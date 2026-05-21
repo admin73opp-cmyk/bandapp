@@ -1173,25 +1173,22 @@ select option{background:var(--w)}
 // DATA
 let songs=[];
 // ── SETLISTS ──────────────────────────────────────────────
-const setlists=[
-  {id:1, name:'Blue Note Summer Jazz Night', concertIds:[1], date:'2026-06-07', type:'Concert', venue:'Blue Note Brussels', duration:90, audience:120, paid:true, total:'€3,000', price:'€25/ticket'},
-  {id:2, name:'Antwerp Jazz Festival',        concertIds:[2], date:'2026-06-21', type:'Concert', venue:'Zomerbar Antwerpen', duration:60, audience:500, paid:false},
-  {id:3, name:'Wedding — Van den Berg',       concertIds:[3], date:'2026-07-04', type:'Wedding', venue:'Château de Namur',  duration:120, audience:80, paid:true, total:'€2,000', price:'Package'},
-  {id:4, name:'Practice Session',             concertIds:[], date:'', type:'Practice', venue:'', duration:60, audience:0, paid:false},
-];
-let activeSetlistId=1;
-let nextSetlistId=5;
-// Per-setlist song arrays keyed by setlist id
-const slSongs={
-  1:[1,2,3,4,5,6,7,8,10,11,9,12],
-  2:[1,3,6,7,8,9,10,12],
-  3:[3,8,9,12,1,6],
-  4:[],
-};
-// slS always points to the active setlist's songs array
+let setlists=[];
+let activeSetlistId=null;
+// slSongs: {[setlistUUID]: [songUUID, ...]} — in-memory cache populated from DB
+let slSongs={};
 function getSlS(){return slSongs[activeSetlistId]||(slSongs[activeSetlistId]=[]);}
-// Keep slS as a proxy for backward compat — redirect reads/writes through getSlS()
 let slS=getSlS();
+
+async function loadSetlists(){
+  setlists = await SetlistsDB.fetch(activeBandId);
+  if(!activeSetlistId && setlists.length) activeSetlistId=setlists[0].id;
+  if(activeSetlistId) await loadSetlistSongs(activeSetlistId);
+  slS=getSlS();
+}
+async function loadSetlistSongs(setlistId){
+  slSongs[setlistId] = await SetlistsDB.fetchSongs(setlistId);
+}
 let myC={};
 // Loads songs + personal notes from Supabase into module-level globals
 async function loadSongs(){
@@ -2100,25 +2097,35 @@ function openMediaUrl(btn){
   if(!url)return;
   window.open(url,'_blank','noopener,noreferrer');
 }
-function removeSongFromSL(id){
-  const idx=getSlS().indexOf(id);
+async function removeSongFromSL(id){
+  const arr=getSlS();
+  const idx=arr.indexOf(id);
   if(idx===-1)return;
-  getSlS().splice(idx,1);
+  arr.splice(idx,1);
   renderSL();renderSlMeta();
+  await SetlistsDB.saveSongs(activeSetlistId, arr);
   toast2('Song removed','w');
 }
-function slMoveUp(i){if(i<=0)return;const t=getSlS()[i];getSlS()[i]=getSlS()[i-1];getSlS()[i-1]=t;renderSL();renderSlMeta();toast2('Moved up');}
-function slMoveDown(i){if(i>=getSlS().length-1)return;const t=getSlS()[i];getSlS()[i]=getSlS()[i+1];getSlS()[i+1]=t;renderSL();renderSlMeta();toast2('Moved down');}
+async function slMoveUp(i){
+  const arr=getSlS();if(i<=0)return;const t=arr[i];arr[i]=arr[i-1];arr[i-1]=t;
+  renderSL();renderSlMeta();await SetlistsDB.saveSongs(activeSetlistId,arr);toast2('Moved up');
+}
+async function slMoveDown(i){
+  const arr=getSlS();if(i>=arr.length-1)return;const t=arr[i];arr[i]=arr[i+1];arr[i+1]=t;
+  renderSL();renderSlMeta();await SetlistsDB.saveSongs(activeSetlistId,arr);toast2('Moved down');
+}
 
 // Desktop drag
 let dSrc=null;
 function ds(e){dSrc=e.currentTarget;}
 function dov(e){e.preventDefault();e.currentTarget.classList.add('dov');}
-function ddrop(e){
+async function ddrop(e){
   e.preventDefault();e.currentTarget.classList.remove('dov');
   if(dSrc&&dSrc!==e.currentTarget){
-    const si=getSlS().indexOf(parseInt(dSrc.dataset.id)),ti=getSlS().indexOf(parseInt(e.currentTarget.dataset.id));
-    getSlS().splice(si,1);getSlS().splice(ti,0,parseInt(dSrc.dataset.id));renderSL();toast2('Order updated');
+    const arr=getSlS();
+    const si=arr.indexOf(dSrc.dataset.id),ti=arr.indexOf(e.currentTarget.dataset.id);
+    const [moved]=arr.splice(si,1);arr.splice(ti,0,moved);
+    renderSL();await SetlistsDB.saveSongs(activeSetlistId,arr);toast2('Order updated');
   }
 }
 
@@ -2126,7 +2133,7 @@ function ddrop(e){
 let tSrcIdx=null, tClone=null;
 function tStart(e){
   const row=e.currentTarget.closest('tr');
-  tSrcIdx=getSlS().indexOf(parseInt(row.dataset.id));
+  tSrcIdx=getSlS().indexOf(row.dataset.id); // UUID string — no parseInt
   row.style.opacity='.4';
   e.preventDefault();
 }
@@ -2147,8 +2154,12 @@ function tEnd(e){
   if(!el)return;
   const tr=el.closest('tr[data-id]');
   if(tr&&tSrcIdx!==null){
-    const ti=getSlS().indexOf(parseInt(tr.dataset.id));
-    if(ti!==-1&&ti!==tSrcIdx){getSlS().splice(tSrcIdx,1);getSlS().splice(ti,0,...getSlS().splice(tSrcIdx,0));renderSL();toast2('Order updated');}
+    const arr=getSlS();
+    const ti=arr.indexOf(tr.dataset.id); // UUID string — no parseInt
+    if(ti!==-1&&ti!==tSrcIdx){
+      const [moved]=arr.splice(tSrcIdx,1);arr.splice(ti,0,moved);
+      renderSL();SetlistsDB.saveSongs(activeSetlistId,arr);toast2('Order updated');
+    }
   }
   tSrcIdx=null;
 }
@@ -2158,17 +2169,18 @@ function renderSLDropdown(){
   const dd=document.getElementById('slDropdown');if(!dd)return;
   dd.innerHTML=setlists.map(sl=>`<option value="${sl.id}"${sl.id===activeSetlistId?' selected':''}>${sl.name}</option>`).join('');
 }
-function selSLDropdown(sel){
-  const id=parseInt(sel.value);
+async function selSLDropdown(sel){
+  const id=sel.value; // UUID string — no parseInt
   activeSetlistId=id;
+  await loadSetlistSongs(id);
   slS=getSlS();
   const sl=setlists.find(x=>x.id===id);
   document.getElementById('slName').textContent=sl?sl.name:'Set List';
   renderSlMeta();renderSL();
 }
-// Legacy selSL kept for compatibility with other callers
-function selSL(el,id){
+async function selSL(el,id){
   activeSetlistId=id;
+  await loadSetlistSongs(id);
   slS=getSlS();
   const sl=setlists.find(x=>x.id===id);
   document.getElementById('slName').textContent=sl?sl.name:'Set List';
@@ -2177,17 +2189,12 @@ function selSL(el,id){
 }
 
 // Delete setlist
-function deleteActiveSetlist(){
+async function deleteActiveSetlist(){
   const sl=setlists.find(x=>x.id===activeSetlistId);if(!sl)return;
   if(!confirm(`⚠ Delete "${sl.name}"?\n\nThe setlist will be permanently deleted and all links to rehearsals and concerts will disappear. This cannot be undone.`))return;
-  // Remove links from concerts and rehearsals
-  concerts.forEach(c=>{c.setlistIds=(c.setlistIds||[]).filter(id=>id!==activeSetlistId);});
-  rehearsals.forEach(r=>{if(r.setlistId===activeSetlistId)r.setlistId=null;});
-  const idx=setlists.findIndex(x=>x.id===activeSetlistId);
-  setlists.splice(idx,1);
+  await SetlistsDB.delete(activeSetlistId);
   delete slSongs[activeSetlistId];
-  if(setlists.length){activeSetlistId=setlists[0].id;}
-  slS=getSlS();
+  await loadSetlists();
   renderSLDropdown();
   const sl2=setlists.find(x=>x.id===activeSetlistId);
   document.getElementById('slName').textContent=sl2?sl2.name:'No set lists';
@@ -2328,32 +2335,30 @@ function selSlMode(mode){
   document.getElementById('slCreateBtn').textContent=mode==='ai'?'✦ Generate Set List':'Create Set List';
 }
 
-function createNewSetList(){
+async function createNewSetList(){
   const title=document.getElementById('slNewTitle').value.trim();
   if(!title){toast2('Please enter a set list title','w');return;}
   const cid=parseInt(document.getElementById('slNewConcert').value)||null;
   const c=cid?concerts.find(x=>x.id===cid):null;
-  const newSL={
-    id:nextSetlistId++,
+  const newSL=await SetlistsDB.upsert({
+    band_id:activeBandId,
     name:title,
-    concertIds:cid?[cid]:[],
-    date:c?`${c.year}-${String(Object.keys(MONTH_MAP).indexOf(c.month)+1).padStart(2,'0')}-${String(c.day).padStart(2,'0')}` :'',
+    date:c?`${c.year}-${String(Object.keys(MONTH_MAP).indexOf(c.month)+1).padStart(2,'0')}-${String(c.day).padStart(2,'0')}`:null,
     type:c?'Concert':'Practice',
-    venue:c?c.venue:'',
+    venue:c?c.venue:null,
     duration:c?c.duration:60,
     audience:c?c.audience:0,
     paid:c?c.paid:false,
-    total:c?c.total:'',
-    price:c?c.price:'',
-  };
-  setlists.push(newSL);
-  slSongs[newSL.id]=[];  // start with empty song list
-  if(c){if(!c.setlistIds)c.setlistIds=[];c.setlistIds.push(newSL.id);}
+    total:c?c.total:null,
+    price:c?c.price:null,
+  });
+  if(!newSL)return;
+  slSongs[newSL.id]=[];
+  await loadSetlists();
   closeMod('slMod');
-  renderSLDropdown();
-  // activate the new setlist
   activeSetlistId=newSL.id;
-  slS=getSlS();  // point slS at the new empty array
+  slS=getSlS();
+  renderSLDropdown();
   document.getElementById('slName').textContent=title;
   renderSlMeta();renderSL();
   nav('setlists');
@@ -2759,11 +2764,10 @@ function renderAsList(){
   const filtered=songs.filter(s=>!s.hidden&&(s.title+s.artist).toLowerCase().includes(q));
   const inList=new Set(getSlS());
   el.innerHTML=filtered.map(s=>{
-    const sid=s.legacy_id??s.id; // use legacy int id while setlists still reference integers
-    const already=inList.has(sid);
+    const already=inList.has(s.id);
     const dur=s.dur?fmtDur(s.dur):'—';
     return`<label style="display:flex;align-items:center;gap:8px;padding:8px 10px;background:var(--bg);border:1.5px solid ${already?'var(--a)':'var(--bd)'};border-radius:var(--rad);cursor:pointer;${already?'opacity:.55':''}">
-      <input type="checkbox" style="accent-color:var(--a)" value="${sid}" ${already?'disabled checked':''}>
+      <input type="checkbox" style="accent-color:var(--a)" value="${s.id}" ${already?'disabled checked':''}>
       <div style="flex:1">
         <div style="font-weight:600;font-size:.82rem">${s.title}</div>
         <div style="font-size:.69rem;color:var(--ink2)">${s.artist} · ${s.key} · ${dur}</div>
@@ -2773,17 +2777,21 @@ function renderAsList(){
   }).join('');
 }
 
-function addSelectedSongs(){
+async function addSelectedSongs(){
   const checks=document.querySelectorAll('#asList input[type="checkbox"]:checked:not(:disabled)');
   let added=0;
   checks.forEach(cb=>{
-    const id=parseInt(cb.value);
+    const id=cb.value; // UUID string — no parseInt
     if(!getSlS().includes(id)){getSlS().push(id);added++;}
   });
   closeMod('asMod');
   renderSL();
-  if(added>0)toast2(`${added} song${added>1?'s':''} added to set list!`);
-  else toast2('No new songs selected','w');
+  if(added>0){
+    await SetlistsDB.saveSongs(activeSetlistId, getSlS());
+    toast2(`${added} song${added>1?'s':''} added to set list!`);
+  } else {
+    toast2('No new songs selected','w');
+  }
 }
 
 // BLACKOUTS
@@ -3971,6 +3979,7 @@ async function initApp(){
   populateInstrumentSelects();
   populateLangSelect('pfLang', currentUser.lang);
   await loadSongs();
+  await loadSetlists();
   renderSLDropdown();renderSL();renderSlMeta();renderLib();updateLibCount();
   setCalView(calView);renderRehearsals();renderConcerts();renderMembers();
   renderGuestDir();renderBP();renderAsList();renderBandList();
