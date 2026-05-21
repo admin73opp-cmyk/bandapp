@@ -108,9 +108,6 @@ supabase.auth.onAuthStateChange(async (event, session) => {
     return;
   }
   await loadCurrentUser(session.user.id);
-  if (!activeBandId) {
-    console.warn('[bandapp] activeBandId is null after loadCurrentUser — user may have no band memberships');
-  }
   document.getElementById('authScreen').style.display = 'none';
   document.getElementById('app').classList.add('vis');
   initSbState();

@@ -1468,7 +1468,7 @@ function renderRehPhotoArea(id){
   const area=document.getElementById('rePhotoArea');if(!area)return;
   const photos=r?r.photos||[]:[];
   area.innerHTML=photos.map((p,i)=>`<div style="position:relative;display:inline-block"><img src="${p}" style="width:64px;height:64px;border-radius:8px;object-fit:cover;border:1.5px solid var(--bd)"><button onclick="removeRehPhoto('${id}',${i})" style="position:absolute;top:-6px;right:-6px;width:18px;height:18px;border-radius:50%;background:var(--r);border:2px solid var(--w);color:#fff;font-size:.55rem;cursor:pointer;display:flex;align-items:center;justify-content:center">✕</button></div>`).join('')
-    +`<label style="width:64px;height:64px;border-radius:8px;border:2px dashed var(--bd);display:inline-flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;color:var(--ink3);font-size:.65rem;gap:3px" onmouseover="this.style.borderColor='var(--a)'" onmouseout="this.style.borderColor='var(--bd)'"><span style="font-size:1.3rem">📷</span>Add photo<input type="file" accept="image/*" style="display:none" onchange="addRehPhoto(event,'${id||editingRehId||0}')"></label>`;
+    +`<label style="width:64px;height:64px;border-radius:8px;border:2px dashed var(--bd);display:inline-flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;color:var(--ink3);font-size:.65rem;gap:3px" onmouseover="this.style.borderColor='var(--a)'" onmouseout="this.style.borderColor='var(--bd)'"><span style="font-size:1.3rem">📷</span>Add photo<input type="file" accept="image/*" style="display:none" onchange="addRehPhoto(event,'${id||editingRehId||''}')"></label>`;
 }
 function removeRehPhoto(id,idx){const r=rehearsals.find(x=>x.id===id);if(!r||!r.photos)return;r.photos.splice(idx,1);renderRehPhotoArea(id);renderRehearsals();toast2('Photo removed','w');}
 function openRehPhotoLightbox(id,idx){
@@ -2375,7 +2375,7 @@ function renderLib(filter='All',search=''){
   const f=songs.filter(s=>(filter==='All'||s.genre===filter)&&(s.title+s.artist).toLowerCase().includes(search.toLowerCase()));
   if(!f.length){grid.innerHTML=`<div class="es" style="grid-column:1/-1"><div class="es-ico">🎵</div><h3>No songs found</h3><p>Try another filter.</p></div>`;return;}
   grid.innerHTML=f.map(s=>`
-    <div class="songcard${s.hidden?' hidden-song':''}" onclick="openSongEdit(${s.id})">
+    <div class="songcard${s.hidden?' hidden-song':''}" onclick="openSongEdit('${s.id}')">
       ${s.hidden?`<div style="position:absolute;top:10px;right:10px;font-size:.62rem;font-weight:700;color:var(--ink3);background:var(--bg2);border:1px solid var(--bd);border-radius:99px;padding:2px 7px;letter-spacing:.04em">HIDDEN</div>`:''}
       <div class="sctt" style="padding-right:${s.hidden?'52px':'0'}">${s.title}</div>
       <div class="scar">${s.artist}${s.dur?`<span style="float:right;font-family:var(--mono);font-size:.72rem;color:var(--ink3)">${fmtDur(s.dur)}</span>`:''}</div>
@@ -2396,14 +2396,14 @@ function renderLib(filter='All',search=''){
       </div>
       <!-- corner action buttons — visible on hover -->
       <div class="sc-actions" onclick="event.stopPropagation()">
-        <div class="sc-act-btn" onclick="toggleHideSong(${s.id})" title="${s.hidden?'Unhide':'Hide'} song">
+        <div class="sc-act-btn" onclick="toggleHideSong('${s.id}')" title="${s.hidden?'Unhide':'Hide'} song">
           <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
             ${s.hidden
               ? '<path d="M1 8s2.5-5 7-5 7 5 7 5-2.5 5-7 5-7-5-7-5z"/><circle cx="8" cy="8" r="2"/>'
               : '<path d="M1 8s2.5-5 7-5 7 5 7 5-2.5 5-7 5-7-5-7-5z"/><circle cx="8" cy="8" r="2"/><path d="M2 2l12 12" stroke-linecap="round"/>'}
           </svg>
         </div>
-        <div class="sc-act-btn del" onclick="deleteSong(${s.id})" title="Delete song">
+        <div class="sc-act-btn del" onclick="deleteSong('${s.id}')" title="Delete song">
           <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
             <path d="M2 4h12M5 4V2h6v2M6 7v5M10 7v5M3 4l1 10h8l1-10"/>
           </svg>
@@ -2561,14 +2561,14 @@ function renderSheet(){
       <td><input class="sh-cell" style="min-width:150px;font-size:.72rem" value="${esc(s.spotify||'')}" placeholder="Spotify URL" data-field="spotify" data-id="${s.id}" onchange="sheetEdit(this)"></td>
       <td><input class="sh-cell" style="min-width:150px;font-size:.72rem" value="${esc(s.youtube||'')}" placeholder="YouTube URL" data-field="youtube" data-id="${s.id}" onchange="sheetEdit(this)"></td>
       <td><div class="sh-chk"><input type="checkbox"${s.hidden?' checked':''} style="accent-color:var(--a);width:15px;height:15px;cursor:pointer" data-field="hidden" data-id="${s.id}" onchange="sheetEdit(this)"></div></td>
-      <td style="text-align:center;padding:4px"><button class="btn-ic btn" onclick="deleteSheetRow(${s.id})" style="width:24px;height:24px;color:var(--r);border-color:var(--r2)" title="Delete"><svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 4h12M5 4V2h6v2M6 7v5M10 7v5M3 4l1 10h8l1-10"/></svg></button></td>
+      <td style="text-align:center;padding:4px"><button class="btn-ic btn" onclick="deleteSheetRow('${s.id}')" style="width:24px;height:24px;color:var(--r);border-color:var(--r2)" title="Delete"><svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 4h12M5 4V2h6v2M6 7v5M10 7v5M3 4l1 10h8l1-10"/></svg></button></td>
     </tr>`).join('');
 }
 
 function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 
 function sheetEdit(el){
-  const id=parseInt(el.dataset.id),field=el.dataset.field;
+  const id=el.dataset.id,field=el.dataset.field;
   const s=songs.find(x=>x.id===id);if(!s)return;
   s[field]=field==='hidden'?el.checked:field==='dur'?parseInt(el.value)||0:el.value;
   if(field==='hidden'){const row=el.closest('tr');if(row)row.className='sh-row'+(s.hidden?' hidden-row':'');}
@@ -2576,7 +2576,7 @@ function sheetEdit(el){
 }
 
 function sheetEditDur(el){
-  const id=parseInt(el.dataset.id);
+  const id=el.dataset.id;
   const s=songs.find(x=>x.id===id);if(!s)return;
   const row=el.closest('tr');
   const minEl=row.querySelector('[data-field="durMin"]');
@@ -2748,7 +2748,6 @@ async function deleteSong(id){
   await loadSongs();renderLib(aG);toast2('Song deleted','w');
 }
 function openAsMod(){
-  console.log('[bandapp] openAsMod — activeBandId:', activeBandId, 'songs:', songs.length, 'activeSetlistId:', activeSetlistId);
   const sl=setlists.find(x=>x.id===activeSetlistId);
   const sub=document.getElementById('asModSubtitle');
   if(sub&&sl)sub.textContent=`Adding to: "${sl.name}"`;
@@ -3388,7 +3387,7 @@ function renderConcertPhotoArea(id){
     </div>`).join('')
     +`<label style="width:64px;height:64px;border-radius:8px;border:2px dashed var(--bd);display:inline-flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;color:var(--ink3);font-size:.65rem;gap:3px;transition:border-color .12s" onmouseover="this.style.borderColor='var(--a)'" onmouseout="this.style.borderColor='var(--bd)'">
       <span style="font-size:1.3rem">📷</span>Add photo
-      <input type="file" accept="image/*" style="display:none" onchange="addConcertPhoto(event,'${id||editingConcertId||0}')">
+      <input type="file" accept="image/*" style="display:none" onchange="addConcertPhoto(event,'${id||editingConcertId||''}')">
     </label>`;
 }
 

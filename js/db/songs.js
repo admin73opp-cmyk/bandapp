@@ -5,14 +5,12 @@
 const SongsDB = {
 
   async fetch(bandId) {
-    console.log('[bandapp] SongsDB.fetch — bandId:', bandId);
     const { data, error } = await supabase
       .from('songs')
       .select('*')
       .eq('band_id', bandId)
       .order('title');
     if (error) { handleDbError(error); return []; }
-    console.log('[bandapp] SongsDB.fetch — returned', (data||[]).length, 'rows');
     return (data || []).map(s => ({ ...s, dur: s.duration, note: s.notes }));
   },
 
