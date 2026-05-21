@@ -1224,14 +1224,31 @@ function isGuestExpired(m){
 }
 function activeMembers(){return members.filter(m=>m.role!=='guest'||isGuestActive(m));}
 function expiredGuests(){return members.filter(m=>isGuestExpired(m));}
-const concerts=[
-  {id:1,month:"JUN",day:"7",year:"2026",title:"Blue Note Summer Jazz Night",venue:"Blue Note Brussels",time:"21:00",duration:90,audience:120,paid:true,total:"€3,000",price:"€25/ticket",notes:"",photos:[],setlistIds:[1],cancelled:false},
-  {id:2,month:"JUN",day:"21",year:"2026",title:"Antwerp Jazz Festival",venue:"Zomerbar Antwerpen",time:"18:00",duration:60,audience:500,paid:false,notes:"Outdoor stage — bring own backline",photos:[],setlistIds:[2],cancelled:false},
-  {id:3,month:"JUL",day:"4",year:"2026",title:"Wedding — Van den Berg",venue:"Château de Namur",time:"19:00",duration:120,audience:80,paid:true,total:"€2,000",price:"Package",notes:"",photos:[],setlistIds:[3],cancelled:false},
-  {id:4,month:"MAR",day:"15",year:"2026",title:"Spring Jazz Night",venue:"Café Central, Brussels",time:"21:00",duration:90,audience:80,paid:true,total:"€1,200",price:"€15/ticket",notes:"Great crowd, encored twice.",photos:[],setlistIds:[],cancelled:false},
-  {id:5,month:"FEB",day:"8",year:"2026",title:"Valentine's Jazz Dinner",venue:"Le Loup Blanc",time:"20:00",duration:75,audience:60,paid:true,total:"€900",price:"Included in dinner",notes:"Intimate setting, played all ballads.",photos:[],setlistIds:[],cancelled:false},
-];
-let nextConcertId=6;
+let concerts=[];
+
+async function loadConcerts(){
+  concerts = await ConcertsDB.fetch(activeBandId);
+  buildCalEv();
+}
+// Derives a concert/rehearsal dot map from the live arrays.
+// Birthday and other static dots are preserved.
+function buildCalEv(){
+  calEv={"2026-05-15":["birthday"]}; // keep static entries
+  concerts.filter(c=>!c.cancelled&&c.date).forEach(c=>{
+    if(!calEv[c.date])calEv[c.date]=[];
+    if(!calEv[c.date].includes('concert'))calEv[c.date].push('concert');
+  });
+  rehearsals.filter(r=>!r.cancelled&&r.date).forEach(r=>{
+    if(!calEv[r.date])calEv[r.date]=[];
+    if(!calEv[r.date].includes('rehearsal'))calEv[r.date].push('rehearsal');
+  });
+  BAND_CAL_EVENTS[activeBandId]=calEv;
+}
+// Returns all concerts that have this setlist linked — used by renderSlMeta
+// instead of the now-empty sl.concertIds array.
+function concertsForSetlist(setlistId){
+  return concerts.filter(c=>(c.setlistIds||[]).includes(setlistId));
+}
 
 // ── DATE HELPERS ──────────────────────────────────────────
 const MONTH_MAP = {JAN:0,FEB:1,MAR:2,APR:3,MAY:4,JUN:5,JUL:6,AUG:7,SEP:8,OCT:9,NOV:10,DEC:11};
@@ -1308,7 +1325,7 @@ function handleRehCardClick(e,id){
   if(btn){
     const action = btn.dataset.action;
     if(action==='cancel'){promptCancel('rehearsal',id);return;}
-    if(action==='setlist'){openSetlistFromConcert(parseInt(btn.dataset.slid));return;}
+    if(action==='setlist'){openSetlistFromConcert(btn.dataset.slid);return;}
     if(action==='view'){openRehView(id);return;}
   }
   openRehView(id);
@@ -1769,7 +1786,7 @@ function createNewBand(){
   showMod('bswMod');renderBandList();
   toast2(`"${name}" created! Switch to it to get started.`);
 }
-const calEv={"2026-05-23":["rehearsal"],"2026-05-31":["rehearsal"],"2026-06-07":["concert"],"2026-06-21":["concert"],"2026-07-04":["concert"],"2026-05-15":["birthday"]};
+let calEv={"2026-05-15":["birthday"]}; // rebuilt by buildCalEv() after data loads
 
 // ── SEED BAND DATA ────────────────────────────────────────
 // Link the demo globals to Band 1's data store
@@ -2247,12 +2264,13 @@ function renderSlMeta(){
   // Linked concert row
   const row=document.getElementById('slConcertLink');
   if(!row)return;
-  const linkedConcerts=(sl.concertIds||[]).map(id=>concerts.find(x=>x.id===id)).filter(Boolean).filter(c=>!isPast(c));
-  const pastLinked=(sl.concertIds||[]).map(id=>concerts.find(x=>x.id===id)).filter(Boolean).filter(c=>isPast(c));
+  const allLinked=concertsForSetlist(sl.id);
+  const linkedConcerts=allLinked.filter(c=>!isPast(c));
+  const pastLinked=allLinked.filter(c=>isPast(c));
   if(linkedConcerts.length||pastLinked.length){
     const chips=[...linkedConcerts,...pastLinked].map(con=>
-      `<span style="display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:99px;background:var(--a2);border:1.5px solid rgba(108,99,255,.25);font-size:.75rem;font-weight:600;color:var(--a);cursor:pointer;${isPast(con)?'opacity:.65':''}" onclick="nav('concerts');openConcertView(${con.id})">★ ${con.title}</span>
-       <button class="btn btn-xs btn-g" onclick="linkSlToConcert(null,${con.id})" style="font-size:.66rem" title="Unlink">✕</button>`
+      `<span style="display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:99px;background:var(--a2);border:1.5px solid rgba(108,99,255,.25);font-size:.75rem;font-weight:600;color:var(--a);cursor:pointer;${isPast(con)?'opacity:.65':''}" onclick="nav('concerts');openConcertView('${con.id}')">★ ${con.title}</span>
+       <button class="btn btn-xs btn-g" onclick="linkSlToConcert(null,'${con.id}')" style="font-size:.66rem" title="Unlink">✕</button>`
     ).join('');
     row.innerHTML=`<span style="font-size:.72rem;color:var(--ink3)">Linked concerts:</span>${chips}<button class="btn btn-xs btn-g" onclick="openSlLinkModal()" style="font-size:.7rem">+ Link more</button>`;
   } else {
@@ -2262,21 +2280,15 @@ function renderSlMeta(){
   }
 }
 
-function linkSlToConcert(concertId, unlinkId){
-  const sl=setlists.find(x=>x.id===activeSetlistId);if(!sl)return;
-  if(!sl.concertIds)sl.concertIds=[];
+async function linkSlToConcert(concertId, unlinkId){
   if(unlinkId){
-    // unlink specific concert
-    sl.concertIds=sl.concertIds.filter(id=>id!==unlinkId);
-    const uc=concerts.find(x=>x.id===unlinkId);
-    if(uc)uc.setlistIds=(uc.setlistIds||[]).filter(id=>id!==activeSetlistId);
+    await ConcertsDB.unlinkSetlist(unlinkId, activeSetlistId);
+    await loadConcerts();
     renderSlMeta();renderConcerts();toast2('Concert unlinked');return;
   }
   if(!concertId)return;
-  // add link if not already present
-  if(!sl.concertIds.includes(concertId)){sl.concertIds.push(concertId);}
-  const c=concerts.find(x=>x.id===concertId);
-  if(c){if(!c.setlistIds)c.setlistIds=[];if(!c.setlistIds.includes(activeSetlistId))c.setlistIds.push(activeSetlistId);}
+  await ConcertsDB.linkSetlist(concertId, activeSetlistId);
+  await loadConcerts();
   renderSlMeta();renderConcerts();
   toast2('Set list linked to concert!');
   closeMod('slLinkMod');
@@ -2294,7 +2306,7 @@ function renderSlLinkList(){
   const upcoming=concerts.filter(c=>!isPast(c));
   const past=concerts.filter(c=>isPast(c));
   const makeItem=c=>`
-    <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--bg);border:1.5px solid var(--bd);border-radius:var(--rad);cursor:pointer;transition:border-color .13s" onclick="linkSlToConcert(${c.id})" onmouseover="this.style.borderColor='var(--a)'" onmouseout="this.style.borderColor='var(--bd)'">
+    <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--bg);border:1.5px solid var(--bd);border-radius:var(--rad);cursor:pointer;transition:border-color .13s" onclick="linkSlToConcert('${c.id}')" onmouseover="this.style.borderColor='var(--a)'" onmouseout="this.style.borderColor='var(--bd)'">
       <div style="flex:1"><div style="font-weight:600;font-size:.85rem">${c.title}</div><div style="font-size:.72rem;color:var(--ink2)">${c.month} ${c.day}, ${c.year} · ${c.venue}</div></div>
       ${(c.setlistIds||[]).length&&!(c.setlistIds||[]).includes(activeSetlistId)?`<span class="pill pgray" style="font-size:.66rem">Has setlist</span>`:''}
       ${(c.setlistIds||[]).includes(activeSetlistId)?`<span class="pill pg" style="font-size:.66rem">✓ Linked</span>`:''}
@@ -2313,7 +2325,7 @@ function openSlMod(){
   slCreateMode='manual';
   selSlMode('manual');
   sel.onchange=()=>{
-    const cid=parseInt(sel.value);
+    const cid=sel.value;
     const c=concerts.find(x=>x.id===cid);
     const prev=document.getElementById('slConcertPreview');
     if(c&&cid){prev.style.display='';prev.textContent=`📍 ${c.venue} · ${c.time} · ~${c.audience} people`;}
@@ -3052,24 +3064,23 @@ function openConcertLinkFromConcert(concertId){
 
 function renderConcertLinkList(concertId){
   const el=document.getElementById('concertLinkList');if(!el)return;
+  const concert=concerts.find(x=>x.id===concertId);
+  const linkedIds=concert?.setlistIds||[];
   el.innerHTML=setlists.map(sl=>`
-    <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--bg);border:1.5px solid var(--bd);border-radius:var(--rad);cursor:pointer;transition:border-color .13s" onclick="linkConcertToSetlist(${concertId},${sl.id})" onmouseover="this.style.borderColor='var(--a)'" onmouseout="this.style.borderColor='var(--bd)'">
+    <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--bg);border:1.5px solid var(--bd);border-radius:var(--rad);cursor:pointer;transition:border-color .13s" onclick="linkConcertToSetlist('${concertId}','${sl.id}')" onmouseover="this.style.borderColor='var(--a)'" onmouseout="this.style.borderColor='var(--bd)'">
       <div style="flex:1"><div style="font-weight:600;font-size:.85rem">${sl.name}</div><div style="font-size:.72rem;color:var(--ink2)">${sl.type}${sl.date?' · '+new Date(sl.date+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}):''}</div></div>
-      ${(sl.concertIds||[]).length&&!(sl.concertIds||[]).includes(concertId)?`<span class="pill pgray" style="font-size:.66rem">Has concerts</span>`:''}
-      ${(sl.concertIds||[]).includes(concertId)?`<span class="pill pg" style="font-size:.66rem">✓ Linked</span>`:''}
+      ${linkedIds.includes(sl.id)?`<span class="pill pg" style="font-size:.66rem">✓ Linked</span>`:''}
     </div>`).join('');
 }
 
-function linkConcertToSetlist(concertId, slId){
-  const c=concerts.find(x=>x.id===concertId);if(!c)return;
-  if(!c.setlistIds)c.setlistIds=[];
-  if(!c.setlistIds.includes(slId))c.setlistIds.push(slId);
-  const sl=setlists.find(x=>x.id===slId);
-  if(sl){if(!sl.concertIds)sl.concertIds=[];if(!sl.concertIds.includes(concertId))sl.concertIds.push(concertId);}
+async function linkConcertToSetlist(concertId, slId){
+  await ConcertsDB.linkSetlist(concertId, slId);
+  await loadConcerts();
   closeMod('concertLinkMod');renderConcerts();renderSlMeta();
   toast2('Concert linked to set list!');
 }
 function concertDate(c){
+  if(c.date) return new Date(c.date+'T12:00:00');
   return new Date(parseInt(c.year), MONTH_MAP[c.month], parseInt(c.day));
 }
 
@@ -3095,16 +3106,16 @@ function concertCard(c,style){
   const pastStyle=style==='past', cancelStyle=style==='cancelled';
   const photos=(c.photos||[]).slice(0,4);
   const photoHtml=photos.length
-    ?`<div class="concert-photos">${photos.map((p,i)=>`<img class="concert-thumb" src="${p}" alt="Concert photo ${i+1}" onclick="event.stopPropagation();openPhotoLightbox('${c.id}',${i})">`).join('')}${!cancelStyle?`<label class="concert-thumb-add" onclick="event.stopPropagation()"><input type="file" accept="image/*" style="display:none" onchange="addConcertPhoto(event,${c.id})">+</label>`:''}</div>`
+    ?`<div class="concert-photos">${photos.map((p,i)=>`<img class="concert-thumb" src="${p}" alt="Concert photo ${i+1}" onclick="event.stopPropagation();openPhotoLightbox('${c.id}',${i})">`).join('')}${!cancelStyle?`<label class="concert-thumb-add" onclick="event.stopPropagation()"><input type="file" accept="image/*" style="display:none" onchange="addConcertPhoto(event,'${c.id}')">+</label>`:''}</div>`
     :cancelStyle?``:
-    `<div class="concert-photos"><label class="concert-thumb-add" onclick="event.stopPropagation()"><input type="file" accept="image/*" style="display:none" onchange="addConcertPhoto(event,${c.id})">📷</label></div>`;
+    `<div class="concert-photos"><label class="concert-thumb-add" onclick="event.stopPropagation()"><input type="file" accept="image/*" style="display:none" onchange="addConcertPhoto(event,'${c.id}')">📷</label></div>`;
   const badge=cancelStyle?`<span style="margin-left:8px;font-size:.66rem;padding:2px 7px;border-radius:99px;background:var(--r2);color:var(--r);font-weight:600;vertical-align:middle">Cancelled</span>`
     :pastStyle?`<span style="margin-left:8px;font-size:.66rem;padding:2px 7px;border-radius:99px;background:var(--bg2);color:var(--ink3);font-weight:600;vertical-align:middle">Past</span>`:'';
   const actions=cancelStyle||pastStyle
     ?`<button class="btn btn-g btn-sm" data-action="view">View</button>`
     :`<button class="btn btn-g btn-sm" style="color:var(--amb);border-color:var(--amb2)" data-action="cancel">Cancel</button>
       <button class="btn btn-g btn-sm" data-action="view">View</button>`;
-  return`<div class="ccrd${pastStyle?' past':''}${cancelStyle?' cancelled':''}" data-cid="${c.id}" onclick="handleConcertCardClick(event,${c.id})">
+  return`<div class="ccrd${pastStyle?' past':''}${cancelStyle?' cancelled':''}" data-cid="${c.id}" onclick="handleConcertCardClick(event,'${c.id}')">
     <div class="cdb">
       <div class="cdmo">${c.month}</div>
       <div class="cddy" style="${pastStyle||cancelStyle?'color:var(--ink3)':''}">${c.day}</div>
@@ -3121,6 +3132,7 @@ function concertCard(c,style){
         <span class="pill ${cancelStyle?'pr':'pp'}">${cancelStyle?'🚫 Cancelled':'Concert'}</span>
         ${!cancelStyle&&c.paid?`<span class="pill pg">€ ${c.total}</span><span class="pill pgray">${c.price}</span>`:!cancelStyle?'<span class="pill pgray">Free</span>':''}
         ${(c.setlistIds||[]).map(sid=>{const sl=setlists.find(x=>x.id===sid);return sl?`<span class="pill pp" style="cursor:pointer" data-action="setlist" data-slid="${sid}">♩ ${sl.name}</span>`:''}).join('')}
+
       </div>
       ${photoHtml}
     </div>
@@ -3133,7 +3145,7 @@ function handleConcertCardClick(e,id){
   if(btn){
     const action = btn.dataset.action;
     if(action==='cancel'){promptCancel('concert',id);return;}
-    if(action==='setlist'){openSetlistFromConcert(parseInt(btn.dataset.slid));return;}
+    if(action==='setlist'){openSetlistFromConcert(btn.dataset.slid);return;}
     if(action==='view'){openConcertView(id);return;}
   }
   openConcertView(id);
@@ -3150,20 +3162,14 @@ function promptCancel(type,id){
   if(lbl)lbl.textContent=chLabels[getBandNotifPref()]||'email';
   showMod('cancelMod');
 }
-function confirmCancel(notify){
+async function confirmCancel(notify){
   if(!cancelTarget)return;
   const {type,id}=cancelTarget;
   if(type==='concert'){
     const c=concerts.find(x=>x.id===id);
     if(c){
-      c.cancelled=true;
-      // remove from calendar so dot no longer shows
-      const mo=String(Object.keys(MONTH_MAP).indexOf(c.month)+1).padStart(2,'0');
-      const key=`${c.year}-${mo}-${String(c.day).padStart(2,'0')}`;
-      if(calEv[key]){
-        calEv[key]=calEv[key].filter(t=>t!=='concert');
-        if(!calEv[key].length) delete calEv[key];
-      }
+      await ConcertsDB.upsert({...c, cancelled:true});
+      await loadConcerts();
       renderConcerts();renderCal();
     }
   } else {
@@ -3212,7 +3218,7 @@ function openConcertView(id){
   const cvSlRow=document.getElementById('cvSlRow');
   if(slsLinked.length){
     cvSlRow.style.display='';
-    document.getElementById('cvSlBadge').innerHTML=slsLinked.map(sl=>`<span class="pill pp" style="cursor:pointer;margin-right:4px" onclick="openSetlistFromConcert(${sl.id})">♩ ${sl.name}</span>`).join('');
+    document.getElementById('cvSlBadge').innerHTML=slsLinked.map(sl=>`<span class="pill pp" style="cursor:pointer;margin-right:4px" onclick="openSetlistFromConcert('${sl.id}')">♩ ${sl.name}</span>`).join('');
   } else cvSlRow.style.display='none';
   const photos=c.photos||[];
   document.getElementById('cvPhotos').innerHTML=photos.length
@@ -3222,20 +3228,22 @@ function openConcertView(id){
   if(c.cancelled||past){
     actions.innerHTML=`<button class="btn btn-g" onclick="closeMod('cvMod')">Close</button>`;
   } else {
-    const slBtns=(c.setlistIds||[]).map(sid=>{const sl=setlists.find(x=>x.id===sid);return sl?`<button class="btn btn-p btn-sm" onclick="openSetlistFromConcert(${sid})">♩ ${sl.name}</button>`:''}).join('');
+    const slBtns=(c.setlistIds||[]).map(sid=>{const sl=setlists.find(x=>x.id===sid);return sl?`<button class="btn btn-p btn-sm" onclick="openSetlistFromConcert('${sid}')">♩ ${sl.name}</button>`:''}).join('');
     actions.innerHTML=`
       <button class="btn btn-g" onclick="closeMod('cvMod')">Close</button>
-      <button class="btn btn-g btn-sm" style="color:var(--amb);border-color:var(--amb2)" onclick="closeMod('cvMod');promptCancel('concert',${c.id})">🚫 Cancel</button>
-      <button class="btn btn-g btn-sm" onclick="closeMod('cvMod');openConcertEdit(${c.id})">Edit</button>
-      <button class="btn btn-g btn-sm" onclick="closeMod('cvMod');openConcertLinkFromConcert(${c.id})">♩ Link Set List</button>
+      <button class="btn btn-g btn-sm" style="color:var(--amb);border-color:var(--amb2)" onclick="closeMod('cvMod');promptCancel('concert','${c.id}')">🚫 Cancel</button>
+      <button class="btn btn-g btn-sm" onclick="closeMod('cvMod');openConcertEdit('${c.id}')">Edit</button>
+      <button class="btn btn-g btn-sm" onclick="closeMod('cvMod');openConcertLinkFromConcert('${c.id}')">♩ Link Set List</button>
       ${slBtns}`;
   }
   showMod('cvMod');
 }
-function deleteConcert(id){
+async function deleteConcert(id){
   const c=concerts.find(x=>x.id===id);if(!c)return;
   if(!confirm(`Delete "${c.title}"? This cannot be undone.`))return;
-  concerts.splice(concerts.indexOf(c),1);closeMod('cvMod');renderConcerts();toast2('Concert deleted','w');
+  await ConcertsDB.delete(id);
+  await loadConcerts();
+  closeMod('cvMod');renderConcerts();toast2('Concert deleted','w');
 }
 
 
@@ -3293,8 +3301,7 @@ function openConcertEdit(id){
   document.getElementById('ceTitle').value=c.title||'';
   document.getElementById('ceVenue').value=c.venue||'';
   document.getElementById('ceAddress').value=c.address||'';
-  const mo=String(Object.keys(MONTH_MAP).indexOf(c.month)+1).padStart(2,'0');
-  document.getElementById('ceDate').value=`${c.year}-${mo}-${String(c.day).padStart(2,'0')}`;
+  document.getElementById('ceDate').value=c.date||'';
   document.getElementById('ceTime').value=c.time||'';
   document.getElementById('ceDuration').value=c.duration||'';
   document.getElementById('ceAudience').value=c.audience||'';
@@ -3315,67 +3322,39 @@ function openConcertEdit(id){
   showMod('ceMod');
 }
 
-function saveConcertEdit(){
+async function saveConcertEdit(){
   const dateVal=document.getElementById('ceDate').value;
   const title=document.getElementById('ceTitle').value.trim();
   if(!title){toast2('Please enter a concert name','w');return;}
-  const MO_NAMES=['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
-  let month='JUN',day='1',year='2026';
-  if(dateVal){const d=new Date(dateVal+'T12:00:00');month=MO_NAMES[d.getMonth()];day=String(d.getDate());year=String(d.getFullYear());}
   const paid=document.getElementById('cePaidPaid').classList.contains('on');
   const totalRaw=document.getElementById('ceTotal').value.trim();
   const ticket=document.getElementById('ceTicket').value.trim();
+  const chosenSlId=document.getElementById('ceSetlistSelect').value||null;
 
-  if(editingConcertId){
-    const c=concerts.find(x=>x.id===editingConcertId);if(!c)return;
-    // remove old calendar entry if date changed
-    if(dateVal){
-      const oldKey=`${c.year}-${String(Object.keys(MONTH_MAP).indexOf(c.month)+1).padStart(2,'0')}-${String(c.day).padStart(2,'0')}`;
-      const newKey=dateVal;
-      if(oldKey!==newKey && calEv[oldKey]){
-        calEv[oldKey]=calEv[oldKey].filter(t=>t!=='concert');
-        if(!calEv[oldKey].length) delete calEv[oldKey];
-      }
-    }
-    c.title=title;c.venue=document.getElementById('ceVenue').value.trim();
-    c.address=document.getElementById('ceAddress').value.trim();
-    c.month=month;c.day=day;c.year=year;
-    c.time=document.getElementById('ceTime').value;
-    c.duration=parseInt(document.getElementById('ceDuration').value)||90;
-    c.audience=parseInt(document.getElementById('ceAudience').value)||0;
-    c.notes=document.getElementById('ceNotes').value.trim();
-    c.type=document.getElementById('ceType').value;
-    c.paid=paid;c.total=totalRaw?`€${totalRaw}`:'';c.price=ticket;
-    c.contactDial=document.getElementById('cePhoneCc').value;
-    c.contactPhone=document.getElementById('cePhoneNum').value.trim();
-    // update calendar entry
-    if(dateVal){
-      if(!calEv[dateVal]) calEv[dateVal]=[];
-      if(!calEv[dateVal].includes('concert')) calEv[dateVal].push('concert');
-    }
-  } else {
-    const newId=nextConcertId++;
-    concerts.push({id:newId,title,venue:document.getElementById('ceVenue').value.trim(),address:document.getElementById('ceAddress').value.trim(),month,day,year,time:document.getElementById('ceTime').value,duration:parseInt(document.getElementById('ceDuration').value)||90,audience:parseInt(document.getElementById('ceAudience').value)||0,notes:document.getElementById('ceNotes').value.trim(),type:document.getElementById('ceType').value,paid,total:totalRaw?`€${totalRaw}`:'',price:ticket,contactDial:document.getElementById('cePhoneCc').value,contactPhone:document.getElementById('cePhoneNum').value.trim(),photos:[]});
-    // add to calendar
-    if(dateVal){
-      if(!calEv[dateVal]) calEv[dateVal]=[];
-      if(!calEv[dateVal].includes('concert')) calEv[dateVal].push('concert');
-    }
+  const payload={
+    title,
+    venue: document.getElementById('ceVenue').value.trim(),
+    date: dateVal||null,
+    time: document.getElementById('ceTime').value,
+    duration: parseInt(document.getElementById('ceDuration').value)||90,
+    audience: parseInt(document.getElementById('ceAudience').value)||0,
+    notes: document.getElementById('ceNotes').value.trim(),
+    paid,
+    total: totalRaw?`€${totalRaw}`:'',
+    price: ticket,
+  };
+  if(editingConcertId) payload.id=editingConcertId;
+
+  const saved=await ConcertsDB.upsert(payload);
+  if(!saved)return;
+
+  if(chosenSlId&&!(saved.setlistIds||[]).includes(chosenSlId)){
+    await ConcertsDB.linkSetlist(saved.id, chosenSlId);
   }
-  // ── setlist link: apply selection from dropdown (both directions) ──
-  const savedId = editingConcertId || concerts[concerts.length-1]?.id;
-  const savedConcert = concerts.find(x=>x.id===savedId);
-  const chosenSlId = parseInt(document.getElementById('ceSetlistSelect').value)||null;
-  if(savedConcert){
-    if(!savedConcert.setlistIds) savedConcert.setlistIds=[];
-    if(chosenSlId){
-      // link chosen setlist ↔ concert (both sides)
-      if(!savedConcert.setlistIds.includes(chosenSlId)) savedConcert.setlistIds.push(chosenSlId);
-      const sl=setlists.find(x=>x.id===chosenSlId);
-      if(sl){if(!sl.concertIds)sl.concertIds=[];if(!sl.concertIds.includes(savedId))sl.concertIds.push(savedId);}
-    }
-  }
-  closeMod('ceMod');renderConcerts();renderCal();renderSlMeta();toast2(editingConcertId?'Concert updated!':'Concert added!');
+
+  await loadConcerts();
+  closeMod('ceMod');renderConcerts();renderCal();renderSlMeta();
+  toast2(editingConcertId?'Concert updated!':'Concert added!');
 }
 
 // ── CONCERT PHOTOS ────────────────────────────────────────
@@ -3401,11 +3380,11 @@ function renderConcertPhotoArea(id){
   area.innerHTML=photos.map((p,i)=>`
     <div style="position:relative;display:inline-block">
       <img src="${p}" style="width:64px;height:64px;border-radius:8px;object-fit:cover;border:1.5px solid var(--bd)">
-      <button onclick="removeConcertPhoto(${id},${i})" style="position:absolute;top:-6px;right:-6px;width:18px;height:18px;border-radius:50%;background:var(--r);border:2px solid var(--w);color:#fff;font-size:.55rem;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1">✕</button>
+      <button onclick="removeConcertPhoto('${id}',${i})" style="position:absolute;top:-6px;right:-6px;width:18px;height:18px;border-radius:50%;background:var(--r);border:2px solid var(--w);color:#fff;font-size:.55rem;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1">✕</button>
     </div>`).join('')
     +`<label style="width:64px;height:64px;border-radius:8px;border:2px dashed var(--bd);display:inline-flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;color:var(--ink3);font-size:.65rem;gap:3px;transition:border-color .12s" onmouseover="this.style.borderColor='var(--a)'" onmouseout="this.style.borderColor='var(--bd)'">
       <span style="font-size:1.3rem">📷</span>Add photo
-      <input type="file" accept="image/*" style="display:none" onchange="addConcertPhoto(event,${id||editingConcertId||0})">
+      <input type="file" accept="image/*" style="display:none" onchange="addConcertPhoto(event,'${id||editingConcertId||0}')">
     </label>`;
 }
 
@@ -3415,7 +3394,7 @@ function removeConcertPhoto(id,idx){
 }
 
 function openPhotoLightbox(id,idx){
-  const c=concerts.find(x=>x.id===parseInt(id));
+  const c=concerts.find(x=>x.id===id);
   if(!c||!c.photos||!c.photos[idx])return;
   const overlay=document.createElement('div');
   overlay.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:9000;display:flex;align-items:center;justify-content:center;cursor:pointer';
@@ -3980,6 +3959,7 @@ async function initApp(){
   populateLangSelect('pfLang', currentUser.lang);
   await loadSongs();
   await loadSetlists();
+  await loadConcerts();
   renderSLDropdown();renderSL();renderSlMeta();renderLib();updateLibCount();
   setCalView(calView);renderRehearsals();renderConcerts();renderMembers();
   renderGuestDir();renderBP();renderAsList();renderBandList();
