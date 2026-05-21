@@ -2334,7 +2334,7 @@ function selSlMode(mode){
 async function createNewSetList(){
   const title=document.getElementById('slNewTitle').value.trim();
   if(!title){toast2('Please enter a set list title','w');return;}
-  const cid=parseInt(document.getElementById('slNewConcert').value)||null;
+  const cid=document.getElementById('slNewConcert').value||null;
   const c=cid?concerts.find(x=>x.id===cid):null;
   const newSL=await SetlistsDB.upsert({
     band_id:activeBandId,
@@ -2758,6 +2758,10 @@ function renderAsList(){
   const el=document.getElementById('asList');if(!el)return;
   const q=(document.getElementById('asSearch')?.value||'').toLowerCase();
   const filtered=songs.filter(s=>!s.hidden&&(s.title+s.artist).toLowerCase().includes(q));
+  if(!filtered.length){
+    el.innerHTML=`<div style="padding:20px;text-align:center;color:var(--ink3);font-size:.82rem">${songs.length?'No songs match your search.':'No songs in library yet. <a href="#" onclick="closeMod(\'asMod\');nav(\'library\')" style="color:var(--a)">Add songs →</a>'}</div>`;
+    return;
+  }
   const inList=new Set(getSlS());
   el.innerHTML=filtered.map(s=>{
     const already=inList.has(s.id);
