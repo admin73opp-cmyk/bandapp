@@ -95,16 +95,26 @@ async function doLogout() {
 // ── Auth state listener — wires everything together ───────────
 
 supabase.auth.onAuthStateChange(async (event, session) => {
-  if (session) {
-    await loadCurrentUser(session.user.id);
-    document.getElementById('authScreen').style.display = 'none';
-    document.getElementById('app').classList.add('vis');
-    initSbState();
-    await initApp();
-  } else {
+  if (event === 'SIGNED_OUT') {
     document.getElementById('app').classList.remove('vis');
     document.getElementById('authScreen').style.display = 'flex';
+    return;
   }
+  // Only run full init on login / session restore — not on token refreshes
+  if (event !== 'SIGNED_IN' && event !== 'INITIAL_SESSION') return;
+  if (!session) {
+    document.getElementById('app').classList.remove('vis');
+    document.getElementById('authScreen').style.display = 'flex';
+    return;
+  }
+  await loadCurrentUser(session.user.id);
+  if (!activeBandId) {
+    console.warn('[bandapp] activeBandId is null after loadCurrentUser — user may have no band memberships');
+  }
+  document.getElementById('authScreen').style.display = 'none';
+  document.getElementById('app').classList.add('vis');
+  initSbState();
+  await initApp();
 });
 
 // On first load, restore an existing session without waiting for the event

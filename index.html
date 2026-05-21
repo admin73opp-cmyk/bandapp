@@ -1181,6 +1181,7 @@ function getSlS(){return slSongs[activeSetlistId]||(slSongs[activeSetlistId]=[])
 let slS=getSlS();
 
 async function loadSetlists(){
+  if(!activeBandId){ setlists=[]; slSongs={}; slS=[]; return; }
   setlists = await SetlistsDB.fetch(activeBandId);
   if(!activeSetlistId && setlists.length) activeSetlistId=setlists[0].id;
   if(activeSetlistId) await loadSetlistSongs(activeSetlistId);
@@ -1192,6 +1193,7 @@ async function loadSetlistSongs(setlistId){
 let myC={};
 // Loads songs + personal notes from Supabase into module-level globals
 async function loadSongs(){
+  if(!activeBandId){ songs=[]; myC={}; return; }
   songs = await SongsDB.fetch(activeBandId);
   myC   = await SongsDB.fetchNotes(activeBandId);
 }
@@ -2412,6 +2414,7 @@ function renderLib(filter='All',search=''){
 function filtG(g,el){document.querySelectorAll('.lf .chip').forEach(c=>c.classList.remove('on'));el.classList.add('on');aG=g;renderLib(g);}
 function filterLib(v){renderLib(aG,v);}
 async function addSong(){
+  if(!activeBandId){toast2('No band selected — please create or join a band first','w');return;}
   const title=document.getElementById('nst').value.trim();
   if(!title){toast2('Please enter a song title','w');return;}
   const min=parseInt(document.getElementById('nsDurMin').value)||0;
@@ -2745,6 +2748,7 @@ async function deleteSong(id){
   await loadSongs();renderLib(aG);toast2('Song deleted','w');
 }
 function openAsMod(){
+  console.log('[bandapp] openAsMod — activeBandId:', activeBandId, 'songs:', songs.length, 'activeSetlistId:', activeSetlistId);
   const sl=setlists.find(x=>x.id===activeSetlistId);
   const sub=document.getElementById('asModSubtitle');
   if(sub&&sl)sub.textContent=`Adding to: "${sl.name}"`;

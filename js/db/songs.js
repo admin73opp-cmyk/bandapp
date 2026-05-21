@@ -5,14 +5,14 @@
 const SongsDB = {
 
   async fetch(bandId) {
+    console.log('[bandapp] SongsDB.fetch — bandId:', bandId);
     const { data, error } = await supabase
       .from('songs')
       .select('*')
       .eq('band_id', bandId)
       .order('title');
     if (error) { handleDbError(error); return []; }
-    // Expose legacy_id so setlist code (still using integer IDs) can
-    // find songs via songByAnyId() during the transition period.
+    console.log('[bandapp] SongsDB.fetch — returned', (data||[]).length, 'rows');
     return (data || []).map(s => ({ ...s, dur: s.duration, note: s.notes }));
   },
 
