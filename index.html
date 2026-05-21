@@ -1171,20 +1171,7 @@ select option{background:var(--w)}
 
 <script>
 // DATA
-const songs=[
-  {id:1, title:"Autumn Leaves",        artist:"Miles Davis",       genre:"Jazz", key:"Am", dur:354, note:"Opening — slow build",    spotify:"https://open.spotify.com/track/0M1lq50jGaTn2Hbm2CRQ9D", youtube:"https://www.youtube.com/watch?v=r-Z8KuwI7Gc",  apple:"https://music.apple.com/us/album/autumn-leaves/1452696571"},
-  {id:2, title:"So What",              artist:"Miles Davis",       genre:"Jazz", key:"Dm", dur:548, note:"Antoine sax solo feature", spotify:"https://open.spotify.com/track/7q3kkfAVpmcZ8g6JUThi3o",  youtube:"https://www.youtube.com/watch?v=zqNTltOGh5c",  apple:"https://music.apple.com/us/album/so-what/1452696571"},
-  {id:3, title:"Fly Me to the Moon",   artist:"Frank Sinatra",     genre:"Jazz", key:"C",  dur:147, note:"Venue request",            spotify:"https://open.spotify.com/track/5b5ywsTkG3XobY7Dgkm8eD",  youtube:"https://www.youtube.com/watch?v=ZEcqHA7dbwM",  apple:""},
-  {id:4, title:"Take Five",            artist:"Dave Brubeck",      genre:"Jazz", key:"Eb", dur:324, note:"5/4 — Kim leads",          spotify:"https://open.spotify.com/track/1YQWosTIljIvxAgHWTp7KP",  youtube:"https://www.youtube.com/watch?v=vmDDOFXSgAs",  apple:""},
-  {id:5, title:"A Night in Tunisia",   artist:"Dizzy Gillespie",   genre:"Jazz", key:"Dm", dur:402, note:"High energy",              spotify:"", youtube:"https://www.youtube.com/watch?v=t1XjL1j0mls",  apple:""},
-  {id:6, title:"Watermelon Man",       artist:"Herbie Hancock",    genre:"Funk", key:"F",  dur:299, note:"Crowd pleaser",            spotify:"https://open.spotify.com/track/2bGPTQOBfKDRhhkzLQMqXi",  youtube:"https://www.youtube.com/watch?v=G7bHMOSGHbU",  apple:""},
-  {id:7, title:"Chameleon",            artist:"Herbie Hancock",    genre:"Funk", key:"Bm", dur:651, note:"Extended jam",             spotify:"https://open.spotify.com/track/5e5JqNqGNMv4kNJMLlCWac",  youtube:"https://www.youtube.com/watch?v=UbkqE4fpvdI",  apple:""},
-  {id:8, title:"What's Going On",      artist:"Marvin Gaye",       genre:"Soul", key:"Eb", dur:235, note:"Sophie on lead vocals",    spotify:"https://open.spotify.com/track/3Um9toULmYFGCpvaIPFw7l",  youtube:"https://www.youtube.com/watch?v=H-kA3UtBj4M",  apple:""},
-  {id:9, title:"At Last",              artist:"Etta James",        genre:"Blues",key:"F",  dur:202, note:"Wedding favourite",        spotify:"https://open.spotify.com/track/3xKsf9qdS1CyvXSMEid6g8",  youtube:"https://www.youtube.com/watch?v=CzNvEeZKP6I",  apple:""},
-  {id:10,title:"Cantaloupe Island",    artist:"Herbie Hancock",    genre:"Jazz", key:"Fm", dur:337, note:"Laid back groove",         spotify:"https://open.spotify.com/track/3PG5EB2rOSMkKMQRPaFfPK",  youtube:"https://www.youtube.com/watch?v=4iqiLGkCKFE",  apple:""},
-  {id:11,title:"My Favorite Things",   artist:"John Coltrane",     genre:"Jazz", key:"E",  dur:473, note:"Energy builder",           spotify:"https://open.spotify.com/track/0q5yTFV5pFqeIh8HjBcJF3",  youtube:"https://www.youtube.com/watch?v=qSMqS_RxXBw",  apple:""},
-  {id:12,title:"Summertime",           artist:"George Gershwin",   genre:"Jazz", key:"Am", dur:268, note:"Encore option",            spotify:"https://open.spotify.com/track/3SiRcHOPHjBSNjFVKVPuZH",  youtube:"https://www.youtube.com/watch?v=rqt1nUjQWbw",  apple:""},
-];
+let songs=[];
 // ── SETLISTS ──────────────────────────────────────────────
 const setlists=[
   {id:1, name:'Blue Note Summer Jazz Night', concertIds:[1], date:'2026-06-07', type:'Concert', venue:'Blue Note Brussels', duration:90, audience:120, paid:true, total:'€3,000', price:'€25/ticket'},
@@ -1205,7 +1192,15 @@ const slSongs={
 function getSlS(){return slSongs[activeSetlistId]||(slSongs[activeSetlistId]=[]);}
 // Keep slS as a proxy for backward compat — redirect reads/writes through getSlS()
 let slS=getSlS();
-const myC={1:"Capo 5 fingerpick",2:"Stay back — Antoine's solo",3:"Key +2",4:"Watch Kim tempo",5:"Rhythm tight",6:"Wah pedal on",7:"Let it breathe",8:"Comp lightly",10:"Clean Rhodes",11:"Build up",9:"Soft ballad",12:"Back to Am"};
+let myC={};
+// Loads songs + personal notes from Supabase into module-level globals
+async function loadSongs(){
+  songs = await SongsDB.fetch(activeBandId);
+  myC   = await SongsDB.fetchNotes(activeBandId);
+}
+// Finds a song by UUID or legacy integer id — bridges the transition
+// period where setlists still carry integer song ids.
+function songByAnyId(id){return songs.find(x=>x.id===id||x.legacy_id===id);}
 const TODAY_STR='2026-05-20'; // demo today
 
 const members=[
@@ -2053,7 +2048,7 @@ function toast2(msg,type='ok'){const t=document.getElementById('toast');document
 function renderSL(){
   const isMob=window.innerWidth<768;
   document.getElementById('slBody').innerHTML=getSlS().map((id,i)=>{
-    const s=songs.find(x=>x.id===id);if(!s)return'';
+    const s=songByAnyId(id);if(!s)return'';
     const moveBtn=isMob
       ?`<td style="white-space:nowrap;padding:4px 6px">
           <button class="btn-ic btn" style="width:22px;height:22px;padding:0" onclick="slMoveUp(${i})" title="Move up" ${i===0?'disabled':''}>▲</button>
@@ -2089,7 +2084,7 @@ function openSongMedia(s,rowIdx){
   return`<button class="lb2" title="Open media" onclick="openMediaPicker(${rowIdx})">▶</button>`;
 }
 function openMediaPicker(rowIdx){
-  const id=slS[rowIdx];const s=songs.find(x=>x.id===id);if(!s)return;
+  const id=slS[rowIdx];const s=songByAnyId(id);if(!s)return;
   const links=[];
   if(s.spotify)links.push({label:'🎵 Spotify',url:s.spotify});
   if(s.youtube)links.push({label:'▶ YouTube',url:s.youtube});
@@ -2203,7 +2198,13 @@ function deleteActiveSetlist(){
 function switchV(v,el){document.querySelectorAll('#pg-setlists .stabs .stb').forEach(s=>s.classList.remove('on'));el.classList.add('on');document.getElementById('vMain').style.display=v==='main'?'':'none';document.getElementById('vMy').style.display=v==='my'?'':'none';if(v==='my')renderMyBody();}
 function renderMyBody(){
   const el=document.getElementById('myBody');if(!el)return;
-  el.innerHTML=getSlS().map((id,i)=>{const s=songs.find(x=>x.id===id);if(!s)return'';return`<tr><td class="snum">${String(i+1).padStart(2,'0')}</td><td class="stitle">${s.title}</td><td class="sartist" style="color:var(--ink2);font-size:.75rem">${s.artist}</td><td><span class="kp">${s.key}</span></td><td class="nc">${s.note}</td><td><input style="background:transparent;border:none;border-bottom:1.5px solid var(--bd);font-family:var(--font);font-size:.75rem;width:100%;outline:none;padding:2px 4px;color:var(--ink)" value="${myC[id]||''}" placeholder="Add note…" onchange="myC[${id}]=this.value;toast2('Note saved')"></td></tr>`;}).join('');
+  el.innerHTML=getSlS().map((id,i)=>{const s=songByAnyId(id);if(!s)return'';return`<tr><td class="snum">${String(i+1).padStart(2,'0')}</td><td class="stitle">${s.title}</td><td class="sartist" style="color:var(--ink2);font-size:.75rem">${s.artist}</td><td><span class="kp">${s.key}</span></td><td class="nc">${s.note}</td><td><input style="background:transparent;border:none;border-bottom:1.5px solid var(--bd);font-family:var(--font);font-size:.75rem;width:100%;outline:none;padding:2px 4px;color:var(--ink)" value="${myC[s.id]||''}" placeholder="Add note…" onchange="saveSongNote('${s.id}',this.value)"></td></tr>`;}).join('');
+}
+async function saveSongNote(songId,note){
+  myC[songId]=note;
+  if(note){await SongsDB.upsertNote(songId,note);}
+  else{await SongsDB.deleteNote(songId);}
+  toast2('Note saved');
 }
 function selSL(el,id){
   document.querySelectorAll('.stabs .stb').forEach(s=>s.classList.remove('on'));
@@ -2409,29 +2410,31 @@ function renderLib(filter='All',search=''){
 }
 function filtG(g,el){document.querySelectorAll('.lf .chip').forEach(c=>c.classList.remove('on'));el.classList.add('on');aG=g;renderLib(g);}
 function filterLib(v){renderLib(aG,v);}
-function addSong(){
+async function addSong(){
   const title=document.getElementById('nst').value.trim();
   if(!title){toast2('Please enter a song title','w');return;}
   const min=parseInt(document.getElementById('nsDurMin').value)||0;
   const sec=parseInt(document.getElementById('nsDurSec').value)||0;
   const dur=min*60+sec||0;
-  songs.unshift({
-    id:Date.now(),
+  const s=await SongsDB.upsert({
+    band_id:activeBandId,
     title,
     artist:document.getElementById('nsa').value.trim(),
     genre:document.getElementById('nsg').value,
     key:document.getElementById('nsk').value,
-    dur:dur||undefined,
+    dur:dur||null,
     note:document.getElementById('nsnote').value.trim(),
     spotify:document.getElementById('nsSpotify').value.trim(),
     youtube:document.getElementById('nsYoutube').value.trim(),
     apple:document.getElementById('nsApple').value.trim(),
     hidden:false,
   });
+  if(!s)return;
   ['nst','nsa','nsnote','nsSpotify','nsYoutube','nsApple','nsDurMin','nsDurSec'].forEach(id=>{
     const el=document.getElementById(id);if(el)el.value='';
   });
   closeMod('alsMod');
+  await loadSongs();
   renderLib(aG);
   updateLibCount();
   if(libView==='sheet')renderSheet();
@@ -2482,7 +2485,7 @@ function fmtDurLong(sec){
   return`${h}:${String(m).padStart(2,'0')}:${String(ss).padStart(2,'0')}`;
 }
 function slTotalDur(){
-  return getSlS().reduce((acc,id)=>{const s=songs.find(x=>x.id===id);return acc+(s&&s.dur?s.dur:0);},0);
+  return getSlS().reduce((acc,id)=>{const s=songByAnyId(id);return acc+(s&&s.dur?s.dur:0);},0);
 }
 let sheetSortCol=null, sheetSortDir='asc';
 
@@ -2580,17 +2583,19 @@ function sheetEditDur(el){
   updateLibCount();
 }
 
-function addSheetRow(){
-  const ns={id:Date.now(),title:'',artist:'',genre:'Jazz',key:'Am',note:'',hidden:false,spotify:'',youtube:'',apple:''};
-  songs.push(ns);renderSheet();updateLibCount();
+async function addSheetRow(){
+  const ns=await SongsDB.upsert({band_id:activeBandId,title:'',artist:'',genre:'Jazz',key:'Am',note:'',hidden:false,spotify:'',youtube:'',apple:''});
+  if(!ns)return;
+  await loadSongs();renderSheet();updateLibCount();
   const rows=document.querySelectorAll('#sheetBody tr');
   if(rows.length){const inp=rows[rows.length-1].querySelector('input');if(inp){inp.focus();inp.select();}}
 }
 
-function deleteSheetRow(id){
-  const s=songs.find(x=>x.id===id);if(!s)return;
+async function deleteSheetRow(id){
+  const s=songByAnyId(id);if(!s)return;
   if(!confirm(`Delete "${s.title}"?`))return;
-  songs.splice(songs.indexOf(s),1);renderSheet();renderLib(aG);updateLibCount();toast2('Song deleted','w');
+  await SongsDB.delete(s.id);
+  await loadSongs();renderSheet();renderLib(aG);updateLibCount();toast2('Song deleted','w');
 }
 
 // ── EXCEL EXPORT ──────────────────────────────────────────
@@ -2652,8 +2657,10 @@ function importExcel(event){
       }
       if(!imported.length){toast2('No songs found in file','w');return;}
       if(confirm(`Import ${imported.length} songs? This will replace your current library.`)){
-        songs.length=0;imported.forEach(s=>songs.push(s));
-        renderLib(aG);renderSheet();updateLibCount();
+        // Delete all existing songs for this band then insert the imported set
+        await supabase.from('songs').delete().eq('band_id',activeBandId);
+        await Promise.all(imported.map(s=>SongsDB.upsert({band_id:activeBandId,...s,id:undefined})));
+        await loadSongs();renderLib(aG);renderSheet();updateLibCount();
         toast2(`✓ ${imported.length} songs imported!`);
       }
     }catch(err){toast2('Could not read file','w');console.error(err);}
@@ -2667,8 +2674,8 @@ function importExcel(event){
 let editingSongId=null;
 
 function openSongEdit(id){
-  const s=songs.find(x=>x.id===id);if(!s)return;
-  editingSongId=id;
+  const s=songByAnyId(id);if(!s)return;
+  editingSongId=s.id; // always store UUID
   document.getElementById('seName').value=s.title;
   document.getElementById('seArtist').value=s.artist;
   document.getElementById('seGenre').value=s.genre;
@@ -2691,43 +2698,50 @@ function openSongEdit(id){
   showMod('seMod');
 }
 
-function saveSongEdit(){
-  const s=songs.find(x=>x.id===editingSongId);if(!s)return;
-  s.title=document.getElementById('seName').value.trim()||s.title;
-  s.artist=document.getElementById('seArtist').value.trim()||s.artist;
-  s.genre=document.getElementById('seGenre').value;
-  s.key=document.getElementById('seKey').value;
-  s.note=document.getElementById('seNote').value;
+async function saveSongEdit(){
+  const s=songByAnyId(editingSongId);if(!s)return;
   const seMin=parseInt(document.getElementById('seDurMin').value)||0;
   const seSec=parseInt(document.getElementById('seDurSec').value)||0;
-  s.dur=seMin*60+seSec||undefined;
-  s.spotify=document.getElementById('seSpotify').value;
-  s.youtube=document.getElementById('seYoutube').value;
-  s.apple=document.getElementById('seApple').value;
-  closeMod('seMod');renderLib(aG);toast2('Song updated!');
+  await SongsDB.upsert({
+    id:s.id,
+    band_id:activeBandId,
+    title:document.getElementById('seName').value.trim()||s.title,
+    artist:document.getElementById('seArtist').value.trim()||s.artist,
+    genre:document.getElementById('seGenre').value,
+    key:document.getElementById('seKey').value,
+    note:document.getElementById('seNote').value,
+    dur:seMin*60+seSec||null,
+    spotify:document.getElementById('seSpotify').value,
+    youtube:document.getElementById('seYoutube').value,
+    apple:document.getElementById('seApple').value,
+    hidden:s.hidden,
+  });
+  closeMod('seMod');await loadSongs();renderLib(aG);toast2('Song updated!');
 }
 
-function toggleHideSong(id){
-  const s=songs.find(x=>x.id===id);if(!s)return;
-  s.hidden=!s.hidden;
-  // if called from inside the edit modal, refresh button state
-  if(editingSongId===id){
+async function toggleHideSong(id){
+  const s=songByAnyId(id);if(!s)return;
+  const hidden=!s.hidden;
+  await SongsDB.upsert({...s,hidden});
+  await loadSongs();
+  const updated=songByAnyId(s.id);
+  if(editingSongId===s.id){
     const hBtn=document.getElementById('seHideBtn');
-    hBtn.textContent=s.hidden?'👁 Unhide Song':'🙈 Hide Song';
-    hBtn.style.background=s.hidden?'var(--g2)':'var(--bg2)';
-    hBtn.style.borderColor=s.hidden?'#86EFAC':'var(--bd)';
-    hBtn.style.color=s.hidden?'var(--g)':'var(--ink2)';
+    hBtn.textContent=updated.hidden?'👁 Unhide Song':'🙈 Hide Song';
+    hBtn.style.background=updated.hidden?'var(--g2)':'var(--bg2)';
+    hBtn.style.borderColor=updated.hidden?'#86EFAC':'var(--bd)';
+    hBtn.style.color=updated.hidden?'var(--g)':'var(--ink2)';
   }
   renderLib(aG);
-  toast2(s.hidden?'Song hidden from setlists':'Song visible again');
+  toast2(updated.hidden?'Song hidden from setlists':'Song visible again');
 }
 
-function deleteSong(id){
-  const s=songs.find(x=>x.id===id);if(!s)return;
+async function deleteSong(id){
+  const s=songByAnyId(id);if(!s)return;
   if(!confirm(`Delete "${s.title}"? This cannot be undone.`))return;
-  songs.splice(songs.indexOf(s),1);
-  if(editingSongId===id)closeMod('seMod');
-  renderLib(aG);toast2('Song deleted','w');
+  await SongsDB.delete(s.id);
+  if(editingSongId===s.id)closeMod('seMod');
+  await loadSongs();renderLib(aG);toast2('Song deleted','w');
 }
 function openAsMod(){
   const sl=setlists.find(x=>x.id===activeSetlistId);
@@ -2745,10 +2759,11 @@ function renderAsList(){
   const filtered=songs.filter(s=>!s.hidden&&(s.title+s.artist).toLowerCase().includes(q));
   const inList=new Set(getSlS());
   el.innerHTML=filtered.map(s=>{
-    const already=inList.has(s.id);
+    const sid=s.legacy_id??s.id; // use legacy int id while setlists still reference integers
+    const already=inList.has(sid);
     const dur=s.dur?fmtDur(s.dur):'—';
     return`<label style="display:flex;align-items:center;gap:8px;padding:8px 10px;background:var(--bg);border:1.5px solid ${already?'var(--a)':'var(--bd)'};border-radius:var(--rad);cursor:pointer;${already?'opacity:.55':''}">
-      <input type="checkbox" style="accent-color:var(--a)" value="${s.id}" ${already?'disabled checked':''}>
+      <input type="checkbox" style="accent-color:var(--a)" value="${sid}" ${already?'disabled checked':''}>
       <div style="flex:1">
         <div style="font-weight:600;font-size:.82rem">${s.title}</div>
         <div style="font-size:.69rem;color:var(--ink2)">${s.artist} · ${s.key} · ${dur}</div>
@@ -3005,7 +3020,7 @@ function openSetlistFromConcert(slId){
 
   // Song list — use the shared slS array for now
   document.getElementById('slPopSongs').innerHTML=getSlS().map((id,i)=>{
-    const s=songs.find(x=>x.id===id);if(!s)return'';
+    const s=songByAnyId(id);if(!s)return'';
     return`<tr>
       <td style="padding:7px 10px;font-family:var(--mono);font-size:.7rem;color:var(--ink3);border-bottom:1px solid var(--bd)">${String(i+1).padStart(2,'0')}</td>
       <td style="padding:7px 10px;border-bottom:1px solid var(--bd)"><div style="font-weight:600;font-size:.82rem">${s.title}</div><div style="font-size:.72rem;color:var(--ink2)">${s.artist}</div></td>
@@ -3955,6 +3970,7 @@ async function initApp(){
   populateCountrySelects();
   populateInstrumentSelects();
   populateLangSelect('pfLang', currentUser.lang);
+  await loadSongs();
   renderSLDropdown();renderSL();renderSlMeta();renderLib();updateLibCount();
   setCalView(calView);renderRehearsals();renderConcerts();renderMembers();
   renderGuestDir();renderBP();renderAsList();renderBandList();
