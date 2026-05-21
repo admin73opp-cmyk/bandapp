@@ -415,13 +415,13 @@ select option{background:var(--w)}
       </div>
       <div class="ns">
         <div class="nsl">Account</div>
-        <div class="ni" onclick="openProfile(0)" data-label="Edit My Profile"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="5" r="3"/><path d="M2 14c0-3.3 2.7-5 6-5s6 1.7 6 5"/></svg><span class="sb-label">Edit My Profile</span></div>
+        <div class="ni" onclick="openProfile(currentUser.memberIdx)" data-label="Edit My Profile"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="5" r="3"/><path d="M2 14c0-3.3 2.7-5 6-5s6 1.7 6 5"/></svg><span class="sb-label">Edit My Profile</span></div>
         <div class="ni" onclick="doLogout()" style="color:var(--r)" onmouseover="this.style.background='var(--r2)'" onmouseout="this.style.background='transparent'" data-label="Log Out"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 2H3a1 1 0 00-1 1v10a1 1 0 001 1h3M10 11l3-3-3-3M13 8H6"/></svg><span class="sb-label">Log Out</span></div>
       </div>
     </div>
     <div class="sb-foot">
-      <div class="uav" onclick="openProfile(0)" style="cursor:pointer" title="Edit your profile">MR</div>
-      <div class="sbar-foot-text" style="flex:1;cursor:pointer" onclick="openProfile(0)"><div style="font-size:.79rem;font-weight:600">Marco Rossi</div><div style="font-size:.67rem;color:var(--ink3)">Guitar · Admin</div></div>
+      <div class="uav" onclick="openProfile(currentUser.memberIdx)" style="cursor:pointer" title="Edit your profile">MR</div>
+      <div class="sbar-foot-text" style="flex:1;cursor:pointer" onclick="openProfile(currentUser.memberIdx)"><div style="font-size:.79rem;font-weight:600">Marco Rossi</div><div style="font-size:.67rem;color:var(--ink3)">Guitar · Admin</div></div>
     </div>
   </nav>
 
@@ -1200,19 +1200,26 @@ async function loadSongs(){
 function songByAnyId(id){return songs.find(x=>x.id===id||x.legacy_id===id);}
 const TODAY_STR='2026-05-20'; // demo today
 
-const members=[
-  {init:"MR",name:"Marco Rossi",instrument:"Guitar",inst2:"",vocals:"Lead",role:"admin",avail:[1,0,1,0,1,0,0],color:"#6C63FF"},
-  {init:"SV",name:"Sophie Vandenberghe",instrument:"Piano / Keys",inst2:"Vocals",vocals:"Backing",role:"member",avail:[1,1,0,0,1,1,0],color:"#2563EB"},
-  {init:"LM",name:"Lucas Martens",instrument:"Bass Guitar",inst2:"",vocals:"None",role:"member",avail:[0,0,1,0,1,0,0],color:"#16A34A"},
-  {init:"KD",name:"Kim De Smedt",instrument:"Drums",inst2:"Percussion",vocals:"None",role:"member",avail:[1,1,1,0,1,0,0],color:"#DC2626"},
-  {init:"AB",name:"Antoine Blanchard",instrument:"Saxophone",inst2:"Clarinet",vocals:"None",role:"member",avail:[0,0,0,0,1,1,0],color:"#9333EA"},
-  {init:"TM",name:"Thomas Müller",instrument:"Trumpet",inst2:"",vocals:"None",role:"guest",guestStart:"2026-05-20",guestEnd:"2026-07-31",avail:[1,0,0,1,1,0,0],color:"#0891B2"},
-];
+let members=[];
+let guestDirectory=[];
 
-// Guest directory — expired/removed guests
-const guestDirectory=[
-  {name:"Celine Dupont",instrument:"Violin",role:"guest",guestStart:"2025-11-01",guestEnd:"2026-01-31",band:"The Jazz Cats",status:"expired"},
-];
+async function loadMembers(){
+  const all=await MembersDB.fetchAll(activeBandId);
+  members=all.filter(m=>m.guestStatus!=='removed');
+  guestDirectory=all.filter(m=>m.guestStatus==='removed');
+  // Populate extraData in parallel so index-based UI code keeps working
+  extraData=members.map(m=>({
+    bday:m.bday, nat:m.nat, country:m.country, lang:m.lang,
+    bio:m.bio, gear:m.gear,
+    phone:[m.phoneDial,m.phoneNum].filter(Boolean).join(' '),
+    email:'',
+    spotify:m.spotify, apple:m.apple, youtube:m.youtube,
+    instagram:m.instagram, facebook:m.facebook, website:m.website,
+  }));
+  // Resolve currentUser's index from their auth UUID
+  const newIdx=members.findIndex(m=>m.id===currentUser.id);
+  if(newIdx>=0) currentUser.memberIdx=newIdx;
+}
 
 function isGuestActive(m){
   if(m.role!=='guest')return true; // not a guest, always active
@@ -3659,7 +3666,7 @@ function renderGuestDir(){
 function openGuestDetail(idx){
   const g=window._guestDirData&&window._guestDirData[idx];if(!g)return;
   const memberIdx=members.indexOf(g);
-  const ex=memberIdx>=0?(extraData[memberIdx]||{}):{};
+  const ex=g; // all profile fields are on the member object
   const daysActive=Math.round((new Date(g.guestEnd)-new Date(g.guestStart))/(1000*60*60*24));
   const flag=ex.nat?isoFlag(ex.nat):'';
 
@@ -3689,56 +3696,23 @@ function openGuestDetail(idx){
   showMod('guestDetailMod');
 }
 
-function removeMember(idx){
+async function removeMember(idx){
   const m=members[idx];if(!m)return;
   const isGuest=m.role==='guest';
   const msg=isGuest
     ?`Remove guest "${m.name}" from the band? They will be moved to the Guest Directory.`
     :`Remove "${m.name}" from the band? This cannot be undone.`;
   if(!confirm(msg))return;
-  if(isGuest){
-    // Move to guest directory archive
-    guestDirectory.push({
-      name:m.name, instrument:m.instrument, init:m.init, color:m.color,
-      role:'guest', guestStart:m.guestStart||TODAY_STR, guestEnd:m.guestEnd||TODAY_STR,
-      band:'The Jazz Cats', status:'removed'
-    });
-  }
-  members.splice(idx,1);
-  // extraData is still global for demo; in prod this would be per-band too
+  await MembersDB.removeBandMember(activeBandId, m.id, isGuest);
+  await loadMembers();
   renderMembers();
   renderGuestDir();
   toast2(`${m.name.split(' ')[0]} removed from band`,'w');
 }
 
 function openReactivateAsGuest(idx, name){
-  // For archived guests (idx === -1), we need to re-add them to members
-  // For expired members still in the array, just reopen date picker
-  if(idx < 0){
-    // Find in guestDirectory by name
-    const archived = guestDirectory.find(g=>g.name===name);
-    if(!archived){ toast2('Cannot reactivate — guest record not found','w'); return; }
-    // Add back as a guest member
-    const newMember = {
-      init: archived.init || name.slice(0,2).toUpperCase(),
-      name: archived.name,
-      instrument: archived.instrument || '',
-      inst2: '', vocals: 'None',
-      role: 'guest',
-      guestStart: TODAY_STR,
-      guestEnd: '',
-      avail: [1,0,1,0,1,0,0],
-      color: archived.color || '#0891B2'
-    };
-    members.push(newMember);
-    extraData.push({});
-    editingGuestConvertIdx = members.length - 1;
-    // Remove from archive
-    const aIdx = guestDirectory.indexOf(archived);
-    if(aIdx >= 0) guestDirectory.splice(aIdx, 1);
-  } else {
-    editingGuestConvertIdx = idx;
-  }
+  // idx >= 0: expired-natural guest still in members[]; idx < 0: archived in guestDirectory
+  editingGuestConvertIdx = idx;
   document.getElementById('gcName').textContent = name;
   document.getElementById('gcStart').value = TODAY_STR;
   document.getElementById('gcEnd').value = '';
@@ -3746,15 +3720,14 @@ function openReactivateAsGuest(idx, name){
   showMod('guestConvertMod');
 }
 
-function openChangeRoleModal(idx){
+async function openChangeRoleModal(idx){
   const m=members[idx];if(!m)return;
   if(m.role==='guest'){
-    // convert guest to member
     if(!confirm(`Convert ${m.name} from Guest to full Member? Their guest expiry dates will be removed.`))return;
-    m.role='member';delete m.guestStart;delete m.guestEnd;
+    await MembersDB.upsertBandMember(activeBandId, m.id, {role:'member', guest_start:null, guest_end:null});
+    await loadMembers();
     renderMembers();toast2(`${m.name.split(' ')[0]} is now a Member!`);
   } else {
-    // convert member to guest — prompt for dates
     editingGuestConvertIdx=idx;
     document.getElementById('gcName').textContent=m.name;
     document.getElementById('gcStart').value=TODAY_STR;
@@ -3764,23 +3737,36 @@ function openChangeRoleModal(idx){
   }
 }
 let editingGuestConvertIdx=null;
-function confirmGuestConvert(){
-  const m=members[editingGuestConvertIdx];if(!m)return;
+async function confirmGuestConvert(){
+  // idx >= 0: converting an existing member; idx < 0: reactivating an archived guest
+  const m = editingGuestConvertIdx >= 0
+    ? members[editingGuestConvertIdx]
+    : guestDirectory.find(x => x.name === document.getElementById('gcName').textContent);
+  if(!m)return;
   const start=document.getElementById('gcStart').value;
   const end=document.getElementById('gcEnd').value;
   if(!end){toast2('Please set an end date','w');return;}
-  m.role='guest';m.guestStart=start;m.guestEnd=end;
+  await MembersDB.upsertBandMember(activeBandId, m.id, {
+    role:'guest', guest_start:start, guest_end:end, guest_status:null,
+  });
+  await loadMembers();
   closeMod('guestConvertMod');editingGuestConvertIdx=null;
-  renderMembers();toast2(`${m.name.split(' ')[0]} is now a Guest until ${end}`);
+  renderMembers();renderGuestDir();toast2(`${m.name.split(' ')[0]} is now a Guest until ${end}`);
 }
-function promoteGuestToMember(idx,name){
+async function promoteGuestToMember(idx,name){
   if(idx>=0){
     const m=members[idx];
     if(!confirm(`Promote ${m.name} to full Member?`))return;
-    m.role='member';delete m.guestStart;delete m.guestEnd;
+    await MembersDB.upsertBandMember(activeBandId, m.id, {role:'member', guest_start:null, guest_end:null, guest_status:null});
+    await loadMembers();
     renderMembers();toast2(`${m.name.split(' ')[0]} is now a Member!`);
   } else {
-    toast2(`${name} is in the archive — invite them again to add as a member`,'w');
+    const g=guestDirectory.find(x=>x.name===name);
+    if(!g){toast2(`${name} is not in the archive — invite them again`,'w');return;}
+    if(!confirm(`Promote ${g.name} to full Member?`))return;
+    await MembersDB.upsertBandMember(activeBandId, g.id, {role:'member', guest_start:null, guest_end:null, guest_status:null});
+    await loadMembers();
+    renderMembers();renderGuestDir();toast2(`${g.name.split(' ')[0]} is now a Member!`);
   }
 }
 
@@ -3959,6 +3945,7 @@ async function initApp(){
   await loadSetlists();
   await loadConcerts();
   await loadRehearsals();
+  await loadMembers();
   renderSLDropdown();renderSL();renderSlMeta();renderLib();updateLibCount();
   setCalView(calView);renderRehearsals();renderConcerts();renderMembers();
   renderGuestDir();renderBP();renderAsList();renderBandList();
@@ -4205,14 +4192,7 @@ function handleBpLogo(event) {
   reader.readAsDataURL(file);
   event.target.value = '';
 }
-const extraData=[
-  {bday:'1988-03-14',nat:'IT',country:'BE',lang:'en',bio:"Guitarist and founder of The Jazz Cats. Passionate about jazz, blues and everything in between.",gear:'Fender Stratocaster 62 reissue, Boss Blues Driver, Vox AC30',spotify:'',apple:'',youtube:'https://youtube.com/@marcoguitar',instagram:'https://instagram.com/marco.guitar',facebook:'',website:''},
-  {bday:'1991-07-22',nat:'BE',country:'BE',lang:'nl',bio:"Classically trained pianist turned jazz enthusiast. Loves Bill Evans and Brad Mehldau.",gear:'Yamaha CP88 stage piano',spotify:'',apple:'',youtube:'',instagram:'',facebook:'',website:''},
-  {bday:'1985-11-05',nat:'BE',country:'BE',lang:'nl',bio:"Bass player with 15 years of experience in jazz and funk bands.",gear:'Fender Jazz Bass 74 reissue, Markbass combo',spotify:'',apple:'',youtube:'',instagram:'',facebook:'',website:''},
-  {bday:'1993-04-18',nat:'BE',country:'BE',lang:'en',bio:"Drummer and percussionist. Studied at the Royal Conservatory of Brussels.",gear:'DW Collector series, Zildjian A cymbals',spotify:'',apple:'',youtube:'',instagram:'',facebook:'',website:''},
-  {bday:'1987-09-30',nat:'FR',country:'BE',lang:'fr',bio:"Saxophonist based in Brussels. Also performs as a solo artist in Paris and Lyon.",gear:'Selmer Mark VI tenor, Vandoren mouthpiece',spotify:'',apple:'',youtube:'https://youtube.com/antoine.sax',instagram:'',facebook:'',website:''},
-  {bday:'1990-06-12',nat:'DE',country:'BE',lang:'de',bio:"Trumpet player joining The Jazz Cats as a guest for the summer season.",gear:'Bach Stradivarius 37, Denis Wick mouthpiece',spotify:'',apple:'',youtube:'',instagram:'',facebook:'',website:''},
-];
+let extraData=[];
 let editingIdx=null;
 
 function openProfile(idx){
@@ -4297,48 +4277,50 @@ function openProfile(idx){
   showMod('profMod');
 }
 
-function saveProfile(){
+async function saveProfile(){
   if(editingIdx===null)return;
+  const m=members[editingIdx];if(!m)return;
   const fn=document.getElementById('pfFirst').value.trim();
   const ln=document.getElementById('pfLast').value.trim();
-  const fullName=`${fn} ${ln}`.trim();
-  if(fullName){
-    members[editingIdx].name=fullName;
-    // recompute initials from the new name
-    members[editingIdx].init=fullName.split(' ').filter(Boolean).map(w=>w[0]).join('').toUpperCase().slice(0,2);
-  }
-  members[editingIdx].instrument=document.getElementById('pfInst1').value;
-  members[editingIdx].inst2=document.getElementById('pfInst2').value;
   const vback={'No vocals':'None','Lead vocals':'Lead','Backing vocals':'Backing','Lead & backing':'Lead'};
-  members[editingIdx].vocals=vback[document.getElementById('pfVocals').value]||'None';
-  // save availability from toggles
   const chips=document.querySelectorAll('#pfAvailDays .dtog');
-  chips.forEach((c,i)=>{members[editingIdx].avail[i]=c.classList.contains('on')?1:0;});
-  // update extra data
-  extraData[editingIdx].bday=document.getElementById('pfBday').value;
-  extraData[editingIdx].bio=document.getElementById('pfBio').value;
-  extraData[editingIdx].gear=document.getElementById('pfGear').value;
-  extraData[editingIdx].nat=document.getElementById('pfNat').value;
-  extraData[editingIdx].country=document.getElementById('pfCountry').value;
-  extraData[editingIdx].email=document.getElementById('pfEmail').value;
-  extraData[editingIdx].phone=getFullPhone('pfPhoneCc','pfPhoneNum');
-  extraData[editingIdx].lang=document.getElementById('pfLang').value;
-  extraData[editingIdx].spotify=document.getElementById('pfSpotify').value;
-  extraData[editingIdx].apple=document.getElementById('pfApple').value;
-  extraData[editingIdx].youtube=document.getElementById('pfYoutube').value;
-  extraData[editingIdx].instagram=document.getElementById('pfInstagram').value;
-  extraData[editingIdx].facebook=document.getElementById('pfFacebook').value;
-  extraData[editingIdx].website=document.getElementById('pfWebsite').value;
-  // sync currentUser if own profile
+  const avail=[...chips].map(c=>c.classList.contains('on')?1:0);
+  const fullPhone=getFullPhone('pfPhoneCc','pfPhoneNum');
+  const dialCode=document.getElementById('pfPhoneCc')?.value||'';
+  const phoneNum=document.getElementById('pfPhoneNum')?.value.trim()||'';
+
+  await MembersDB.upsertProfile(m.id, {
+    first_name:    fn,
+    last_name:     ln,
+    initials:      ((fn[0]||'')+(ln[0]||'')).toUpperCase(),
+    instrument:    document.getElementById('pfInst1').value,
+    instrument2:   document.getElementById('pfInst2').value,
+    vocals:        vback[document.getElementById('pfVocals').value]||'None',
+    availability:  avail,
+    bday:          document.getElementById('pfBday').value||null,
+    nationality:   document.getElementById('pfNat').value,
+    country:       document.getElementById('pfCountry').value,
+    lang:          document.getElementById('pfLang').value,
+    bio:           document.getElementById('pfBio').value,
+    gear:          document.getElementById('pfGear').value,
+    phone_dial:    dialCode,
+    phone_number:  phoneNum,
+    spotify_url:   document.getElementById('pfSpotify').value,
+    apple_url:     document.getElementById('pfApple').value,
+    youtube_url:   document.getElementById('pfYoutube').value,
+    instagram_url: document.getElementById('pfInstagram').value,
+    facebook_url:  document.getElementById('pfFacebook').value,
+    website_url:   document.getElementById('pfWebsite').value,
+  });
+
   if(editingIdx===currentUser.memberIdx){
     currentUser.firstName=fn||currentUser.firstName;
     currentUser.lastName=ln||currentUser.lastName;
     currentUser.lang=document.getElementById('pfLang').value;
     syncCurrentUserToUI();
-  } else if(editingIdx===0&&fullName){
-    // fallback: keep legacy sidebar sync for index 0 if not currentUser
-    document.querySelector('.sb-foot div div').textContent=fullName;
   }
+
+  await loadMembers();
   closeMod('profMod');
   renderMembers();
   toast2('Profile saved!');
