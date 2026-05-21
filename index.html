@@ -1711,86 +1711,61 @@ function copyWaLink(){
     toast2('Link copied!');
   });
 }
-const BANDS=[
-  {id:1,name:'The Jazz Cats',initials:'JC',color:'var(--a)',city:'Brussels',country:'Belgium',genre:'Jazz',formed:'2019',bio:'A Brussels-based jazz ensemble with a passion for classic swing, bebop, and contemporary jazz fusion. Formed in 2019.',role:'Admin',memberCount:5,songCount:24,setlistCount:4,nextGig:{label:'Jun 7',sub:'Blue Note Brussels'},upcomingCount:3,pastCount:2,
-    platforms:[
-      {label:'Spotify',   icon:'🎵', url:'https://open.spotify.com'},
-      {label:'Apple Music',icon:'🍎',url:'https://music.apple.com'},
-      {label:'YouTube',   icon:'▶',  url:'https://youtube.com'},
-      {label:'Instagram', icon:'📸', url:'https://instagram.com'},
-    ],
-    photos:[]
-  },
-  {id:2,name:'Brussels Funk Collective',initials:'BF',color:'var(--bl)',city:'Brussels',country:'Belgium',genre:'Funk',formed:'2021',bio:'Seven-piece funk and soul outfit bringing the groove to stages across Belgium since 2021.',role:'Member',memberCount:7,songCount:18,setlistCount:2,nextGig:{label:'Jun 14',sub:'Ancienne Belgique'},upcomingCount:2,pastCount:5,
-    platforms:[
-      {label:'Spotify',   icon:'🎵', url:'https://open.spotify.com'},
-      {label:'Instagram', icon:'📸', url:'https://instagram.com'},
-    ],
-    photos:[]
-  },
-];
-let activeBandId=1;
+let BANDS=[];
+let activeBandId=null;
+
+async function loadBands(){
+  BANDS=await BandsDB.fetch();
+}
+
 function getActiveBand(){return BANDS.find(b=>b.id===activeBandId);}
 
-function switchBand(id){
+async function switchBand(id){
   if(id===activeBandId){closeMod('bswMod');return;}
   activeBandId=id;
+  localStorage.setItem('activeBandId', id);
   const b=getActiveBand();
-  // Sidebar band button
-  const bav=document.querySelector('.bav');
-  if(bav){bav.textContent=b.initials;bav.style.background=b.color;}
-  const bbL=document.querySelectorAll('.sb-band .sb-label div');
-  if(bbL[0])bbL[0].textContent=b.name;
-  if(bbL[1])bbL[1].textContent=b.role;
-  // Topbar subtitle
-  document.getElementById('pgS').textContent=`${b.name} · ${b.memberCount} members`;
-  // Dashboard stats
-  const sv=document.querySelectorAll('.sv');
-  if(sv[0])sv[0].textContent=b.memberCount;
-  if(sv[1])sv[1].textContent=b.songCount;
-  if(sv[2])sv[2].textContent=b.setlistCount;
-  if(sv[3])sv[3].textContent=b.nextGig.label;
-  const ss=document.querySelectorAll('.ss');
-  if(ss[3])ss[3].textContent=b.nextGig.sub;
-  // Concert count
-  const cc=document.getElementById('concertCount');
-  if(cc)cc.textContent=`${b.upcomingCount} upcoming · ${b.pastCount} past`;
-  // Band profile
-  const bpname=document.querySelector('.bpname');if(bpname)bpname.textContent=b.name;
-  const bpbio=document.querySelector('.bpbio');if(bpbio)bpbio.textContent=b.bio;
-  const bpphoto=document.querySelector('.bpphoto');if(bpphoto){bpphoto.textContent=b.initials;bpphoto.style.background=b.color;}
-  const bpCover=document.getElementById('bpCover');
-  if(bpCover)bpCover.style.background=b.id===2?'linear-gradient(135deg,#2563EB 0%,#1D4ED8 40%,#1E3A8A 100%)':'linear-gradient(135deg,#6C63FF 0%,#4C46C9 40%,#2563EB 100%)';
-  const bpLogo=document.getElementById('bpLogo');
-  if(bpLogo){bpLogo.textContent=b.initials;bpLogo.style.background=b.color;bpLogo.style.backgroundImage='';}
-  const bpplat=document.querySelector('.bpplat');
-  if(bpplat)bpplat.innerHTML=(b.platforms||[]).filter(p=>p.url).map(p=>`<a class="platl" href="${p.url}" target="_blank">${p.icon} ${p.label}</a>`).join('');
-  // Lib count
-  const lc=document.getElementById('libCount');if(lc)lc.textContent=`${b.songCount} songs in library`;
-  renderBandList();closeMod('bswMod');
-  renderCal();
-  refreshWaUI();
-  toast2(`Switched to ${b.name}`);nav('dashboard');
+  closeMod('bswMod');
+  toast2(`Switching to ${b?.name||'band'}…`);
+  await loadSongs();
+  await loadSetlists();
+  await loadConcerts();
+  await loadRehearsals();
+  await loadMembers();
+  await loadBlackouts();
+  renderSLDropdown();renderSL();renderSlMeta();renderLib();updateLibCount();
+  setCalView(calView);renderRehearsals();renderConcerts();renderMembers();
+  renderGuestDir();renderBP();renderAsList();renderBandList();
+  syncCurrentUserToUI();refreshWaUI();
+  nav('dashboard');
 }
 
 function renderBandList(){
   const el=document.getElementById('bandList');if(!el)return;
   el.innerHTML=BANDS.map(b=>{
     const active=b.id===activeBandId;
-    return`<div style="display:flex;align-items:center;gap:10px;padding:11px;background:${active?'var(--a2)':'var(--bg)'};border:1.5px solid ${active?'var(--a)':'var(--bd)'};border-radius:var(--rad);cursor:pointer;transition:all .13s" onclick="switchBand(${b.id})" ${!active?'onmouseover="this.style.borderColor=\'var(--a)\'" onmouseout="this.style.borderColor=\'var(--bd)\'"':''}><div class="bav" style="background:${b.color}">${b.initials}</div><div style="flex:1"><div style="font-weight:600;font-size:.84rem">${b.name}</div><div style="font-size:.69rem;color:var(--ink2)">${b.role} · ${b.memberCount} members · ${b.genre}</div></div>${active?'<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;flex-shrink:0;color:var(--a)"><path d="M3 8l4 4 6-8"/></svg>':''}</div>`;
+    return`<div style="display:flex;align-items:center;gap:10px;padding:11px;background:${active?'var(--a2)':'var(--bg)'};border:1.5px solid ${active?'var(--a)':'var(--bd)'};border-radius:var(--rad);cursor:pointer;transition:all .13s" onclick="switchBand('${b.id}')" ${!active?'onmouseover="this.style.borderColor=\'var(--a)\'" onmouseout="this.style.borderColor=\'var(--bd)\'"':''}><div class="bav" style="background:${b.color}">${b.initials}</div><div style="flex:1"><div style="font-weight:600;font-size:.84rem">${b.name}</div><div style="font-size:.69rem;color:var(--ink2)">${b.role} · ${b.memberCount} members · ${b.genre}</div></div>${active?'<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;flex-shrink:0;color:var(--a)"><path d="M3 8l4 4 6-8"/></svg>':''}</div>`;
   }).join('');
 }
 
-function createNewBand(){
+async function createNewBand(){
   const name=document.getElementById('nbName').value.trim();
   if(!name){toast2('Please enter a band name','w');return;}
-  const countryEl=document.getElementById('nbCountry');
-  const countryCode=countryEl.value;
+  const countryCode=document.getElementById('nbCountry').value;
   const countryName=countryCode?(ISO_COUNTRIES.find(x=>x.c===countryCode)?.n||countryCode):'';
   const initials=name.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
   const colors=['#16A34A','#DC2626','#9333EA','#D97706','#0891B2'];
   const color=colors[BANDS.length%colors.length];
-  BANDS.push({id:Date.now(),name,initials,color,city:document.getElementById('nbCity').value.trim(),country:countryName,genre:document.getElementById('nbGenre').value,bio:document.getElementById('nbBio').value.trim(),role:'Admin',memberCount:1,songCount:0,setlistCount:0,nextGig:{label:'—',sub:'No gigs yet'},upcomingCount:0,pastCount:0,platforms:[]});
+  const saved=await BandsDB.upsert({
+    name,initials,color,
+    city:document.getElementById('nbCity').value.trim(),
+    country:countryName,
+    genre:document.getElementById('nbGenre').value,
+    bio:document.getElementById('nbBio').value.trim(),
+  });
+  if(!saved)return;
+  await BandsDB.addMember(saved.id, currentUser.id, 'admin');
+  await loadBands();
   closeMod('newBandMod');
   ['nbName','nbCity','nbBio'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
   const nbC=document.getElementById('nbCountry');if(nbC)nbC.value='';
@@ -1868,13 +1843,11 @@ function hasCrossBandConflict(memberIdx, key){
   return blocks.has(key);
 }
 let curMonth=new Date(2026,4,1);
-let nextBOId=10;
-let blackouts=[
-  {id:1,label:"Carnival Brussels",from:"2026-03-01",to:"2026-03-03",scope:"band",mids:[]},
-  {id:2,label:"Summer School Holiday",from:"2026-07-01",to:"2026-08-31",scope:"band",mids:[]},
-  {id:3,label:"Antoine — Paris tour",from:"2026-06-10",to:"2026-06-14",scope:"members",mids:[5]},
-  {id:4,label:"Ascension weekend",from:"2026-05-14",to:"2026-05-14",scope:"band",mids:[]},
-];
+let blackouts=[];
+
+async function loadBlackouts(){
+  blackouts=await BlackoutsDB.fetch(activeBandId);
+}
 
 // ── CURRENT USER ─────────────────────────────────────────
 // Single source of truth for the logged-in user.
@@ -2820,14 +2793,32 @@ async function addSelectedSongs(){
 // BLACKOUTS
 function isBO(key){return blackouts.some(b=>b.scope==='band'&&key>=b.from&&key<=b.to);}
 function getBOLbl(key){const b=blackouts.find(b=>b.scope==='band'&&key>=b.from&&key<=b.to);return b?b.label:null;}
-function isMBO(mi,key){return blackouts.some(b=>b.scope==='members'&&b.mids.includes(mi+1)&&key>=b.from&&key<=b.to);}
+function isMBO(mi,key){const uid=members[mi]?.id;return !!uid&&blackouts.some(b=>b.scope==='members'&&b.mids.includes(uid)&&key>=b.from&&key<=b.to);}
 function getBOMap(){const m={};blackouts.filter(b=>b.scope==='band').forEach(b=>{for(let d=new Date(b.from+'T00:00:00');d<=new Date(b.to+'T00:00:00');d.setDate(d.getDate()+1))m[d.toISOString().slice(0,10)]=b.label;});return m;}
 function fmtD(iso){return new Date(iso+'T00:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});}
 function openAddBO(){clrBOF();showMod('boMod');}
 function clrBOF(){['boId','boLab','boFr','boTo'].forEach(id=>document.getElementById(id).value='');document.getElementById('boSc').value='band';togBOM();document.querySelectorAll('.bomc').forEach(c=>c.classList.remove('on'));}
-function editBO(id){const b=blackouts.find(x=>x.id===id);if(!b)return;document.getElementById('boId').value=b.id;document.getElementById('boLab').value=b.label;document.getElementById('boFr').value=b.from;document.getElementById('boTo').value=b.to;document.getElementById('boSc').value=b.scope;togBOM();document.querySelectorAll('.bomc').forEach(c=>c.classList.toggle('on',b.mids.includes(parseInt(c.dataset.mid))));showMod('boMod');}
-function savBO(){const id=parseInt(document.getElementById('boId').value)||0;const label=document.getElementById('boLab').value.trim();const from=document.getElementById('boFr').value;const to=document.getElementById('boTo').value||from;const scope=document.getElementById('boSc').value;if(!label||!from){toast2('Fill in label and start date','w');return;}const mids=scope==='members'?[...document.querySelectorAll('.bomc.on')].map(c=>parseInt(c.dataset.mid)):[];if(id){const idx=blackouts.findIndex(x=>x.id===id);if(idx>-1)blackouts[idx]={id,label,from,to,scope,mids};}else blackouts.push({id:nextBOId++,label,from,to,scope,mids});closeMod('boMod');renderBOList();renderCal();syncBOPill();toast2(id?'Blackout updated':'Blackout added');}
-function delBO(id){blackouts=blackouts.filter(x=>x.id!==id);renderBOList();renderCal();syncBOPill();toast2('Blackout removed','w');}
+function editBO(id){const b=blackouts.find(x=>x.id===id);if(!b)return;document.getElementById('boId').value=b.id;document.getElementById('boLab').value=b.label;document.getElementById('boFr').value=b.from;document.getElementById('boTo').value=b.to;document.getElementById('boSc').value=b.scope;togBOM();document.querySelectorAll('.bomc').forEach(c=>c.classList.toggle('on',b.mids.includes(c.dataset.mid)));showMod('boMod');}
+async function savBO(){
+  const id=document.getElementById('boId').value||null;
+  const label=document.getElementById('boLab').value.trim();
+  const from=document.getElementById('boFr').value;
+  const to=document.getElementById('boTo').value||from;
+  const scope=document.getElementById('boSc').value;
+  if(!label||!from){toast2('Fill in label and start date','w');return;}
+  const mids=scope==='members'?[...document.querySelectorAll('.bomc.on')].map(c=>c.dataset.mid):[];
+  const payload={label,from,to,scope,mids};
+  if(id) payload.id=id;
+  const saved=await BlackoutsDB.upsert(payload);
+  if(!saved)return;
+  await loadBlackouts();
+  closeMod('boMod');renderBOList();renderCal();syncBOPill();toast2(id?'Blackout updated':'Blackout added');
+}
+async function delBO(id){
+  await BlackoutsDB.delete(id);
+  await loadBlackouts();
+  renderBOList();renderCal();syncBOPill();toast2('Blackout removed','w');
+}
 function togBOM(){document.getElementById('boMR').style.display=document.getElementById('boSc').value==='members'?'':'none';}
 function togBOMc(el){el.classList.toggle('on');}
 function syncBOPill(){const n=blackouts.filter(b=>b.scope==='band').length;document.getElementById('boLbl').textContent=n===0?'No blackouts':`${n} blackout period${n>1?'s':''}`;document.getElementById('boIco').textContent=n>0?'🚫':'📅';}
@@ -2836,8 +2827,8 @@ function renderBOList(){
   if(!blackouts.length){el.innerHTML=`<div class="es" style="padding:20px"><div class="es-ico" style="font-size:1.6rem">📅</div><h3>No blackout periods</h3><p>Add holidays, closures, or absences.</p></div>`;return;}
   el.innerHTML=[...blackouts].sort((a,b)=>a.from.localeCompare(b.from)).map(b=>{
     const ff=fmtD(b.from),tf=b.to!==b.from?` → ${fmtD(b.to)}`:'';
-    const nm=b.scope==='members'?`<div style="font-size:.67rem;color:var(--ink3);margin-top:2px">${b.mids.map(mid=>members[mid-1]?.name.split(' ')[0]).join(', ')}</div>`:'';
-    return`<div class="boit"><div class="bost" style="background:${b.scope==='band'?'var(--r)':'var(--bl)'}"></div><div class="bobd"><div class="bola">${b.label}</div><div class="boda">${ff}${tf}</div>${nm}</div><div style="display:flex;align-items:center;gap:5px;flex-shrink:0"><span class="pill ${b.scope==='band'?'pr':'pbl'}">${b.scope==='band'?'Whole band':`${b.mids.length} member${b.mids.length!==1?'s':''}`}</span><button class="btn-ic btn" onclick="editBO(${b.id})" style="width:27px;height:27px"><svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M11 2l3 3-8 8H3v-3L11 2z"/></svg></button><button class="btn-ic btn" onclick="delBO(${b.id})" style="width:27px;height:27px;color:var(--r);border-color:var(--r2)"><svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 4h12M5 4V2h6v2M6 7v5M10 7v5M3 4l1 10h8l1-10"/></svg></button></div></div>`;
+    const nm=b.scope==='members'?`<div style="font-size:.67rem;color:var(--ink3);margin-top:2px">${b.mids.map(uid=>members.find(x=>x.id===uid)?.name.split(' ')[0]).filter(Boolean).join(', ')}</div>`:'';
+    return`<div class="boit"><div class="bost" style="background:${b.scope==='band'?'var(--r)':'var(--bl)'}"></div><div class="bobd"><div class="bola">${b.label}</div><div class="boda">${ff}${tf}</div>${nm}</div><div style="display:flex;align-items:center;gap:5px;flex-shrink:0"><span class="pill ${b.scope==='band'?'pr':'pbl'}">${b.scope==='band'?'Whole band':`${b.mids.length} member${b.mids.length!==1?'s':''}`}</span><button class="btn-ic btn" onclick="editBO('${b.id}')" style="width:27px;height:27px"><svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M11 2l3 3-8 8H3v-3L11 2z"/></svg></button><button class="btn-ic btn" onclick="delBO('${b.id}')" style="width:27px;height:27px;color:var(--r);border-color:var(--r2)"><svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 4h12M5 4V2h6v2M6 7v5M10 7v5M3 4l1 10h8l1-10"/></svg></button></div></div>`;
   }).join('');
 }
 
@@ -3810,7 +3801,7 @@ function renderBP(){
   const active=[0,1,0,1,1,0,0];
   document.getElementById('dtogs').innerHTML=days.map((d,i)=>`<div class="dtog ${active[i]?'on':''}" onclick="${isAdmin?"this.classList.toggle('on')":''}" style="${isAdmin?'':'pointer-events:none;opacity:.7'}">${d.slice(0,3)}</div>`).join('');
   const mc=document.getElementById('boMC');
-  if(mc)mc.innerHTML=members.map((m,i)=>`<div class="bomc chip" data-mid="${i+1}" onclick="togBOMc(this)" style="display:flex;align-items:center;gap:6px"><div class="mav2" style="width:18px;height:18px;font-size:.5rem;background:${m.color}">${m.init}</div>${m.name.split(' ')[0]}</div>`).join('');
+  if(mc)mc.innerHTML=members.map(m=>`<div class="bomc chip" data-mid="${m.id}" onclick="togBOMc(this)" style="display:flex;align-items:center;gap:6px"><div class="mav2" style="width:18px;height:18px;font-size:.5rem;background:${m.color}">${m.init}</div>${m.name.split(' ')[0]}</div>`).join('');
   renderBOList();syncBOPill();
   refreshWaUI();
   refreshNotifSettUI();
@@ -3849,26 +3840,29 @@ function toggleBandEdit(editing){
   }
 }
 
-function saveBandEditInline(){
+async function saveBandEditInline(){
   const b=getActiveBand();if(!b)return;
   const name=document.getElementById('beNameInline').value.trim();
   if(!name){toast2('Band name is required','w');return;}
-  b.name=name;
-  b.genre=document.getElementById('beGenreInline').value;
-  b.formed=document.getElementById('beFormedInline').value.trim();
-  b.city=document.getElementById('beCityInline').value.trim();
-  b.country=document.getElementById('beCountryInline').value.trim();
-  b.bio=document.getElementById('beBioInline').value.trim();
-  b.initials=name.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
-  b.platforms=PLATFORM_DEFS.map(d=>{const url=(document.getElementById('bePlat_'+d.key)?.value||'').trim();return url?{label:d.label,icon:d.icon,url}:null;}).filter(Boolean);
+  const saved=await BandsDB.upsert({
+    id: b.id,
+    name,
+    initials: name.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2),
+    color: b.color,
+    genre: document.getElementById('beGenreInline').value,
+    formed: document.getElementById('beFormedInline').value.trim(),
+    city: document.getElementById('beCityInline').value.trim(),
+    country: document.getElementById('beCountryInline').value.trim(),
+    bio: document.getElementById('beBioInline').value.trim(),
+  });
+  if(!saved)return;
+  await loadBands();
   toggleBandEdit(false);
   renderBP();
-  // sync sidebar + topbar
   const bbL=document.querySelectorAll('.sb-band .sb-label div');
-  if(bbL[0])bbL[0].textContent=b.name;
-  const bav=document.querySelector('.bav');if(bav)bav.textContent=b.initials;
-  const bpLogo=document.getElementById('bpLogo');if(bpLogo&&!bpLogo.style.backgroundImage)bpLogo.textContent=b.initials;
-  document.getElementById('pgS').textContent=`${b.name} · ${b.memberCount} members`;
+  if(bbL[0])bbL[0].textContent=saved.name;
+  const bav=document.querySelector('.bav');if(bav)bav.textContent=saved.initials;
+  const bpLogo=document.getElementById('bpLogo');if(bpLogo&&!bpLogo.style.backgroundImage)bpLogo.textContent=saved.initials;
   renderBandList();
   toast2('Band profile saved!');
 }
@@ -3881,21 +3875,22 @@ function promptDeleteBand(){
   showMod('deleteBandMod');
 }
 
-function confirmDeleteBand(){
+async function confirmDeleteBand(){
   const b=getActiveBand();if(!b)return;
   const input=document.getElementById('deleteBandConfirmInput').value.trim();
   if(input!==b.name){toast2('Band name does not match','w');return;}
-  const idx=BANDS.findIndex(x=>x.id===activeBandId);
-  BANDS.splice(idx,1);
+  await BandsDB.delete(activeBandId);
   closeMod('deleteBandMod');
+  await loadBands();
   if(BANDS.length){
     activeBandId=BANDS[0].id;
-    switchBand(activeBandId);
+    await switchBand(activeBandId);
   } else {
+    activeBandId=null;
+    renderBandList();
     toast2('Band deleted. No more bands.','w');
     nav('dashboard');
   }
-  renderBandList();
   toast2('Band deleted','w');
 }
 
@@ -3941,11 +3936,13 @@ async function initApp(){
   populateCountrySelects();
   populateInstrumentSelects();
   populateLangSelect('pfLang', currentUser.lang);
+  await loadBands();
   await loadSongs();
   await loadSetlists();
   await loadConcerts();
   await loadRehearsals();
   await loadMembers();
+  await loadBlackouts();
   renderSLDropdown();renderSL();renderSlMeta();renderLib();updateLibCount();
   setCalView(calView);renderRehearsals();renderConcerts();renderMembers();
   renderGuestDir();renderBP();renderAsList();renderBandList();
