@@ -1255,16 +1255,17 @@ const MONTH_MAP = {JAN:0,FEB:1,MAR:2,APR:3,MAY:4,JUN:5,JUL:6,AUG:7,SEP:8,OCT:9,N
 const TODAY = new Date(2026, 4, 20); // demo "today" = May 20 2026
 
 // ── REHEARSALS ────────────────────────────────────────────
-const rehearsals=[
-  {id:1,month:'MAY',day:'23',year:'2026',title:'Full Band Rehearsal',location:'Studio De Muziek, Brussels',start:'19:00',end:'22:00',notes:'Focus on Blue Note setlist',photos:[],setlistId:1,cancelled:false},
-  {id:2,month:'MAY',day:'31',year:'2026',title:'Rhythm Section Practice',location:"Marco's Studio, Brussels",start:'15:00',end:'17:00',notes:'Bass and drums tightening',photos:[],setlistId:null,cancelled:false},
-  {id:3,month:'MAR',day:'12',year:'2026',title:'Full Band Rehearsal',location:'Studio De Muziek, Brussels',start:'19:00',end:'22:00',notes:'Ran through full setlist twice.',photos:[],setlistId:null,cancelled:false},
-  {id:4,month:'FEB',day:'19',year:'2026',title:'Horn Section Workshop',location:"Antoine's place, Brussels",start:'14:00',end:'16:00',notes:'Antoine led the session.',photos:[],setlistId:null,cancelled:false},
-  {id:5,month:'JAN',day:'28',year:'2026',title:'Full Band Rehearsal',location:'Studio De Muziek, Brussels',start:'19:00',end:'22:00',notes:'First rehearsal of the year.',photos:[],setlistId:null,cancelled:false},
-];
-let nextRehearsalId=6;
+let rehearsals=[];
 
-function rehearsalDate(r){return new Date(parseInt(r.year),MONTH_MAP[r.month],parseInt(r.day));}
+async function loadRehearsals(){
+  rehearsals = await RehearsalsDB.fetch(activeBandId);
+  buildCalEv();
+}
+
+function rehearsalDate(r){
+  if(r.date) return new Date(r.date+'T12:00:00');
+  return new Date(parseInt(r.year),MONTH_MAP[r.month],parseInt(r.day));
+}
 function isRehPast(r){return rehearsalDate(r)<TODAY;}
 
 function renderRehearsals(){
@@ -1287,8 +1288,8 @@ function rehearsalCard(r,style){
   const pastStyle=style==='past', cancelStyle=style==='cancelled';
   const photos=(r.photos||[]).slice(0,4);
   const photoHtml=photos.length
-    ?`<div class="concert-photos">${photos.map((p,i)=>`<img class="concert-thumb" src="${p}" alt="Photo ${i+1}" onclick="event.stopPropagation();openRehPhotoLightbox('${r.id}',${i})">`).join('')}${!cancelStyle?`<label class="concert-thumb-add" onclick="event.stopPropagation()"><input type="file" accept="image/*" style="display:none" onchange="addRehPhoto(event,${r.id})">+</label>`:''}</div>`
-    :cancelStyle?'':`<div class="concert-photos"><label class="concert-thumb-add" onclick="event.stopPropagation()"><input type="file" accept="image/*" style="display:none" onchange="addRehPhoto(event,${r.id})">📷</label></div>`;
+    ?`<div class="concert-photos">${photos.map((p,i)=>`<img class="concert-thumb" src="${p}" alt="Photo ${i+1}" onclick="event.stopPropagation();openRehPhotoLightbox('${r.id}',${i})">`).join('')}${!cancelStyle?`<label class="concert-thumb-add" onclick="event.stopPropagation()"><input type="file" accept="image/*" style="display:none" onchange="addRehPhoto(event,'${r.id}')">+</label>`:''}</div>`
+    :cancelStyle?'':`<div class="concert-photos"><label class="concert-thumb-add" onclick="event.stopPropagation()"><input type="file" accept="image/*" style="display:none" onchange="addRehPhoto(event,'${r.id}')">📷</label></div>`;
   const slLinked=r.setlistId?setlists.find(x=>x.id===r.setlistId):null;
   const badge=cancelStyle
     ?`<span style="margin-left:8px;font-size:.66rem;padding:2px 7px;border-radius:99px;background:var(--r2);color:var(--r);font-weight:600;vertical-align:middle">Cancelled</span>`
@@ -1297,7 +1298,7 @@ function rehearsalCard(r,style){
     ?`<button class="btn btn-g btn-sm" data-action="view">View</button>`
     :`<button class="btn btn-g btn-sm" style="color:var(--amb);border-color:var(--amb2)" data-action="cancel">Cancel</button>
       <button class="btn btn-g btn-sm" data-action="view">View</button>`;
-  return`<div class="ccrd${pastStyle?' past':''}${cancelStyle?' cancelled':''}" data-rid="${r.id}" onclick="handleRehCardClick(event,${r.id})">
+  return`<div class="ccrd${pastStyle?' past':''}${cancelStyle?' cancelled':''}" data-rid="${r.id}" onclick="handleRehCardClick(event,'${r.id}')">
     <div class="cdb">
       <div class="cdmo">${r.month}</div>
       <div class="cddy" style="${pastStyle||cancelStyle?'color:var(--ink3)':''}">${r.day}</div>
@@ -1386,18 +1387,19 @@ function openRehView(id){
   } else {
     actions.innerHTML=`
       <button class="btn btn-g" onclick="closeMod('reViewMod')">Close</button>
-      <button class="btn btn-g btn-sm" style="color:var(--amb);border-color:var(--amb2)" onclick="closeMod('reViewMod');promptCancel('rehearsal',${r.id})">🚫 Cancel</button>
-      <button class="btn btn-g btn-sm" onclick="closeMod('reViewMod');openRehEdit(${r.id})">Edit</button>
-      <button class="btn btn-p btn-sm" onclick="closeMod('reViewMod');shareRehearsal(${r.id})">Share</button>`;
+      <button class="btn btn-g btn-sm" style="color:var(--amb);border-color:var(--amb2)" onclick="closeMod('reViewMod');promptCancel('rehearsal','${r.id}')">🚫 Cancel</button>
+      <button class="btn btn-g btn-sm" onclick="closeMod('reViewMod');openRehEdit('${r.id}')">Edit</button>
+      <button class="btn btn-p btn-sm" onclick="closeMod('reViewMod');shareRehearsal('${r.id}')">Share</button>`;
   }
 
   showMod('reViewMod');
 }
 
-function deleteRehearsal(id){
+async function deleteRehearsal(id){
   const r=rehearsals.find(x=>x.id===id);if(!r)return;
   if(!confirm(`Delete "${r.title}"? This cannot be undone.`))return;
-  rehearsals.splice(rehearsals.indexOf(r),1);
+  await RehearsalsDB.delete(id);
+  await loadRehearsals();
   closeMod('reViewMod');
   renderRehearsals();
   toast2('Rehearsal deleted','w');
@@ -1421,24 +1423,26 @@ function openRehEdit(id){
   document.getElementById('reStart').value=r.start||'19:00';
   document.getElementById('reEnd').value=r.end||'22:00';
   document.getElementById('reNotes').value=r.notes||'';
-  const mo=String(Object.keys(MONTH_MAP).indexOf(r.month)+1).padStart(2,'0');
-  document.getElementById('reDate').value=`${r.year}-${mo}-${String(r.day).padStart(2,'0')}`;
+  document.getElementById('reDate').value=r.date||'';
   renderRehPhotoArea(id);
   showMod('reMod');
 }
-function saveRehEdit(){
+async function saveRehEdit(){
   const title=document.getElementById('reTitle').value.trim();
   if(!title){toast2('Please enter a rehearsal name','w');return;}
-  const MO_NAMES=['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
   const dateVal=document.getElementById('reDate').value;
-  let month='JUN',day='1',year='2026';
-  if(dateVal){const d=new Date(dateVal+'T12:00:00');month=MO_NAMES[d.getMonth()];day=String(d.getDate());year=String(d.getFullYear());}
-  if(editingRehId){
-    const r=rehearsals.find(x=>x.id===editingRehId);if(!r)return;
-    Object.assign(r,{title,month,day,year,location:document.getElementById('reLocation').value.trim(),start:document.getElementById('reStart').value,end:document.getElementById('reEnd').value,notes:document.getElementById('reNotes').value.trim()});
-  } else {
-    rehearsals.push({id:nextRehearsalId++,title,month,day,year,location:document.getElementById('reLocation').value.trim(),start:document.getElementById('reStart').value,end:document.getElementById('reEnd').value,notes:document.getElementById('reNotes').value.trim(),photos:[],setlistId:null});
-  }
+  const payload={
+    title,
+    date: dateVal||null,
+    location: document.getElementById('reLocation').value.trim(),
+    start: document.getElementById('reStart').value,
+    end: document.getElementById('reEnd').value,
+    notes: document.getElementById('reNotes').value.trim(),
+  };
+  if(editingRehId) payload.id=editingRehId;
+  const saved=await RehearsalsDB.upsert(payload);
+  if(!saved)return;
+  await loadRehearsals();
   closeMod('reMod');renderRehearsals();toast2(editingRehId?'Rehearsal updated!':'Rehearsal added!');
 }
 
@@ -1454,12 +1458,12 @@ function renderRehPhotoArea(id){
   const r=rehearsals.find(x=>x.id===id);
   const area=document.getElementById('rePhotoArea');if(!area)return;
   const photos=r?r.photos||[]:[];
-  area.innerHTML=photos.map((p,i)=>`<div style="position:relative;display:inline-block"><img src="${p}" style="width:64px;height:64px;border-radius:8px;object-fit:cover;border:1.5px solid var(--bd)"><button onclick="removeRehPhoto(${id},${i})" style="position:absolute;top:-6px;right:-6px;width:18px;height:18px;border-radius:50%;background:var(--r);border:2px solid var(--w);color:#fff;font-size:.55rem;cursor:pointer;display:flex;align-items:center;justify-content:center">✕</button></div>`).join('')
-    +`<label style="width:64px;height:64px;border-radius:8px;border:2px dashed var(--bd);display:inline-flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;color:var(--ink3);font-size:.65rem;gap:3px" onmouseover="this.style.borderColor='var(--a)'" onmouseout="this.style.borderColor='var(--bd)'"><span style="font-size:1.3rem">📷</span>Add photo<input type="file" accept="image/*" style="display:none" onchange="addRehPhoto(event,${id||editingRehId||0})"></label>`;
+  area.innerHTML=photos.map((p,i)=>`<div style="position:relative;display:inline-block"><img src="${p}" style="width:64px;height:64px;border-radius:8px;object-fit:cover;border:1.5px solid var(--bd)"><button onclick="removeRehPhoto('${id}',${i})" style="position:absolute;top:-6px;right:-6px;width:18px;height:18px;border-radius:50%;background:var(--r);border:2px solid var(--w);color:#fff;font-size:.55rem;cursor:pointer;display:flex;align-items:center;justify-content:center">✕</button></div>`).join('')
+    +`<label style="width:64px;height:64px;border-radius:8px;border:2px dashed var(--bd);display:inline-flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;color:var(--ink3);font-size:.65rem;gap:3px" onmouseover="this.style.borderColor='var(--a)'" onmouseout="this.style.borderColor='var(--bd)'"><span style="font-size:1.3rem">📷</span>Add photo<input type="file" accept="image/*" style="display:none" onchange="addRehPhoto(event,'${id||editingRehId||0}')"></label>`;
 }
 function removeRehPhoto(id,idx){const r=rehearsals.find(x=>x.id===id);if(!r||!r.photos)return;r.photos.splice(idx,1);renderRehPhotoArea(id);renderRehearsals();toast2('Photo removed','w');}
 function openRehPhotoLightbox(id,idx){
-  const r=rehearsals.find(x=>x.id===parseInt(id));if(!r||!r.photos||!r.photos[idx])return;
+  const r=rehearsals.find(x=>x.id===id);if(!r||!r.photos||!r.photos[idx])return;
   const o=document.createElement('div');o.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:9000;display:flex;align-items:center;justify-content:center;cursor:pointer';o.onclick=()=>document.body.removeChild(o);
   o.innerHTML=`<img src="${r.photos[idx]}" style="max-width:90vw;max-height:90vh;border-radius:12px;object-fit:contain">`;document.body.appendChild(o);
 }
@@ -3175,14 +3179,8 @@ async function confirmCancel(notify){
   } else {
     const r=rehearsals.find(x=>x.id===id);
     if(r){
-      r.cancelled=true;
-      // remove rehearsal dot from calendar
-      const mo=String(Object.keys(MONTH_MAP).indexOf(r.month)+1).padStart(2,'0');
-      const key=`${r.year}-${mo}-${String(r.day).padStart(2,'0')}`;
-      if(calEv[key]){
-        calEv[key]=calEv[key].filter(t=>t!=='rehearsal');
-        if(!calEv[key].length) delete calEv[key];
-      }
+      await RehearsalsDB.upsert({...r, cancelled:true});
+      await loadRehearsals();
       renderRehearsals();renderCal();
     }
   }
@@ -3960,6 +3958,7 @@ async function initApp(){
   await loadSongs();
   await loadSetlists();
   await loadConcerts();
+  await loadRehearsals();
   renderSLDropdown();renderSL();renderSlMeta();renderLib();updateLibCount();
   setCalView(calView);renderRehearsals();renderConcerts();renderMembers();
   renderGuestDir();renderBP();renderAsList();renderBandList();
