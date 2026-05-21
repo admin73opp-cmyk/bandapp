@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Bandapp</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/supabase-client.js"></script>
 <style>
 :root{--font:-apple-system,BlinkMacSystemFont,'Segoe UI','Helvetica Neue',Arial,sans-serif;--mono:'SF Mono','Fira Code','Fira Mono','Roboto Mono',Menlo,monospace;--ink:#111118;--ink2:#5A5A72;--ink3:#9A9AB0;--bg:#F5F5F8;--bg2:#EEEEF3;--w:#FFFFFF;--bd:#E2E2EC;--a:#6C63FF;--a2:#EDEAFF;--g:#16A34A;--g2:#DCFCE7;--r:#DC2626;--r2:#FEE2E2;--amb:#D97706;--amb2:#FEF3C7;--bl:#2563EB;--bl2:#DBEAFE;--rad:10px;--radl:16px;--sh:0 1px 3px rgba(0,0,0,.07),0 4px 14px rgba(0,0,0,.05);--shl:0 8px 30px rgba(0,0,0,.12)}
 @media(prefers-color-scheme:dark){
@@ -360,18 +362,18 @@ select option{background:var(--w)}
       <button class="stb" style="flex:1;border-radius:7px" onclick="switchTab('signup')">Sign up</button>
     </div>
     <div id="lf">
-      <div class="fg"><label>Email</label><input type="email" placeholder="you@email.com"></div>
-      <div class="fg"><label>Password</label><input type="password" placeholder="••••••••"></div>
+      <div class="fg"><label>Email</label><input id="loginEmail" type="email" placeholder="you@email.com"></div>
+      <div class="fg"><label>Password</label><input id="loginPassword" type="password" placeholder="••••••••"></div>
       <button class="btn btn-p btn-fw" onclick="doLogin()">Sign in</button>
       <div style="text-align:center;font-size:.77rem;color:var(--ink3);margin:13px 0;position:relative"><span style="background:var(--w);padding:0 9px;position:relative;z-index:1">or</span><div style="position:absolute;top:50%;left:0;right:0;height:1px;background:var(--bd)"></div></div>
       <button class="btn btn-g btn-fw" onclick="doDemo()">Continue as demo</button>
     </div>
     <div id="sf" style="display:none">
-      <div class="fr"><div class="fg"><label>First name</label><input placeholder="Marco"></div><div class="fg"><label>Last name</label><input placeholder="Rossi"></div></div>
-      <div class="fg"><label>Email</label><input type="email" placeholder="you@email.com"></div>
-      <div class="fg"><label>Password</label><input type="password" placeholder="••••••••"></div>
-      <div class="fg"><label>Band name (optional)</label><input placeholder="The Jazz Cats"></div>
-      <button class="btn btn-p btn-fw" onclick="doLogin()">Create account</button>
+      <div class="fr"><div class="fg"><label>First name</label><input id="signupFirst" placeholder="Marco"></div><div class="fg"><label>Last name</label><input id="signupLast" placeholder="Rossi"></div></div>
+      <div class="fg"><label>Email</label><input id="signupEmail" type="email" placeholder="you@email.com"></div>
+      <div class="fg"><label>Password</label><input id="signupPassword" type="password" placeholder="••••••••"></div>
+      <div class="fg"><label>Band name (optional)</label><input id="signupBand" placeholder="The Jazz Cats"></div>
+      <button class="btn btn-p btn-fw" onclick="doSignUp()">Create account</button>
     </div>
   </div>
 </div>
@@ -1931,15 +1933,7 @@ function switchTab(t){
   document.getElementById('lf').style.display=t==='login'?'':'none';
   document.getElementById('sf').style.display=t==='signup'?'':'none';
 }
-function doLogin(){document.getElementById('authScreen').style.display='none';document.getElementById('app').classList.add('vis');initSbState();initApp();}
-function doDemo(){doLogin();}
-function doLogout(){
-  if(confirm('Log out of Bandapp?')){
-    document.getElementById('app').classList.remove('vis');
-    document.getElementById('authScreen').style.display='flex';
-    nav('dashboard');
-  }
-}
+// doLogin / doDemo / doSignUp / doLogout are defined in js/auth.js
 
 // NAV
 function nav(p){
@@ -3957,7 +3951,7 @@ function openBandPhotoLightbox(idx){
 
 // INIT
 function openInvMod(){populatePhoneCc('invPhoneCc','+32');document.getElementById('invPhoneNum').value='';showMod('invMod');}
-function initApp(){
+async function initApp(){
   populateCountrySelects();
   populateInstrumentSelects();
   populateLangSelect('pfLang', currentUser.lang);
@@ -4805,5 +4799,15 @@ function saveProfile(){
 </div>
 </div>
 
+<!-- Supabase data layer — loaded after app script so they share global scope -->
+<script src="js/db/bands.js"></script>
+<script src="js/db/songs.js"></script>
+<script src="js/db/setlists.js"></script>
+<script src="js/db/concerts.js"></script>
+<script src="js/db/rehearsals.js"></script>
+<script src="js/db/members.js"></script>
+<script src="js/db/blackouts.js"></script>
+<!-- Auth — last so it can reference initApp, toast2, and all app globals -->
+<script src="js/auth.js"></script>
 </body>
 </html>
