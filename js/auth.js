@@ -33,16 +33,12 @@ async function loadCurrentUser(uid) {
     .select('band_id, role')
     .eq('user_id', uid);
 
-  console.log('[bandapp] memberships query:', { memberships, memErr });
-
   currentUser._memberships = memberships || [];
 
   // Restore previously active band from localStorage, or default to first
   const saved = localStorage.getItem('activeBandId');
   const validIds = (memberships || []).map(m => m.band_id);
   activeBandId = (saved && validIds.includes(saved)) ? saved : (validIds[0] || null);
-
-  console.log('[bandapp] activeBandId set to:', activeBandId, '(saved was:', saved, ')');
 
   const activeMembership = (memberships || []).find(m => m.band_id === activeBandId);
   currentUser.role = activeMembership?.role || 'member';

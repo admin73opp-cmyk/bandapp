@@ -1197,10 +1197,8 @@ async function loadSetlistSongs(setlistId){
 let myC={};
 // Loads songs + personal notes from Supabase into module-level globals
 async function loadSongs(){
-  console.log('[bandapp] loadSongs activeBandId:', activeBandId);
   if(!activeBandId){ songs=[]; myC={}; return; }
   songs = await SongsDB.fetch(activeBandId);
-  console.log('[bandapp] loadSongs result:', songs.length, 'songs');
   myC   = await SongsDB.fetchNotes(activeBandId);
 }
 // Finds a song by UUID or legacy integer id — bridges the transition
@@ -3945,14 +3943,6 @@ function openBandPhotoLightbox(idx){
 
 // INIT
 function openInvMod(){populatePhoneCc('invPhoneCc','+32');document.getElementById('invPhoneNum').value='';showMod('invMod');}
-function showDebugBanner(msg){
-  let el=document.getElementById('__debug');
-  if(!el){el=document.createElement('div');el.id='__debug';
-    el.style.cssText='position:fixed;bottom:60px;left:50%;transform:translateX(-50%);background:#1C1C26;color:#F0F0F8;font-size:.72rem;font-family:monospace;padding:8px 14px;border-radius:8px;z-index:99999;border:1px solid #6C63FF;max-width:90vw;text-align:center';
-    document.body.appendChild(el);}
-  el.textContent=msg;
-  clearTimeout(el._t);el._t=setTimeout(()=>el.remove(),15000);
-}
 
 async function initApp(){
   populateCountrySelects();
@@ -3969,7 +3959,6 @@ async function initApp(){
   setCalView(calView);renderRehearsals();renderConcerts();renderMembers();
   renderGuestDir();renderBP();renderAsList();renderBandList();
   syncCurrentUserToUI();
-  showDebugBanner(`bandId: ${activeBandId ? activeBandId.slice(0,8)+'…' : 'NULL'} | songs: ${songs.length} | sets: ${setlists.length}`);
 }
 </script>
 <!-- MUSICIAN PROFILE MODAL -->

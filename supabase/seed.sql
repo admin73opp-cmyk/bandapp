@@ -92,6 +92,34 @@ values
    '{"first_name":"Celine","last_name":"Dupont"}')
 on conflict (id) do nothing;
 
+-- ── Auth identities (required by GoTrue for email sign-in) ───
+-- Newer Supabase versions require a matching row in auth.identities
+-- or signInWithPassword returns "Database error querying schema".
+insert into auth.identities (provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at)
+values
+  ('b0000000-0000-0000-0000-000000000001','b0000000-0000-0000-0000-000000000001',
+   '{"sub":"b0000000-0000-0000-0000-000000000001","email":"demo@bandapp.com","email_verified":true,"phone_verified":false}',
+   'email',now(),now(),now()),
+  ('b0000000-0000-0000-0000-000000000002','b0000000-0000-0000-0000-000000000002',
+   '{"sub":"b0000000-0000-0000-0000-000000000002","email":"sophie@bandapp.com","email_verified":true,"phone_verified":false}',
+   'email',now(),now(),now()),
+  ('b0000000-0000-0000-0000-000000000003','b0000000-0000-0000-0000-000000000003',
+   '{"sub":"b0000000-0000-0000-0000-000000000003","email":"lucas@bandapp.com","email_verified":true,"phone_verified":false}',
+   'email',now(),now(),now()),
+  ('b0000000-0000-0000-0000-000000000004','b0000000-0000-0000-0000-000000000004',
+   '{"sub":"b0000000-0000-0000-0000-000000000004","email":"kim@bandapp.com","email_verified":true,"phone_verified":false}',
+   'email',now(),now(),now()),
+  ('b0000000-0000-0000-0000-000000000005','b0000000-0000-0000-0000-000000000005',
+   '{"sub":"b0000000-0000-0000-0000-000000000005","email":"antoine@bandapp.com","email_verified":true,"phone_verified":false}',
+   'email',now(),now(),now()),
+  ('b0000000-0000-0000-0000-000000000006','b0000000-0000-0000-0000-000000000006',
+   '{"sub":"b0000000-0000-0000-0000-000000000006","email":"thomas@bandapp.com","email_verified":true,"phone_verified":false}',
+   'email',now(),now(),now()),
+  ('b0000000-0000-0000-0000-000000000007','b0000000-0000-0000-0000-000000000007',
+   '{"sub":"b0000000-0000-0000-0000-000000000007","email":"celine@bandapp.com","email_verified":true,"phone_verified":false}',
+   'email',now(),now(),now())
+on conflict do nothing;
+
 -- ── Profiles ─────────────────────────────────────────────────
 insert into profiles
   (id, first_name, last_name, initials, instrument, instrument2, vocals,

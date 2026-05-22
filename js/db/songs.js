@@ -46,13 +46,11 @@ const SongsDB = {
     };
     if (!payload.band_id) payload.band_id = activeBandId;
 
-    console.log('[bandapp] SongsDB.upsert payload:', payload);
     const { data, error } = await supabase
       .from('songs')
       .upsert(payload)
       .select()
       .single();
-    console.log('[bandapp] SongsDB.upsert result:', { data, error });
     if (error) { handleDbError(error); return null; }
     return {
       ...data,
