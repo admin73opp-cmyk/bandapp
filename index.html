@@ -2309,7 +2309,7 @@ function openSlMod(){
   const sel=document.getElementById('slNewConcert');
   const upcoming=concerts.filter(c=>!isPast(c)&&!c.cancelled).sort((a,b)=>concertDate(a)-concertDate(b));
   sel.innerHTML=`<option value="">— No concert yet —</option>`
-    +upcoming.map(c=>`<option value="${c.id}">${c.title} — ${c.month} ${c.day}, ${c.year}</option>`).join('');
+    +upcoming.map(c=>`<option value="${c.id}">${c.title}${c.date?' — '+c.date:''}</option>`).join('');
   document.getElementById('slNewTitle').value='';
   document.getElementById('slConcertPreview').style.display='none';
   slCreateMode='manual';
@@ -2345,7 +2345,7 @@ async function createNewSetList(){
   const newSL=await SetlistsDB.upsert({
     band_id:activeBandId,
     name:title,
-    date:c?`${c.year}-${String(Object.keys(MONTH_MAP).indexOf(c.month)+1).padStart(2,'0')}-${String(c.day).padStart(2,'0')}`:null,
+    date:c?(c.date||null):null,
     type:c?'Concert':'Practice',
     venue:c?c.venue:null,
     duration:c?c.duration:60,
