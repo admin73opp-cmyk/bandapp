@@ -2645,7 +2645,7 @@ function exportExcel(){
 function importExcel(event){
   const file=event.target.files[0];if(!file)return;
   const reader=new FileReader();
-  reader.onload=e=>{
+  reader.onload=async e=>{
     try{
       let imported=[];
       if(typeof XLSX!=='undefined'&&!file.name.endsWith('.csv')){
