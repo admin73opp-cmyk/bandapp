@@ -1196,8 +1196,10 @@ async function loadSetlistSongs(setlistId){
 let myC={};
 // Loads songs + personal notes from Supabase into module-level globals
 async function loadSongs(){
+  console.log('[bandapp] loadSongs activeBandId:', activeBandId);
   if(!activeBandId){ songs=[]; myC={}; return; }
   songs = await SongsDB.fetch(activeBandId);
+  console.log('[bandapp] loadSongs result:', songs.length, 'songs');
   myC   = await SongsDB.fetchNotes(activeBandId);
 }
 // Finds a song by UUID or legacy integer id — bridges the transition

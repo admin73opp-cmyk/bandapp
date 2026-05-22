@@ -22,10 +22,12 @@ async function loadCurrentUser(uid) {
   currentUser.lang       = profile.lang        || 'en';
 
   // Load band membership for this user to determine role in active band
-  const { data: memberships } = await supabase
+  const { data: memberships, error: memErr } = await supabase
     .from('band_members')
     .select('band_id, role')
     .eq('user_id', uid);
+
+  console.log('[bandapp] memberships query:', { memberships, memErr });
 
   currentUser._memberships = memberships || [];
 
@@ -33,6 +35,8 @@ async function loadCurrentUser(uid) {
   const saved = localStorage.getItem('activeBandId');
   const validIds = (memberships || []).map(m => m.band_id);
   activeBandId = (saved && validIds.includes(saved)) ? saved : (validIds[0] || null);
+
+  console.log('[bandapp] activeBandId set to:', activeBandId, '(saved was:', saved, ')');
 
   const activeMembership = (memberships || []).find(m => m.band_id === activeBandId);
   currentUser.role = activeMembership?.role || 'member';
