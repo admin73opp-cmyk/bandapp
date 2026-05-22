@@ -1,6 +1,7 @@
 // ── Songs data layer — SongsDB namespace ─────────────────────
 // Translates between DB column names and the UI field names used
-// throughout index.html (duration↔dur, notes↔note).
+// throughout index.html (duration↔dur, notes↔note,
+// spotify_url↔spotify, youtube_url↔youtube, apple_url↔apple).
 
 const SongsDB = {
 
@@ -11,7 +12,14 @@ const SongsDB = {
       .eq('band_id', bandId)
       .order('title');
     if (error) { handleDbError(error); return []; }
-    return (data || []).map(s => ({ ...s, dur: s.duration, note: s.notes }));
+    return (data || []).map(s => ({
+      ...s,
+      dur:     s.duration,
+      note:    s.notes,
+      spotify: s.spotify_url || '',
+      youtube: s.youtube_url || '',
+      apple:   s.apple_url   || '',
+    }));
   },
 
   // Returns {songUUID: noteText} map for the current user in a band
@@ -27,8 +35,15 @@ const SongsDB = {
 
   async upsert(song) {
     // Strip UI aliases and derived fields; map back to DB column names
-    const { dur, note, legacy_id, band_members, ...rest } = song;
-    const payload = { ...rest, duration: dur, notes: note };
+    const { dur, note, spotify, youtube, apple, legacy_id, band_members, ...rest } = song;
+    const payload = {
+      ...rest,
+      duration:    dur,
+      notes:       note,
+      spotify_url: spotify || null,
+      youtube_url: youtube || null,
+      apple_url:   apple   || null,
+    };
     if (!payload.band_id) payload.band_id = activeBandId;
 
     const { data, error } = await supabase
@@ -37,7 +52,14 @@ const SongsDB = {
       .select()
       .single();
     if (error) { handleDbError(error); return null; }
-    return { ...data, dur: data.duration, note: data.notes };
+    return {
+      ...data,
+      dur:     data.duration,
+      note:    data.notes,
+      spotify: data.spotify_url || '',
+      youtube: data.youtube_url || '',
+      apple:   data.apple_url   || '',
+    };
   },
 
   async delete(id) {

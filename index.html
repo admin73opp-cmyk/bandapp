@@ -2072,7 +2072,7 @@ function renderSL(){
       <td style="font-family:var(--mono);font-size:.72rem;color:var(--ink2);white-space:nowrap">${s.dur?fmtDur(s.dur):'—'}</td>
       <td class="lkcol">${openSongMedia(s,i)}</td>
       <td class="nc">${s.note}</td>
-      <td><button class="btn btn-xs btn-g" onclick="removeSongFromSL(${id})">✕</button></td>
+      <td><button class="btn btn-xs btn-g" onclick="removeSongFromSL('${id}')">✕</button></td>
     </tr>`;
   }).join('');
 }
