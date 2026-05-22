@@ -1,7 +1,7 @@
 // ── Auth helpers ─────────────────────────────────────────────
 
 function handleDbError(err) {
-  console.error('[bandapp]', err);
+  console.error('[bandapp] DB error:', err?.code, err?.message, err?.details, err?.hint, err);
   toast2(err.message || 'Something went wrong', 'w');
 }
 
@@ -12,9 +12,15 @@ async function loadCurrentUser(uid) {
     .eq('id', uid)
     .single();
 
-  if (error) { handleDbError(error); return; }
+  currentUser.id = uid;
 
-  currentUser.id         = uid;
+  if (error) {
+    console.error('[bandapp] profiles query failed — code:', error?.code, 'message:', error?.message);
+    handleDbError(error);
+    // Continue without profile data; memberships will also be empty
+    return;
+  }
+
   currentUser.firstName  = profile.first_name  || '';
   currentUser.lastName   = profile.last_name   || '';
   currentUser.instrument = profile.instrument  || '';
@@ -88,7 +94,10 @@ async function doDemo() {
     email:    'demo@bandapp.com',
     password: 'demo1234',
   });
-  if (error) { toast2(error.message, 'w'); }
+  if (error) {
+    console.error('[bandapp] demo login error:', error?.status, error?.message, error);
+    toast2(error.message, 'w');
+  }
 }
 
 async function doLogout() {
