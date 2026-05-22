@@ -2340,20 +2340,24 @@ function selSlMode(mode){
 async function createNewSetList(){
   const title=document.getElementById('slNewTitle').value.trim();
   if(!title){toast2('Please enter a set list title','w');return;}
+  if(!activeBandId){toast2('No active band — please select a band first','w');return;}
   const cid=document.getElementById('slNewConcert').value||null;
   const c=cid?concerts.find(x=>x.id===cid):null;
-  const newSL=await SetlistsDB.upsert({
-    band_id:activeBandId,
-    name:title,
-    date:c?(c.date||null):null,
-    type:c?'Concert':'Practice',
-    venue:c?c.venue:null,
-    duration:c?c.duration:60,
-    audience:c?c.audience:0,
-    paid:c?c.paid:false,
-    total:c?c.total:null,
-    price:c?c.price:null,
-  });
+  let newSL;
+  try{
+    newSL=await SetlistsDB.upsert({
+      band_id:activeBandId,
+      name:title,
+      date:c?(c.date||null):null,
+      type:c?'Concert':'Practice',
+      venue:c?c.venue:null,
+      duration:c?c.duration:60,
+      audience:c?c.audience:0,
+      paid:c?c.paid:false,
+      total:c?c.total:null,
+      price:c?c.price:null,
+    });
+  }catch(e){toast2(e.message||'Failed to create set list','w');console.error('[bandapp] createNewSetList error:',e);return;}
   if(!newSL)return;
   slSongs[newSL.id]=[];
   await loadSetlists();
@@ -2424,19 +2428,22 @@ async function addSong(){
   const min=parseInt(document.getElementById('nsDurMin').value)||0;
   const sec=parseInt(document.getElementById('nsDurSec').value)||0;
   const dur=min*60+sec||0;
-  const s=await SongsDB.upsert({
-    band_id:activeBandId,
-    title,
-    artist:document.getElementById('nsa').value.trim(),
-    genre:document.getElementById('nsg').value,
-    key:document.getElementById('nsk').value,
-    dur:dur||null,
-    note:document.getElementById('nsnote').value.trim(),
-    spotify:document.getElementById('nsSpotify').value.trim(),
-    youtube:document.getElementById('nsYoutube').value.trim(),
-    apple:document.getElementById('nsApple').value.trim(),
-    hidden:false,
-  });
+  let s;
+  try{
+    s=await SongsDB.upsert({
+      band_id:activeBandId,
+      title,
+      artist:document.getElementById('nsa').value.trim(),
+      genre:document.getElementById('nsg').value,
+      key:document.getElementById('nsk').value,
+      dur:dur||null,
+      note:document.getElementById('nsnote').value.trim(),
+      spotify:document.getElementById('nsSpotify').value.trim(),
+      youtube:document.getElementById('nsYoutube').value.trim(),
+      apple:document.getElementById('nsApple').value.trim(),
+      hidden:false,
+    });
+  }catch(e){toast2(e.message||'Failed to add song','w');console.error('[bandapp] addSong error:',e);return;}
   if(!s)return;
   ['nst','nsa','nsnote','nsSpotify','nsYoutube','nsApple','nsDurMin','nsDurSec'].forEach(id=>{
     const el=document.getElementById(id);if(el)el.value='';
@@ -2589,6 +2596,16 @@ function sheetEditDur(el){
   const sec=parseInt(secEl?.value)||0;
   s.dur=min*60+sec||undefined;
   updateLibCount();
+}
+
+async function saveSheetEdits(){
+  if(!songs.length){toast2('Nothing to save','w');return;}
+  toast2('Saving…');
+  const results=await Promise.all(songs.map(s=>SongsDB.upsert(s)));
+  if(results.every(Boolean)){
+    await loadSongs();renderSheet();updateLibCount();
+    toast2('Library saved ✓');
+  }
 }
 
 async function addSheetRow(){
@@ -2975,6 +2992,7 @@ function renderBest(){
 
 let pendKey=null;
 function openRehMod(d,key,isFull){
+  const yr=curMonth.getFullYear(),mo=curMonth.getMonth();
   pendKey=key;
   const dows=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
   document.getElementById('rmTt').textContent=`Rehearsal — ${dows[new Date(yr,mo,d).getDay()]}, ${MN[mo]} ${d}`;
