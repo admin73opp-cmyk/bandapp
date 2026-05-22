@@ -36,6 +36,7 @@
   input:-webkit-autofill,input:-webkit-autofill:focus{-webkit-box-shadow:0 0 0 100px var(--bg) inset;-webkit-text-fill-color:var(--ink)}
   .toast{background:var(--bd);color:var(--ink)}
   .sb.minimized .ni:hover::after{background:var(--bd);color:var(--ink)}
+  .sb-band-name{color:var(--ink)!important}
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 body{font-family:var(--font);background:var(--bg);color:var(--ink);min-height:100vh;overflow-x:hidden;-webkit-font-smoothing:antialiased}
@@ -392,7 +393,7 @@ select option{background:var(--w)}
     <div class="sb-band">
       <button class="bb" onclick="renderBandList();showMod('bswMod')">
         <div class="bav">JC</div>
-        <div class="sb-label"><div style="font-size:.81rem;font-weight:600;color:var(--ink)">The Jazz Cats</div><div style="font-size:.67rem;color:var(--ink3)">Admin</div></div>
+        <div class="sb-label"><div class="sb-band-name" style="font-size:.81rem;font-weight:600;color:var(--ink)">The Jazz Cats</div><div style="font-size:.67rem;color:var(--ink3)">Admin</div></div>
         <svg class="sb-label" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" style="width:12px;margin-left:auto;color:var(--ink3)"><path d="M4 6l4 4 4-4"/></svg>
       </button>
     </div>
