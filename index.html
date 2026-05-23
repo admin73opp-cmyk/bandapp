@@ -356,7 +356,18 @@ select option{background:var(--w)}
 .phone-cc-display svg{opacity:.5;flex-shrink:0}
 .phone-num{flex:1;min-width:0;padding:9px 13px;background:var(--bg);border:1.5px solid var(--bd);border-radius:var(--rad);color:var(--ink);font-family:var(--font);font-size:.83rem;outline:none;transition:border-color .13s}
 .phone-num:focus{border-color:var(--a)}
+/* ── Forced themes (override media query) ── */
+html[data-theme="light"]{--ink:#111118;--ink2:#5A5A72;--ink3:#9A9AB0;--bg:#F5F5F8;--bg2:#EEEEF3;--w:#FFFFFF;--bd:#E2E2EC;--a:#6C63FF;--a2:#EDEAFF;--g:#16A34A;--g2:#DCFCE7;--r:#DC2626;--r2:#FEE2E2;--amb:#D97706;--amb2:#FEF3C7;--bl:#2563EB;--bl2:#DBEAFE;--sh:0 1px 3px rgba(0,0,0,.07),0 4px 14px rgba(0,0,0,.05);--shl:0 8px 30px rgba(0,0,0,.12);color-scheme:light}
+html[data-theme="dark"]{--ink:#F0F0F8;--ink2:#9A9AB8;--ink3:#5A5A78;--bg:#111116;--bg2:#18181F;--w:#1C1C26;--bd:#2A2A38;--a:#8B84FF;--a2:#1E1A3A;--g:#22C55E;--g2:#0D2818;--r:#F87171;--r2:#2A0E0E;--amb:#FBB85A;--amb2:#2A1A00;--bl:#60A5FA;--bl2:#0D1E3A;--sh:0 1px 3px rgba(0,0,0,.3),0 4px 14px rgba(0,0,0,.25);--shl:0 8px 30px rgba(0,0,0,.5);color-scheme:dark}
+html[data-theme="dark"] ::-webkit-scrollbar-thumb{background:var(--bd)}
+html[data-theme="dark"] select option{background:var(--w);color:var(--ink)}
+html[data-theme="dark"] .sb-ov{background:rgba(0,0,0,.55)}
+html[data-theme="dark"] input:-webkit-autofill,html[data-theme="dark"] input:-webkit-autofill:focus{-webkit-box-shadow:0 0 0 100px var(--bg) inset;-webkit-text-fill-color:var(--ink)}
+html[data-theme="dark"] .toast{background:var(--bd);color:var(--ink)}
+html[data-theme="dark"] .sb.minimized .ni:hover::after{background:var(--bd);color:var(--ink)}
+html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
 </style>
+<script>(function(){const t=localStorage.getItem('appearance');if(t&&t!=='default')document.documentElement.setAttribute('data-theme',t);})();</script>
 
 <body>
 
@@ -1119,6 +1130,22 @@ select option{background:var(--w)}
               <option value="calendar">Calendar</option>
               <option value="bandprofile">Band Profile</option>
               <option value="myprofile">My Profile</option>
+            </select>
+          </div>
+          <div style="margin-top:14px">
+            <button class="btn btn-p btn-sm" onclick="saveSettings()">Save</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="ct" style="margin-bottom:4px">Appearance</div>
+          <div style="font-size:.75rem;color:var(--ink3);margin-bottom:14px">Choose your preferred color scheme.</div>
+          <div class="fg" style="max-width:280px">
+            <label>Color scheme</label>
+            <select id="settAppearance" onchange="applyTheme(this.value)">
+              <option value="default">Default (browser settings)</option>
+              <option value="light">Light</option>
+              <option value="dark">Dark</option>
             </select>
           </div>
           <div style="margin-top:14px">
@@ -4341,6 +4368,7 @@ async function initApp(){
   setCalView(calView);renderRehearsals();renderConcerts();renderMembers();
   renderGuestDir();renderBP();renderAsList();renderBandList();
   syncCurrentUserToUI();renderDashboard();
+  nav(localStorage.getItem('defaultView')||'dashboard');
 }
 </script>
 <!-- MUSICIAN PROFILE MODAL -->
@@ -4986,16 +5014,26 @@ function renderMpLinkPreview(){
   }).join('');
 }
 
+function applyTheme(mode){
+  if(!mode||mode==='default') document.documentElement.removeAttribute('data-theme');
+  else document.documentElement.setAttribute('data-theme',mode);
+}
+
 function populateSettingsPage(){
   populateLangSelect('settLang', currentUser.lang||'en');
   const dv=document.getElementById('settDefaultView');
   if(dv) dv.value=localStorage.getItem('defaultView')||'dashboard';
+  const ap=document.getElementById('settAppearance');
+  if(ap) ap.value=localStorage.getItem('appearance')||'default';
 }
 
 async function saveSettings(){
   const lang=document.getElementById('settLang').value;
   const dv=document.getElementById('settDefaultView').value;
+  const ap=document.getElementById('settAppearance')?.value||'default';
   localStorage.setItem('defaultView', dv);
+  localStorage.setItem('appearance', ap);
+  applyTheme(ap);
   const idx=currentUser.memberIdx;
   const m=members[idx];
   if(m) await MembersDB.upsertProfile(m.id,{lang});
