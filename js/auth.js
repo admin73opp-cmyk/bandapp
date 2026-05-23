@@ -17,8 +17,22 @@ async function loadCurrentUser(uid, email) {
 
   if (error) {
     console.error('[bandapp] profiles query failed — code:', error?.code, 'message:', error?.message);
-    handleDbError(error);
-    // Continue without profile data; memberships will also be empty
+    // Profile row missing (common for new users if RLS blocked the insert at signup).
+    // Fall back to auth metadata and create the row now that the user is authenticated.
+    const { data: { user: authUser } } = await supabase.auth.getUser();
+    const meta = authUser?.user_metadata || {};
+    const fn = meta.first_name || '';
+    const ln = meta.last_name || '';
+    currentUser.firstName = fn;
+    currentUser.lastName  = ln;
+    if (fn || ln) {
+      await supabase.from('profiles').upsert({
+        id:         uid,
+        first_name: fn,
+        last_name:  ln,
+        initials:   ((fn[0] || '') + (ln[0] || '')).toUpperCase(),
+      });
+    }
     return;
   }
 

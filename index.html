@@ -2134,8 +2134,8 @@ async function loadBlackouts(){
 // In production this comes from the auth/session layer.
 const currentUser = {
   memberIdx: 0,          // index into members[] — links back to band membership
-  firstName: 'Marco',
-  lastName: 'Rossi',
+  firstName: '',
+  lastName: '',
   get name(){ return `${this.firstName} ${this.lastName}`.trim(); },
   get initials(){ return (this.firstName[0]||(this.lastName[0]||'?')).toUpperCase() + (this.lastName[0]||'').toUpperCase(); },
   get instrument(){ return members[this.memberIdx]?.instrument || ''; },
@@ -2193,7 +2193,7 @@ function syncCurrentUserToUI(){
   if(greet){
     const h = new Date().getHours();
     const tod = h < 12 ? 'morning' : h < 18 ? 'afternoon' : 'evening';
-    greet.textContent = `Good ${tod}, ${u.firstName} 👋`;
+    greet.textContent = u.firstName ? `Good ${tod}, ${u.firstName} 👋` : `Good ${tod} 👋`;
   }
 }
 
