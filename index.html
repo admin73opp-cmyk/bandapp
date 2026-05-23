@@ -305,7 +305,9 @@ select option{background:var(--w)}
 .bobd{flex:1;min-width:0}.bola{font-weight:600;font-size:.82rem;margin-bottom:2px}.boda{font-family:var(--mono);font-size:.69rem;color:var(--ink2)}
 /* modal */
 .mov{position:fixed;inset:0;background:rgba(0,0,0,.28);backdrop-filter:blur(3px);display:flex;align-items:center;justify-content:center;z-index:500}
-.mod{background:var(--w);border-radius:var(--radl);padding:25px;width:min(510px,95vw);max-height:91vh;overflow-y:auto;overflow-x:hidden;box-shadow:var(--shl)}
+.mod{background:var(--w);border-radius:var(--radl);padding:25px;width:min(510px,95vw);max-height:91vh;overflow-y:auto;overflow-x:hidden;box-shadow:var(--shl);position:relative}
+.mod-x{position:absolute;top:13px;right:13px;width:26px;height:26px;border-radius:50%;border:1.5px solid var(--bd);background:var(--bg);color:var(--ink2);font-size:.75rem;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1;transition:background .13s,border-color .13s,color .13s;z-index:2;flex-shrink:0;padding:0}.mod-x:hover{background:var(--r2);border-color:var(--r);color:var(--r)}
+.mod .mott{padding-right:36px}
 .mod-sticky{display:flex;flex-direction:column;max-height:91vh;padding:0;overflow:hidden}
 .mod-sticky .mod-body{padding:25px 25px 0;overflow-y:auto;flex:1}
 .mod-sticky .mod-foot{padding:13px 25px 20px;border-top:1px solid var(--bd);display:flex;gap:7px;justify-content:flex-end;background:var(--w);flex-shrink:0}
@@ -4364,6 +4366,24 @@ async function saveProfile(){
   renderMembers();
   toast2('Profile saved!');
 }
+
+// Auto-inject close buttons into every modal that doesn't already have one
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('.mov').forEach(ov => {
+    const id = ov.id;
+    const mod = ov.querySelector('.mod');
+    if (!mod || !id) return;
+    // Skip modals that already have a dedicated close button
+    if (mod.querySelector('[title="Close"]')) return;
+    const btn = document.createElement('button');
+    btn.className = 'mod-x';
+    btn.title = 'Close';
+    btn.setAttribute('aria-label', 'Close');
+    btn.innerHTML = '&#x2715;';
+    btn.onclick = e => { e.stopPropagation(); closeMod(id); };
+    mod.prepend(btn);
+  });
+});
 </script>
 
 <!-- SONG EDIT MODAL -->
