@@ -497,29 +497,18 @@ select option{background:var(--w)}
     <!-- DASHBOARD -->
     <div class="pg-area on" id="pg-dashboard">
       <div style="margin-bottom:17px">
-        <h2 id="dshG" style="font-size:1.35rem;font-weight:700;letter-spacing:-.03em">Good evening, Marco 👋</h2>
-        <p id="dshS" style="font-size:.84rem;color:var(--ink2);margin-top:4px">2 rehearsals and 1 concert coming up this month.</p>
+        <h2 id="dshG" style="font-size:1.35rem;font-weight:700;letter-spacing:-.03em">Good evening 👋</h2>
+        <p id="dshS" style="font-size:.84rem;color:var(--ink2);margin-top:4px"></p>
       </div>
-      <div class="sg">
-        <div class="sc" onclick="nav('members')"><div class="t1">Members</div><div class="sv">5</div><div class="ss">All confirmed</div></div>
-        <div class="sc" onclick="nav('library')"><div class="t1">Songs</div><div class="sv">24</div><div class="ss">In library</div></div>
-        <div class="sc" onclick="nav('setlists')"><div class="t1">Set Lists</div><div class="sv">4</div><div class="ss">1 new this week</div></div>
-        <div class="sc" onclick="nav('concerts')"><div class="t1">Next Gig</div><div class="sv">Jun 7</div><div class="ss">Blue Note Brussels</div></div>
-      </div>
+      <div class="sg" id="dshStats"></div>
       <div class="dg">
         <div class="card">
           <div class="ch"><div class="ct">Upcoming</div><div class="cl" onclick="nav('calendar')">See calendar →</div></div>
-          <div class="er"><div class="edb"><div class="edd">Fri</div><div class="edn">23</div></div><div style="flex:1"><div class="en">Full Band Rehearsal</div><div class="em">Studio De Muziek · 19:00–22:00</div></div><span class="pill pg">Rehearsal</span></div>
-          <div class="er"><div class="edb"><div class="edd">Sat</div><div class="edn">31</div></div><div style="flex:1"><div class="en">Rhythm Section Practice</div><div class="em">Marco's Studio · 15:00–17:00</div></div><span class="pill pg">Rehearsal</span></div>
-          <div class="er"><div class="edb"><div class="edd">Sat</div><div class="edn" style="color:var(--a)">7</div></div><div style="flex:1"><div class="en">Blue Note Summer Jazz Night</div><div class="em">Blue Note Brussels · 21:00 · €25/ticket</div></div><span class="pill pp">Concert</span></div>
+          <div id="dshUpcoming"></div>
         </div>
         <div class="card">
           <div class="ch"><div class="ct">Band Members</div><div class="cl" onclick="nav('members')">Manage →</div></div>
-          <div class="mr2"><div class="mav2" style="background:#6C63FF">MR</div><div style="flex:1"><div class="mn">Marco Rossi</div><div class="mi">Guitar · Lead Vocals</div></div><div class="ad on"></div></div>
-          <div class="mr2"><div class="mav2" style="background:#2563EB">SV</div><div style="flex:1"><div class="mn">Sophie Vandenberghe</div><div class="mi">Piano · Backing Vocals</div></div><div class="ad on"></div></div>
-          <div class="mr2"><div class="mav2" style="background:#16A34A">LM</div><div style="flex:1"><div class="mn">Lucas Martens</div><div class="mi">Bass Guitar</div></div><div class="ad pt2"></div></div>
-          <div class="mr2"><div class="mav2" style="background:#DC2626">KD</div><div style="flex:1"><div class="mn">Kim De Smedt</div><div class="mi">Drums & Percussion</div></div><div class="ad on"></div></div>
-          <div class="mr2"><div class="mav2" style="background:#9333EA">AB</div><div style="flex:1"><div class="mn">Antoine Blanchard</div><div class="mi">Saxophone</div></div><div class="ad off"></div></div>
+          <div id="dshMembers"></div>
         </div>
       </div>
     </div>
@@ -1999,7 +1988,7 @@ async function switchBand(id){
   renderSLDropdown();renderSL();renderSlMeta();renderLib();updateLibCount();
   setCalView(calView);renderRehearsals();renderConcerts();renderMembers();
   renderGuestDir();renderBP();renderAsList();renderBandList();
-  syncCurrentUserToUI();refreshWaUI();
+  syncCurrentUserToUI();renderDashboard();refreshWaUI();
   nav(localStorage.getItem('defaultView')||'dashboard');
 }
 
@@ -2131,7 +2120,9 @@ const currentUser = {
 // Pushes currentUser data to every UI surface that shows the logged-in user.
 function syncCurrentUserToUI(){
   const u = currentUser;
-  // Sidebar footer
+  const band = getActiveBand();
+
+  // Sidebar footer (user)
   const uav = document.querySelector('.uav');
   if(uav){
     const photo = memberPhotos[u.memberIdx];
@@ -2149,7 +2140,26 @@ function syncCurrentUserToUI(){
   const footName = document.querySelector('.sbar-foot-text div:first-child');
   if(footName) footName.textContent = u.name;
   const footRole = document.querySelector('.sbar-foot-text div:last-child');
-  if(footRole) footRole.textContent = `${u.instrument} · ${u.role === 'admin' ? 'Admin' : 'Member'}`;
+  if(footRole){
+    const inst = u.instrument;
+    const role = u.role === 'admin' ? 'Admin' : 'Member';
+    footRole.textContent = inst ? `${inst} · ${role}` : role;
+  }
+
+  // Sidebar band button
+  const bandAv = document.querySelector('.bb .bav');
+  if(bandAv){
+    bandAv.textContent = band?.initials || '?';
+    bandAv.style.background = band?.color || 'var(--ink3)';
+  }
+  const bandNameEl = document.querySelector('.bb .sb-band-name');
+  if(bandNameEl) bandNameEl.textContent = band?.name || 'No band';
+  const bandRoleEl = document.querySelector('.bb .sb-label div:last-child');
+  if(bandRoleEl) bandRoleEl.textContent = band ? (u.role === 'admin' ? 'Admin' : 'Member') : 'Join or create';
+
+  // Page subtitle
+  const pgS = document.getElementById('pgS');
+  if(pgS) pgS.textContent = band ? `${band.name} · ${members.length} member${members.length !== 1 ? 's' : ''}` : '';
 
   // Dashboard greeting
   const greet = document.getElementById('dshG');
@@ -4249,6 +4259,74 @@ function openBandPhotoLightbox(idx){
 // INIT
 function openInvMod(){populatePhoneCc('invPhoneCc','+32');document.getElementById('invPhoneNum').value='';showMod('invMod');}
 
+function renderDashboard(){
+  const band = getActiveBand();
+  const todayStr = new Date().toISOString().split('T')[0];
+  const thisMonth = todayStr.slice(0,7);
+  const dshS = document.getElementById('dshS');
+  const dshStats = document.getElementById('dshStats');
+  const dshUpcoming = document.getElementById('dshUpcoming');
+  const dshMembers = document.getElementById('dshMembers');
+  const empty = txt => `<div style="color:var(--ink3);font-size:.82rem;padding:4px 0">${txt}</div>`;
+
+  if(!activeBandId || !band){
+    if(dshS) dshS.textContent = 'Create or join a band to get started.';
+    if(dshStats) dshStats.innerHTML = '';
+    if(dshUpcoming) dshUpcoming.innerHTML = empty('No band selected.');
+    if(dshMembers) dshMembers.innerHTML = empty('No band selected.');
+    return;
+  }
+
+  // Upcoming: merge concerts + rehearsals, sort, take first 4
+  const upEv = [
+    ...rehearsals.filter(r=>!r.cancelled&&r.date>=todayStr).map(r=>({
+      type:'rehearsal', date:r.date, title:r.title||'Rehearsal',
+      detail:[r.location,(r.startTime&&r.endTime)?`${r.startTime}–${r.endTime}`:''].filter(Boolean).join(' · ')
+    })),
+    ...concerts.filter(c=>!c.cancelled&&c.date>=todayStr).map(c=>({
+      type:'concert', date:c.date, title:c.title||'Concert',
+      detail:[c.venue,c.time].filter(Boolean).join(' · ')
+    })),
+  ].sort((a,b)=>a.date.localeCompare(b.date)).slice(0,4);
+
+  // Subtitle
+  const rCount = rehearsals.filter(r=>!r.cancelled&&r.date>=todayStr&&r.date.slice(0,7)===thisMonth).length;
+  const cCount = concerts.filter(c=>!c.cancelled&&c.date>=todayStr&&c.date.slice(0,7)===thisMonth).length;
+  if(dshS){
+    const parts=[];
+    if(rCount) parts.push(`${rCount} rehearsal${rCount>1?'s':''}`);
+    if(cCount) parts.push(`${cCount} concert${cCount>1?'s':''}`);
+    dshS.textContent = parts.length ? `${parts.join(' and ')} coming up this month.` : 'Nothing scheduled this month yet.';
+  }
+
+  // Stat cards
+  const nextGig = concerts.filter(c=>!c.cancelled&&c.date>=todayStr).sort((a,b)=>a.date.localeCompare(b.date))[0];
+  if(dshStats) dshStats.innerHTML =
+    `<div class="sc" onclick="nav('members')"><div class="t1">Members</div><div class="sv">${members.length}</div><div class="ss">${members.length===1?'1 member':'Active band'}</div></div>`+
+    `<div class="sc" onclick="nav('library')"><div class="t1">Songs</div><div class="sv">${songs.length}</div><div class="ss">In library</div></div>`+
+    `<div class="sc" onclick="nav('setlists')"><div class="t1">Set Lists</div><div class="sv">${setlists.length}</div><div class="ss">${setlists.length?'Ready to play':'None yet'}</div></div>`+
+    `<div class="sc" onclick="nav('concerts')"><div class="t1">Next Gig</div><div class="sv">${nextGig?new Date(nextGig.date+'T00:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric'}):'—'}</div><div class="ss">${nextGig?.venue||'None scheduled'}</div></div>`;
+
+  // Upcoming events list
+  if(dshUpcoming){
+    dshUpcoming.innerHTML = upEv.length ? upEv.map(ev=>{
+      const d=new Date(ev.date+'T00:00:00');
+      const pill=ev.type==='concert'?'<span class="pill pp">Concert</span>':'<span class="pill pg">Rehearsal</span>';
+      return`<div class="er"><div class="edb"><div class="edd">${d.toLocaleDateString('en-GB',{weekday:'short'})}</div><div class="edn">${d.getDate()}</div></div><div style="flex:1"><div class="en">${ev.title}</div><div class="em">${ev.detail}</div></div>${pill}</div>`;
+    }).join('') : empty('No upcoming events.');
+  }
+
+  // Band members list
+  if(dshMembers){
+    const active = activeMembers();
+    dshMembers.innerHTML = active.length ? active.slice(0,6).map(m=>{
+      const avToday=(m.avail||[])[new Date().getDay()]?'on':'off';
+      const instLine=[m.instrument,m.vocals&&m.vocals!=='None'?m.vocals:''].filter(Boolean).join(' · ');
+      return`<div class="mr2"><div class="mav2" style="background:${m.color}">${m.init}</div><div style="flex:1"><div class="mn">${m.name}</div><div class="mi">${instLine}</div></div><div class="ad ${avToday}"></div></div>`;
+    }).join('') : empty('No members yet. Invite someone to join!');
+  }
+}
+
 async function initApp(){
   populateCountrySelects();
   populateInstrumentSelects();
@@ -4262,7 +4340,7 @@ async function initApp(){
   renderSLDropdown();renderSL();renderSlMeta();renderLib();updateLibCount();
   setCalView(calView);renderRehearsals();renderConcerts();renderMembers();
   renderGuestDir();renderBP();renderAsList();renderBandList();
-  syncCurrentUserToUI();
+  syncCurrentUserToUI();renderDashboard();
 }
 </script>
 <!-- MUSICIAN PROFILE MODAL -->
