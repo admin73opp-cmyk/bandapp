@@ -1086,6 +1086,23 @@ select option{background:var(--w)}
       <div style="display:flex;flex-direction:column;gap:16px;max-width:620px">
 
         <div class="card">
+          <div class="ct" style="margin-bottom:4px">Default View</div>
+          <div style="font-size:.75rem;color:var(--ink3);margin-bottom:14px">The page shown when you open the app.</div>
+          <div class="fg" style="max-width:280px">
+            <label>On startup, go to</label>
+            <select id="settDefaultView">
+              <option value="dashboard">Dashboard</option>
+              <option value="calendar">Calendar</option>
+              <option value="bandprofile">Band Profile</option>
+              <option value="myprofile">My Profile</option>
+            </select>
+          </div>
+          <div style="margin-top:14px">
+            <button class="btn btn-p btn-sm" onclick="saveSettings()">Save</button>
+          </div>
+        </div>
+
+        <div class="card">
           <div class="ct" style="margin-bottom:4px">App Language</div>
           <div style="font-size:.75rem;color:var(--ink3);margin-bottom:14px">Controls date formats, day names, and interface labels.</div>
           <div class="fg" style="max-width:280px"><label>Language</label><select id="settLang"></select></div>
@@ -1932,7 +1949,7 @@ async function switchBand(id){
   setCalView(calView);renderRehearsals();renderConcerts();renderMembers();
   renderGuestDir();renderBP();renderAsList();renderBandList();
   syncCurrentUserToUI();refreshWaUI();
-  nav('dashboard');
+  nav(localStorage.getItem('defaultView')||'dashboard');
 }
 
 function renderBandList(){
@@ -4830,10 +4847,14 @@ function renderMpLinkPreview(){
 
 function populateSettingsPage(){
   populateLangSelect('settLang', currentUser.lang||'en');
+  const dv=document.getElementById('settDefaultView');
+  if(dv) dv.value=localStorage.getItem('defaultView')||'dashboard';
 }
 
 async function saveSettings(){
   const lang=document.getElementById('settLang').value;
+  const dv=document.getElementById('settDefaultView').value;
+  localStorage.setItem('defaultView', dv);
   const idx=currentUser.memberIdx;
   const m=members[idx];
   if(m) await MembersDB.upsertProfile(m.id,{lang});
