@@ -292,6 +292,8 @@ select option{background:var(--w)}
 .bpname{font-size:1.35rem;font-weight:700;letter-spacing:-.04em;margin-bottom:4px}
 .bpbio{font-size:.79rem;color:var(--ink2);line-height:1.6;margin-bottom:10px}
 .bpplat{display:flex;gap:5px;flex-wrap:wrap}
+.mp-lbl{font-size:.69rem;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.04em;margin-bottom:3px}
+.mp-val{font-size:.84rem;color:var(--ink)}
 .platl{display:flex;align-items:center;gap:4px;padding:5px 10px;border-radius:99px;border:1.5px solid var(--bd);background:transparent;font-size:.72rem;font-weight:500;color:var(--ink2);cursor:pointer;transition:all .11s;text-decoration:none;font-family:var(--font)}
 .platl:hover{border-color:var(--a);color:var(--a);background:var(--a2)}
 .settg{display:grid;grid-template-columns:1fr 1fr;gap:12px}
@@ -920,7 +922,7 @@ select option{background:var(--w)}
     </div>
 
     <div class="pg-area" id="pg-myprofile">
-      <!-- Hero: Cover + Avatar -->
+      <!-- Hero: Cover + Avatar (always editable via file inputs) -->
       <div style="margin:-22px -22px 0;position:relative">
         <div id="mpCover" onclick="document.getElementById('mpCoverInput').click()" style="height:160px;background:linear-gradient(135deg,#6C63FF 0%,#4ECCA3 100%);position:relative;overflow:hidden;cursor:pointer" title="Change cover photo">
           <input type="file" id="mpCoverInput" accept="image/*" style="display:none" onchange="handleMpCover(event)">
@@ -941,69 +943,140 @@ select option{background:var(--w)}
             <div id="mpNameDisplay" style="font-size:1.2rem;font-weight:700;letter-spacing:-.02em"></div>
             <div id="mpRoleDisplay" style="font-size:.78rem;color:var(--ink2);margin-top:3px"></div>
           </div>
-          <button class="btn btn-p btn-sm" onclick="saveMpProfile()" style="margin-bottom:6px;align-self:flex-end">Save Changes</button>
         </div>
       </div>
 
       <div style="display:flex;flex-direction:column;gap:16px;margin-top:8px">
 
-        <div class="card">
-          <div class="ct" style="margin-bottom:14px">Personal Info</div>
-          <div class="fr">
-            <div class="fg"><label>First Name</label><input id="mpFirst" placeholder="Marco"></div>
-            <div class="fg"><label>Last Name</label><input id="mpLast" placeholder="Rossi"></div>
-          </div>
-          <div class="fr">
-            <div class="fg"><label>Birthday</label><input type="date" id="mpBday"></div>
-            <div class="fg">
-              <label>Nationality <span id="mpNatFlagPreview" style="font-size:1.1rem"></span></label>
-              <select id="mpNat" onchange="renderMpNatFlag()"><option value="">— Select nationality —</option></select>
+        <!-- PERSONAL INFO -->
+        <div class="card" id="mp-card-personal">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+            <div class="ct">Personal Info</div>
+            <div style="display:flex;gap:6px">
+              <button class="btn btn-g btn-sm" id="mp-btn-edit-personal" onclick="mpEdit('personal')">Edit</button>
+              <button class="btn btn-p btn-sm" id="mp-btn-save-personal" style="display:none" onclick="mpSave('personal')">Save</button>
+              <button class="btn btn-g btn-sm" id="mp-btn-cancel-personal" style="display:none" onclick="mpCancel('personal')">Cancel</button>
             </div>
           </div>
-          <div class="fr">
-            <div class="fg"><label>Email</label><input type="email" id="mpEmail" placeholder="marco@example.com"></div>
-            <div class="fg"><label>Country of Residence</label><select id="mpCountry"><option value="">— Select country —</option></select></div>
+          <!-- Read view -->
+          <div id="mpv-personal">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px 24px">
+              <div><div class="mp-lbl">First Name</div><div id="mpv-first" class="mp-val">—</div></div>
+              <div><div class="mp-lbl">Last Name</div><div id="mpv-last" class="mp-val">—</div></div>
+              <div><div class="mp-lbl">Birthday</div><div id="mpv-bday" class="mp-val">—</div></div>
+              <div><div class="mp-lbl">Nationality</div><div id="mpv-nat" class="mp-val">—</div></div>
+              <div><div class="mp-lbl">Email</div><div id="mpv-email" class="mp-val">—</div></div>
+              <div><div class="mp-lbl">Country of Residence</div><div id="mpv-country" class="mp-val">—</div></div>
+              <div><div class="mp-lbl">Phone</div><div id="mpv-phone" class="mp-val">—</div></div>
+            </div>
+            <div id="mpv-bio" style="margin-top:12px;font-size:.84rem;color:var(--ink2);line-height:1.55;display:none"></div>
           </div>
-          <div class="fg">
-            <label>WhatsApp / Phone</label>
-            <div class="phone-row">
-              <div class="phone-cc-wrap">
-                <div class="phone-cc-display" id="mpPhoneCcDisplay">+32 <svg width="10" height="10" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6l4 4 4-4"/></svg></div>
-                <select id="mpPhoneCc" onchange="updatePhoneCcDisplay('mpPhoneCc','mpPhoneCcDisplay')"></select>
+          <!-- Edit view -->
+          <div id="mpe-personal" style="display:none">
+            <div class="fr">
+              <div class="fg"><label>First Name</label><input id="mpFirst" placeholder="Marco"></div>
+              <div class="fg"><label>Last Name</label><input id="mpLast" placeholder="Rossi"></div>
+            </div>
+            <div class="fr">
+              <div class="fg"><label>Birthday</label><input type="date" id="mpBday"></div>
+              <div class="fg">
+                <label>Nationality <span id="mpNatFlagPreview" style="font-size:1.1rem"></span></label>
+                <select id="mpNat" onchange="renderMpNatFlag()"><option value="">— Select nationality —</option></select>
               </div>
-              <input class="phone-num" type="tel" id="mpPhoneNum" placeholder="479 123 456">
+            </div>
+            <div class="fr">
+              <div class="fg"><label>Email</label><input type="email" id="mpEmail" placeholder="marco@example.com"></div>
+              <div class="fg"><label>Country of Residence</label><select id="mpCountry"><option value="">— Select country —</option></select></div>
+            </div>
+            <div class="fg">
+              <label>WhatsApp / Phone</label>
+              <div class="phone-row">
+                <div class="phone-cc-wrap">
+                  <div class="phone-cc-display" id="mpPhoneCcDisplay">+32 <svg width="10" height="10" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6l4 4 4-4"/></svg></div>
+                  <select id="mpPhoneCc" onchange="updatePhoneCcDisplay('mpPhoneCc','mpPhoneCcDisplay')"></select>
+                </div>
+                <input class="phone-num" type="tel" id="mpPhoneNum" placeholder="479 123 456">
+              </div>
+            </div>
+            <div class="fg"><label>Bio</label><textarea id="mpBio" style="min-height:70px" placeholder="A few words about yourself…"></textarea></div>
+          </div>
+        </div>
+
+        <!-- MUSIC -->
+        <div class="card" id="mp-card-music">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+            <div class="ct">Music</div>
+            <div style="display:flex;gap:6px">
+              <button class="btn btn-g btn-sm" id="mp-btn-edit-music" onclick="mpEdit('music')">Edit</button>
+              <button class="btn btn-p btn-sm" id="mp-btn-save-music" style="display:none" onclick="mpSave('music')">Save</button>
+              <button class="btn btn-g btn-sm" id="mp-btn-cancel-music" style="display:none" onclick="mpCancel('music')">Cancel</button>
             </div>
           </div>
-          <div class="fg"><label>Bio</label><textarea id="mpBio" style="min-height:70px" placeholder="A few words about yourself…"></textarea></div>
-        </div>
-
-        <div class="card">
-          <div class="ct" style="margin-bottom:14px">Music</div>
-          <div class="fr">
-            <div class="fg"><label>Main Instrument</label><select id="mpInst1" onchange="renderMpInstPreview()"><option value="">— Select —</option></select></div>
-            <div class="fg"><label>Secondary <span style="font-weight:400;color:var(--ink3)">(optional)</span></label><select id="mpInst2" onchange="renderMpInstPreview()"><option value="">None</option></select></div>
+          <!-- Read view -->
+          <div id="mpv-music">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px 24px">
+              <div><div class="mp-lbl">Instrument(s)</div><div id="mpv-inst" style="display:flex;gap:6px;flex-wrap:wrap;margin-top:4px"></div></div>
+              <div><div class="mp-lbl">Vocals</div><div id="mpv-vocals" class="mp-val" style="margin-top:4px">—</div></div>
+            </div>
+            <div id="mpv-gear-wrap" style="margin-top:12px;display:none">
+              <div class="mp-lbl">Equipment &amp; Gear</div>
+              <div id="mpv-gear" style="font-size:.84rem;color:var(--ink2);margin-top:3px;line-height:1.5"></div>
+            </div>
           </div>
-          <div id="mpInstPreview" style="display:none;margin-bottom:10px"><div style="font-size:.72rem;color:var(--ink3);margin-bottom:5px">Preview</div><div id="mpInstPills" style="display:flex;gap:6px;flex-wrap:wrap"></div></div>
-          <div class="fg"><label>Vocals</label><select id="mpVocals"><option>No vocals</option><option>Lead vocals</option><option>Backing vocals</option><option>Lead &amp; backing</option></select></div>
-          <div class="fg"><label>Equipment &amp; Gear <span style="font-weight:400;color:var(--ink3)">(optional)</span></label><textarea id="mpGear" style="min-height:60px" placeholder="e.g. Fender Stratocaster, Boss pedalboard…"></textarea></div>
+          <!-- Edit view -->
+          <div id="mpe-music" style="display:none">
+            <div class="fr">
+              <div class="fg"><label>Main Instrument</label><select id="mpInst1" onchange="renderMpInstPreview()"><option value="">— Select —</option></select></div>
+              <div class="fg"><label>Secondary <span style="font-weight:400;color:var(--ink3)">(optional)</span></label><select id="mpInst2" onchange="renderMpInstPreview()"><option value="">None</option></select></div>
+            </div>
+            <div id="mpInstPreview" style="display:none;margin-bottom:10px"><div style="font-size:.72rem;color:var(--ink3);margin-bottom:5px">Preview</div><div id="mpInstPills" style="display:flex;gap:6px;flex-wrap:wrap"></div></div>
+            <div class="fg"><label>Vocals</label><select id="mpVocals"><option>No vocals</option><option>Lead vocals</option><option>Backing vocals</option><option>Lead &amp; backing</option></select></div>
+            <div class="fg"><label>Equipment &amp; Gear <span style="font-weight:400;color:var(--ink3)">(optional)</span></label><textarea id="mpGear" style="min-height:60px" placeholder="e.g. Fender Stratocaster, Boss pedalboard…"></textarea></div>
+          </div>
         </div>
 
-        <div class="card">
-          <div class="ct" style="margin-bottom:6px">Weekly Availability</div>
+        <!-- AVAILABILITY -->
+        <div class="card" id="mp-card-avail">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+            <div class="ct">Weekly Availability</div>
+            <div style="display:flex;gap:6px">
+              <button class="btn btn-g btn-sm" id="mp-btn-edit-avail" onclick="mpEdit('avail')">Edit</button>
+              <button class="btn btn-p btn-sm" id="mp-btn-save-avail" style="display:none" onclick="mpSave('avail')">Save</button>
+              <button class="btn btn-g btn-sm" id="mp-btn-cancel-avail" style="display:none" onclick="mpCancel('avail')">Cancel</button>
+            </div>
+          </div>
           <div style="font-size:.74rem;color:var(--ink3);margin-bottom:12px">Which days are you generally available? Used for rehearsal planning.</div>
-          <div id="mpAvailDays" style="display:flex;gap:6px;flex-wrap:wrap"></div>
-          <div style="font-size:.72rem;color:var(--ink3);margin-top:10px">Individual days can still be blocked separately on the calendar.</div>
+          <!-- Read view -->
+          <div id="mpv-avail" style="display:flex;gap:6px;flex-wrap:wrap"></div>
+          <!-- Edit view -->
+          <div id="mpe-avail" style="display:none;margin-top:4px">
+            <div id="mpAvailDays" style="display:flex;gap:6px;flex-wrap:wrap"></div>
+            <div style="font-size:.72rem;color:var(--ink3);margin-top:10px">Individual days can still be blocked separately on the calendar.</div>
+          </div>
         </div>
 
-        <div class="card">
-          <div class="ct" style="margin-bottom:14px">Links &amp; Social <span style="font-weight:400;font-size:.78rem;color:var(--ink3)">(all optional)</span></div>
-          <div class="fg"><label>Spotify</label><input id="mpSpotify" placeholder="https://open.spotify.com/artist/…" oninput="renderMpLinkPreview()"></div>
-          <div class="fg"><label>Apple Music</label><input id="mpApple" placeholder="https://music.apple.com/…" oninput="renderMpLinkPreview()"></div>
-          <div class="fg"><label>YouTube</label><input id="mpYoutube" placeholder="https://youtube.com/@…" oninput="renderMpLinkPreview()"></div>
-          <div class="fg"><label>Instagram</label><input id="mpInstagram" placeholder="https://instagram.com/…" oninput="renderMpLinkPreview()"></div>
-          <div class="fg"><label>Facebook</label><input id="mpFacebook" placeholder="https://facebook.com/…" oninput="renderMpLinkPreview()"></div>
-          <div class="fg"><label>Website</label><input id="mpWebsite" placeholder="https://yoursite.com" oninput="renderMpLinkPreview()"></div>
-          <div id="mpLinkPreview" style="display:none;margin-top:4px"><div style="font-size:.72rem;color:var(--ink3);margin-bottom:7px">Preview</div><div id="mpLinkPills" class="bpplat"></div></div>
+        <!-- LINKS & SOCIAL -->
+        <div class="card" id="mp-card-links">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+            <div class="ct">Links &amp; Social</div>
+            <div style="display:flex;gap:6px">
+              <button class="btn btn-g btn-sm" id="mp-btn-edit-links" onclick="mpEdit('links')">Edit</button>
+              <button class="btn btn-p btn-sm" id="mp-btn-save-links" style="display:none" onclick="mpSave('links')">Save</button>
+              <button class="btn btn-g btn-sm" id="mp-btn-cancel-links" style="display:none" onclick="mpCancel('links')">Cancel</button>
+            </div>
+          </div>
+          <!-- Read view -->
+          <div id="mpv-links"></div>
+          <!-- Edit view -->
+          <div id="mpe-links" style="display:none">
+            <div class="fg"><label>Spotify</label><input id="mpSpotify" placeholder="https://open.spotify.com/artist/…" oninput="renderMpLinkPreview()"></div>
+            <div class="fg"><label>Apple Music</label><input id="mpApple" placeholder="https://music.apple.com/…" oninput="renderMpLinkPreview()"></div>
+            <div class="fg"><label>YouTube</label><input id="mpYoutube" placeholder="https://youtube.com/@…" oninput="renderMpLinkPreview()"></div>
+            <div class="fg"><label>Instagram</label><input id="mpInstagram" placeholder="https://instagram.com/…" oninput="renderMpLinkPreview()"></div>
+            <div class="fg"><label>Facebook</label><input id="mpFacebook" placeholder="https://facebook.com/…" oninput="renderMpLinkPreview()"></div>
+            <div class="fg"><label>Website</label><input id="mpWebsite" placeholder="https://yoursite.com" oninput="renderMpLinkPreview()"></div>
+            <div id="mpLinkPreview" style="display:none;margin-top:4px"><div style="font-size:.72rem;color:var(--ink3);margin-bottom:7px">Preview</div><div id="mpLinkPills" class="bpplat"></div></div>
+          </div>
         </div>
 
       </div>
@@ -4555,48 +4628,129 @@ async function populateMpPage(){
   document.getElementById('mpInstagram').value=ex.instagram||m.instagram||'';
   document.getElementById('mpFacebook').value=ex.facebook||m.facebook||'';
   document.getElementById('mpWebsite').value=ex.website||m.website||'';
-  renderMpLinkPreview();
 
+  // Render all read views and ensure all sections start in read mode
+  renderMpReadViews();
+  ['personal','music','avail','links'].forEach(sec=>mpCancel(sec));
 }
 
-async function saveMpProfile(){
+// ── My Profile: read/edit toggle ─────────────────────────────
+function mpEdit(sec){
+  document.getElementById('mpv-'+sec).style.display='none';
+  document.getElementById('mpe-'+sec).style.display='';
+  document.getElementById('mp-btn-edit-'+sec).style.display='none';
+  document.getElementById('mp-btn-save-'+sec).style.display='';
+  document.getElementById('mp-btn-cancel-'+sec).style.display='';
+}
+function mpCancel(sec){
+  document.getElementById('mpv-'+sec).style.display='';
+  document.getElementById('mpe-'+sec).style.display='none';
+  document.getElementById('mp-btn-edit-'+sec).style.display='';
+  document.getElementById('mp-btn-save-'+sec).style.display='none';
+  document.getElementById('mp-btn-cancel-'+sec).style.display='none';
+}
+async function mpSave(sec){
   const idx=currentUser.memberIdx;
   const m=members[idx];
   if(!m){toast2('Profile not loaded','w');return;}
-  const fn=document.getElementById('mpFirst').value.trim();
-  const ln=document.getElementById('mpLast').value.trim();
-  const vback={'No vocals':'None','Lead vocals':'Lead','Backing vocals':'Backing','Lead & backing':'Both'};
-  const chips=document.querySelectorAll('#mpAvailDays .dtog');
-  const avail=[...chips].map(c=>c.classList.contains('on')?1:0);
-  const dialCode=document.getElementById('mpPhoneCc')?.value||'';
-  const phoneNum=document.getElementById('mpPhoneNum')?.value.trim()||'';
-  await MembersDB.upsertProfile(m.id,{
-    first_name:fn,last_name:ln,
-    initials:((fn[0]||'')+(ln[0]||'')).toUpperCase(),
-    instrument:document.getElementById('mpInst1').value,
-    instrument2:document.getElementById('mpInst2').value,
-    vocals:vback[document.getElementById('mpVocals').value]||'None',
-    availability:avail,
-    bday:document.getElementById('mpBday').value||null,
-    nationality:document.getElementById('mpNat').value,
-    country:document.getElementById('mpCountry').value,
-    bio:document.getElementById('mpBio').value,
-    gear:document.getElementById('mpGear').value,
-    phone_dial:dialCode,phone_number:phoneNum,
-    spotify_url:document.getElementById('mpSpotify').value,
-    apple_url:document.getElementById('mpApple').value,
-    youtube_url:document.getElementById('mpYoutube').value,
-    instagram_url:document.getElementById('mpInstagram').value,
-    facebook_url:document.getElementById('mpFacebook').value,
-    website_url:document.getElementById('mpWebsite').value,
-  });
-  currentUser.firstName=fn||currentUser.firstName;
-  currentUser.lastName=ln||currentUser.lastName;
+  if(sec==='personal'){
+    const fn=document.getElementById('mpFirst').value.trim();
+    const ln=document.getElementById('mpLast').value.trim();
+    const dialCode=document.getElementById('mpPhoneCc')?.value||'';
+    const phoneNum=document.getElementById('mpPhoneNum')?.value.trim()||'';
+    await MembersDB.upsertProfile(m.id,{
+      first_name:fn,last_name:ln,
+      initials:((fn[0]||'')+(ln[0]||'')).toUpperCase(),
+      bday:document.getElementById('mpBday').value||null,
+      nationality:document.getElementById('mpNat').value,
+      country:document.getElementById('mpCountry').value,
+      bio:document.getElementById('mpBio').value,
+      phone_dial:dialCode,phone_number:phoneNum,
+    });
+    currentUser.firstName=fn||currentUser.firstName;
+    currentUser.lastName=ln||currentUser.lastName;
+  } else if(sec==='music'){
+    const vback={'No vocals':'None','Lead vocals':'Lead','Backing vocals':'Backing','Lead & backing':'Both'};
+    await MembersDB.upsertProfile(m.id,{
+      instrument:document.getElementById('mpInst1').value,
+      instrument2:document.getElementById('mpInst2').value,
+      vocals:vback[document.getElementById('mpVocals').value]||'None',
+      gear:document.getElementById('mpGear').value,
+    });
+  } else if(sec==='avail'){
+    const chips=document.querySelectorAll('#mpAvailDays .dtog');
+    const avail=[...chips].map(c=>c.classList.contains('on')?1:0);
+    await MembersDB.upsertProfile(m.id,{availability:avail});
+  } else if(sec==='links'){
+    await MembersDB.upsertProfile(m.id,{
+      spotify_url:document.getElementById('mpSpotify').value,
+      apple_url:document.getElementById('mpApple').value,
+      youtube_url:document.getElementById('mpYoutube').value,
+      instagram_url:document.getElementById('mpInstagram').value,
+      facebook_url:document.getElementById('mpFacebook').value,
+      website_url:document.getElementById('mpWebsite').value,
+    });
+  }
   await loadMembers();
-  const nd=document.getElementById('mpNameDisplay');
-  if(nd)nd.textContent=`${fn} ${ln}`.trim();
+  renderMpReadViews();
+  mpCancel(sec);
+  document.getElementById('mpNameDisplay').textContent=`${currentUser.firstName} ${currentUser.lastName}`.trim();
   syncCurrentUserToUI();
-  toast2('Profile saved!');
+  toast2('Saved!');
+}
+
+function renderMpReadViews(){
+  const idx=currentUser.memberIdx;
+  const m=members[idx];
+  const ex=extraData[idx]||{};
+  if(!m)return;
+
+  // Personal
+  document.getElementById('mpv-first').textContent=m.firstName||'—';
+  document.getElementById('mpv-last').textContent=m.lastName||'—';
+  const bday=ex.bday||m.bday||'';
+  document.getElementById('mpv-bday').textContent=bday
+    ?new Date(bday+'T12:00').toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}):'—';
+  const natOpt=document.querySelector(`#mpNat option[value="${ex.nat||m.nat||''}"]`);
+  document.getElementById('mpv-nat').textContent=natOpt&&natOpt.value?natOpt.textContent:(ex.nat||m.nat||'—');
+  document.getElementById('mpv-email').textContent=ex.email||'—';
+  const ctryOpt=document.querySelector(`#mpCountry option[value="${ex.country||m.country||''}"]`);
+  document.getElementById('mpv-country').textContent=ctryOpt&&ctryOpt.value?ctryOpt.textContent:(ex.country||m.country||'—');
+  const phone=ex.phone||[m.phoneDial,m.phoneNum].filter(Boolean).join(' ')||'';
+  document.getElementById('mpv-phone').textContent=phone||'—';
+  const bio=ex.bio||m.bio||'';
+  const bioEl=document.getElementById('mpv-bio');
+  bioEl.textContent=bio; bioEl.style.display=bio?'':'none';
+
+  // Music
+  const inst1=m.instrument||''; const inst2=m.inst2||'';
+  const instEl=document.getElementById('mpv-inst');
+  instEl.innerHTML=[inst1,inst2].filter(Boolean)
+    .map(i=>`<span class="pill pgray" style="font-size:.75rem">${i}</span>`).join('')||'<span style="color:var(--ink3);font-size:.84rem">—</span>';
+  const vmap={'Lead':'Lead vocals','Backing':'Backing vocals','None':'No vocals','Both':'Lead & backing'};
+  document.getElementById('mpv-vocals').textContent=vmap[m.vocals]||m.vocals||'—';
+  const gear=ex.gear||m.gear||'';
+  const gearWrap=document.getElementById('mpv-gear-wrap');
+  document.getElementById('mpv-gear').textContent=gear; gearWrap.style.display=gear?'':'none';
+
+  // Availability
+  const dayNames=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+  document.getElementById('mpv-avail').innerHTML=dayNames.map((d,i)=>{
+    const on=(m.avail||[])[i];
+    return`<div style="width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.71rem;font-weight:600;background:${on?'var(--a)':'var(--bg)'};color:${on?'#fff':'var(--ink3)'};border:1.5px solid ${on?'var(--a)':'var(--bd)'}">${d}</div>`;
+  }).join('');
+
+  // Links
+  const linksEl=document.getElementById('mpv-links');
+  const active=MP_PLATFORMS.filter(p=>document.getElementById(p.id)?.value.trim());
+  if(active.length){
+    linksEl.innerHTML=`<div class="bpplat">`+active.map(p=>{
+      const url=document.getElementById(p.id).value.trim();
+      return`<a class="platl" data-url="${url}" onclick="openMediaUrl(this)">${p.icon} ${p.label}</a>`;
+    }).join('')+`</div>`;
+  } else {
+    linksEl.innerHTML=`<span style="color:var(--ink3);font-size:.84rem">No links added yet</span>`;
+  }
 }
 
 function handleMpCover(event){
