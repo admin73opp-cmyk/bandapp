@@ -459,7 +459,7 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
       <div class="ns">
         <div class="nsl">Music</div>
         <div class="ni" onclick="nav('setlists')" data-label="Set Lists"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 4h12M2 8h8M2 12h10"/></svg><span class="sb-label">Set Lists</span></div>
-        <div class="ni" onclick="nav('library')" data-label="Song Library"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="5" cy="12" r="2"/><circle cx="13" cy="11" r="2"/><path d="M7 12V4l8-2v8"/></svg><span class="sb-label">Song Library</span><span class="nb" style="background:var(--bl)">24</span></div>
+        <div class="ni" onclick="nav('library')" data-label="Song Library"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="5" cy="12" r="2"/><circle cx="13" cy="11" r="2"/><path d="M7 12V4l8-2v8"/></svg><span class="sb-label">Song Library</span><span class="nb" id="sbLibCount" style="background:var(--bl)">0</span></div>
       </div>
       <div class="ns">
         <div class="nsl">Band</div>
@@ -527,10 +527,25 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
     <!-- SET LISTS -->
     <div class="pg-area" id="pg-setlists">
       <div style="display:flex;gap:9px;align-items:center;margin-bottom:15px;flex-wrap:wrap">
-        <div style="flex:1"><div style="font-size:1.12rem;font-weight:700;letter-spacing:-.03em">Set Lists</div><div style="font-size:.74rem;color:var(--ink2);margin-top:2px">4 lists · 24 songs in library</div></div>
+        <div style="flex:1"><div style="font-size:1.12rem;font-weight:700;letter-spacing:-.03em">Set Lists</div><div id="slSubtitle" style="font-size:.74rem;color:var(--ink2);margin-top:2px"></div></div>
         <button class="btn btn-g btn-sm" onclick="openAsMod()">+ Songs</button>
         <button class="btn btn-p btn-sm" onclick="openSlMod()">+ Set List</button>
       </div>
+      <!-- Empty states -->
+      <div id="slEmptyNoSongs" style="display:none;text-align:center;padding:50px 20px">
+        <div style="font-size:2rem;margin-bottom:10px">🎵</div>
+        <div style="font-weight:700;font-size:1rem;margin-bottom:8px">No songs in library yet</div>
+        <p style="font-size:.84rem;color:var(--ink2);margin-bottom:18px">Add songs to the library first, then you can build set lists.</p>
+        <button class="btn btn-p btn-sm" onclick="nav('library')">Go to Song Library →</button>
+      </div>
+      <div id="slEmptyNoLists" style="display:none;text-align:center;padding:50px 20px">
+        <div style="font-size:2rem;margin-bottom:10px">📋</div>
+        <div style="font-weight:700;font-size:1rem;margin-bottom:8px">No set lists yet</div>
+        <p style="font-size:.84rem;color:var(--ink2);margin-bottom:18px">You have songs in the library — create your first set list!</p>
+        <button class="btn btn-p btn-sm" onclick="openSlMod()">+ Create Set List</button>
+      </div>
+      <!-- Set list content (hidden when empty) -->
+      <div id="slContent">
       <!-- Setlist dropdown selector -->
       <div style="display:flex;gap:9px;align-items:center;margin-bottom:14px;flex-wrap:wrap">
         <div style="flex:1;position:relative">
@@ -577,6 +592,7 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
           <span style="font-size:.69rem;color:var(--ink3)">Drag ⠿ to reorder</span>
         </div>
       </div>
+      </div> <!-- /slContent -->
     </div>
 
     <!-- LIBRARY -->
@@ -800,6 +816,17 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
     <!-- BAND PROFILE -->
     <div class="pg-area" id="pg-bandprofile">
 
+      <!-- Empty state: no band yet -->
+      <div id="bpEmpty" style="display:none;text-align:center;padding:60px 20px">
+        <div style="font-size:2.5rem;margin-bottom:12px">🎸</div>
+        <div style="font-size:1.1rem;font-weight:700;margin-bottom:8px">No Band Yet</div>
+        <p style="font-size:.84rem;color:var(--ink2);margin-bottom:20px">You're not part of any band. Create one to get started.</p>
+        <button class="btn btn-p btn-sm" onclick="showMod('nbMod')">+ Create a Band</button>
+      </div>
+
+      <!-- Band content (hidden when no band) -->
+      <div id="bpContent">
+
       <!-- ── HERO HEADER ── -->
       <div style="background:var(--w);border:1px solid var(--bd);border-radius:var(--radl);overflow:hidden;box-shadow:var(--sh);margin-bottom:16px">
 
@@ -954,6 +981,7 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
         </div>
 
       </div>
+    </div> <!-- /bpContent -->
     </div>
 
     <div class="pg-area" id="pg-myprofile">
@@ -2481,6 +2509,17 @@ function tEnd(e){
 
 // Dropdown setlist selector
 function renderSLDropdown(){
+  // Update subtitle
+  const sub=document.getElementById('slSubtitle');
+  if(sub) sub.textContent=setlists.length?`${setlists.length} list${setlists.length!==1?'s':''} · ${songs.length} song${songs.length!==1?'s':''} in library`:'';
+  // Toggle empty states vs content
+  const noSongs=document.getElementById('slEmptyNoSongs');
+  const noLists=document.getElementById('slEmptyNoLists');
+  const slContent=document.getElementById('slContent');
+  const showEmpty=!songs.length||!setlists.length;
+  if(noSongs) noSongs.style.display=(!songs.length)?'block':'none';
+  if(noLists) noLists.style.display=(songs.length&&!setlists.length)?'block':'none';
+  if(slContent) slContent.style.display=showEmpty?'none':'';
   const dd=document.getElementById('slDropdown');if(!dd)return;
   dd.innerHTML=setlists.map(sl=>`<option value="${sl.id}"${sl.id===activeSetlistId?' selected':''}>${sl.name}</option>`).join('');
 }
@@ -2783,9 +2822,10 @@ function setLibView(v){
 }
 
 function updateLibCount(){
-  const el=document.getElementById('libCount');if(!el)return;
-  const genres=new Set(songs.map(s=>s.genre));
-  el.textContent=`${songs.length} songs across ${genres.size} genres`;
+  const el=document.getElementById('libCount');
+  if(el){const genres=new Set(songs.map(s=>s.genre));el.textContent=`${songs.length} songs across ${genres.size} genres`;}
+  const badge=document.getElementById('sbLibCount');
+  if(badge) badge.textContent=songs.length;
 }
 
 // ── SPREADSHEET ───────────────────────────────────────────
@@ -4117,6 +4157,12 @@ async function promoteGuestToMember(idx,name){
 function renderBP(){
   const b=getActiveBand();
   const isAdmin=b&&b.role==='Admin';
+  // Show empty state when no band
+  const bpEmpty=document.getElementById('bpEmpty');
+  const bpContent=document.getElementById('bpContent');
+  if(bpEmpty) bpEmpty.style.display=b?'none':'block';
+  if(bpContent) bpContent.style.display=b?'':'none';
+  if(!b) return;
 
   // Header
   const nameEl=document.getElementById('bpNameDisplay');
