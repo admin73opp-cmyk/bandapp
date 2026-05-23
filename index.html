@@ -422,6 +422,7 @@ select option{background:var(--w)}
       <div class="ns">
         <div class="nsl">Account</div>
         <div class="ni" onclick="nav('myprofile')" data-label="My Profile"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="5" r="3"/><path d="M2 14c0-3.3 2.7-5 6-5s6 1.7 6 5"/></svg><span class="sb-label">My Profile</span></div>
+        <div class="ni" onclick="nav('settings')" data-label="Settings"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="2.2"/><path d="M8 1.5v1M8 13.5v1M1.5 8h1M13.5 8h1M3.4 3.4l.7.7M11.9 11.9l.7.7M3.4 12.6l.7-.7M11.9 4.1l.7-.7"/></svg><span class="sb-label">Settings</span></div>
         <div class="ni" onclick="doLogout()" style="color:var(--r)" onmouseover="this.style.background='var(--r2)'" onmouseout="this.style.background='transparent'" data-label="Log Out"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 2H3a1 1 0 00-1 1v10a1 1 0 001 1h3M10 11l3-3-3-3M13 8H6"/></svg><span class="sb-label">Log Out</span></div>
       </div>
     </div>
@@ -1005,11 +1006,24 @@ select option{background:var(--w)}
           <div id="mpLinkPreview" style="display:none;margin-top:4px"><div style="font-size:.72rem;color:var(--ink3);margin-bottom:7px">Preview</div><div id="mpLinkPills" class="bpplat"></div></div>
         </div>
 
+      </div>
+    </div>
+
+    <div class="pg-area" id="pg-settings">
+      <div style="display:flex;flex-direction:column;gap:16px;max-width:620px">
+
         <div class="card">
-          <div class="ct" style="margin-bottom:14px">Settings</div>
-          <div class="fg" style="max-width:280px"><label>App Language</label><select id="mpLang"></select></div>
-          <div style="height:1px;background:var(--bd);margin:14px 0"></div>
-          <div style="display:flex;align-items:flex-start;gap:9px;padding:11px 13px;background:var(--bl2);border:1px solid rgba(96,165,250,.25);border-radius:var(--rad);font-size:.76rem;color:var(--bl)">
+          <div class="ct" style="margin-bottom:4px">App Language</div>
+          <div style="font-size:.75rem;color:var(--ink3);margin-bottom:14px">Controls date formats, day names, and interface labels.</div>
+          <div class="fg" style="max-width:280px"><label>Language</label><select id="settLang"></select></div>
+          <div style="margin-top:14px">
+            <button class="btn btn-p btn-sm" onclick="saveSettings()">Save</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="ct" style="margin-bottom:4px">Integrations</div>
+          <div style="display:flex;align-items:flex-start;gap:9px;padding:11px 13px;background:var(--bl2);border:1px solid rgba(96,165,250,.25);border-radius:var(--rad);font-size:.76rem;color:var(--bl);margin-top:10px">
             <span style="font-size:1rem;flex-shrink:0">📅</span>
             <span><strong>Google Calendar sync</strong> — connect your Google Calendar so rehearsals and concerts appear automatically. <span style="text-decoration:underline;cursor:pointer" onclick="toast2('Google Calendar sync coming soon')">Set up →</span></span>
           </div>
@@ -2043,9 +2057,10 @@ function nav(p){
   document.querySelectorAll('.ni').forEach(n=>n.classList.remove('on'));
   const f=[...document.querySelectorAll('.ni')].find(n=>n.getAttribute('onclick')?.includes(p));
   if(f)f.classList.add('on');
-  const T={dashboard:'Dashboard',setlists:'Set Lists',library:'Song Library',calendar:'Calendar',rehearsals:'Rehearsals',concerts:'Concerts',members:'Members',guestdir:'Guest Directory',bandprofile:'Band Profile',myprofile:'My Profile'};
+  const T={dashboard:'Dashboard',setlists:'Set Lists',library:'Song Library',calendar:'Calendar',rehearsals:'Rehearsals',concerts:'Concerts',members:'Members',guestdir:'Guest Directory',bandprofile:'Band Profile',myprofile:'My Profile',settings:'Settings'};
   document.getElementById('pgT').textContent=T[p]||p;
   if(p==='myprofile') populateMpPage().catch(console.error);
+  if(p==='settings') populateSettingsPage();
   closeSb();
 }
 function toggleSbMinimize(){
@@ -4542,8 +4557,6 @@ async function populateMpPage(){
   document.getElementById('mpWebsite').value=ex.website||m.website||'';
   renderMpLinkPreview();
 
-  // Settings
-  populateLangSelect('mpLang',ex.lang||m.lang||currentUser.lang||'en');
 }
 
 async function saveMpProfile(){
@@ -4567,7 +4580,6 @@ async function saveMpProfile(){
     bday:document.getElementById('mpBday').value||null,
     nationality:document.getElementById('mpNat').value,
     country:document.getElementById('mpCountry').value,
-    lang:document.getElementById('mpLang').value,
     bio:document.getElementById('mpBio').value,
     gear:document.getElementById('mpGear').value,
     phone_dial:dialCode,phone_number:phoneNum,
@@ -4580,7 +4592,6 @@ async function saveMpProfile(){
   });
   currentUser.firstName=fn||currentUser.firstName;
   currentUser.lastName=ln||currentUser.lastName;
-  currentUser.lang=document.getElementById('mpLang').value;
   await loadMembers();
   const nd=document.getElementById('mpNameDisplay');
   if(nd)nd.textContent=`${fn} ${ln}`.trim();
@@ -4654,6 +4665,19 @@ function renderMpLinkPreview(){
     const url=document.getElementById(p.id).value.trim();
     return`<a class="platl" data-url="${url}" onclick="openMediaUrl(this)">${p.icon} ${p.label}</a>`;
   }).join('');
+}
+
+function populateSettingsPage(){
+  populateLangSelect('settLang', currentUser.lang||'en');
+}
+
+async function saveSettings(){
+  const lang=document.getElementById('settLang').value;
+  const idx=currentUser.memberIdx;
+  const m=members[idx];
+  if(m) await MembersDB.upsertProfile(m.id,{lang});
+  currentUser.lang=lang;
+  toast2('Settings saved!');
 }
 </script>
 
