@@ -2787,13 +2787,17 @@ function renderAsList(){
     return;
   }
   const inList=new Set(getSlS());
+  // Build a set of title+artist keys already in the setlist for duplicate detection
+  const inListKeys=new Set(getSlS().map(id=>songByAnyId(id)).filter(Boolean).map(s=>(s.title.toLowerCase().trim()+'|'+(s.artist||'').toLowerCase().trim())));
   el.innerHTML=filtered.map(s=>{
     const already=inList.has(s.id);
+    const dupKey=s.title.toLowerCase().trim()+'|'+(s.artist||'').toLowerCase().trim();
+    const isDup=!already&&inListKeys.has(dupKey);
     const dur=s.dur?fmtDur(s.dur):'—';
-    return`<label style="display:flex;align-items:center;gap:8px;padding:8px 10px;background:var(--bg);border:1.5px solid ${already?'var(--a)':'var(--bd)'};border-radius:var(--rad);cursor:pointer;${already?'opacity:.55':''}">
-      <input type="checkbox" style="accent-color:var(--a)" value="${s.id}" ${already?'disabled checked':''}>
+    return`<label style="display:flex;align-items:center;gap:8px;padding:8px 10px;background:var(--bg);border:1.5px solid ${already?'var(--a)':isDup?'#F59E0B':'var(--bd)'};border-radius:var(--rad);cursor:pointer;${already?'opacity:.55':''}">
+      <input type="checkbox" style="accent-color:var(--a)" value="${s.id}" ${already?'disabled checked':''} data-dup="${isDup}">
       <div style="flex:1">
-        <div style="font-weight:600;font-size:.82rem">${s.title}</div>
+        <div style="font-weight:600;font-size:.82rem">${s.title}${isDup?` <span style="font-size:.62rem;font-weight:700;color:#D97706" title="A song with this title and artist is already in this set list">⚠ already in list</span>`:''}</div>
         <div style="font-size:.69rem;color:var(--ink2)">${s.artist} · ${s.key} · ${dur}</div>
       </div>
       <span class="pill pbl" style="font-size:.63rem">${s.genre}</span>
@@ -2802,18 +2806,26 @@ function renderAsList(){
 }
 
 async function addSelectedSongs(){
-  const checks=document.querySelectorAll('#asList input[type="checkbox"]:checked:not(:disabled)');
-  let added=0;
-  checks.forEach(cb=>{
-    const id=cb.value; // UUID string — no parseInt
-    if(!getSlS().includes(id)){getSlS().push(id);added++;}
-  });
+  const checks=[...document.querySelectorAll('#asList input[type="checkbox"]:checked:not(:disabled)')];
+  const toAdd=[];
+  for(const cb of checks){
+    const id=cb.value;
+    if(getSlS().includes(id)) continue;
+    if(cb.dataset.dup==='true'){
+      const s=songByAnyId(id);
+      const ok=confirm(`"${s?.title}"${s?.artist?' by '+s.artist:''} is already in this set list.\n\nAdd it again anyway?`);
+      if(!ok) continue;
+    }
+    toAdd.push(id);
+  }
   closeMod('asMod');
-  renderSL();
-  if(added>0){
+  if(toAdd.length){
+    toAdd.forEach(id=>{if(!getSlS().includes(id))getSlS().push(id);});
+    renderSL();
     await SetlistsDB.saveSongs(activeSetlistId, getSlS());
-    toast2(`${added} song${added>1?'s':''} added to set list!`);
+    toast2(`${toAdd.length} song${toAdd.length>1?'s':''} added to set list!`);
   } else {
+    renderSL();
     toast2('No new songs selected','w');
   }
 }
