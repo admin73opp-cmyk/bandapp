@@ -1047,7 +1047,7 @@ select option{background:var(--w)}
           </div>
           <div style="font-size:.74rem;color:var(--ink3);margin-bottom:12px">Which days are you generally available? Used for rehearsal planning.</div>
           <!-- Read view -->
-          <div id="mpv-avail" style="display:flex;gap:6px;flex-wrap:wrap"></div>
+          <div id="mpv-avail" style="display:flex;flex-direction:row;flex-wrap:wrap;gap:6px;align-items:center"></div>
           <!-- Edit view -->
           <div id="mpe-avail" style="display:none;margin-top:4px">
             <div id="mpAvailDays" style="display:flex;gap:6px;flex-wrap:wrap"></div>
@@ -4741,7 +4741,7 @@ function renderMpReadViews(){
   const dayNames=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
   document.getElementById('mpv-avail').innerHTML=dayNames.map((d,i)=>{
     const on=(m.avail||[])[i];
-    return`<div class="dtog ${on?'on':''}" style="pointer-events:none">${d}</div>`;
+    return`<div class="dtog ${on?'on':''}" style="pointer-events:none;flex:0 0 auto">${d}</div>`;
   }).join('');
 
   // Links
