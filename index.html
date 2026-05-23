@@ -2045,7 +2045,7 @@ function nav(p){
   if(f)f.classList.add('on');
   const T={dashboard:'Dashboard',setlists:'Set Lists',library:'Song Library',calendar:'Calendar',rehearsals:'Rehearsals',concerts:'Concerts',members:'Members',guestdir:'Guest Directory',bandprofile:'Band Profile',myprofile:'My Profile'};
   document.getElementById('pgT').textContent=T[p]||p;
-  if(p==='myprofile') populateMpPage();
+  if(p==='myprofile') populateMpPage().catch(console.error);
   closeSb();
 }
 function toggleSbMinimize(){
@@ -4474,10 +4474,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // ── MY PROFILE PAGE ──────────────────────────────────────────
 
-function populateMpPage(){
+async function populateMpPage(){
+  // If members haven't loaded yet (race: app becomes visible before initApp completes),
+  // load them now so the page isn't blank.
+  if(!members.length && activeBandId) await loadMembers();
+
   const idx=currentUser.memberIdx;
   const m=members[idx];
-  if(!m)return;
+  if(!m){ console.warn('[myprofile] member not found — memberIdx:',idx,'members:',members.length); return; }
   const ex=extraData[idx]||{};
 
   // Avatar
@@ -4504,15 +4508,14 @@ function populateMpPage(){
 
   // Personal info
   populateCountrySelects();
-  const parts=m.name.split(' ');
-  document.getElementById('mpFirst').value=parts[0]||'';
-  document.getElementById('mpLast').value=parts.slice(1).join(' ')||'';
-  document.getElementById('mpBday').value=ex.bday||'';
-  document.getElementById('mpNat').value=ex.nat||'';
+  document.getElementById('mpFirst').value=m.firstName||'';
+  document.getElementById('mpLast').value=m.lastName||'';
+  document.getElementById('mpBday').value=ex.bday||m.bday||'';
+  document.getElementById('mpNat').value=ex.nat||m.nat||'';
   document.getElementById('mpEmail').value=ex.email||'';
-  document.getElementById('mpCountry').value=ex.country||'';
-  initPhoneField('mpPhoneCc','mpPhoneNum',ex.phone||'');
-  document.getElementById('mpBio').value=ex.bio||'';
+  document.getElementById('mpCountry').value=ex.country||m.country||'';
+  initPhoneField('mpPhoneCc','mpPhoneNum',ex.phone||[m.phoneDial,m.phoneNum].filter(Boolean).join(' ')||'');
+  document.getElementById('mpBio').value=ex.bio||m.bio||'';
   renderMpNatFlag();
 
   // Music
@@ -4526,21 +4529,21 @@ function populateMpPage(){
   // Availability
   const dayNames=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
   document.getElementById('mpAvailDays').innerHTML=dayNames.map((d,i)=>
-    `<div class="dtog ${m.avail[i]?'on':''}" onclick="this.classList.toggle('on')" data-di="${i}">${d}</div>`
+    `<div class="dtog ${(m.avail||[])[i]?'on':''}" onclick="this.classList.toggle('on')" data-di="${i}">${d}</div>`
   ).join('');
 
   // Gear & Links
-  document.getElementById('mpGear').value=ex.gear||'';
-  document.getElementById('mpSpotify').value=ex.spotify||'';
-  document.getElementById('mpApple').value=ex.apple||'';
-  document.getElementById('mpYoutube').value=ex.youtube||'';
-  document.getElementById('mpInstagram').value=ex.instagram||'';
-  document.getElementById('mpFacebook').value=ex.facebook||'';
-  document.getElementById('mpWebsite').value=ex.website||'';
+  document.getElementById('mpGear').value=ex.gear||m.gear||'';
+  document.getElementById('mpSpotify').value=ex.spotify||m.spotify||'';
+  document.getElementById('mpApple').value=ex.apple||m.apple||'';
+  document.getElementById('mpYoutube').value=ex.youtube||m.youtube||'';
+  document.getElementById('mpInstagram').value=ex.instagram||m.instagram||'';
+  document.getElementById('mpFacebook').value=ex.facebook||m.facebook||'';
+  document.getElementById('mpWebsite').value=ex.website||m.website||'';
   renderMpLinkPreview();
 
   // Settings
-  populateLangSelect('mpLang',ex.lang||currentUser.lang||'en');
+  populateLangSelect('mpLang',ex.lang||m.lang||currentUser.lang||'en');
 }
 
 async function saveMpProfile(){
