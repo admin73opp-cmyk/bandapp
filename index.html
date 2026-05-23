@@ -1020,7 +1020,7 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
               </div>
             </div>
             <div class="fr">
-              <div class="fg"><label>Email</label><input type="email" id="mpEmail" placeholder="marco@example.com"></div>
+              <div class="fg"><label>Email <span style="font-weight:400;color:var(--ink3)">(cannot be changed here)</span></label><input type="email" id="mpEmail" readonly style="opacity:.7;cursor:default"></div>
               <div class="fg"><label>Country of Residence</label><select id="mpCountry"><option value="">— Select country —</option></select></div>
             </div>
             <div class="fg">
@@ -4368,7 +4368,9 @@ async function initApp(){
   setCalView(calView);renderRehearsals();renderConcerts();renderMembers();
   renderGuestDir();renderBP();renderAsList();renderBandList();
   syncCurrentUserToUI();renderDashboard();
-  nav(localStorage.getItem('defaultView')||'dashboard');
+  // New users with no band go to My Profile to complete their info first
+  const isNewUser = !currentUser._memberships?.length;
+  nav(isNewUser ? 'myprofile' : (localStorage.getItem('defaultView')||'dashboard'));
 }
 </script>
 <!-- MUSICIAN PROFILE MODAL -->
@@ -4759,15 +4761,17 @@ async function populateMpPage(){
 
   const idx=currentUser.memberIdx;
   const m=members[idx];
-  if(!m){ console.warn('[myprofile] member not found — memberIdx:',idx,'members:',members.length); return; }
   const ex=extraData[idx]||{};
+  // New users with no band membership won't have an m — fall back to currentUser
+  const fn=m?.firstName||currentUser.firstName||'';
+  const ln=m?.lastName||currentUser.lastName||'';
 
   // Avatar
   const av=document.getElementById('mpAv');
   if(av){
-    const photo=memberPhotos[idx];
+    const photo=m?memberPhotos[idx]:null;
     if(photo){av.style.backgroundImage=`url(${photo})`;av.style.backgroundSize='cover';av.style.backgroundPosition='center';av.textContent='';}
-    else{av.style.backgroundImage='';av.style.background=m.color;av.textContent=m.init;}
+    else{av.style.backgroundImage='';av.style.background=m?.color||currentUser.color||'#6C63FF';av.textContent=m?.init||currentUser.initials||'?';}
   }
 
   // Cover photo (persisted in localStorage)
@@ -4781,43 +4785,43 @@ async function populateMpPage(){
   // Name / role header
   const nd=document.getElementById('mpNameDisplay');
   const rd=document.getElementById('mpRoleDisplay');
-  if(nd)nd.textContent=m.name;
-  if(rd)rd.textContent=(m.instrument?m.instrument+' · ':'')+( m.role==='admin'?'Admin':m.role==='guest'?'Guest':'Member');
+  if(nd)nd.textContent=[fn,ln].filter(Boolean).join(' ')||'Your Profile';
+  if(rd)rd.textContent=m?(m.instrument?m.instrument+' · ':'')+( m.role==='admin'?'Admin':m.role==='guest'?'Guest':'Member'):'New member';
 
   // Personal info
   populateCountrySelects();
-  document.getElementById('mpFirst').value=m.firstName||'';
-  document.getElementById('mpLast').value=m.lastName||'';
-  document.getElementById('mpBday').value=ex.bday||m.bday||'';
-  document.getElementById('mpNat').value=ex.nat||m.nat||'';
-  document.getElementById('mpEmail').value=ex.email||'';
-  document.getElementById('mpCountry').value=ex.country||m.country||'';
+  document.getElementById('mpFirst').value=fn;
+  document.getElementById('mpLast').value=ln;
+  document.getElementById('mpBday').value=ex.bday||m?.bday||'';
+  document.getElementById('mpNat').value=ex.nat||m?.nat||'';
+  document.getElementById('mpEmail').value=currentUser.email||'';
+  document.getElementById('mpCountry').value=ex.country||m?.country||'';
   initPhoneField('mpPhoneCc','mpPhoneNum',ex.phone||[m.phoneDial,m.phoneNum].filter(Boolean).join(' ')||'');
   document.getElementById('mpBio').value=ex.bio||m.bio||'';
   renderMpNatFlag();
 
   // Music
   populateInstrumentSelects();
-  document.getElementById('mpInst1').value=m.instrument||'';
-  document.getElementById('mpInst2').value=m.inst2||'';
+  document.getElementById('mpInst1').value=m?.instrument||'';
+  document.getElementById('mpInst2').value=m?.inst2||'';
   renderMpInstPreview();
   const vmap={'Lead':'Lead vocals','Backing':'Backing vocals','None':'No vocals','Both':'Lead & backing'};
-  document.getElementById('mpVocals').value=vmap[m.vocals]||'No vocals';
+  document.getElementById('mpVocals').value=vmap[m?.vocals]||'No vocals';
 
   // Availability
   const dayNames=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
   document.getElementById('mpAvailDays').innerHTML=dayNames.map((d,i)=>
-    `<div class="dtog ${(m.avail||[])[i]?'on':''}" onclick="this.classList.toggle('on')" data-di="${i}">${d}</div>`
+    `<div class="dtog ${(m?.avail||[1,1,1,1,1,1,1])[i]?'on':''}" onclick="this.classList.toggle('on')" data-di="${i}">${d}</div>`
   ).join('');
 
   // Gear & Links
-  document.getElementById('mpGear').value=ex.gear||m.gear||'';
-  document.getElementById('mpSpotify').value=ex.spotify||m.spotify||'';
-  document.getElementById('mpApple').value=ex.apple||m.apple||'';
-  document.getElementById('mpYoutube').value=ex.youtube||m.youtube||'';
-  document.getElementById('mpInstagram').value=ex.instagram||m.instagram||'';
-  document.getElementById('mpFacebook').value=ex.facebook||m.facebook||'';
-  document.getElementById('mpWebsite').value=ex.website||m.website||'';
+  document.getElementById('mpGear').value=ex.gear||m?.gear||'';
+  document.getElementById('mpSpotify').value=ex.spotify||m?.spotify||'';
+  document.getElementById('mpApple').value=ex.apple||m?.apple||'';
+  document.getElementById('mpYoutube').value=ex.youtube||m?.youtube||'';
+  document.getElementById('mpInstagram').value=ex.instagram||m?.instagram||'';
+  document.getElementById('mpFacebook').value=ex.facebook||m?.facebook||'';
+  document.getElementById('mpWebsite').value=ex.website||m?.website||'';
 
   // Render all read views and ensure all sections start in read mode
   renderMpReadViews();
@@ -4842,13 +4846,14 @@ function mpCancel(sec){
 async function mpSave(sec){
   const idx=currentUser.memberIdx;
   const m=members[idx];
-  if(!m){toast2('Profile not loaded','w');return;}
+  const profileId=m?.id||currentUser.id;
+  if(!profileId){toast2('Profile not loaded','w');return;}
   if(sec==='personal'){
     const fn=document.getElementById('mpFirst').value.trim();
     const ln=document.getElementById('mpLast').value.trim();
     const dialCode=document.getElementById('mpPhoneCc')?.value||'';
     const phoneNum=document.getElementById('mpPhoneNum')?.value.trim()||'';
-    await MembersDB.upsertProfile(m.id,{
+    await MembersDB.upsertProfile(profileId,{
       first_name:fn,last_name:ln,
       initials:((fn[0]||'')+(ln[0]||'')).toUpperCase(),
       bday:document.getElementById('mpBday').value||null,
@@ -4861,7 +4866,7 @@ async function mpSave(sec){
     currentUser.lastName=ln||currentUser.lastName;
   } else if(sec==='music'){
     const vback={'No vocals':'None','Lead vocals':'Lead','Backing vocals':'Backing','Lead & backing':'Both'};
-    await MembersDB.upsertProfile(m.id,{
+    await MembersDB.upsertProfile(profileId,{
       instrument:document.getElementById('mpInst1').value,
       instrument2:document.getElementById('mpInst2').value,
       vocals:vback[document.getElementById('mpVocals').value]||'None',
@@ -4870,9 +4875,9 @@ async function mpSave(sec){
   } else if(sec==='avail'){
     const chips=document.querySelectorAll('#mpAvailDays .dtog');
     const avail=[...chips].map(c=>c.classList.contains('on')?1:0);
-    await MembersDB.upsertProfile(m.id,{availability:avail});
+    await MembersDB.upsertProfile(profileId,{availability:avail});
   } else if(sec==='links'){
-    await MembersDB.upsertProfile(m.id,{
+    await MembersDB.upsertProfile(profileId,{
       spotify_url:document.getElementById('mpSpotify').value,
       apple_url:document.getElementById('mpApple').value,
       youtube_url:document.getElementById('mpYoutube').value,
@@ -4893,22 +4898,21 @@ function renderMpReadViews(){
   const idx=currentUser.memberIdx;
   const m=members[idx];
   const ex=extraData[idx]||{};
-  if(!m)return;
 
   // Personal
-  document.getElementById('mpv-first').textContent=m.firstName||'—';
-  document.getElementById('mpv-last').textContent=m.lastName||'—';
-  const bday=ex.bday||m.bday||'';
+  document.getElementById('mpv-first').textContent=m?.firstName||currentUser.firstName||'—';
+  document.getElementById('mpv-last').textContent=m?.lastName||currentUser.lastName||'—';
+  const bday=ex.bday||m?.bday||'';
   document.getElementById('mpv-bday').textContent=bday
     ?new Date(bday+'T12:00').toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}):'—';
-  const natOpt=document.querySelector(`#mpNat option[value="${ex.nat||m.nat||''}"]`);
-  document.getElementById('mpv-nat').textContent=natOpt&&natOpt.value?natOpt.textContent:(ex.nat||m.nat||'—');
-  document.getElementById('mpv-email').textContent=ex.email||'—';
-  const ctryOpt=document.querySelector(`#mpCountry option[value="${ex.country||m.country||''}"]`);
-  document.getElementById('mpv-country').textContent=ctryOpt&&ctryOpt.value?ctryOpt.textContent:(ex.country||m.country||'—');
-  const phone=ex.phone||[m.phoneDial,m.phoneNum].filter(Boolean).join(' ')||'';
+  const natOpt=document.querySelector(`#mpNat option[value="${ex.nat||m?.nat||''}"]`);
+  document.getElementById('mpv-nat').textContent=natOpt&&natOpt.value?natOpt.textContent:(ex.nat||m?.nat||'—');
+  document.getElementById('mpv-email').textContent=currentUser.email||'—';
+  const ctryOpt=document.querySelector(`#mpCountry option[value="${ex.country||m?.country||''}"]`);
+  document.getElementById('mpv-country').textContent=ctryOpt&&ctryOpt.value?ctryOpt.textContent:(ex.country||m?.country||'—');
+  const phone=ex.phone||[m?.phoneDial,m?.phoneNum].filter(Boolean).join(' ')||'';
   document.getElementById('mpv-phone').textContent=phone||'—';
-  const bio=ex.bio||m.bio||'';
+  const bio=ex.bio||m?.bio||'';
   const bioEl=document.getElementById('mpv-bio');
   bioEl.textContent=bio; bioEl.style.display=bio?'':'none';
 
