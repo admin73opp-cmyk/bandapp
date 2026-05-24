@@ -452,19 +452,19 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
       <div class="ns">
         <div class="nsl">Main</div>
         <div class="ni on" onclick="nav('dashboard')" data-label="Dashboard"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="1" width="6" height="6" rx="1.5"/><rect x="9" y="1" width="6" height="6" rx="1.5"/><rect x="1" y="9" width="6" height="6" rx="1.5"/><rect x="9" y="9" width="6" height="6" rx="1.5"/></svg><span class="sb-label">Dashboard</span></div>
-        <div class="ni" onclick="nav('calendar')" data-label="Calendar"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="2" width="14" height="13" rx="2"/><path d="M1 6h14M5 1v2M11 1v2"/></svg><span class="sb-label">Calendar</span><span class="nb">3</span></div>
-        <div class="ni" onclick="nav('rehearsals')" data-label="Rehearsals"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M6 6l5 2-5 2V6z"/></svg><span class="sb-label">Rehearsals</span></div>
-        <div class="ni" onclick="nav('concerts')" data-label="Concerts"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 1l2.4 4.9 5.4.8-3.9 3.8.9 5.3L8 13.3l-4.8 2.5.9-5.3L.2 6.7l5.4-.8L8 1z"/></svg><span class="sb-label">Concerts</span></div>
+        <div class="ni" onclick="nav('calendar')" data-label="Calendar"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="2" width="14" height="13" rx="2"/><path d="M1 6h14M5 1v2M11 1v2"/></svg><span class="sb-label">Calendar</span></div>
+        <div class="ni" onclick="nav('rehearsals')" data-label="Rehearsals"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M6 6l5 2-5 2V6z"/></svg><span class="sb-label">Rehearsals</span><span class="nb" id="sbRehCount" style="display:none">0</span></div>
+        <div class="ni" onclick="nav('concerts')" data-label="Concerts"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 1l2.4 4.9 5.4.8-3.9 3.8.9 5.3L8 13.3l-4.8 2.5.9-5.3L.2 6.7l5.4-.8L8 1z"/></svg><span class="sb-label">Concerts</span><span class="nb" id="sbConCount" style="display:none">0</span></div>
       </div>
       <div class="ns">
         <div class="nsl">Music</div>
-        <div class="ni" onclick="nav('setlists')" data-label="Set Lists"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 4h12M2 8h8M2 12h10"/></svg><span class="sb-label">Set Lists</span></div>
+        <div class="ni" onclick="nav('setlists')" data-label="Set Lists"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 4h12M2 8h8M2 12h10"/></svg><span class="sb-label">Set Lists</span><span class="nb" id="sbSlCount" style="display:none">0</span></div>
         <div class="ni" onclick="nav('library')" data-label="Song Library"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="5" cy="12" r="2"/><circle cx="13" cy="11" r="2"/><path d="M7 12V4l8-2v8"/></svg><span class="sb-label">Song Library</span><span class="nb" id="sbLibCount" style="background:var(--bl)">0</span></div>
       </div>
       <div class="ns">
         <div class="nsl">Band</div>
-        <div class="ni" onclick="nav('members')" data-label="Members"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="6" cy="5" r="2.5"/><path d="M1 14c0-3 2.2-5 5-5s5 2 5 5"/><circle cx="12" cy="5" r="2"/><path d="M14 13c0-2.4-1.5-4-4-4"/></svg><span class="sb-label">Members</span></div>
-        <div class="ni" onclick="nav('guestdir')" data-label="Guest Directory"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="5" r="3"/><path d="M2 14c0-3.3 2.7-5 6-5s6 1.7 6 5"/><path d="M12 8l2 2-2 2" stroke-linecap="round"/></svg><span class="sb-label">Guest Directory</span></div>
+        <div class="ni" onclick="nav('members')" data-label="Members"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="6" cy="5" r="2.5"/><path d="M1 14c0-3 2.2-5 5-5s5 2 5 5"/><circle cx="12" cy="5" r="2"/><path d="M14 13c0-2.4-1.5-4-4-4"/></svg><span class="sb-label">Members</span><span class="nb" id="sbMemCount" style="display:none">0</span></div>
+        <div class="ni" onclick="nav('guestdir')" data-label="Guest Directory"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="5" r="3"/><path d="M2 14c0-3.3 2.7-5 6-5s6 1.7 6 5"/><path d="M12 8l2 2-2 2" stroke-linecap="round"/></svg><span class="sb-label">Guest Directory</span><span class="nb" id="sbGuestCount" style="display:none">0</span></div>
         <div class="ni" onclick="nav('bandprofile')" data-label="Band Profile"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="6" r="4"/><path d="M1 14c0-4 3-6 7-6s7 2 7 6"/></svg><span class="sb-label">Band Profile</span></div>
       </div>
       <div class="ns">
@@ -1818,7 +1818,7 @@ async function saveRehEdit(){
   const saved=await RehearsalsDB.upsert(payload);
   if(!saved)return;
   await loadRehearsals();
-  closeMod('reMod');renderRehearsals();toast2(editingRehId?'Rehearsal updated!':'Rehearsal added!');
+  closeMod('reMod');renderRehearsals();updateSidebarCounts();toast2(editingRehId?'Rehearsal updated!':'Rehearsal added!');
 }
 
 // Photos
@@ -2101,10 +2101,10 @@ async function switchBand(id){
   await loadRehearsals();
   await loadMembers();
   await loadBlackouts();
-  renderSLDropdown();renderSL();renderSlMeta();renderLib();updateLibCount();
+  renderSLDropdown();renderSL();renderSlMeta();renderLib();updateLibCount();updateSidebarCounts();
   setCalView(calView);renderRehearsals();renderConcerts();renderMembers();
   renderGuestDir();renderBP();renderAsList();renderBandList();
-  syncCurrentUserToUI();renderDashboard();refreshWaUI();
+  syncCurrentUserToUI();renderDashboard();updateSidebarCounts();refreshWaUI();
   nav(localStorage.getItem('defaultView')||'dashboard');
 }
 
@@ -2899,6 +2899,15 @@ function updateLibCount(){
   if(badge) badge.textContent=songs.length;
 }
 
+function updateSidebarCounts(){
+  const set=(id,n)=>{const el=document.getElementById(id);if(!el)return;el.textContent=n;el.style.display=n>0?'':'none';};
+  set('sbRehCount', rehearsals.filter(r=>!r.cancelled&&!isRehPast(r)).length);
+  set('sbConCount',  concerts.filter(c=>!c.cancelled&&!isPast(c)).length);
+  set('sbSlCount',   setlists.length);
+  set('sbMemCount',  activeMembers().length);
+  set('sbGuestCount',(expiredGuests().length+guestDirectory.length));
+}
+
 // ── SPREADSHEET ───────────────────────────────────────────
 const GENRES_LIST=['Jazz','Funk','Soul','Blues','Pop','Rock','Latin','R&B','Other'];
 const KEYS_LIST=['Am','C','G','D','Dm','F','Bb','Eb','Gm','Em','A','E','Fm','Cm','Bm','Ab','Db'];
@@ -3654,14 +3663,14 @@ async function confirmCancel(notify){
     if(c){
       await ConcertsDB.upsert({...c, cancelled:true});
       await loadConcerts();
-      renderConcerts();renderCal();
+      renderConcerts();renderCal();updateSidebarCounts();
     }
   } else {
     const r=rehearsals.find(x=>x.id===id);
     if(r){
       await RehearsalsDB.upsert({...r, cancelled:true});
       await loadRehearsals();
-      renderRehearsals();renderCal();
+      renderRehearsals();renderCal();updateSidebarCounts();
     }
   }
   closeMod('cancelMod');closeMod('cvMod');closeMod('reViewMod');cancelTarget=null;
@@ -3832,7 +3841,7 @@ async function saveConcertEdit(){
   }
 
   await loadConcerts();
-  closeMod('ceMod');renderConcerts();renderCal();renderSlMeta();
+  closeMod('ceMod');renderConcerts();renderCal();renderSlMeta();updateSidebarCounts();
   toast2(editingConcertId?'Concert updated!':'Concert added!');
 }
 
@@ -4249,7 +4258,7 @@ async function confirmGuestConvert(){
   });
   await loadMembers();
   closeMod('guestConvertMod');editingGuestConvertIdx=null;
-  renderMembers();renderGuestDir();toast2(`${m.name.split(' ')[0]} is now a Guest until ${end}`);
+  renderMembers();renderGuestDir();updateSidebarCounts();toast2(`${m.name.split(' ')[0]} is now a Guest until ${end}`);
 }
 async function promoteGuestToMember(idx,name){
   if(idx>=0){
@@ -4264,7 +4273,7 @@ async function promoteGuestToMember(idx,name){
     if(!confirm(`Promote ${g.name} to full Member?`))return;
     await MembersDB.upsertBandMember(activeBandId, g.id, {role:'member', guest_start:null, guest_end:null, guest_status:null});
     await loadMembers();
-    renderMembers();renderGuestDir();toast2(`${g.name.split(' ')[0]} is now a Member!`);
+    renderMembers();renderGuestDir();updateSidebarCounts();toast2(`${g.name.split(' ')[0]} is now a Member!`);
   }
 }
 
@@ -4524,10 +4533,10 @@ async function initApp(){
   await loadRehearsals();
   await loadMembers();
   await loadBlackouts();
-  renderSLDropdown();renderSL();renderSlMeta();renderLib();updateLibCount();
+  renderSLDropdown();renderSL();renderSlMeta();renderLib();updateLibCount();updateSidebarCounts();
   setCalView(calView);renderRehearsals();renderConcerts();renderMembers();
   renderGuestDir();renderBP();renderAsList();renderBandList();
-  syncCurrentUserToUI();renderDashboard();
+  syncCurrentUserToUI();renderDashboard();updateSidebarCounts();
   // New users with no band go to My Profile to complete their info first
   const isNewUser = !currentUser._memberships?.length;
   nav(isNewUser ? 'myprofile' : (localStorage.getItem('defaultView')||'dashboard'));
