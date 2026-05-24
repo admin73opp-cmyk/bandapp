@@ -2119,9 +2119,11 @@ function renderBandList(){
 async function createNewBand(){
   const name=document.getElementById('nbName').value.trim();
   if(!name){toast2('Please enter a band name','w');return;}
+  const btn=document.querySelector('#newBandMod .btn-p');
+  if(btn){btn.disabled=true;btn.textContent='Creating…';}
   const countryCode=document.getElementById('nbCountry').value;
   const countryName=countryCode?(ISO_COUNTRIES.find(x=>x.c===countryCode)?.n||countryCode):'';
-  const initials=name.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
+  const initials=name.split(' ').filter(Boolean).map(w=>w[0]).join('').toUpperCase().slice(0,2)||name.slice(0,2).toUpperCase();
   const colors=['#16A34A','#DC2626','#9333EA','#D97706','#0891B2'];
   const color=colors[BANDS.length%colors.length];
   const saved=await BandsDB.upsert({
@@ -2131,14 +2133,15 @@ async function createNewBand(){
     genre:document.getElementById('nbGenre').value,
     bio:document.getElementById('nbBio').value.trim(),
   });
-  if(!saved)return;
-  await BandsDB.addMember(saved.id, currentUser.id, 'admin');
+  if(btn){btn.disabled=false;btn.textContent='Create Band';}
+  if(!saved){return;}
+  await BandsDB.addMember(saved.id,currentUser.id,'admin');
   await loadBands();
   closeMod('newBandMod');
   ['nbName','nbCity','nbBio'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
   const nbC=document.getElementById('nbCountry');if(nbC)nbC.value='';
-  showMod('bswMod');renderBandList();
-  toast2(`"${name}" created! Switch to it to get started.`);
+  toast2(`"${name}" created!`);
+  await switchBand(saved.id);
 }
 let calEv={"2026-05-15":["birthday"]}; // rebuilt by buildCalEv() after data loads
 
