@@ -1900,7 +1900,7 @@ function renderRehPhotoArea(id){
   const area=document.getElementById('rePhotoArea');if(!area)return;
   const photos=r?r.photos||[]:[];
   area.innerHTML=photos.map((p,i)=>`<div style="position:relative;display:inline-block"><img src="${p}" style="width:64px;height:64px;border-radius:8px;object-fit:cover;border:1.5px solid var(--bd)"><button onclick="removeRehPhoto('${id}',${i})" style="position:absolute;top:-6px;right:-6px;width:18px;height:18px;border-radius:50%;background:var(--r);border:2px solid var(--w);color:#fff;font-size:.55rem;cursor:pointer;display:flex;align-items:center;justify-content:center">✕</button></div>`).join('')
-    +`<label style="width:64px;height:64px;border-radius:8px;border:2px dashed var(--bd);display:inline-flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;color:var(--ink3);font-size:.65rem;gap:3px" onmouseover="this.style.borderColor='var(--a)'" onmouseout="this.style.borderColor='var(--bd)'"><span style="font-size:1.3rem">📷</span>Add photo<input type="file" accept="image/*" style="display:none" onchange="addRehPhoto(event,'${id||editingRehId||''}')"></label>`;
+    +`<label style="width:64px;height:64px;border-radius:8px;border:2px dashed var(--bd);display:inline-flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;color:var(--ink3);font-size:.65rem;gap:3px" onmouseover="this.style.borderColor='var(--a)'" onmouseout="this.style.borderColor='var(--bd)'"><span style="font-size:1.3rem">📷</span>${t('Add photo')}<input type="file" accept="image/*" style="display:none" onchange="addRehPhoto(event,'${id||editingRehId||''}')"></label>`;
 }
 function removeRehPhoto(id,idx){const r=rehearsals.find(x=>x.id===id);if(!r||!r.photos)return;r.photos.splice(idx,1);renderRehPhotoArea(id);renderRehearsals();toast2('Photo removed','w');}
 function openRehPhotoLightbox(id,idx){
@@ -1977,10 +1977,14 @@ const DIAL_CODES=[
   {c:'YE',name:'Yemen',dial:'+967'},{c:'ZM',name:'Zambia',dial:'+260'},{c:'ZW',name:'Zimbabwe',dial:'+263'},
 ].sort((a,b)=>a.name.localeCompare(b.name));
 
+function getLocalCountryName(isoCode){
+  const loc=(typeof currentUser!=='undefined'&&currentUser.lang==='pt')?'pt-BR':'en';
+  try{ return new Intl.DisplayNames([loc],{type:'region'}).of(isoCode)||isoCode; }catch(e){ return isoCode; }
+}
 function populatePhoneCc(selectId, selectedDial){
   const sel=document.getElementById(selectId);if(!sel)return;
   const current=selectedDial||'+32';
-  sel.innerHTML=DIAL_CODES.map(d=>`<option value="${d.dial}"${d.dial===current?' selected':''}>${d.dial} — ${d.name}</option>`).join('');
+  sel.innerHTML=DIAL_CODES.map(d=>`<option value="${d.dial}"${d.dial===current?' selected':''}>${d.dial} — ${getLocalCountryName(d.c)}</option>`).join('');
   sel.value=current;
   // update the paired display div (convention: displayId = selectId + 'Display')
   const disp=document.getElementById(selectId+'Display');
@@ -2450,7 +2454,7 @@ function changeLang(lang) {
 }
 
 // MODALS
-function showMod(id){document.getElementById(id).style.display='flex';}
+function showMod(id){document.getElementById(id).style.display='flex';applyI18n();}
 function closeMod(id){document.getElementById(id).style.display='none';}
 function closeMB(e,id){if(e.target===e.currentTarget)closeMod(id);}
 function togGuest(s){document.getElementById('guestFld').style.display=s.value==='yes'?'':'none';}
@@ -2851,7 +2855,7 @@ function renderSlMeta(){
   const totalPill=totalSec?`<span class="pill pgray" style="font-family:var(--mono);font-size:.72rem">⏱ ${fmtDurLong(totalSec)}</span>`:'';
   if(meta){
     const typeClass=sl.type==='Wedding'?'pamb':sl.type==='Practice'?'pgray':'pp';
-    const dateStr=sl.date?new Date(sl.date+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric'}):'';
+    const dateStr=sl.date?new Date(sl.date+'T12:00:00').toLocaleDateString(dateLoc(),{month:'short',day:'numeric'}):'';
     const paidPill=sl.paid?`<span class="pill pg">💰 ${sl.total||'Paid'}${sl.price?` · ${sl.price}`:''}</span>`:'';
     meta.innerHTML=`
       <span class="pill ${typeClass}">${sl.type||'Concert'}</span>
@@ -3470,7 +3474,8 @@ function isBO(key){return blackouts.some(b=>b.scope==='band'&&key>=b.from&&key<=
 function getBOLbl(key){const b=blackouts.find(b=>b.scope==='band'&&key>=b.from&&key<=b.to);return b?b.label:null;}
 function isMBO(mi,key){const uid=members[mi]?.id;return !!uid&&blackouts.some(b=>b.scope==='members'&&b.mids.includes(uid)&&key>=b.from&&key<=b.to);}
 function getBOMap(){const m={};blackouts.filter(b=>b.scope==='band').forEach(b=>{for(let d=new Date(b.from+'T00:00:00');d<=new Date(b.to+'T00:00:00');d.setDate(d.getDate()+1))m[d.toISOString().slice(0,10)]=b.label;});return m;}
-function fmtD(iso){return new Date(iso+'T00:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});}
+function dateLoc(){ return (typeof currentUser!=='undefined'&&currentUser.lang==='pt')?'pt-BR':'en-GB'; }
+function fmtD(iso){return new Date(iso+'T00:00:00').toLocaleDateString(dateLoc(),{month:'short',day:'numeric',year:'numeric'});}
 function openAddBO(){clrBOF();showMod('boMod');}
 function clrBOF(){['boId','boLab','boFr','boTo'].forEach(id=>document.getElementById(id).value='');document.getElementById('boSc').value='band';togBOM();document.querySelectorAll('.bomc').forEach(c=>c.classList.remove('on'));}
 function editBO(id){const b=blackouts.find(x=>x.id===id);if(!b)return;document.getElementById('boId').value=b.id;document.getElementById('boLab').value=b.label;document.getElementById('boFr').value=b.from;document.getElementById('boTo').value=b.to;document.getElementById('boSc').value=b.scope;togBOM();document.querySelectorAll('.bomc').forEach(c=>c.classList.toggle('on',b.mids.includes(c.dataset.mid)));showMod('boMod');}
@@ -3717,7 +3722,7 @@ function openSetlistFromConcert(slId){
 
   // Meta pills
   const typeClass=sl.type==='Wedding'?'pamb':sl.type==='Practice'?'pgray':'pp';
-  const dateStr=sl.date?new Date(sl.date+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}):'';
+  const dateStr=sl.date?new Date(sl.date+'T12:00:00').toLocaleDateString(dateLoc(),{month:'short',day:'numeric',year:'numeric'}):'';
   document.getElementById('slPopMeta').innerHTML=`
     <span class="pill ${typeClass}">${sl.type||'Concert'}</span>
     ${dateStr?`<span class="pill pgray">${dateStr}</span>`:''}
@@ -3755,7 +3760,7 @@ function renderConcertLinkList(concertId){
   const linkedIds=concert?.setlistIds||[];
   el.innerHTML=setlists.map(sl=>`
     <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--bg);border:1.5px solid var(--bd);border-radius:var(--rad);cursor:pointer;transition:border-color .13s" onclick="linkConcertToSetlist('${concertId}','${sl.id}')" onmouseover="this.style.borderColor='var(--a)'" onmouseout="this.style.borderColor='var(--bd)'">
-      <div style="flex:1"><div style="font-weight:600;font-size:.85rem">${sl.name}</div><div style="font-size:.72rem;color:var(--ink2)">${sl.type}${sl.date?' · '+new Date(sl.date+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}):''}</div></div>
+      <div style="flex:1"><div style="font-weight:600;font-size:.85rem">${sl.name}</div><div style="font-size:.72rem;color:var(--ink2)">${sl.type}${sl.date?' · '+new Date(sl.date+'T12:00:00').toLocaleDateString(dateLoc(),{month:'short',day:'numeric',year:'numeric'}):''}</div></div>
       ${linkedIds.includes(sl.id)?`<span class="pill pg" style="font-size:.66rem">✓ Linked</span>`:''}
     </div>`).join('');
 }
@@ -3963,15 +3968,21 @@ function populateCeSetlistSelect(linkedIds){
   }
 }
 
+const CONCERT_TYPES=['Concert','Wedding','Birthday','Anniversary','Festival','Corporate','Rehearsal','Recording Session','Other'];
+function populateCeTypeSelect(selected){
+  const sel=document.getElementById('ceType');if(!sel)return;
+  sel.innerHTML=CONCERT_TYPES.map(v=>`<option value="${v}"${v===(selected||'Concert')?' selected':''}>${t(v)}</option>`).join('');
+}
+
 function openNewConcert(){
   if(!activeBandId){toast2('Create a band first before adding concerts','w');return;}
   editingConcertId = null;
-  document.getElementById('ceModalTitle').textContent = 'New Concert';
+  document.getElementById('ceModalTitle').textContent = t('New Concert');
   ['ceTitle','ceVenue','ceAddress','ceTime','ceDuration','ceAudience','ceNotes'].forEach(id=>{
     const el=document.getElementById(id); if(el) el.value='';
   });
   document.getElementById('ceDate').value='';
-  document.getElementById('ceType').value='Concert';
+  populateCeTypeSelect('Concert');
   document.getElementById('cePaidFree').classList.add('on');
   document.getElementById('cePaidPaid').classList.remove('on');
   document.getElementById('cePaidFields').style.display='none';
@@ -3988,7 +3999,7 @@ function openNewConcert(){
 function openConcertEdit(id){
   const c=concerts.find(x=>x.id===id); if(!c) return;
   editingConcertId=id;
-  document.getElementById('ceModalTitle').textContent='Edit Concert';
+  document.getElementById('ceModalTitle').textContent=t('Edit Concert');
   document.getElementById('ceTitle').value=c.title||'';
   document.getElementById('ceVenue').value=c.venue||'';
   document.getElementById('ceAddress').value=c.address||'';
@@ -3997,7 +4008,7 @@ function openConcertEdit(id){
   document.getElementById('ceDuration').value=c.duration||'';
   document.getElementById('ceAudience').value=c.audience||'';
   document.getElementById('ceNotes').value=c.notes||'';
-  document.getElementById('ceType').value=c.type||'Concert';
+  populateCeTypeSelect(c.type||'Concert');
   const paid=c.paid||false;
   document.getElementById('cePaidFree').classList.toggle('on',!paid);
   document.getElementById('cePaidPaid').classList.toggle('on',paid);
@@ -4074,7 +4085,7 @@ function renderConcertPhotoArea(id){
       <button onclick="removeConcertPhoto('${id}',${i})" style="position:absolute;top:-6px;right:-6px;width:18px;height:18px;border-radius:50%;background:var(--r);border:2px solid var(--w);color:#fff;font-size:.55rem;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1">✕</button>
     </div>`).join('')
     +`<label style="width:64px;height:64px;border-radius:8px;border:2px dashed var(--bd);display:inline-flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;color:var(--ink3);font-size:.65rem;gap:3px;transition:border-color .12s" onmouseover="this.style.borderColor='var(--a)'" onmouseout="this.style.borderColor='var(--bd)'">
-      <span style="font-size:1.3rem">📷</span>Add photo
+      <span style="font-size:1.3rem">📷</span>${t('Add photo')}
       <input type="file" accept="image/*" style="display:none" onchange="addConcertPhoto(event,'${id||editingConcertId||''}')">
     </label>`;
 }
@@ -4717,7 +4728,7 @@ function renderDashboard(){
     `<div class="sc" onclick="nav('members')"><div class="t1">${t('Members')}</div><div class="sv">${members.length}</div><div class="ss">${members.length===1?t('1 member'):t('Active band')}</div></div>`+
     `<div class="sc" onclick="nav('library')"><div class="t1">${t('Songs')}</div><div class="sv">${songs.length}</div><div class="ss">${t('In library')}</div></div>`+
     `<div class="sc" onclick="nav('setlists')"><div class="t1">${t('Set Lists')}</div><div class="sv">${setlists.length}</div><div class="ss">${setlists.length?t('Ready to play'):t('None yet')}</div></div>`+
-    `<div class="sc" onclick="nav('concerts')"><div class="t1">${t('Next Gig')}</div><div class="sv">${nextGig?new Date(nextGig.date+'T00:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric'}):'—'}</div><div class="ss">${nextGig?.venue||t('None scheduled')}</div></div>`;
+    `<div class="sc" onclick="nav('concerts')"><div class="t1">${t('Next Gig')}</div><div class="sv">${nextGig?new Date(nextGig.date+'T00:00:00').toLocaleDateString(dateLoc(),{month:'short',day:'numeric'}):'—'}</div><div class="ss">${nextGig?.venue||t('None scheduled')}</div></div>`;
 
   // Upcoming events list
   if(dshUpcoming){
@@ -5543,17 +5554,13 @@ async function saveSettings(){
 
     <div class="fg"><label data-i18n="Event Name">Event Name</label><input id="ceTitle" placeholder="Blue Note Summer Night"></div>
     <div class="fg"><label data-i18n="Event Type">Event Type</label>
-      <select id="ceType">
-        <option>Concert</option><option>Wedding</option><option>Birthday</option>
-        <option>Anniversary</option><option>Festival</option><option>Corporate</option>
-        <option>Rehearsal</option><option>Recording Session</option><option>Other</option>
-      </select>
+      <select id="ceType"></select>
     </div>
     <div class="fg"><label data-i18n="Date">Date</label><input type="date" id="ceDate"></div>
     <div class="fg"><label data-i18n="Start Time">Start Time</label><input type="time" id="ceTime" value="21:00"></div>
     <div class="fr">
       <div class="fg"><label data-i18n="Duration (optional)">Duration (min)</label><input type="number" id="ceDuration" value="90"></div>
-      <div class="fg"><label>Expected Audience</label><input type="number" id="ceAudience" placeholder="120"></div>
+      <div class="fg"><label data-i18n="Expected Audience">Expected Audience</label><input type="number" id="ceAudience" placeholder="120"></div>
     </div>
     <div class="fg"><label data-i18n="Venue Name">Venue Name</label><input id="ceVenue" placeholder="Blue Note"></div>
     <div class="fg"><label data-i18n="Venue Address">Venue Address</label><input id="ceAddress" placeholder="Rue Fossé aux Loups 26, Brussels"></div>
@@ -5585,12 +5592,12 @@ async function saveSettings(){
     <!-- Notes -->
     <div style="height:1px;background:var(--bd);margin:4px 0 14px"></div>
     <div class="fg"><label><span data-i18n="Notes">Notes</span> <span style="font-weight:400;color:var(--ink3)" data-i18n="(optional)">(optional)</span></label>
-      <textarea id="ceNotes" style="min-height:60px" placeholder="Logistics, special requests, setlist notes…"></textarea>
+      <textarea id="ceNotes" style="min-height:60px" data-i18n-placeholder="Logistics, special requests, setlist notes…" placeholder="Logistics, special requests, setlist notes…"></textarea>
     </div>
 
     <!-- Set List link -->
     <div style="height:1px;background:var(--bd);margin:4px 0 14px"></div>
-    <div style="font-size:.69rem;font-weight:700;color:var(--ink2);margin-bottom:9px;letter-spacing:.04em;text-transform:uppercase"><span data-i18n="Set Lists">Set List</span> <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--ink3)">(optional)</span></div>
+    <div style="font-size:.69rem;font-weight:700;color:var(--ink2);margin-bottom:9px;letter-spacing:.04em;text-transform:uppercase"><span data-i18n="Set Lists">Set List</span> <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--ink3)" data-i18n="(optional)">(optional)</span></div>
     <div class="fg" style="margin-bottom:6px">
       <select id="ceSetlistSelect">
         <option value="">— No set list —</option>
@@ -5601,15 +5608,15 @@ async function saveSettings(){
     <!-- Photos — shown only when editing an existing concert -->
     <div id="cePhotosSection" style="display:none">
       <div style="height:1px;background:var(--bd);margin:4px 0 14px"></div>
-      <div style="font-size:.69rem;font-weight:700;color:var(--ink2);margin-bottom:9px;letter-spacing:.04em;text-transform:uppercase">Concert Photos</div>
+      <div style="font-size:.69rem;font-weight:700;color:var(--ink2);margin-bottom:9px;letter-spacing:.04em;text-transform:uppercase" data-i18n="Concert Photos">Concert Photos</div>
       <div id="cePhotoArea" style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:4px"></div>
-      <div style="font-size:.71rem;color:var(--ink3);margin-bottom:8px">Photos appear on the concert card. Click a photo to view full size.</div>
+      <div style="font-size:.71rem;color:var(--ink3);margin-bottom:8px" data-i18n="Photos appear on the concert card. Click a photo to view full size.">Photos appear on the concert card. Click a photo to view full size.</div>
     </div>
   </div>
   <!-- sticky footer -->
   <div style="padding:13px 25px 20px;border-top:1px solid var(--bd);display:flex;gap:7px;justify-content:flex-end;align-items:center;background:var(--w);flex-shrink:0">
     <button class="btn btn-g" onclick="closeMod('ceMod')" data-i18n="Cancel">Cancel</button>
-    <button class="btn btn-p" onclick="saveConcertEdit()" data-i18n="Save">Save Concert</button>
+    <button class="btn btn-p" onclick="saveConcertEdit()" data-i18n="Save Concert">Save Concert</button>
   </div>
 </div>
 </div>

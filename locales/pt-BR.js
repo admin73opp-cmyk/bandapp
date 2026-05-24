@@ -686,6 +686,16 @@ window.PT_BR = {
   '(min. 6 chars)': '(mín. 6 caracteres)',
   'Default: Email notification only.': 'Padrão: Apenas notificação por e-mail.',
 
+  /* ── CONCERT EDIT MODAL ──────────────────────────────── */
+  'Update the concert details. Changes are reflected immediately.': 'Atualize os detalhes do show. As alterações são refletidas imediatamente.',
+  'Anniversary': 'Aniversário de casamento',
+  'Recording Session': 'Sessão de Gravação',
+  'Save Concert': 'Salvar Show',
+  'Expected Audience': 'Público Esperado',
+  'Concert Photos': 'Fotos do Show',
+  'Photos appear on the concert card. Click a photo to view full size.': 'As fotos aparecem no cartão do show. Clique para ver em tamanho completo.',
+  'Logistics, special requests, setlist notes…': 'Logística, pedidos especiais, notas do setlist…',
+
   /* ── DASHBOARD ────────────────────────────────────────── */
   'Band Members': 'Membros da Banda',
   'See calendar →': 'Ver calendário →',
