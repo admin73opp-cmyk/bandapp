@@ -1440,7 +1440,7 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
       <input class="phone-num" type="tel" id="invPhoneNum" placeholder="479 123 456">
     </div>
   </div>
-  <div class="fr"><div class="fg"><label>Instrument</label><select><option>Guitar</option><option>Piano / Keys</option><option>Bass</option><option>Drums</option><option>Saxophone</option><option>Trumpet</option><option>Violin</option><option>Vocals</option><option>Other</option></select></div><div class="fg"><label>Role</label><select id="invRole" onchange="toggleInvGuestDates(this)"><option>Member</option><option>Admin</option><option>Guest</option></select></div></div>
+  <div class="fr"><div class="fg"><label>Instrument</label><select id="invInstrument"><option value="">— Instrument —</option></select></div><div class="fg"><label>Role</label><select id="invRole" onchange="toggleInvGuestDates(this)"><option>Member</option><option>Admin</option><option>Guest</option></select></div></div>
   <div id="invGuestDates" style="display:none">
     <div style="padding:9px 12px;background:var(--amb2);border:1px solid rgba(217,119,6,.3);border-radius:var(--rad);font-size:.76rem;color:var(--amb);margin-bottom:10px">Guests have full member access during the active date range, then move to the Guest Directory.</div>
     <div class="fr">
@@ -2558,6 +2558,8 @@ function openInviteMessage(){
   if(invEmail) params.set('email',invEmail);
   const phone=getFullPhone('invPhoneCc','invPhoneNum');
   if(phone) params.set('phone',phone);
+  const instrument=(document.getElementById('invInstrument')?.value||'').trim();
+  if(instrument) params.set('instrument',instrument);
   if(bandId) params.set('band',bandId);
   const inviteUrl=baseUrl+(params.toString()?'?'+params.toString():'');
 
@@ -4218,7 +4220,7 @@ function instIcon(name){
 
 function populateInstrumentSelects(){
   const opts=INSTRUMENTS.map(x=>`<option value="${x.v}">${x.i} ${x.label}</option>`).join('');
-  [{id:'pfInst1',blank:'— Select —'},{id:'pfInst2',blank:'None'},{id:'mpInst1',blank:'— Select —'},{id:'mpInst2',blank:'None'}].forEach(({id,blank})=>{
+  [{id:'pfInst1',blank:'— Select —'},{id:'pfInst2',blank:'None'},{id:'mpInst1',blank:'— Select —'},{id:'mpInst2',blank:'None'},{id:'invInstrument',blank:'— Instrument —'}].forEach(({id,blank})=>{
     const el=document.getElementById(id);
     if(el)el.innerHTML=`<option value="">${blank}</option>${opts}`;
   });
@@ -4636,7 +4638,13 @@ function openBandPhotoLightbox(idx){
 }
 
 // INIT
-function openInvMod(){populatePhoneCc('invPhoneCc','+32');document.getElementById('invPhoneNum').value='';showMod('invMod');}
+function openInvMod(){
+  populatePhoneCc('invPhoneCc','+32');
+  document.getElementById('invPhoneNum').value='';
+  const invInst=document.getElementById('invInstrument');
+  if(invInst) invInst.value='';
+  showMod('invMod');
+}
 
 function renderDashboard(){
   const band = getActiveBand();
@@ -5179,6 +5187,16 @@ async function populateMpPage(){
   document.getElementById('mpFacebook').value=ex.facebook||m?.facebook||cp.facebook_url||'';
   document.getElementById('mpWebsite').value=ex.website||m?.website||cp.website_url||'';
 
+  // Pre-fill blank fields from invite sessionStorage (persisted when new user visited invite link)
+  const _ssFirst=sessionStorage.getItem('inviteFirst');
+  const _ssLast =sessionStorage.getItem('inviteLast');
+  const _ssPhone=sessionStorage.getItem('invitePhone');
+  const _ssInst =sessionStorage.getItem('inviteInstrument');
+  if(_ssFirst && !document.getElementById('mpFirst').value)  document.getElementById('mpFirst').value=_ssFirst;
+  if(_ssLast  && !document.getElementById('mpLast').value)   document.getElementById('mpLast').value=_ssLast;
+  if(_ssPhone && !document.getElementById('mpPhoneNum')?.value) initPhoneField('mpPhoneCc','mpPhoneNum',_ssPhone);
+  if(_ssInst){const _instEl=document.getElementById('mpInst1');if(_instEl&&!_instEl.value){_instEl.value=_ssInst;renderMpInstPreview();}}
+
   // Render all read views and ensure all sections start in read mode
   renderMpReadViews();
   ['personal','music','avail','links'].forEach(sec=>mpCancel(sec));
@@ -5253,6 +5271,7 @@ async function mpSave(sec){
   mpCancel(sec);
   document.getElementById('mpNameDisplay').textContent=`${currentUser.firstName} ${currentUser.lastName}`.trim();
   syncCurrentUserToUI();
+  ['inviteFirst','inviteLast','inviteEmail','invitePhone','inviteInstrument'].forEach(k=>sessionStorage.removeItem(k));
   toast2('Saved!');
 }
 

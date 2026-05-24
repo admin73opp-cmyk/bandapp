@@ -25,6 +25,11 @@ async function loadCurrentUser(uid, email) {
     const ln = meta.last_name || '';
     currentUser.firstName = fn;
     currentUser.lastName  = ln;
+    currentUser._memberships = [];
+    // Restore pending band from metadata if sessionStorage was cleared (e.g. after page refresh)
+    if (meta.pending_band_id && !sessionStorage.getItem('pendingBandId')) {
+      sessionStorage.setItem('pendingBandId', meta.pending_band_id);
+    }
     if (fn || ln) {
       await supabase.from('profiles').upsert({
         id:         uid,
@@ -89,7 +94,10 @@ async function doSignUp() {
   const { data, error } = await supabase.auth.signUp({
     email,
     password: pw,
-    options: { data: { first_name: firstName, last_name: lastName }, emailRedirectTo: redirectTo },
+    options: {
+      data: { first_name: firstName, last_name: lastName, ...(pendingBandId ? { pending_band_id: pendingBandId } : {}) },
+      emailRedirectTo: redirectTo,
+    },
   });
 
   if (error) { toast2(error.message, 'w'); return; }
@@ -216,14 +224,21 @@ supabase.auth.onAuthStateChange(async (event, session) => {
   const _urlParams = new URLSearchParams(window.location.search);
   const _pendingBandId = _urlParams.get('band') || sessionStorage.getItem('pendingBandId');
   if (_pendingBandId) {
-    const { data: joinData } = await supabase.rpc('join_band_by_code', { p_code: _pendingBandId });
+    const { data: joinData, error: joinErr } = await supabase.rpc('join_band_by_code', { p_code: _pendingBandId });
     if (joinData?.success) {
       currentUser._memberships = [...(currentUser._memberships || []), { band_id: joinData.band_id, role: 'member' }];
       activeBandId = joinData.band_id;
       localStorage.setItem('activeBandId', joinData.band_id);
+      sessionStorage.removeItem('pendingBandId');
+      window.history.replaceState({}, '', window.location.pathname);
+    } else if (joinData?.error === 'already_member') {
+      sessionStorage.removeItem('pendingBandId');
+      window.history.replaceState({}, '', window.location.pathname);
+    } else {
+      // RPC not deployed or network error — clean URL but keep pendingBandId for retry on next login
+      window.history.replaceState({}, '', window.location.pathname);
+      if (joinErr) console.warn('[bandapp] join_band_by_code failed:', joinErr?.message);
     }
-    sessionStorage.removeItem('pendingBandId');
-    window.history.replaceState({}, '', window.location.pathname);
   }
 
   document.getElementById('authScreen').style.display = 'none';
@@ -239,12 +254,19 @@ supabase.auth.onAuthStateChange(async (event, session) => {
     document.getElementById('authScreen').style.display = 'flex';
     // Pre-fill signup form from invite URL params
     const p = new URLSearchParams(window.location.search);
+    // Store all invite params in sessionStorage so they survive the email confirmation redirect
+    if (p.get('fname'))      sessionStorage.setItem('inviteFirst',      p.get('fname'));
+    if (p.get('lname'))      sessionStorage.setItem('inviteLast',       p.get('lname'));
+    if (p.get('email'))      sessionStorage.setItem('inviteEmail',      p.get('email'));
+    if (p.get('phone'))      sessionStorage.setItem('invitePhone',      p.get('phone'));
+    if (p.get('instrument')) sessionStorage.setItem('inviteInstrument', p.get('instrument'));
+    if (p.get('band'))       sessionStorage.setItem('pendingBandId',    p.get('band'));
+
     if (p.get('fname') || p.get('email') || p.get('band')) {
       if (typeof switchTab === 'function') switchTab('signup');
       if (p.get('fname')) { const el = document.getElementById('signupFirst'); if (el) el.value = p.get('fname'); }
       if (p.get('lname')) { const el = document.getElementById('signupLast');  if (el) el.value = p.get('lname'); }
       if (p.get('email')) { const el = document.getElementById('signupEmail'); if (el) el.value = p.get('email'); }
-      if (p.get('band'))  sessionStorage.setItem('pendingBandId', p.get('band'));
     }
   }
   // If session exists, onAuthStateChange fires automatically
