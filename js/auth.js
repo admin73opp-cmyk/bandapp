@@ -82,10 +82,14 @@ async function doSignUp() {
   if (!email || !pw) { toast2('Enter email and password', 'w'); return; }
   if (pw.length < 6) { toast2('Password must be at least 6 characters', 'w'); return; }
 
+  const pendingBandId = sessionStorage.getItem('pendingBandId') || new URLSearchParams(window.location.search).get('band') || '';
+  const baseUrl = localStorage.getItem('appUrl') || (window.location.origin + window.location.pathname);
+  const redirectTo = pendingBandId ? `${baseUrl}?band=${encodeURIComponent(pendingBandId)}` : baseUrl;
+
   const { data, error } = await supabase.auth.signUp({
     email,
     password: pw,
-    options: { data: { first_name: firstName, last_name: lastName } },
+    options: { data: { first_name: firstName, last_name: lastName }, emailRedirectTo: redirectTo },
   });
 
   if (error) { toast2(error.message, 'w'); return; }
@@ -207,6 +211,21 @@ supabase.auth.onAuthStateChange(async (event, session) => {
     return;
   }
   await loadCurrentUser(session.user.id, session.user.email);
+
+  // Auto-join band from invite link (?band=UUID) or sessionStorage
+  const _urlParams = new URLSearchParams(window.location.search);
+  const _pendingBandId = _urlParams.get('band') || sessionStorage.getItem('pendingBandId');
+  if (_pendingBandId) {
+    const { data: joinData } = await supabase.rpc('join_band_by_code', { p_code: _pendingBandId });
+    if (joinData?.success) {
+      currentUser._memberships = [...(currentUser._memberships || []), { band_id: joinData.band_id, role: 'member' }];
+      activeBandId = joinData.band_id;
+      localStorage.setItem('activeBandId', joinData.band_id);
+    }
+    sessionStorage.removeItem('pendingBandId');
+    window.history.replaceState({}, '', window.location.pathname);
+  }
+
   document.getElementById('authScreen').style.display = 'none';
   document.getElementById('app').classList.add('vis');
   initSbState();
@@ -218,6 +237,15 @@ supabase.auth.onAuthStateChange(async (event, session) => {
   const { data: { session } } = await supabase.auth.getSession();
   if (!session) {
     document.getElementById('authScreen').style.display = 'flex';
+    // Pre-fill signup form from invite URL params
+    const p = new URLSearchParams(window.location.search);
+    if (p.get('fname') || p.get('email') || p.get('band')) {
+      if (typeof switchTab === 'function') switchTab('signup');
+      if (p.get('fname')) { const el = document.getElementById('signupFirst'); if (el) el.value = p.get('fname'); }
+      if (p.get('lname')) { const el = document.getElementById('signupLast');  if (el) el.value = p.get('lname'); }
+      if (p.get('email')) { const el = document.getElementById('signupEmail'); if (el) el.value = p.get('email'); }
+      if (p.get('band'))  sessionStorage.setItem('pendingBandId', p.get('band'));
+    }
   }
   // If session exists, onAuthStateChange fires automatically
 })();
