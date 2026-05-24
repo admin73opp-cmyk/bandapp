@@ -786,30 +786,50 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
 
     <!-- MEMBERS -->
     <div class="pg-area" id="pg-members">
-      <div style="display:flex;gap:9px;align-items:center;margin-bottom:15px;flex-wrap:wrap">
-        <div style="flex:1"><div style="font-size:1.12rem;font-weight:700;letter-spacing:-.03em">Members</div><div style="font-size:.74rem;color:var(--ink2);margin-top:2px" id="memberCount">5 active members</div></div>
-        <button class="btn btn-g btn-sm" onclick="openInvMod()">Invite Member</button>
+      <!-- Empty state: no band yet -->
+      <div id="membersNoBand" style="display:none;text-align:center;padding:60px 20px">
+        <div style="font-size:2.5rem;margin-bottom:12px">🎸</div>
+        <div style="font-size:1.1rem;font-weight:700;margin-bottom:8px">No Band Yet</div>
+        <p style="font-size:.84rem;color:var(--ink2);margin-bottom:20px">Start by creating your first band to manage members.</p>
+        <button class="btn btn-p btn-sm" onclick="openNewBand()">+ Create a Band</button>
       </div>
-      <div class="memgrid" id="memGrid"></div>
+      <!-- Content (hidden when no band) -->
+      <div id="membersContent">
+        <div style="display:flex;gap:9px;align-items:center;margin-bottom:15px;flex-wrap:wrap">
+          <div style="flex:1"><div style="font-size:1.12rem;font-weight:700;letter-spacing:-.03em">Members</div><div style="font-size:.74rem;color:var(--ink2);margin-top:2px" id="memberCount"></div></div>
+          <button class="btn btn-g btn-sm" onclick="openInvMod()">Invite Member</button>
+        </div>
+        <div class="memgrid" id="memGrid"></div>
+      </div>
     </div>
 
     <!-- GUEST DIRECTORY -->
     <div class="pg-area" id="pg-guestdir">
-      <div style="display:flex;gap:9px;align-items:center;margin-bottom:6px;flex-wrap:wrap">
-        <div style="flex:1">
-          <div style="font-size:1.12rem;font-weight:700;letter-spacing:-.03em">Guest Directory</div>
-          <div style="font-size:.74rem;color:var(--ink2);margin-top:2px">Past and expired guest musicians · all members can view · admin can edit</div>
+      <!-- Empty state: no band yet -->
+      <div id="guestDirNoBand" style="display:none;text-align:center;padding:60px 20px">
+        <div style="font-size:2.5rem;margin-bottom:12px">🎸</div>
+        <div style="font-size:1.1rem;font-weight:700;margin-bottom:8px">No Band Yet</div>
+        <p style="font-size:.84rem;color:var(--ink2);margin-bottom:20px">Start by creating your first band to manage guest musicians.</p>
+        <button class="btn btn-p btn-sm" onclick="openNewBand()">+ Create a Band</button>
+      </div>
+      <!-- Content (hidden when no band) -->
+      <div id="guestDirContent">
+        <div style="display:flex;gap:9px;align-items:center;margin-bottom:6px;flex-wrap:wrap">
+          <div style="flex:1">
+            <div style="font-size:1.12rem;font-weight:700;letter-spacing:-.03em">Guest Directory</div>
+            <div style="font-size:.74rem;color:var(--ink2);margin-top:2px">Past and expired guest musicians · all members can view · admin can edit</div>
+          </div>
         </div>
-      </div>
-      <div style="padding:10px 13px;background:var(--bg2);border:1px solid var(--bd);border-radius:var(--rad);font-size:.78rem;color:var(--ink2);margin-bottom:16px;display:flex;align-items:center;gap:8px">
-        <span style="font-size:1rem">📋</span>
-        Guests whose end date has passed are automatically moved here. Admins can promote them to full Members at any time.
-      </div>
-      <div id="guestDirList" style="display:flex;flex-direction:column;gap:8px"></div>
-      <div id="guestDirEmpty" style="display:none;text-align:center;padding:40px 20px;color:var(--ink3)">
-        <div style="font-size:2rem;margin-bottom:10px;opacity:.4">👤</div>
-        <div style="font-size:.88rem;font-weight:600;color:var(--ink2);margin-bottom:4px">No past guests yet</div>
-        <div style="font-size:.78rem">Expired guest musicians will appear here automatically.</div>
+        <div style="padding:10px 13px;background:var(--bg2);border:1px solid var(--bd);border-radius:var(--rad);font-size:.78rem;color:var(--ink2);margin-bottom:16px;display:flex;align-items:center;gap:8px">
+          <span style="font-size:1rem">📋</span>
+          Guests whose end date has passed are automatically moved here. Admins can promote them to full Members at any time.
+        </div>
+        <div id="guestDirList" style="display:flex;flex-direction:column;gap:8px"></div>
+        <div id="guestDirEmpty" style="display:none;text-align:center;padding:40px 20px;color:var(--ink3)">
+          <div style="font-size:2rem;margin-bottom:10px;opacity:.4">👤</div>
+          <div style="font-size:.88rem;font-weight:600;color:var(--ink2);margin-bottom:4px">No past guests yet</div>
+          <div style="font-size:.78rem">Expired guest musicians will appear here automatically.</div>
+        </div>
       </div>
     </div>
 
@@ -821,7 +841,7 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
         <div style="font-size:2.5rem;margin-bottom:12px">🎸</div>
         <div style="font-size:1.1rem;font-weight:700;margin-bottom:8px">No Band Yet</div>
         <p style="font-size:.84rem;color:var(--ink2);margin-bottom:20px">You're not part of any band. Create one to get started.</p>
-        <button class="btn btn-p btn-sm" onclick="showMod('nbMod')">+ Create a Band</button>
+        <button class="btn btn-p btn-sm" onclick="openNewBand()">+ Create a Band</button>
       </div>
 
       <!-- Band content (hidden when no band) -->
@@ -1377,7 +1397,7 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
   <div class="mott">Your Bands</div>
   <div style="font-size:.75rem;color:var(--ink2);margin-bottom:12px">Switch between bands or create a new one.</div>
   <div style="display:flex;flex-direction:column;gap:7px;margin-bottom:14px" id="bandList"></div>
-  <button class="btn btn-g btn-fw" onclick="closeMod('bswMod');showMod('newBandMod')">+ Create New Band</button>
+  <button class="btn btn-g btn-fw" onclick="closeMod('bswMod');openNewBand()">+ Create New Band</button>
 </div>
 </div>
 
@@ -3890,12 +3910,17 @@ function isoName(code){
 // Populate both country selects in the profile modal
 function populateCountrySelects(){
   const opts=ISO_COUNTRIES.map(c=>`<option value="${c.c}">${c.f} ${c.n}</option>`).join('');
-  ['pfNat','pfCountry','mpNat','mpCountry'].forEach(id=>{
+  ['pfNat','pfCountry','mpNat','mpCountry','nbCountry'].forEach(id=>{
     const el=document.getElementById(id);
     if(!el)return;
     // preserve the blank first option
     el.innerHTML=`<option value="">— Select —</option>${opts}`;
   });
+}
+
+function openNewBand(){
+  populateCountrySelects();
+  showMod('newBandMod');
 }
 
 // Update the nationality flag preview inside the profile modal header
@@ -3965,6 +3990,16 @@ function renderPfInstIcons(){
 }
 
 function renderMembers(){
+  const noBand=document.getElementById('membersNoBand');
+  const content=document.getElementById('membersContent');
+  if(!activeBandId){
+    if(noBand)noBand.style.display='';
+    if(content)content.style.display='none';
+    renderGuestDir();
+    return;
+  }
+  if(noBand)noBand.style.display='none';
+  if(content)content.style.display='';
   const days=['Mo','Tu','We','Th','Fr','Sa','Su'];
   const active=activeMembers();
   // sort: admin first, then members, then guests at bottom
@@ -4019,6 +4054,15 @@ function renderMembers(){
 }
 
 function renderGuestDir(){
+  const noBand=document.getElementById('guestDirNoBand');
+  const gContent=document.getElementById('guestDirContent');
+  if(!activeBandId){
+    if(noBand)noBand.style.display='';
+    if(gContent)gContent.style.display='none';
+    return;
+  }
+  if(noBand)noBand.style.display='none';
+  if(gContent)gContent.style.display='';
   const allExpired=[...expiredGuests(),...guestDirectory];
   const list=document.getElementById('guestDirList');
   const empty=document.getElementById('guestDirEmpty');
