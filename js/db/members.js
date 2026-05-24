@@ -3,9 +3,9 @@
 // that match the shape expected by the prototype's members[] and extraData[].
 
 function memberFromRow(row) {
-  const p = row.profiles;
+  const p = row.profiles || {};  // null when profiles_select RLS blocks the join
   return {
-    id:          p.id,            // UUID — used for all DB writes
+    id:          p.id || null,
     role:        row.role,
     guestStart:  row.guest_start  || null,
     guestEnd:    row.guest_end    || null,

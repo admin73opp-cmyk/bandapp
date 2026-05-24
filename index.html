@@ -5133,9 +5133,9 @@ async function populateMpPage(){
   const m=members[idx];
   const ex=extraData[idx]||{};
   const cp=currentUser._profile||{}; // full profile row loaded at login
-  // New users with no band membership won't have an m — fall back to currentUser/cp
-  const fn=m?.firstName||currentUser.firstName||'';
-  const ln=m?.lastName||currentUser.lastName||'';
+  // Fall back through member row → currentUser cache → raw profile row
+  const fn=m?.firstName||currentUser.firstName||cp.first_name||'';
+  const ln=m?.lastName||currentUser.lastName||cp.last_name||'';
 
   // Avatar
   const av=document.getElementById('mpAv');
@@ -5287,9 +5287,9 @@ function renderMpReadViews(){
   const m=members[idx];
   const ex=extraData[idx]||{};
 
-  // Personal — fall back to form inputs for no-band users where m/ex are empty
-  document.getElementById('mpv-first').textContent=m?.firstName||currentUser.firstName||'—';
-  document.getElementById('mpv-last').textContent=m?.lastName||currentUser.lastName||'—';
+  // Personal — fall back to form inputs (same pattern as all other fields)
+  document.getElementById('mpv-first').textContent=m?.firstName||currentUser.firstName||document.getElementById('mpFirst')?.value||'—';
+  document.getElementById('mpv-last').textContent=m?.lastName||currentUser.lastName||document.getElementById('mpLast')?.value||'—';
   const bday=ex.bday||m?.bday||document.getElementById('mpBday')?.value||'';
   document.getElementById('mpv-bday').textContent=bday
     ?new Date(bday+'T12:00').toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}):'—';
