@@ -7,6 +7,8 @@
 <title>Bandapp v26</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="js/supabase-client.js"></script>
+<script src="locales/pt-BR.js"></script>
+<script src="js/i18n.js"></script>
 <style>
 :root{--font:-apple-system,BlinkMacSystemFont,'Segoe UI','Helvetica Neue',Arial,sans-serif;--mono:'SF Mono','Fira Code','Fira Mono','Roboto Mono',Menlo,monospace;--ink:#111118;--ink2:#5A5A72;--ink3:#9A9AB0;--bg:#F5F5F8;--bg2:#EEEEF3;--w:#FFFFFF;--bd:#E2E2EC;--a:#6C63FF;--a2:#EDEAFF;--g:#16A34A;--g2:#DCFCE7;--r:#DC2626;--r2:#FEE2E2;--amb:#D97706;--amb2:#FEF3C7;--bl:#2563EB;--bl2:#DBEAFE;--rad:10px;--radl:16px;--sh:0 1px 3px rgba(0,0,0,.07),0 4px 14px rgba(0,0,0,.05);--shl:0 8px 30px rgba(0,0,0,.12)}
 @media(prefers-color-scheme:dark){
@@ -375,64 +377,64 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
 <div id="authScreen">
   <div style="width:min(380px,95vw)">
     <div style="font-size:1.45rem;font-weight:700;letter-spacing:-.04em;display:flex;align-items:center;gap:8px;margin-bottom:4px"><div class="ld"></div>Bandapp</div>
-    <p style="font-size:.84rem;color:var(--ink2);margin-bottom:27px">Manage your band, rehearsals &amp; setlists</p>
+    <p style="font-size:.84rem;color:var(--ink2);margin-bottom:27px" data-i18n="Manage your band, rehearsals & setlists">Manage your band, rehearsals &amp; setlists</p>
     <div id="auth-tabs" style="display:flex;background:var(--bg);border-radius:var(--rad);padding:4px;gap:3px;margin-bottom:21px">
-      <button class="stb on" style="flex:1;border-radius:7px" onclick="switchTab('login')">Sign in</button>
-      <button class="stb" style="flex:1;border-radius:7px" onclick="switchTab('signup')">Sign up</button>
+      <button class="stb on" style="flex:1;border-radius:7px" onclick="switchTab('login')" data-i18n="Sign in">Sign in</button>
+      <button class="stb" style="flex:1;border-radius:7px" onclick="switchTab('signup')" data-i18n="Sign up">Sign up</button>
     </div>
     <div id="lf">
-      <div class="fg"><label>Email</label><input id="loginEmail" type="email" placeholder="you@email.com" autocomplete="email"></div>
-      <div class="fg"><label>Password</label><input id="loginPassword" type="password" placeholder="••••••••" autocomplete="current-password"></div>
-      <button class="btn btn-p btn-fw" onclick="doLogin()">Sign in</button>
+      <div class="fg"><label data-i18n="Email">Email</label><input id="loginEmail" type="email" placeholder="you@email.com" autocomplete="email"></div>
+      <div class="fg"><label data-i18n="Password">Password</label><input id="loginPassword" type="password" placeholder="••••••••" autocomplete="current-password"></div>
+      <button class="btn btn-p btn-fw" onclick="doLogin()" data-i18n="Sign in">Sign in</button>
       <div style="text-align:center;margin:7px 0 4px">
-        <a href="#" style="font-size:.75rem;color:var(--a);text-decoration:none" onclick="showForgotPassword();return false">Forgot password?</a>
+        <a href="#" style="font-size:.75rem;color:var(--a);text-decoration:none" onclick="showForgotPassword();return false" data-i18n="Forgot password?">Forgot password?</a>
       </div>
-      <div style="text-align:center;font-size:.77rem;color:var(--ink3);margin:9px 0;position:relative"><span style="background:var(--w);padding:0 9px;position:relative;z-index:1">or</span><div style="position:absolute;top:50%;left:0;right:0;height:1px;background:var(--bd)"></div></div>
-      <button class="btn btn-g btn-fw" onclick="doDemo()">Continue as demo</button>
+      <div style="text-align:center;font-size:.77rem;color:var(--ink3);margin:9px 0;position:relative"><span style="background:var(--w);padding:0 9px;position:relative;z-index:1" data-i18n="or">or</span><div style="position:absolute;top:50%;left:0;right:0;height:1px;background:var(--bd)"></div></div>
+      <button class="btn btn-g btn-fw" onclick="doDemo()" data-i18n="Continue as demo">Continue as demo</button>
     </div>
     <div id="sf" style="display:none">
       <div id="sf-invite-banner" style="display:none;padding:10px 14px;background:var(--a2);border:1px solid rgba(108,99,255,.3);border-radius:var(--rad);margin-bottom:14px;font-size:.85rem;text-align:center">
         <div style="font-size:1.4rem;margin-bottom:4px">🎸</div>
-        <div style="font-weight:700;color:var(--a);margin-bottom:2px">You've been invited!</div>
-        <div style="color:var(--ink2)">Sign up to join <strong id="sf-invite-band">the band</strong></div>
+        <div style="font-weight:700;color:var(--a);margin-bottom:2px" data-i18n="You've been invited!">You've been invited!</div>
+        <div style="color:var(--ink2)"><span data-i18n="Sign up to join">Sign up to join</span> <strong id="sf-invite-band">the band</strong></div>
       </div>
-      <div class="fr"><div class="fg"><label>First name</label><input id="signupFirst" placeholder="Marco" autocomplete="given-name"></div><div class="fg"><label>Last name</label><input id="signupLast" placeholder="Rossi" autocomplete="family-name"></div></div>
-      <div class="fg"><label>Email</label><input id="signupEmail" type="email" placeholder="you@email.com" autocomplete="email"></div>
-      <div class="fg"><label>Password <span style="font-weight:400;color:var(--ink3)">(min. 6 chars)</span></label><input id="signupPassword" type="password" placeholder="••••••••" autocomplete="new-password"></div>
-      <div class="fg" id="sfBandField"><label>Band name (optional)</label><input id="signupBand" placeholder="The Jazz Cats"></div>
-      <button class="btn btn-p btn-fw" onclick="doSignUp()">Create account</button>
+      <div class="fr"><div class="fg"><label data-i18n="First name">First name</label><input id="signupFirst" placeholder="Marco" autocomplete="given-name"></div><div class="fg"><label data-i18n="Last name">Last name</label><input id="signupLast" placeholder="Rossi" autocomplete="family-name"></div></div>
+      <div class="fg"><label data-i18n="Email">Email</label><input id="signupEmail" type="email" placeholder="you@email.com" autocomplete="email"></div>
+      <div class="fg"><label><span data-i18n="Password">Password</span> <span style="font-weight:400;color:var(--ink3)" data-i18n="(min. 6 chars)">(min. 6 chars)</span></label><input id="signupPassword" type="password" placeholder="••••••••" autocomplete="new-password"></div>
+      <div class="fg" id="sfBandField"><label data-i18n="Band name (optional)">Band name (optional)</label><input id="signupBand" placeholder="The Jazz Cats"></div>
+      <button class="btn btn-p btn-fw" onclick="doSignUp()" data-i18n="Create account">Create account</button>
     </div>
     <!-- Post-signup: check email -->
     <div id="sf-confirm" style="display:none;text-align:center;padding:8px 0">
       <div style="font-size:2.2rem;margin-bottom:10px">📧</div>
-      <div style="font-weight:700;font-size:1.05rem;margin-bottom:8px">Check your inbox</div>
-      <p style="font-size:.84rem;color:var(--ink2);margin-bottom:18px">We sent a confirmation link to <strong id="sf-confirm-email"></strong>. Click it to activate your account, then sign in.</p>
-      <button class="btn btn-g btn-fw" onclick="switchTab('login')">Back to sign in</button>
+      <div style="font-weight:700;font-size:1.05rem;margin-bottom:8px" data-i18n="Check your inbox">Check your inbox</div>
+      <p style="font-size:.84rem;color:var(--ink2);margin-bottom:18px"><span data-i18n="We sent a confirmation link to">We sent a confirmation link to</span> <strong id="sf-confirm-email"></strong>. <span data-i18n="Click it to activate your account, then sign in.">Click it to activate your account, then sign in.</span></p>
+      <button class="btn btn-g btn-fw" onclick="switchTab('login')" data-i18n="Back to sign in">Back to sign in</button>
     </div>
     <!-- Forgot password form -->
     <div id="ff" style="display:none">
-      <div style="font-weight:600;font-size:.9rem;margin-bottom:6px">Reset your password</div>
-      <p style="font-size:.81rem;color:var(--ink2);margin-bottom:14px">Enter your email and we'll send you a link to set a new password.</p>
-      <div class="fg"><label>Email</label><input id="forgotEmail" type="email" placeholder="you@email.com" autocomplete="email"></div>
-      <button class="btn btn-p btn-fw" onclick="doForgotPassword()">Send reset link</button>
+      <div style="font-weight:600;font-size:.9rem;margin-bottom:6px" data-i18n="Reset your password">Reset your password</div>
+      <p style="font-size:.81rem;color:var(--ink2);margin-bottom:14px" data-i18n="Enter your email and we'll send you a link to set a new password.">Enter your email and we'll send you a link to set a new password.</p>
+      <div class="fg"><label data-i18n="Email">Email</label><input id="forgotEmail" type="email" placeholder="you@email.com" autocomplete="email"></div>
+      <button class="btn btn-p btn-fw" onclick="doForgotPassword()" data-i18n="Send reset link">Send reset link</button>
       <div style="text-align:center;margin-top:10px">
-        <a href="#" style="font-size:.75rem;color:var(--a);text-decoration:none" onclick="switchTab('login');return false">Back to sign in</a>
+        <a href="#" style="font-size:.75rem;color:var(--a);text-decoration:none" onclick="switchTab('login');return false" data-i18n="Back to sign in">Back to sign in</a>
       </div>
     </div>
     <!-- Forgot password: link sent -->
     <div id="ff-sent" style="display:none;text-align:center;padding:8px 0">
       <div style="font-size:2.2rem;margin-bottom:10px">✉️</div>
-      <div style="font-weight:700;font-size:1.05rem;margin-bottom:8px">Link sent!</div>
-      <p style="font-size:.84rem;color:var(--ink2);margin-bottom:18px">Check your inbox at <strong id="ff-sent-email"></strong> and click the link to reset your password.</p>
-      <button class="btn btn-g btn-fw" onclick="switchTab('login')">Back to sign in</button>
+      <div style="font-weight:700;font-size:1.05rem;margin-bottom:8px" data-i18n="Link sent!">Link sent!</div>
+      <p style="font-size:.84rem;color:var(--ink2);margin-bottom:18px"><span data-i18n="Check your inbox at">Check your inbox at</span> <strong id="ff-sent-email"></strong> <span data-i18n="and click the link to reset your password.">and click the link to reset your password.</span></p>
+      <button class="btn btn-g btn-fw" onclick="switchTab('login')" data-i18n="Back to sign in">Back to sign in</button>
     </div>
     <!-- Password recovery form (reached via email link) -->
     <div id="reset-pw-form" style="display:none">
-      <div style="font-weight:600;font-size:.9rem;margin-bottom:6px">Set a new password</div>
-      <p style="font-size:.81rem;color:var(--ink2);margin-bottom:14px">Choose a new password for your account.</p>
-      <div class="fg"><label>New password <span style="font-weight:400;color:var(--ink3)">(min. 6 chars)</span></label><input id="resetNewPw" type="password" placeholder="••••••••" autocomplete="new-password"></div>
-      <div class="fg"><label>Confirm new password</label><input id="resetConfirmPw" type="password" placeholder="••••••••" autocomplete="new-password"></div>
-      <button class="btn btn-p btn-fw" onclick="doResetPassword()">Set new password</button>
+      <div style="font-weight:600;font-size:.9rem;margin-bottom:6px" data-i18n="Set a new password">Set a new password</div>
+      <p style="font-size:.81rem;color:var(--ink2);margin-bottom:14px" data-i18n="Choose a new password for your account.">Choose a new password for your account.</p>
+      <div class="fg"><label><span data-i18n="New password">New password</span> <span style="font-weight:400;color:var(--ink3)" data-i18n="(min. 6 chars)">(min. 6 chars)</span></label><input id="resetNewPw" type="password" placeholder="••••••••" autocomplete="new-password"></div>
+      <div class="fg"><label data-i18n="Confirm new password">Confirm new password</label><input id="resetConfirmPw" type="password" placeholder="••••••••" autocomplete="new-password"></div>
+      <button class="btn btn-p btn-fw" onclick="doResetPassword()" data-i18n="Set new password">Set new password</button>
     </div>
   </div>
 </div>
@@ -442,7 +444,7 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
   <div class="sb-ov" id="sbOv" onclick="toggleSb()"></div>
   <nav class="sb" id="sb">
     <!-- minimize toggle -->
-    <div class="sb-toggle" id="sbToggle" onclick="toggleSbMinimize()" title="Collapse sidebar">
+    <div class="sb-toggle" id="sbToggle" onclick="toggleSbMinimize()" data-i18n-title="Collapse sidebar" title="Collapse sidebar">
       <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 12L6 8l4-4"/></svg>
     </div>
     <div class="sb-logo"><div class="ld"></div><span class="sb-logo-text">Bandapp</span></div>
@@ -455,28 +457,28 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
     </div>
     <div class="sb-nav">
       <div class="ns">
-        <div class="nsl">Main</div>
-        <div class="ni on" onclick="nav('dashboard')" data-label="Dashboard"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="1" width="6" height="6" rx="1.5"/><rect x="9" y="1" width="6" height="6" rx="1.5"/><rect x="1" y="9" width="6" height="6" rx="1.5"/><rect x="9" y="9" width="6" height="6" rx="1.5"/></svg><span class="sb-label">Dashboard</span></div>
-        <div class="ni" onclick="nav('calendar')" data-label="Calendar"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="2" width="14" height="13" rx="2"/><path d="M1 6h14M5 1v2M11 1v2"/></svg><span class="sb-label">Calendar</span></div>
-        <div class="ni" onclick="nav('rehearsals')" data-label="Rehearsals"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M6 6l5 2-5 2V6z"/></svg><span class="sb-label">Rehearsals</span><span class="nb" id="sbRehCount" style="display:none">0</span></div>
-        <div class="ni" onclick="nav('concerts')" data-label="Concerts"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 1l2.4 4.9 5.4.8-3.9 3.8.9 5.3L8 13.3l-4.8 2.5.9-5.3L.2 6.7l5.4-.8L8 1z"/></svg><span class="sb-label">Concerts</span><span class="nb" id="sbConCount" style="display:none">0</span></div>
+        <div class="nsl" data-i18n="Main">Main</div>
+        <div class="ni on" onclick="nav('dashboard')" data-label="Dashboard"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="1" width="6" height="6" rx="1.5"/><rect x="9" y="1" width="6" height="6" rx="1.5"/><rect x="1" y="9" width="6" height="6" rx="1.5"/><rect x="9" y="9" width="6" height="6" rx="1.5"/></svg><span class="sb-label" data-i18n="Dashboard">Dashboard</span></div>
+        <div class="ni" onclick="nav('calendar')" data-label="Calendar"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="2" width="14" height="13" rx="2"/><path d="M1 6h14M5 1v2M11 1v2"/></svg><span class="sb-label" data-i18n="Calendar">Calendar</span></div>
+        <div class="ni" onclick="nav('rehearsals')" data-label="Rehearsals"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M6 6l5 2-5 2V6z"/></svg><span class="sb-label" data-i18n="Rehearsals">Rehearsals</span><span class="nb" id="sbRehCount" style="display:none">0</span></div>
+        <div class="ni" onclick="nav('concerts')" data-label="Concerts"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 1l2.4 4.9 5.4.8-3.9 3.8.9 5.3L8 13.3l-4.8 2.5.9-5.3L.2 6.7l5.4-.8L8 1z"/></svg><span class="sb-label" data-i18n="Concerts">Concerts</span><span class="nb" id="sbConCount" style="display:none">0</span></div>
       </div>
       <div class="ns">
-        <div class="nsl">Music</div>
-        <div class="ni" onclick="nav('setlists')" data-label="Set Lists"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 4h12M2 8h8M2 12h10"/></svg><span class="sb-label">Set Lists</span><span class="nb" id="sbSlCount" style="display:none">0</span></div>
-        <div class="ni" onclick="nav('library')" data-label="Song Library"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="5" cy="12" r="2"/><circle cx="13" cy="11" r="2"/><path d="M7 12V4l8-2v8"/></svg><span class="sb-label">Song Library</span><span class="nb" id="sbLibCount" style="background:var(--bl)">0</span></div>
+        <div class="nsl" data-i18n="Music">Music</div>
+        <div class="ni" onclick="nav('setlists')" data-label="Set Lists"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 4h12M2 8h8M2 12h10"/></svg><span class="sb-label" data-i18n="Set Lists">Set Lists</span><span class="nb" id="sbSlCount" style="display:none">0</span></div>
+        <div class="ni" onclick="nav('library')" data-label="Song Library"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="5" cy="12" r="2"/><circle cx="13" cy="11" r="2"/><path d="M7 12V4l8-2v8"/></svg><span class="sb-label" data-i18n="Song Library">Song Library</span><span class="nb" id="sbLibCount" style="background:var(--bl)">0</span></div>
       </div>
       <div class="ns">
-        <div class="nsl">Band</div>
-        <div class="ni" onclick="nav('members')" data-label="Members"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="6" cy="5" r="2.5"/><path d="M1 14c0-3 2.2-5 5-5s5 2 5 5"/><circle cx="12" cy="5" r="2"/><path d="M14 13c0-2.4-1.5-4-4-4"/></svg><span class="sb-label">Members</span><span class="nb" id="sbMemCount" style="display:none">0</span></div>
-        <div class="ni" onclick="nav('guestdir')" data-label="Guest Directory"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="5" r="3"/><path d="M2 14c0-3.3 2.7-5 6-5s6 1.7 6 5"/><path d="M12 8l2 2-2 2" stroke-linecap="round"/></svg><span class="sb-label">Guest Directory</span><span class="nb" id="sbGuestCount" style="display:none">0</span></div>
-        <div class="ni" onclick="nav('bandprofile')" data-label="Band Profile"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="6" r="4"/><path d="M1 14c0-4 3-6 7-6s7 2 7 6"/></svg><span class="sb-label">Band Profile</span></div>
+        <div class="nsl" data-i18n="Band">Band</div>
+        <div class="ni" onclick="nav('members')" data-label="Members"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="6" cy="5" r="2.5"/><path d="M1 14c0-3 2.2-5 5-5s5 2 5 5"/><circle cx="12" cy="5" r="2"/><path d="M14 13c0-2.4-1.5-4-4-4"/></svg><span class="sb-label" data-i18n="Members">Members</span><span class="nb" id="sbMemCount" style="display:none">0</span></div>
+        <div class="ni" onclick="nav('guestdir')" data-label="Guest Directory"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="5" r="3"/><path d="M2 14c0-3.3 2.7-5 6-5s6 1.7 6 5"/><path d="M12 8l2 2-2 2" stroke-linecap="round"/></svg><span class="sb-label" data-i18n="Guest Directory">Guest Directory</span><span class="nb" id="sbGuestCount" style="display:none">0</span></div>
+        <div class="ni" onclick="nav('bandprofile')" data-label="Band Profile"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="6" r="4"/><path d="M1 14c0-4 3-6 7-6s7 2 7 6"/></svg><span class="sb-label" data-i18n="Band Profile">Band Profile</span></div>
       </div>
       <div class="ns">
-        <div class="nsl">Account</div>
-        <div class="ni" onclick="nav('myprofile')" data-label="My Profile"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="5" r="3"/><path d="M2 14c0-3.3 2.7-5 6-5s6 1.7 6 5"/></svg><span class="sb-label">My Profile</span></div>
-        <div class="ni" onclick="nav('settings')" data-label="Settings"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="2.2"/><path d="M8 1.5v1M8 13.5v1M1.5 8h1M13.5 8h1M3.4 3.4l.7.7M11.9 11.9l.7.7M3.4 12.6l.7-.7M11.9 4.1l.7-.7"/></svg><span class="sb-label">Settings</span></div>
-        <div class="ni" onclick="doLogout()" style="color:var(--r)" onmouseover="this.style.background='var(--r2)'" onmouseout="this.style.background='transparent'" data-label="Log Out"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 2H3a1 1 0 00-1 1v10a1 1 0 001 1h3M10 11l3-3-3-3M13 8H6"/></svg><span class="sb-label">Log Out</span></div>
+        <div class="nsl" data-i18n="Account">Account</div>
+        <div class="ni" onclick="nav('myprofile')" data-label="My Profile"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="5" r="3"/><path d="M2 14c0-3.3 2.7-5 6-5s6 1.7 6 5"/></svg><span class="sb-label" data-i18n="My Profile">My Profile</span></div>
+        <div class="ni" onclick="nav('settings')" data-label="Settings"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="2.2"/><path d="M8 1.5v1M8 13.5v1M1.5 8h1M13.5 8h1M3.4 3.4l.7.7M11.9 11.9l.7.7M3.4 12.6l.7-.7M11.9 4.1l.7-.7"/></svg><span class="sb-label" data-i18n="Settings">Settings</span></div>
+        <div class="ni" onclick="doLogout()" style="color:var(--r)" onmouseover="this.style.background='var(--r2)'" onmouseout="this.style.background='transparent'" data-label="Log Out"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 2H3a1 1 0 00-1 1v10a1 1 0 001 1h3M10 11l3-3-3-3M13 8H6"/></svg><span class="sb-label" data-i18n="Log Out">Log Out</span></div>
       </div>
     </div>
     <div class="sb-foot">
@@ -490,10 +492,10 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
       <button class="hbg" onclick="toggleSb()"><svg width="19" height="19" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 5h16M2 10h16M2 15h16"/></svg></button>
       <div><div class="pt" id="pgT">Dashboard</div><div class="ps" id="pgS">The Jazz Cats · 5 members</div></div>
       <div class="ta">
-        <button class="btn btn-p btn-sm" onclick="openInvMod()">Invite</button>
+        <button class="btn btn-p btn-sm" onclick="openInvMod()" data-i18n="Invite">Invite</button>
         <!-- + Concert: text on desktop, icon on mobile -->
-        <button class="btn btn-p btn-sm tb-icon-btn" onclick="openNewConcert();nav('concerts')" title="+ Concert">
-          <span class="tb-btn-label">+ Concert</span>
+        <button class="btn btn-p btn-sm tb-icon-btn" onclick="openNewConcert();nav('concerts')" title="+ Concert" data-i18n-title="+ Concert">
+          <span class="tb-btn-label" data-i18n="+ Concert">+ Concert</span>
           <span class="tb-btn-icon">
             <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 1l2.4 4.9 5.4.8-3.9 3.8.9 5.3L8 13.3l-4.8 2.5.9-5.3L.2 6.7l5.4-.8L8 1z"/></svg>
             <svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M8 2v12M2 8h12"/></svg>
@@ -539,15 +541,15 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
       <!-- Empty states -->
       <div id="slEmptyNoSongs" style="display:none;text-align:center;padding:50px 20px">
         <div style="font-size:2rem;margin-bottom:10px">🎵</div>
-        <div style="font-weight:700;font-size:1rem;margin-bottom:8px">No songs in library yet</div>
-        <p style="font-size:.84rem;color:var(--ink2);margin-bottom:18px">Add songs to the library first, then you can build set lists.</p>
+        <div style="font-weight:700;font-size:1rem;margin-bottom:8px" data-i18n="No songs in library yet">No songs in library yet</div>
+        <p style="font-size:.84rem;color:var(--ink2);margin-bottom:18px" data-i18n="Start by adding songs to your library.">Add songs to the library first, then you can build set lists.</p>
         <button class="btn btn-p btn-sm" onclick="nav('library')">Go to Song Library →</button>
       </div>
       <div id="slEmptyNoLists" style="display:none;text-align:center;padding:50px 20px">
         <div style="font-size:2rem;margin-bottom:10px">📋</div>
-        <div style="font-weight:700;font-size:1rem;margin-bottom:8px">No set lists yet</div>
+        <div style="font-weight:700;font-size:1rem;margin-bottom:8px" data-i18n="No set lists yet">No set lists yet</div>
         <p style="font-size:.84rem;color:var(--ink2);margin-bottom:18px">You have songs in the library — create your first set list!</p>
-        <button class="btn btn-p btn-sm" onclick="openSlMod()">+ Create Set List</button>
+        <button class="btn btn-p btn-sm" onclick="openSlMod()" data-i18n="Create Set List">+ Create Set List</button>
       </div>
       <!-- Set list content (hidden when empty) -->
       <div id="slContent">
@@ -581,20 +583,20 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
           </div>
         </div>
         <div style="display:flex;gap:5px;margin-bottom:12px">
-          <button class="stb on" onclick="switchV('main',this)">Main</button>
-          <button class="stb" onclick="switchV('my',this)">My View (Marco)</button>
+          <button class="stb on" onclick="switchV('main',this)" data-i18n="Main_tab">Main</button>
+          <button class="stb" onclick="switchV('my',this)" id="myViewBtn">My View (Marco)</button>
         </div>
-        <div id="vMain"><div style="overflow-x:auto"><table class="slt" id="slTbl"><thead><tr><th style="width:28px"></th><th style="width:32px">#</th><th>Title</th><th>Artist</th><th style="width:60px">Key</th><th style="width:60px">Time</th><th class="lkcol">Links</th><th>Notes</th><th style="width:60px"></th></tr></thead><tbody id="slBody"></tbody></table></div></div>
+        <div id="vMain"><div style="overflow-x:auto"><table class="slt" id="slTbl"><thead><tr><th style="width:28px"></th><th style="width:32px">#</th><th data-i18n="Title">Title</th><th data-i18n="Artist">Artist</th><th style="width:60px" data-i18n="Key">Key</th><th style="width:60px" data-i18n="Time">Time</th><th class="lkcol" data-i18n="Links">Links</th><th data-i18n="Notes">Notes</th><th style="width:60px"></th></tr></thead><tbody id="slBody"></tbody></table></div></div>
         <div id="vMy" style="display:none">
           <div style="padding:10px 12px;background:var(--a2);border-radius:var(--rad);margin-bottom:12px;border:1px solid rgba(108,99,255,.2)">
-            <div style="font-size:.77rem;font-weight:600;color:var(--a);margin-bottom:2px">✦ Personal view — Marco Rossi (Guitar)</div>
-            <div style="font-size:.71rem;color:var(--ink2)">Your notes are private. Stays in sync with the main list.</div>
+            <div style="font-size:.77rem;font-weight:600;color:var(--a);margin-bottom:2px" id="slPersonalViewLabel">✦ Personal view — Marco Rossi (Guitar)</div>
+            <div style="font-size:.71rem;color:var(--ink2)" data-i18n="Your notes are private. Stays in sync with the main list.">Your notes are private. Stays in sync with the main list.</div>
           </div>
-          <div style="overflow-x:auto"><table class="slt"><thead><tr><th>#</th><th>Title</th><th>Artist</th><th>Key</th><th>Band Notes</th><th>My Notes</th></tr></thead><tbody id="myBody"></tbody></table></div>
+          <div style="overflow-x:auto"><table class="slt"><thead><tr><th>#</th><th data-i18n="Title">Title</th><th data-i18n="Artist">Artist</th><th data-i18n="Key">Key</th><th data-i18n="Band Notes">Band Notes</th><th>My Notes</th></tr></thead><tbody id="myBody"></tbody></table></div>
         </div>
         <div style="padding-top:10px;border-top:1px solid var(--bd);margin-top:6px;display:flex;justify-content:space-between">
-          <span style="font-size:.72rem;color:var(--ink2)">12 songs · ~84 min</span>
-          <span style="font-size:.69rem;color:var(--ink3)">Drag ⠿ to reorder</span>
+          <span style="font-size:.72rem;color:var(--ink2)" id="slSongCount">12 songs · ~84 min</span>
+          <span style="font-size:.69rem;color:var(--ink3)" data-i18n="Drag ⠿ to reorder">Drag ⠿ to reorder</span>
         </div>
       </div>
       </div> <!-- /slContent -->
@@ -605,27 +607,27 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
       <!-- Header -->
       <div style="display:flex;gap:9px;align-items:center;margin-bottom:15px;flex-wrap:wrap">
         <div style="flex:1">
-          <div style="font-size:1.12rem;font-weight:700;letter-spacing:-.03em">Song Library</div>
+          <div style="font-size:1.12rem;font-weight:700;letter-spacing:-.03em" data-i18n="Song Library">Song Library</div>
           <div style="font-size:.74rem;color:var(--ink2);margin-top:2px" id="libCount">24 songs across 5 genres</div>
         </div>
         <!-- View toggle -->
         <div style="display:flex;background:var(--bg2);border-radius:99px;padding:3px;gap:2px;border:1.5px solid var(--bd)">
           <button id="libViewCards" onclick="setLibView('cards')"
-            style="padding:4px 13px;border-radius:99px;border:none;font-family:var(--font);font-size:.72rem;font-weight:600;cursor:pointer;transition:all .15s;background:var(--a);color:#fff">
-            Cards
+            style="padding:4px 13px;border-radius:99px;border:none;font-family:var(--font);font-size:.72rem;font-weight:600;cursor:pointer;transition:all .15s;background:var(--a);color:#fff"
+            data-i18n="Cards">Cards
           </button>
           <button id="libViewSheet" onclick="setLibView('sheet')"
-            style="padding:4px 13px;border-radius:99px;border:none;font-family:var(--font);font-size:.72rem;font-weight:600;cursor:pointer;transition:all .15s;background:transparent;color:var(--ink2)">
-            Spreadsheet
+            style="padding:4px 13px;border-radius:99px;border:none;font-family:var(--font);font-size:.72rem;font-weight:600;cursor:pointer;transition:all .15s;background:transparent;color:var(--ink2)"
+            data-i18n="Spreadsheet">Spreadsheet
           </button>
         </div>
-        <button class="btn btn-p btn-sm" onclick="openAddSong()">+ Add Song</button>
+        <button class="btn btn-p btn-sm" onclick="openAddSong()" data-i18n="+ Add Song">+ Add Song</button>
       </div>
 
       <!-- Filters (cards view only) -->
       <div class="lf" id="libFilters">
-        <input class="sb2" id="libSearch" placeholder="Search songs…" oninput="filterLib(this.value)">
-        <button class="chip on" onclick="filtG('All',this)">All</button>
+        <input class="sb2" id="libSearch" data-i18n-placeholder="Search songs…" placeholder="Search songs…" oninput="filterLib(this.value)">
+        <button class="chip on" onclick="filtG('All',this)" data-i18n="All">All</button>
         <button class="chip" onclick="filtG('Jazz',this)">Jazz</button>
         <button class="chip" onclick="filtG('Funk',this)">Funk</button>
         <button class="chip" onclick="filtG('Soul',this)">Soul</button>
@@ -644,15 +646,15 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
         <div style="background:var(--w);border:1px solid var(--bd);border-radius:var(--radl);box-shadow:var(--sh);overflow:hidden">
           <!-- Sheet toolbar -->
           <div style="padding:10px 14px;border-bottom:1px solid var(--bd);display:flex;gap:8px;align-items:center;flex-wrap:wrap;background:var(--bg)">
-            <span style="font-size:.72rem;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.06em">Click any cell to edit</span>
+            <span style="font-size:.72rem;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.06em" data-i18n="Click any cell to edit">Click any cell to edit</span>
             <div style="margin-left:auto;display:flex;gap:6px;flex-wrap:wrap">
-              <label class="btn btn-g btn-sm" style="cursor:pointer;font-size:.72rem" title="Upload Excel or CSV to replace library">
-                ↑ Upload
+              <label class="btn btn-g btn-sm" style="cursor:pointer;font-size:.72rem" data-i18n-title="Upload Excel or CSV to replace library" title="Upload Excel or CSV to replace library">
+                <span data-i18n="↑ Upload">↑ Upload</span>
                 <input type="file" accept=".xlsx,.xls,.csv" style="display:none" onchange="importExcel(event)">
               </label>
-              <button class="btn btn-g btn-sm" onclick="exportExcel()" style="font-size:.72rem" title="Download library as Excel">↓ Download</button>
-              <button class="btn btn-g btn-sm" onclick="addSheetRow()" style="font-size:.72rem">+ Row</button>
-              <button class="btn btn-p btn-sm" onclick="saveSheetEdits()" style="font-size:.72rem">✓ Save All</button>
+              <button class="btn btn-g btn-sm" onclick="exportExcel()" style="font-size:.72rem" data-i18n="↓ Download" data-i18n-title="Download library as Excel" title="Download library as Excel">↓ Download</button>
+              <button class="btn btn-g btn-sm" onclick="addSheetRow()" style="font-size:.72rem" data-i18n="+ Row">+ Row</button>
+              <button class="btn btn-p btn-sm" onclick="saveSheetEdits()" style="font-size:.72rem" data-i18n="✓ Save All">✓ Save All</button>
             </div>
           </div>
           <div style="overflow-x:auto">
@@ -662,7 +664,7 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
             </table>
           </div>
           <div style="padding:8px 14px;border-top:1px solid var(--bd);font-size:.71rem;color:var(--ink3);background:var(--bg)">
-            Changes are saved to the library when you click <strong>Save All</strong> or edit another song's popup form.
+            <span data-i18n="Changes are saved to the library when you click">Changes are saved to the library when you click</span> <strong data-i18n="✓ Save All">✓ Save All</strong> <span data-i18n="or edit another song's popup form.">or edit another song's popup form.</span>
           </div>
         </div>
       </div>
@@ -674,10 +676,10 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
       <!-- Empty state: no band yet -->
       <div id="calNoBand" style="display:none;text-align:center;padding:60px 20px">
         <div style="font-size:2.5rem;margin-bottom:12px">🎸</div>
-        <div style="font-size:1.1rem;font-weight:700;margin-bottom:8px">No Band Yet</div>
-        <p style="font-size:.84rem;color:var(--ink2);margin-bottom:20px">Start by creating a band.</p>
-        <button class="btn btn-p btn-sm" onclick="openNewBand()">+ Create a Band</button>
-        <button class="btn btn-g btn-sm" style="margin-left:8px" onclick="openJoinBandMod()">Join a Band</button>
+        <div style="font-size:1.1rem;font-weight:700;margin-bottom:8px" data-i18n="No Band Yet">No Band Yet</div>
+        <p style="font-size:.84rem;color:var(--ink2);margin-bottom:20px" data-i18n="Start by creating a band.">Start by creating a band.</p>
+        <button class="btn btn-p btn-sm" onclick="openNewBand()" data-i18n="+ Create a Band">+ Create a Band</button>
+        <button class="btn btn-g btn-sm" style="margin-left:8px" onclick="openJoinBandMod()" data-i18n="Join a Band">Join a Band</button>
       </div>
 
       <!-- Content (hidden when no band) -->
@@ -694,12 +696,12 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
         <!-- VIEW TOGGLE -->
         <div style="display:flex;background:var(--bg2);border-radius:99px;padding:3px;gap:2px;border:1.5px solid var(--bd)">
           <button id="toggleFull" onclick="setCalView('full')"
-            style="padding:4px 13px;border-radius:99px;border:none;font-family:var(--font);font-size:.72rem;font-weight:600;cursor:pointer;transition:all .15s;background:var(--a);color:#fff">
-            Full
+            style="padding:4px 13px;border-radius:99px;border:none;font-family:var(--font);font-size:.72rem;font-weight:600;cursor:pointer;transition:all .15s;background:var(--a);color:#fff"
+            data-i18n="Full">Full
           </button>
           <button id="toggleCompact" onclick="setCalView('compact')"
-            style="padding:4px 13px;border-radius:99px;border:none;font-family:var(--font);font-size:.72rem;font-weight:600;cursor:pointer;transition:all .15s;background:transparent;color:var(--ink2)">
-            Compact
+            style="padding:4px 13px;border-radius:99px;border:none;font-family:var(--font);font-size:.72rem;font-weight:600;cursor:pointer;transition:all .15s;background:transparent;color:var(--ink2)"
+            data-i18n="Compact">Compact
           </button>
         </div>
 
@@ -708,27 +710,27 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
             <span id="boIco">🚫</span><span id="boLbl">4 blackout periods</span>
             <svg width="9" height="9" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6l4 4 4-4"/></svg>
           </div>
-          <button class="btn btn-g btn-sm" onclick="showMod('blkMod')">Block Days</button>
-          <button class="btn btn-p btn-sm" onclick="openNewConcert();nav('concerts')">+ Event</button>
+          <button class="btn btn-g btn-sm" onclick="showMod('blkMod')" data-i18n="Block Days">Block Days</button>
+          <button class="btn btn-p btn-sm" onclick="openNewConcert();nav('concerts')" data-i18n="+ Event">+ Event</button>
         </div>
       </div>
 
       <!-- ══ FULL VIEW ══ -->
       <div id="calViewFull">
         <div class="bp2">
-          <div class="bpt">⚡ Best Rehearsal Days</div>
-          <div class="bps" id="bestSub">Top available days this month, excluding blackouts and booked events.</div>
+          <div class="bpt" data-i18n="⚡ Best Rehearsal Days">⚡ Best Rehearsal Days</div>
+          <div class="bps" id="bestSub" data-i18n="Top available days this month, excluding blackouts and booked events.">Top available days this month, excluding blackouts and booked events.</div>
           <div class="bpl" id="bestList"></div>
         </div>
         <div class="card">
           <div class="cg" id="calGrid"></div>
           <div class="cal-leg">
-            <div class="li"><div class="ld2" style="background:var(--a)"></div>Concert</div>
-            <div class="li"><div class="ld2" style="background:#15803D;border:2px solid #86EFAC"></div>Rehearsal</div>
-            <div class="li"><div class="ld2" style="background:var(--amb)"></div>Birthday</div>
-            <div class="li"><div class="ld2" style="background:var(--r)"></div>Blackout</div>
-            <div class="li"><div class="ld2" style="background:var(--amb);opacity:.7;border:1.5px solid var(--amb)"></div>Cross-band conflict ⊘</div>
-            <div class="li"><div class="ld2" style="background:var(--g);box-shadow:0 0 0 2px #86EFAC"></div>Full band ⚡</div>
+            <div class="li"><div class="ld2" style="background:var(--a)"></div><span data-i18n="Concert">Concert</span></div>
+            <div class="li"><div class="ld2" style="background:#15803D;border:2px solid #86EFAC"></div><span data-i18n="Rehearsal">Rehearsal</span></div>
+            <div class="li"><div class="ld2" style="background:var(--amb)"></div><span data-i18n="Birthday">Birthday</span></div>
+            <div class="li"><div class="ld2" style="background:var(--r)"></div><span data-i18n="Blackout">Blackout</span></div>
+            <div class="li"><div class="ld2" style="background:var(--amb);opacity:.7;border:1.5px solid var(--amb)"></div><span data-i18n="Cross-band conflict ⊘">Cross-band conflict ⊘</span></div>
+            <div class="li"><div class="ld2" style="background:var(--g);box-shadow:0 0 0 2px #86EFAC"></div><span data-i18n="Full band ⚡">Full band ⚡</span></div>
           </div>
         </div>
       </div>
@@ -738,20 +740,20 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
         <!-- Landscape hint on mobile portrait -->
         <div id="landscapeHint" style="display:none;align-items:center;gap:8px;padding:9px 13px;background:var(--bl2);border:1px solid rgba(96,165,250,.25);border-radius:var(--rad);margin-bottom:12px;font-size:.75rem;color:var(--bl)">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="5" width="22" height="14" rx="2"/><path d="M1 9h22M5 5v14"/></svg>
-          Rotate to landscape for a better view
+          <span data-i18n="Rotate to landscape for a better view">Rotate to landscape for a better view</span>
         </div>
         <div class="card">
           <div class="ch">
-            <div class="ct">Availability — <span id="calMS">May 2026</span></div>
+            <div class="ct"><span data-i18n="Availability">Availability</span> — <span id="calMS">May 2026</span></div>
             <div style="display:flex;gap:8px;font-size:.69rem;color:var(--ink2)">
-              <span style="display:inline-flex;align-items:center;gap:3px"><span style="width:9px;height:9px;border-radius:2px;background:var(--g2);border:1.5px solid #86EFAC;display:inline-block"></span>Full band</span>
-              <span style="display:inline-flex;align-items:center;gap:3px"><span style="width:9px;height:9px;border-radius:2px;background:var(--g2);border:1px solid #86EFAC;display:inline-block"></span>Available</span>
-              <span style="display:inline-flex;align-items:center;gap:3px"><span style="width:9px;height:9px;border-radius:2px;background:var(--r2);border:1px solid #FECACA;display:inline-block"></span>Blackout</span>
+              <span style="display:inline-flex;align-items:center;gap:3px"><span style="width:9px;height:9px;border-radius:2px;background:var(--g2);border:1.5px solid #86EFAC;display:inline-block"></span><span data-i18n="Full band">Full band</span></span>
+              <span style="display:inline-flex;align-items:center;gap:3px"><span style="width:9px;height:9px;border-radius:2px;background:var(--g2);border:1px solid #86EFAC;display:inline-block"></span><span data-i18n="Available">Available</span></span>
+              <span style="display:inline-flex;align-items:center;gap:3px"><span style="width:9px;height:9px;border-radius:2px;background:var(--r2);border:1px solid #FECACA;display:inline-block"></span><span data-i18n="Blackout">Blackout</span></span>
             </div>
           </div>
           <div style="overflow-x:auto"><table class="at"><thead><tr id="avHdr"></tr></thead><tbody id="avBody"></tbody></table></div>
           <div class="fbchips">
-            <div class="t1" style="align-self:center;white-space:nowrap">⚡ Full band:</div>
+            <div class="t1" style="align-self:center;white-space:nowrap" data-i18n="⚡ Full band:">⚡ Full band:</div>
             <div id="fbChips" style="display:flex;gap:5px;flex-wrap:wrap"></div>
           </div>
         </div>
@@ -766,20 +768,20 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
       <!-- Empty state: no band yet -->
       <div id="rehearsalsNoBand" style="display:none;text-align:center;padding:60px 20px">
         <div style="font-size:2.5rem;margin-bottom:12px">🎸</div>
-        <div style="font-size:1.1rem;font-weight:700;margin-bottom:8px">No Band Yet</div>
-        <p style="font-size:.84rem;color:var(--ink2);margin-bottom:20px">Start by creating a band.</p>
-        <button class="btn btn-p btn-sm" onclick="openNewBand()">+ Create a Band</button>
-        <button class="btn btn-g btn-sm" style="margin-left:8px" onclick="openJoinBandMod()">Join a Band</button>
+        <div style="font-size:1.1rem;font-weight:700;margin-bottom:8px" data-i18n="No Band Yet">No Band Yet</div>
+        <p style="font-size:.84rem;color:var(--ink2);margin-bottom:20px" data-i18n="Start by creating a band.">Start by creating a band.</p>
+        <button class="btn btn-p btn-sm" onclick="openNewBand()" data-i18n="+ Create a Band">+ Create a Band</button>
+        <button class="btn btn-g btn-sm" style="margin-left:8px" onclick="openJoinBandMod()" data-i18n="Join a Band">Join a Band</button>
       </div>
       <!-- Content (hidden when no band) -->
       <div id="rehearsalsContent">
         <div style="display:flex;gap:9px;align-items:center;margin-bottom:15px;flex-wrap:wrap">
-          <div style="flex:1"><div style="font-size:1.12rem;font-weight:700;letter-spacing:-.03em">Rehearsals</div><div style="font-size:.74rem;color:var(--ink2);margin-top:2px" id="rehearsalCount"></div></div>
+          <div style="flex:1"><div style="font-size:1.12rem;font-weight:700;letter-spacing:-.03em" data-i18n="Rehearsals">Rehearsals</div><div style="font-size:.74rem;color:var(--ink2);margin-top:2px" id="rehearsalCount"></div></div>
         </div>
         <div class="clist" id="rehearsalListUpcoming"></div>
         <div id="pastRehearsalSection" style="margin-top:24px">
           <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
-            <div style="font-size:.78rem;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.07em">Past Rehearsals</div>
+            <div style="font-size:.78rem;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.07em" data-i18n="Past Rehearsals">Past Rehearsals</div>
             <div style="flex:1;height:1px;background:var(--bd)"></div>
           </div>
           <div class="clist" id="rehearsalListPast"></div>
@@ -1304,8 +1306,8 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
 <!-- AI SET LIST -->
 <div class="mov" id="slMod" style="display:none" onclick="closeMB(event,'slMod')">
 <div class="mod" style="max-width:420px">
-  <div class="mott">New Set List</div>
-  <div class="most">Give your set list a name and optionally link it to a concert. Concert details are pulled in automatically.</div>
+  <div class="mott" data-i18n="New Set List">New Set List</div>
+  <div class="most" data-i18n="Give your set list a name and optionally link it to a concert. Concert details are pulled in automatically.">Give your set list a name and optionally link it to a concert. Concert details are pulled in automatically.</div>
 
   <div class="fg"><label>Set List Title <span style="color:var(--r)">*</span></label><input id="slNewTitle" placeholder="e.g. Blue Note Summer Night"></div>
 
@@ -1320,20 +1322,20 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
 
   <!-- Creation mode -->
   <div style="height:1px;background:var(--bd);margin:8px 0 14px"></div>
-  <div style="font-size:.69rem;font-weight:700;color:var(--ink2);margin-bottom:9px;letter-spacing:.04em;text-transform:uppercase">How do you want to build it?</div>
+  <div style="font-size:.69rem;font-weight:700;color:var(--ink2);margin-bottom:9px;letter-spacing:.04em;text-transform:uppercase" data-i18n="How do you want to build it?">How do you want to build it?</div>
   <div style="display:flex;gap:8px">
     <div class="popt on" id="slModeManual" onclick="selSlMode('manual')" style="flex:1">
-      <div class="poi">✏️</div><div class="pol">Manual</div>
+      <div class="poi">✏️</div><div class="pol" data-i18n="Manual">Manual</div>
     </div>
     <div class="popt" id="slModeAI" onclick="selSlMode('ai')" style="flex:1">
-      <div class="poi">✦</div><div class="pol">AI Suggestion</div>
+      <div class="poi">✦</div><div class="pol" data-i18n="AI Suggestion">AI Suggestion</div>
     </div>
   </div>
-  <div id="slModeNote" style="font-size:.74rem;color:var(--ink3);margin-top:8px">Takes you straight to the set list editor to add songs manually.</div>
+  <div id="slModeNote" style="font-size:.74rem;color:var(--ink3);margin-top:8px" data-i18n="Takes you straight to the set list editor to add songs manually.">Takes you straight to the set list editor to add songs manually.</div>
 
   <div class="moft">
-    <button class="btn btn-g" onclick="closeMod('slMod')">Cancel</button>
-    <button class="btn btn-p" id="slCreateBtn" onclick="createNewSetList()">Create Set List</button>
+    <button class="btn btn-g" onclick="closeMod('slMod')" data-i18n="Cancel">Cancel</button>
+    <button class="btn btn-p" id="slCreateBtn" onclick="createNewSetList()" data-i18n="Create Set List">Create Set List</button>
   </div>
 </div>
 </div>
@@ -1341,13 +1343,13 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
 <!-- ADD SONGS TO SETLIST -->
 <div class="mov" id="asMod" style="display:none" onclick="closeMB(event,'asMod')">
 <div class="mod" style="max-width:460px">
-  <div class="mott">Add Songs</div>
-  <div class="most" id="asModSubtitle">Select songs to add to the active set list.</div>
-  <input class="sb2" id="asSearch" style="width:100%;margin-bottom:10px;box-sizing:border-box" placeholder="Search library…" oninput="renderAsList()">
+  <div class="mott" data-i18n="Add Songs">Add Songs</div>
+  <div class="most" id="asModSubtitle" data-i18n="Select songs to add to the active set list.">Select songs to add to the active set list.</div>
+  <input class="sb2" id="asSearch" style="width:100%;margin-bottom:10px;box-sizing:border-box" data-i18n-placeholder="Search library…" placeholder="Search library…" oninput="renderAsList()">
   <div style="max-height:320px;overflow-y:auto;display:flex;flex-direction:column;gap:5px" id="asList"></div>
   <div class="moft">
-    <button class="btn btn-g" onclick="closeMod('asMod')">Cancel</button>
-    <button class="btn btn-p" onclick="addSelectedSongs()">Add Selected</button>
+    <button class="btn btn-g" onclick="closeMod('asMod')" data-i18n="Cancel">Cancel</button>
+    <button class="btn btn-p" onclick="addSelectedSongs()" data-i18n="Add Selected">Add Selected</button>
   </div>
 </div>
 </div>
@@ -1355,21 +1357,21 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
 <!-- ADD LIBRARY SONG -->
 <div class="mov" id="alsMod" style="display:none" onclick="closeMB(event,'alsMod')">
 <div class="mod">
-  <div class="mott">Add Song to Library</div>
-  <div class="most">Fill in the details below. Streaming links are optional.</div>
+  <div class="mott" data-i18n="Add Song to Library">Add Song to Library</div>
+  <div class="most" data-i18n="Fill in the details below. Streaming links are optional.">Fill in the details below. Streaming links are optional.</div>
 
   <div class="fr">
-    <div class="fg"><label>Song Title</label><input id="nst" placeholder="Autumn Leaves"></div>
-    <div class="fg"><label>Artist</label><input id="nsa" placeholder="Miles Davis"></div>
+    <div class="fg"><label data-i18n="Song Title">Song Title</label><input id="nst" placeholder="Autumn Leaves"></div>
+    <div class="fg"><label data-i18n="Artist">Artist</label><input id="nsa" placeholder="Miles Davis"></div>
   </div>
   <div class="fr">
-    <div class="fg"><label>Genre</label>
+    <div class="fg"><label data-i18n="Genre">Genre</label>
       <select id="nsg">
         <option>Jazz</option><option>Funk</option><option>Soul</option><option>Blues</option>
         <option>Country</option><option>Pop</option><option>Rock</option><option>Latin</option><option>R&amp;B</option><option>Other</option>
       </select>
     </div>
-    <div class="fg"><label>Key</label>
+    <div class="fg"><label data-i18n="Key">Key</label>
       <select id="nsk">
         <option>Am</option><option>C</option><option>G</option><option>D</option><option>Dm</option>
         <option>F</option><option>Bb</option><option>Eb</option><option>Gm</option><option>Em</option>
@@ -1379,7 +1381,7 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
     </div>
   </div>
   <div class="fg">
-    <label>Duration <span style="font-weight:400;color:var(--ink3)">(optional)</span></label>
+    <label><span data-i18n="Duration (optional)">Duration (optional)</span></label>
     <div style="display:flex;gap:8px;align-items:center">
       <input id="nsDurMin" type="number" min="0" max="59" placeholder="min" style="flex:1;padding:9px 13px;background:var(--bg);border:1.5px solid var(--bd);border-radius:var(--rad);color:var(--ink);font-family:var(--font);font-size:.83rem;outline:none;transition:border-color .13s" onfocus="this.style.borderColor='var(--a)'" onblur="this.style.borderColor='var(--bd)'">
       <span style="color:var(--ink3);font-weight:600">:</span>
@@ -1387,19 +1389,19 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
       <span id="nsDurPreview" style="font-family:var(--mono);font-size:.78rem;color:var(--ink3);min-width:36px"></span>
     </div>
   </div>
-  <div class="fg"><label>Band Notes <span style="font-weight:400;color:var(--ink3)">(optional)</span></label>
+  <div class="fg"><label><span data-i18n="Band Notes (optional)">Band Notes</span> <span style="font-weight:400;color:var(--ink3)">(optional)</span></label>
     <textarea id="nsnote" style="min-height:60px" placeholder="e.g. Antoine's feature, watch the tempo change at bar 16…"></textarea>
   </div>
 
   <div style="height:1px;background:var(--bd);margin:4px 0 14px"></div>
-  <div style="font-size:.69rem;font-weight:700;color:var(--ink2);margin-bottom:9px;letter-spacing:.04em;text-transform:uppercase">Streaming Links <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--ink3)">(optional — AI will fill these in)</span></div>
-  <div class="fg"><label>Spotify URL</label><input id="nsSpotify" placeholder="https://open.spotify.com/track/…"></div>
-  <div class="fg"><label>YouTube URL</label><input id="nsYoutube" placeholder="https://youtube.com/watch?v=…"></div>
-  <div class="fg"><label>Apple Music URL</label><input id="nsApple" placeholder="https://music.apple.com/…"></div>
+  <div style="font-size:.69rem;font-weight:700;color:var(--ink2);margin-bottom:9px;letter-spacing:.04em;text-transform:uppercase"><span data-i18n="Streaming Links (optional)">Streaming Links</span> <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--ink3)">(optional)</span></div>
+  <div class="fg"><label data-i18n="Spotify URL">Spotify URL</label><input id="nsSpotify" placeholder="https://open.spotify.com/track/…"></div>
+  <div class="fg"><label data-i18n="YouTube URL">YouTube URL</label><input id="nsYoutube" placeholder="https://youtube.com/watch?v=…"></div>
+  <div class="fg"><label data-i18n="Apple Music URL">Apple Music URL</label><input id="nsApple" placeholder="https://music.apple.com/…"></div>
 
   <div class="moft">
-    <button class="btn btn-g" onclick="closeMod('alsMod')">Cancel</button>
-    <button class="btn btn-p" onclick="addSong()">Add</button>
+    <button class="btn btn-g" onclick="closeMod('alsMod')" data-i18n="Cancel">Cancel</button>
+    <button class="btn btn-p" onclick="addSong()" data-i18n="Add">Add</button>
   </div>
 </div>
 </div>
@@ -1487,12 +1489,12 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
 <!-- BAND SWITCH -->
 <div class="mov" id="bswMod" style="display:none" onclick="closeMB(event,'bswMod')">
 <div class="mod" style="max-width:360px">
-  <div class="mott">Your Bands</div>
+  <div class="mott" data-i18n="Your Bands">Your Bands</div>
   <div style="font-size:.75rem;color:var(--ink2);margin-bottom:12px">Switch between bands or create a new one.</div>
   <div style="display:flex;flex-direction:column;gap:7px;margin-bottom:14px" id="bandList"></div>
   <div style="display:flex;gap:7px">
-    <button class="btn btn-g" style="flex:1" onclick="closeMod('bswMod');openNewBand()">+ Create New Band</button>
-    <button class="btn btn-g" style="flex:1" onclick="closeMod('bswMod');openJoinBandMod()">Join a Band</button>
+    <button class="btn btn-g" style="flex:1" onclick="closeMod('bswMod');openNewBand()" data-i18n="+ Create New Band">+ Create New Band</button>
+    <button class="btn btn-g" style="flex:1" onclick="closeMod('bswMod');openJoinBandMod()" data-i18n="Join a Band">Join a Band</button>
   </div>
 </div>
 </div>
@@ -1500,28 +1502,28 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
 <!-- CREATE NEW BAND MODAL -->
 <div class="mov" id="newBandMod" style="display:none" onclick="closeMB(event,'newBandMod')">
 <div class="mod" style="max-width:460px">
-  <div class="mott">Create New Band</div>
+  <div class="mott" data-i18n="Create New Band">Create New Band</div>
   <div class="most">Set up your new band. You'll be the admin and can invite members after.</div>
-  <div class="fg"><label>Band Name</label><input id="nbName" placeholder="e.g. Brussels Funk Collective"></div>
+  <div class="fg"><label data-i18n="Band name">Band Name</label><input id="nbName" placeholder="e.g. Brussels Funk Collective"></div>
   <div class="fr">
-    <div class="fg"><label>City</label><input id="nbCity" placeholder="Brussels"></div>
-    <div class="fg"><label>Country</label>
+    <div class="fg"><label data-i18n="City">City</label><input id="nbCity" placeholder="Brussels"></div>
+    <div class="fg"><label data-i18n="Country">Country</label>
       <select id="nbCountry"><option value="">— Select country —</option></select>
     </div>
   </div>
-  <div class="fg"><label>Genre / Style</label>
+  <div class="fg"><label data-i18n="Genre / Style">Genre / Style</label>
     <select id="nbGenre">
       <option>Jazz</option><option>Funk</option><option>Soul</option><option>Blues</option>
       <option>Country</option><option>Rock</option><option>Pop</option><option>Latin</option><option>R&amp;B</option>
       <option>Classical</option><option>Mixed / Other</option>
     </select>
   </div>
-  <div class="fg"><label>Short Bio <span style="font-weight:400;color:var(--ink3)">(optional)</span></label>
+  <div class="fg"><label><span data-i18n="Short Bio">Short Bio</span> <span style="font-weight:400;color:var(--ink3)">(optional)</span></label>
     <textarea id="nbBio" style="min-height:60px" placeholder="A few words about the band…"></textarea>
   </div>
   <div class="modal-footer" style="display:flex;gap:7px;justify-content:flex-end;margin-top:14px;padding-top:13px;border-top:1px solid var(--bd)">
-    <button class="btn btn-g" onclick="closeMod('newBandMod')">Cancel</button>
-    <button class="btn btn-p" onclick="createNewBand()">Create Band</button>
+    <button class="btn btn-g" onclick="closeMod('newBandMod')" data-i18n="Cancel">Cancel</button>
+    <button class="btn btn-p" onclick="createNewBand()" data-i18n="Create Band">Create Band</button>
   </div>
 </div>
 </div>
@@ -1532,18 +1534,18 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
   <!-- scrollable body -->
   <div style="padding:25px 25px 0;overflow-y:auto;flex:1">
     <input type="hidden" id="boId">
-    <div class="mott">Blackout Period</div>
+    <div class="mott" data-i18n="Blackout Period">Blackout Period</div>
     <div class="most">Block a date range for the whole band or specific members. Excluded from rehearsal suggestions.</div>
-    <div class="fg"><label>Label</label><input id="boLab" placeholder="Carnival, School Holiday, Antoine on tour…"></div>
-    <div class="fg"><label>From</label><input type="date" id="boFr"></div>
-    <div class="fg"><label>To <span style="font-weight:400;color:var(--ink3)">(leave blank for single day)</span></label><input type="date" id="boTo"></div>
-    <div class="fg"><label>Who does this affect?</label><select id="boSc" onchange="togBOM()"><option value="band">Whole band</option><option value="members">Specific members only</option></select></div>
-    <div id="boMR" style="display:none;margin-bottom:12px"><div style="font-size:.71rem;color:var(--ink2);margin-bottom:7px">Select affected members</div><div style="display:flex;flex-wrap:wrap;gap:6px" id="boMC"></div></div>
+    <div class="fg"><label data-i18n="Label">Label</label><input id="boLab" placeholder="Carnival, School Holiday, Antoine on tour…"></div>
+    <div class="fg"><label data-i18n="From">From</label><input type="date" id="boFr"></div>
+    <div class="fg"><label><span data-i18n="To (leave blank for single day)">To</span> <span style="font-weight:400;color:var(--ink3)">(leave blank for single day)</span></label><input type="date" id="boTo"></div>
+    <div class="fg"><label data-i18n="Who does this affect?">Who does this affect?</label><select id="boSc" onchange="togBOM()"><option value="band" data-i18n="Whole band">Whole band</option><option value="members" data-i18n="Specific members only">Specific members only</option></select></div>
+    <div id="boMR" style="display:none;margin-bottom:12px"><div style="font-size:.71rem;color:var(--ink2);margin-bottom:7px" data-i18n="Select affected members">Select affected members</div><div style="display:flex;flex-wrap:wrap;gap:6px" id="boMC"></div></div>
   </div>
   <!-- sticky footer — Save always visible -->
   <div style="padding:13px 25px 20px;border-top:1px solid var(--bd);display:flex;gap:7px;justify-content:flex-end;background:var(--w);flex-shrink:0">
-    <button class="btn btn-g" onclick="closeMod('boMod')">Cancel</button>
-    <button class="btn btn-p" onclick="savBO()">Save Period</button>
+    <button class="btn btn-g" onclick="closeMod('boMod')" data-i18n="Cancel">Cancel</button>
+    <button class="btn btn-p" onclick="savBO()" data-i18n="Save">Save Period</button>
   </div>
 </div>
 </div>
@@ -1716,8 +1718,8 @@ function renderRehearsals(){
   if(countEl)countEl.textContent=`${upcoming.length} upcoming · ${past.length} past${cancelled.length?` · ${cancelled.length} cancelled`:''}`;
   document.getElementById('rehearsalListUpcoming').innerHTML=upcoming.length
     ?upcoming.map(r=>rehearsalCard(r,'upcoming')).join('')
-    :`<div style="padding:20px;text-align:center;font-size:.82rem;color:var(--ink3)">No upcoming rehearsals — click + New Rehearsal to schedule one.</div>`;
-  document.getElementById('rehearsalListPast').innerHTML=past.length?past.map(r=>rehearsalCard(r,'past')).join(''):`<div style="padding:12px;font-size:.78rem;color:var(--ink3)">No past rehearsals yet.</div>`;
+    :`<div style="padding:20px;text-align:center;font-size:.82rem;color:var(--ink3)">${t('No upcoming rehearsals — click + New Rehearsal to schedule one.')}</div>`;
+  document.getElementById('rehearsalListPast').innerHTML=past.length?past.map(r=>rehearsalCard(r,'past')).join(''):`<div style="padding:12px;font-size:.78rem;color:var(--ink3)">${t('No past rehearsals yet.')}</div>`;
   const pastSec=document.getElementById('pastRehearsalSection');if(pastSec)pastSec.style.display=past.length?'':'none';
   const cancList=document.getElementById('rehearsalListCancelled');if(cancList)cancList.innerHTML=cancelled.map(r=>rehearsalCard(r,'cancelled')).join('');
   const cancSec=document.getElementById('cancelledRehearsalSection');if(cancSec)cancSec.style.display=cancelled.length?'':'none';
@@ -2046,9 +2048,9 @@ function setNotifPref(pref){
   bandNotifPref[activeBandId]=pref;
   Object.entries(idMap).forEach(([p,id])=>{const el=document.getElementById(id);if(el)el.classList.toggle('on',p===pref);});
   const notes={
-    email:'Default: Email notification only.',
-    whatsapp:'Default: WhatsApp group notification only.',
-    both:'Default: Both email and WhatsApp group notification.',
+    email:t('Default: Email notification only.'),
+    whatsapp:t('Default: WhatsApp group notification only.'),
+    both:t('Default: Both email and WhatsApp group notification.'),
   };
   const n=document.getElementById('settNotifNote');if(n)n.textContent=notes[pref];
   toast2('Notification preference saved!');
@@ -2084,9 +2086,9 @@ function selNotif(ch){
     if(errEl)errEl.style.display='none';
     if(noteEl)noteEl.style.display='';
     const msgs={
-      email:'✓ Members will be notified by email once confirmed.',
-      whatsapp:'💬 A notification will be sent to the WhatsApp group.',
-      both:'✓ Members will be notified by email and WhatsApp group.',
+      email:t('✓ Members will be notified by email once confirmed.'),
+      whatsapp:t('💬 A notification will be sent to the WhatsApp group.'),
+      both:t('✓ Members will be notified by email and WhatsApp group.'),
     };
     if(noteEl)noteEl.textContent=msgs[ch];
   }
@@ -2324,7 +2326,7 @@ function syncCurrentUserToUI(){
   const footRole = document.querySelector('.sbar-foot-text div:last-child');
   if(footRole){
     const inst = u.instrument;
-    const role = u.role === 'admin' ? 'Admin' : 'Member';
+    const role = u.role === 'admin' ? t('Admin') : t('Member');
     footRole.textContent = inst ? `${inst} · ${role}` : role;
   }
 
@@ -2337,7 +2339,7 @@ function syncCurrentUserToUI(){
   const bandNameEl = document.querySelector('.bb .sb-band-name');
   if(bandNameEl) bandNameEl.textContent = band?.name || 'No band';
   const bandRoleEl = document.querySelector('.bb .sb-label div:last-child');
-  if(bandRoleEl) bandRoleEl.textContent = band ? (u.role === 'admin' ? 'Admin' : 'Member') : 'Join or create';
+  if(bandRoleEl) bandRoleEl.textContent = band ? (u.role === 'admin' ? t('Admin') : t('Member')) : t('Join or create');
 
   // Page subtitle
   const pgS = document.getElementById('pgS');
@@ -2347,8 +2349,8 @@ function syncCurrentUserToUI(){
   const greet = document.getElementById('dshG');
   if(greet){
     const h = new Date().getHours();
-    const tod = h < 12 ? 'morning' : h < 18 ? 'afternoon' : 'evening';
-    greet.textContent = u.firstName ? `Good ${tod}, ${u.firstName} 👋` : `Good ${tod} 👋`;
+    const tod = h < 12 ? t('Good morning') : h < 18 ? t('Good afternoon') : t('Good evening');
+    greet.textContent = u.firstName ? `${tod}, ${u.firstName} 👋` : `${tod} 👋`;
   }
 }
 
@@ -2402,7 +2404,7 @@ function nav(p){
   document.querySelectorAll('.ni').forEach(n=>n.classList.remove('on'));
   const f=[...document.querySelectorAll('.ni')].find(n=>n.getAttribute('onclick')?.includes(p));
   if(f)f.classList.add('on');
-  const T={dashboard:'Dashboard',setlists:'Set Lists',library:'Song Library',calendar:'Calendar',rehearsals:'Rehearsals',concerts:'Concerts',members:'Members',guestdir:'Guest Directory',bandprofile:'Band Profile',myprofile:'My Profile',settings:'Settings'};
+  const T={dashboard:t('Dashboard'),setlists:t('Set Lists'),library:t('Song Library'),calendar:t('Calendar'),rehearsals:t('Rehearsals'),concerts:t('Concerts'),members:t('Members'),guestdir:t('Guest Directory'),bandprofile:t('Band Profile'),myprofile:t('My Profile'),settings:t('Settings')};
   document.getElementById('pgT').textContent=T[p]||p;
   if(p==='myprofile') populateMpPage().catch(console.error);
   if(p==='settings') populateSettingsPage();
@@ -2413,7 +2415,7 @@ function toggleSbMinimize(){
   const mc=document.querySelector('.mc');
   const isMin=sb.classList.toggle('minimized');
   mc.classList.toggle('sb-minimized',isMin);
-  document.getElementById('sbToggle').title=isMin?'Expand sidebar':'Collapse sidebar';
+  document.getElementById('sbToggle').title=isMin?t('Expand sidebar'):t('Collapse sidebar');
   try{localStorage.setItem('sbMin',isMin?'1':'0');}catch(e){}
 }
 function initSbState(){
@@ -2429,7 +2431,18 @@ function closeSb(){document.getElementById('sb').classList.remove('open');docume
 
 
 // LANG
-
+function changeLang(lang) {
+  currentUser.lang = lang;
+  applyI18n();
+  // Re-render the current page title
+  const active = document.querySelector('.pg-area.on');
+  if (active) {
+    const pageId = active.id.replace('pg-', '');
+    const T = {dashboard:'Dashboard',setlists:'Set Lists',library:'Song Library',calendar:'Calendar',rehearsals:'Rehearsals',concerts:'Concerts',members:'Members',guestdir:'Guest Directory',bandprofile:'Band Profile',myprofile:'My Profile',settings:'Settings'};
+    document.getElementById('pgT').textContent = t(T[pageId] || pageId);
+  }
+  syncCurrentUserToUI();
+}
 
 // MODALS
 function showMod(id){document.getElementById(id).style.display='flex';}
@@ -2628,7 +2641,7 @@ function updPayPill(){
 
 // TOAST
 let toastT;
-function toast2(msg,type='ok'){const t=document.getElementById('toast');document.getElementById('toastMsg').textContent=msg;document.getElementById('toastDot').className='td'+(type==='w'?' w':'');t.classList.add('on');clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('on'),3000);}
+function toast2(msg,type='ok'){const el=document.getElementById('toast');document.getElementById('toastMsg').textContent=t(msg);document.getElementById('toastDot').className='td'+(type==='w'?' w':'');el.classList.add('on');clearTimeout(toastT);toastT=setTimeout(()=>el.classList.remove('on'),3000);}
 
 // SETLIST
 function renderSL(){
@@ -2924,11 +2937,11 @@ function selSlMode(mode){
   document.getElementById('slModeManual').classList.toggle('on',mode==='manual');
   document.getElementById('slModeAI').classList.toggle('on',mode==='ai');
   const notes={
-    manual:'Takes you straight to the set list editor to add songs manually.',
-    ai:'✦ AI will suggest songs from your library based on the concert details.',
+    manual:t('Takes you straight to the set list editor to add songs manually.'),
+    ai:t('✦ AI will suggest songs from your library based on the concert details.'),
   };
   document.getElementById('slModeNote').textContent=notes[mode];
-  document.getElementById('slCreateBtn').textContent=mode==='ai'?'✦ Generate Set List':'Create Set List';
+  document.getElementById('slCreateBtn').textContent=mode==='ai'?'✦ Generate Set List':t('Create Set List');
 }
 
 async function createNewSetList(){
@@ -2977,8 +2990,8 @@ function renderLib(filter='All',search=''){
   const f=songs.filter(s=>(filter==='All'||s.genre===filter)&&(s.title+s.artist).toLowerCase().includes(search.toLowerCase()));
   if(!f.length){
     const msg=songs.length
-      ?`<div class="es" style="grid-column:1/-1"><div class="es-ico">🔍</div><h3>No songs found</h3><p>Try another filter or search term.</p></div>`
-      :`<div class="es" style="grid-column:1/-1"><div class="es-ico">🎵</div><h3>Your library is empty</h3><p>Start by adding songs to your library.</p></div>`;
+      ?`<div class="es" style="grid-column:1/-1"><div class="es-ico">🔍</div><h3>${t('No songs found')}</h3><p>${t('Try another filter or search term.')}</p></div>`
+      :`<div class="es" style="grid-column:1/-1"><div class="es-ico">🎵</div><h3>${t('No songs in library yet')}</h3><p>${t('Start by adding songs to your library.')}</p></div>`;
     grid.innerHTML=msg;return;
   }
   grid.innerHTML=f.map(s=>`
@@ -3481,7 +3494,7 @@ function togBOMc(el){el.classList.toggle('on');}
 function syncBOPill(){const n=blackouts.filter(b=>b.scope==='band').length;document.getElementById('boLbl').textContent=n===0?'No blackouts':`${n} blackout period${n>1?'s':''}`;document.getElementById('boIco').textContent=n>0?'🚫':'📅';}
 function renderBOList(){
   const el=document.getElementById('boList');if(!el)return;
-  if(!blackouts.length){el.innerHTML=`<div class="es" style="padding:20px"><div class="es-ico" style="font-size:1.6rem">📅</div><h3>No blackout periods</h3><p>Add holidays, closures, or absences.</p></div>`;return;}
+  if(!blackouts.length){el.innerHTML=`<div class="es" style="padding:20px"><div class="es-ico" style="font-size:1.6rem">📅</div><h3>${t('No blackout periods')}</h3><p>${t('Add holidays, closures, or absences.')}</p></div>`;return;}
   el.innerHTML=[...blackouts].sort((a,b)=>a.from.localeCompare(b.from)).map(b=>{
     const ff=fmtD(b.from),tf=b.to!==b.from?` → ${fmtD(b.to)}`:'';
     const nm=b.scope==='members'?`<div style="font-size:.67rem;color:var(--ink3);margin-top:2px">${b.mids.map(uid=>members.find(x=>x.id===uid)?.name.split(' ')[0]).filter(Boolean).join(', ')}</div>`:'';
@@ -3773,8 +3786,8 @@ function renderConcerts(){
   if(countEl) countEl.textContent=`${upcoming.length} upcoming · ${past.length} past${cancelled.length?` · ${cancelled.length} cancelled`:''}`;
   document.getElementById('concertListUpcoming').innerHTML=upcoming.length
     ?upcoming.map(c=>concertCard(c,'upcoming')).join('')
-    :`<div style="padding:20px;text-align:center;font-size:.82rem;color:var(--ink3)">No upcoming concerts — click + New Concert to add one.</div>`;
-  document.getElementById('concertListPast').innerHTML=past.length?past.map(c=>concertCard(c,'past')).join(''):`<div style="padding:12px;font-size:.78rem;color:var(--ink3)">No past concerts yet.</div>`;
+    :`<div style="padding:20px;text-align:center;font-size:.82rem;color:var(--ink3)">${t('No upcoming concerts — click + New Concert to add one.')}</div>`;
+  document.getElementById('concertListPast').innerHTML=past.length?past.map(c=>concertCard(c,'past')).join(''):`<div style="padding:12px;font-size:.78rem;color:var(--ink3)">${t('No past concerts yet.')}</div>`;
   document.getElementById('pastConcertSection').style.display=past.length?'':'none';
   document.getElementById('concertListCancelled').innerHTML=cancelled.map(c=>concertCard(c,'cancelled')).join('');
   document.getElementById('cancelledConcertSection').style.display=cancelled.length?'':'none';
@@ -4731,6 +4744,7 @@ async function initApp(){
   await loadRehearsals();
   await loadMembers();
   await loadBlackouts();
+  applyI18n(); // apply translations before first render
   renderSLDropdown();renderSL();renderSlMeta();renderLib();updateLibCount();updateSidebarCounts();
   setCalView(calView);renderRehearsals();renderConcerts();renderMembers();
   renderGuestDir();renderBP();renderAsList();renderBandList();
@@ -4744,7 +4758,7 @@ async function initApp(){
 <div class="mov" id="profMod" style="display:none" onclick="closeMB(event,'profMod')">
 <div class="mod" style="max-width:560px">
 
-  <div class="mott" id="profModalTitle" style="margin-bottom:16px">Edit My Profile</div>
+  <div class="mott" id="profModalTitle" style="margin-bottom:16px" data-i18n="Edit My Profile">Edit My Profile</div>
 
   <div style="display:flex;align-items:center;gap:14px;margin-bottom:20px">
     <div style="position:relative;flex-shrink:0">
@@ -5445,7 +5459,7 @@ async function saveSettings(){
   const idx=currentUser.memberIdx;
   const m=members[idx];
   if(m) await MembersDB.upsertProfile(m.id,{lang});
-  currentUser.lang=lang;
+  changeLang(lang);
   toast2('Settings saved!');
 }
 </script>
@@ -5453,21 +5467,21 @@ async function saveSettings(){
 <!-- SONG EDIT MODAL -->
 <div class="mov" id="seMod" style="display:none" onclick="closeMB(event,'seMod')">
 <div class="mod" style="max-width:500px">
-  <div class="mott">Edit Song</div>
-  <div class="most">Update the song details. Changes apply across all setlists.</div>
+  <div class="mott" data-i18n="Edit Song">Edit Song</div>
+  <div class="most" data-i18n="Update the song details. Changes apply across all setlists.">Update the song details. Changes apply across all setlists.</div>
 
   <div class="fr">
-    <div class="fg"><label>Song Title</label><input id="seName"></div>
-    <div class="fg"><label>Artist</label><input id="seArtist"></div>
+    <div class="fg"><label data-i18n="Song Title">Song Title</label><input id="seName"></div>
+    <div class="fg"><label data-i18n="Artist">Artist</label><input id="seArtist"></div>
   </div>
   <div class="fr">
-    <div class="fg"><label>Genre</label>
+    <div class="fg"><label data-i18n="Genre">Genre</label>
       <select id="seGenre">
         <option>Jazz</option><option>Funk</option><option>Soul</option>
         <option>Blues</option><option>Country</option><option>Pop</option><option>Rock</option><option>Latin</option><option>R&amp;B</option><option>Other</option>
       </select>
     </div>
-    <div class="fg"><label>Key</label>
+    <div class="fg"><label data-i18n="Key">Key</label>
       <select id="seKey">
         <option>Am</option><option>C</option><option>G</option><option>D</option><option>Dm</option>
         <option>F</option><option>Bb</option><option>Eb</option><option>Gm</option><option>Em</option>
@@ -5475,9 +5489,9 @@ async function saveSettings(){
       </select>
     </div>
   </div>
-  <div class="fg"><label>Band Notes</label><textarea id="seNote" style="min-height:60px" placeholder="e.g. Antoine's feature, watch tempo…"></textarea></div>
+  <div class="fg"><label data-i18n="Band Notes">Band Notes</label><textarea id="seNote" style="min-height:60px" placeholder="e.g. Antoine's feature, watch tempo…"></textarea></div>
   <div class="fg">
-    <label>Duration <span style="font-weight:400;color:var(--ink3)">(optional)</span></label>
+    <label><span data-i18n="Duration (optional)">Duration (optional)</span></label>
     <div style="display:flex;gap:8px;align-items:center">
       <input id="seDurMin" type="number" min="0" max="59" placeholder="min" style="flex:1;padding:9px 13px;background:var(--bg);border:1.5px solid var(--bd);border-radius:var(--rad);color:var(--ink);font-family:var(--font);font-size:.83rem;outline:none;transition:border-color .13s" onfocus="this.style.borderColor='var(--a)'" onblur="this.style.borderColor='var(--bd)'">
       <span style="color:var(--ink3);font-weight:600">:</span>
@@ -5488,31 +5502,29 @@ async function saveSettings(){
 
   <!-- Streaming links -->
   <div style="height:1px;background:var(--bd);margin:4px 0 14px"></div>
-  <div style="font-size:.69rem;font-weight:700;color:var(--ink2);margin-bottom:9px;letter-spacing:.04em;text-transform:uppercase">Streaming Links <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--ink3)">(optional)</span></div>
-  <div class="fg"><label>Spotify URL</label><input id="seSpotify" placeholder="https://open.spotify.com/track/…"></div>
-  <div class="fg"><label>YouTube URL</label><input id="seYoutube" placeholder="https://youtube.com/watch?v=…"></div>
-  <div class="fg"><label>Apple Music URL</label><input id="seApple" placeholder="https://music.apple.com/…"></div>
+  <div style="font-size:.69rem;font-weight:700;color:var(--ink2);margin-bottom:9px;letter-spacing:.04em;text-transform:uppercase"><span data-i18n="Streaming Links (optional)">Streaming Links</span> <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--ink3)">(optional)</span></div>
+  <div class="fg"><label data-i18n="Spotify URL">Spotify URL</label><input id="seSpotify" placeholder="https://open.spotify.com/track/…"></div>
+  <div class="fg"><label data-i18n="YouTube URL">YouTube URL</label><input id="seYoutube" placeholder="https://youtube.com/watch?v=…"></div>
+  <div class="fg"><label data-i18n="Apple Music URL">Apple Music URL</label><input id="seApple" placeholder="https://music.apple.com/…"></div>
 
   <!-- Actions row -->
   <div style="height:1px;background:var(--bd);margin:4px 0 14px"></div>
   <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:4px">
-    <!-- Hide toggle -->
     <button id="seHideBtn" onclick="toggleHideSong(editingSongId)"
       style="flex:1;padding:9px 14px;border-radius:var(--rad);border:1.5px solid var(--bd);background:var(--bg2);color:var(--ink2);font-family:var(--font);font-size:.8rem;font-weight:600;cursor:pointer;transition:all .15s;text-align:center">
       🙈 Hide Song
     </button>
-    <!-- Delete -->
     <button onclick="deleteSong(editingSongId)"
       style="padding:9px 14px;border-radius:var(--rad);border:1.5px solid var(--r2);background:var(--r2);color:var(--r);font-family:var(--font);font-size:.8rem;font-weight:600;cursor:pointer;transition:all .15s"
       onmouseover="this.style.background='var(--r)';this.style.color='#fff'" onmouseout="this.style.background='var(--r2)';this.style.color='var(--r)'">
       🗑 Delete Song
     </button>
   </div>
-  <div style="font-size:.72rem;color:var(--ink3);margin-bottom:4px">Hidden songs are greyed out in the library and excluded from AI setlist suggestions.</div>
+  <div style="font-size:.72rem;color:var(--ink3);margin-bottom:4px" data-i18n="Hidden songs are greyed out in the library and excluded from AI setlist suggestions.">Hidden songs are greyed out in the library and excluded from AI setlist suggestions.</div>
 
   <div class="moft">
-    <button class="btn btn-g" onclick="closeMod('seMod')">Cancel</button>
-    <button class="btn btn-p" onclick="saveSongEdit()">Save Changes</button>
+    <button class="btn btn-g" onclick="closeMod('seMod')" data-i18n="Cancel">Cancel</button>
+    <button class="btn btn-p" onclick="saveSongEdit()" data-i18n="Save">Save Changes</button>
   </div>
 </div>
 </div>
@@ -5521,27 +5533,27 @@ async function saveSettings(){
 <div class="mov" id="ceMod" style="display:none" onclick="closeMB(event,'ceMod')">
 <div class="mod" style="max-width:520px;display:flex;flex-direction:column;max-height:91vh;padding:0;overflow:hidden">
   <div style="padding:25px 25px 0;overflow-y:auto;flex:1">
-    <div class="mott" id="ceModalTitle">Edit Concert</div>
-    <div class="most">Update the concert details. Changes are reflected immediately.</div>
+    <div class="mott" id="ceModalTitle" data-i18n="Edit Concert">Edit Concert</div>
+    <div class="most" data-i18n="Update the concert details. Changes are reflected immediately.">Update the concert details. Changes are reflected immediately.</div>
 
-    <div class="fg"><label>Event Name</label><input id="ceTitle" placeholder="Blue Note Summer Night"></div>
-    <div class="fg"><label>Event Type</label>
+    <div class="fg"><label data-i18n="Event Name">Event Name</label><input id="ceTitle" placeholder="Blue Note Summer Night"></div>
+    <div class="fg"><label data-i18n="Event Type">Event Type</label>
       <select id="ceType">
         <option>Concert</option><option>Wedding</option><option>Birthday</option>
         <option>Anniversary</option><option>Festival</option><option>Corporate</option>
         <option>Rehearsal</option><option>Recording Session</option><option>Other</option>
       </select>
     </div>
-    <div class="fg"><label>Date</label><input type="date" id="ceDate"></div>
-    <div class="fg"><label>Start Time</label><input type="time" id="ceTime" value="21:00"></div>
+    <div class="fg"><label data-i18n="Date">Date</label><input type="date" id="ceDate"></div>
+    <div class="fg"><label data-i18n="Start Time">Start Time</label><input type="time" id="ceTime" value="21:00"></div>
     <div class="fr">
-      <div class="fg"><label>Duration (min)</label><input type="number" id="ceDuration" value="90"></div>
+      <div class="fg"><label data-i18n="Duration (optional)">Duration (min)</label><input type="number" id="ceDuration" value="90"></div>
       <div class="fg"><label>Expected Audience</label><input type="number" id="ceAudience" placeholder="120"></div>
     </div>
-    <div class="fg"><label>Venue Name</label><input id="ceVenue" placeholder="Blue Note"></div>
-    <div class="fg"><label>Venue Address</label><input id="ceAddress" placeholder="Rue Fossé aux Loups 26, Brussels"></div>
+    <div class="fg"><label data-i18n="Venue Name">Venue Name</label><input id="ceVenue" placeholder="Blue Note"></div>
+    <div class="fg"><label data-i18n="Venue Address">Venue Address</label><input id="ceAddress" placeholder="Rue Fossé aux Loups 26, Brussels"></div>
     <div class="fg">
-      <label>Venue Contact Phone <span style="font-weight:400;color:var(--ink3)">(optional)</span></label>
+      <label><span data-i18n="Venue Contact Phone (optional)">Venue Contact Phone</span> <span style="font-weight:400;color:var(--ink3)">(optional)</span></label>
       <div class="phone-row">
         <div class="phone-cc-wrap">
           <div class="phone-cc-display" id="cePhoneCcDisplay">+32 <svg width="10" height="10" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6l4 4 4-4"/></svg></div>
@@ -5553,27 +5565,27 @@ async function saveSettings(){
 
     <!-- Paid / Free -->
     <div style="height:1px;background:var(--bd);margin:4px 0 14px"></div>
-    <div style="font-size:.69rem;font-weight:700;color:var(--ink2);margin-bottom:9px;letter-spacing:.04em;text-transform:uppercase">Gig Type</div>
+    <div style="font-size:.69rem;font-weight:700;color:var(--ink2);margin-bottom:9px;letter-spacing:.04em;text-transform:uppercase" data-i18n="Gig Type">Gig Type</div>
     <div class="popts">
-      <div class="popt on" id="cePaidFree" onclick="cePaidSel('free')"><div class="poi">🎤</div><div class="pol">Free gig</div></div>
-      <div class="popt" id="cePaidPaid" onclick="cePaidSel('paid')"><div class="poi">💰</div><div class="pol">Paid gig</div></div>
+      <div class="popt on" id="cePaidFree" onclick="cePaidSel('free')"><div class="poi">🎤</div><div class="pol" data-i18n="Free gig">Free gig</div></div>
+      <div class="popt" id="cePaidPaid" onclick="cePaidSel('paid')"><div class="poi">💰</div><div class="pol" data-i18n="Paid gig">Paid gig</div></div>
     </div>
     <div id="cePaidFields" style="display:none">
       <div class="fr">
-        <div class="fg"><label>Total Amount (€)</label><input type="number" id="ceTotal" placeholder="e.g. 2000"></div>
-        <div class="fg"><label>Ticket Price / Terms</label><input id="ceTicket" placeholder="€25/ticket or Package"></div>
+        <div class="fg"><label data-i18n="Total Amount (€)">Total Amount (€)</label><input type="number" id="ceTotal" placeholder="e.g. 2000"></div>
+        <div class="fg"><label data-i18n="Ticket Price / Terms">Ticket Price / Terms</label><input id="ceTicket" placeholder="€25/ticket or Package"></div>
       </div>
     </div>
 
     <!-- Notes -->
     <div style="height:1px;background:var(--bd);margin:4px 0 14px"></div>
-    <div class="fg"><label>Notes <span style="font-weight:400;color:var(--ink3)">(optional)</span></label>
+    <div class="fg"><label><span data-i18n="Notes">Notes</span> <span style="font-weight:400;color:var(--ink3)" data-i18n="(optional)">(optional)</span></label>
       <textarea id="ceNotes" style="min-height:60px" placeholder="Logistics, special requests, setlist notes…"></textarea>
     </div>
 
     <!-- Set List link -->
     <div style="height:1px;background:var(--bd);margin:4px 0 14px"></div>
-    <div style="font-size:.69rem;font-weight:700;color:var(--ink2);margin-bottom:9px;letter-spacing:.04em;text-transform:uppercase">Set List <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--ink3)">(optional)</span></div>
+    <div style="font-size:.69rem;font-weight:700;color:var(--ink2);margin-bottom:9px;letter-spacing:.04em;text-transform:uppercase"><span data-i18n="Set Lists">Set List</span> <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--ink3)">(optional)</span></div>
     <div class="fg" style="margin-bottom:6px">
       <select id="ceSetlistSelect">
         <option value="">— No set list —</option>
@@ -5591,8 +5603,8 @@ async function saveSettings(){
   </div>
   <!-- sticky footer -->
   <div style="padding:13px 25px 20px;border-top:1px solid var(--bd);display:flex;gap:7px;justify-content:flex-end;align-items:center;background:var(--w);flex-shrink:0">
-    <button class="btn btn-g" onclick="closeMod('ceMod')">Cancel</button>
-    <button class="btn btn-p" onclick="saveConcertEdit()">Save Concert</button>
+    <button class="btn btn-g" onclick="closeMod('ceMod')" data-i18n="Cancel">Cancel</button>
+    <button class="btn btn-p" onclick="saveConcertEdit()" data-i18n="Save">Save Concert</button>
   </div>
 </div>
 </div>
@@ -5691,10 +5703,10 @@ async function saveSettings(){
 <div class="mov" id="cancelMod" style="display:none" onclick="closeMB(event,'cancelMod')">
 <div class="mod" style="max-width:400px">
   <div style="font-size:2rem;text-align:center;margin-bottom:10px">🚫</div>
-  <div class="mott" style="text-align:center">Cancel Event</div>
+  <div class="mott" style="text-align:center" data-i18n="Cancel Event">Cancel Event</div>
   <div class="most" style="text-align:center">Are you sure you want to cancel <strong id="cancelItemName"></strong>? The event will move to the Cancelled section.</div>
   <div style="background:var(--amb2);border:1px solid rgba(217,119,6,.3);border-radius:var(--rad);padding:11px 14px;margin-bottom:16px">
-    <div style="font-size:.82rem;font-weight:600;color:var(--amb);margin-bottom:6px">Notify members?</div>
+    <div style="font-size:.82rem;font-weight:600;color:var(--amb);margin-bottom:6px" data-i18n="Notify members?">Notify members?</div>
     <div style="font-size:.76rem;color:var(--ink2)">Members will be notified using the band's default channel (<strong id="cancelChannelLabel"></strong>).</div>
   </div>
   <div style="display:flex;flex-direction:column;gap:8px">
@@ -5759,25 +5771,25 @@ async function saveSettings(){
 <div class="mov" id="reMod" style="display:none" onclick="closeMB(event,'reMod')">
 <div class="mod" style="max-width:480px;display:flex;flex-direction:column;max-height:91vh;padding:0;overflow:hidden">
   <div style="padding:25px 25px 0;overflow-y:auto;flex:1">
-    <div class="mott" id="reModalTitle">Edit Rehearsal</div>
-    <div class="most">Update rehearsal details. All band members will be informed when you share.</div>
-    <div class="fg"><label>Rehearsal Name</label><input id="reTitle" placeholder="Full Band Rehearsal"></div>
-    <div class="fg"><label>Date</label><input type="date" id="reDate"></div>
+    <div class="mott" id="reModalTitle" data-i18n="Edit Rehearsal">Edit Rehearsal</div>
+    <div class="most" data-i18n="Update rehearsal details. All band members will be informed when you share.">Update rehearsal details. All band members will be informed when you share.</div>
+    <div class="fg"><label data-i18n="Rehearsal Name">Rehearsal Name</label><input id="reTitle" placeholder="Full Band Rehearsal"></div>
+    <div class="fg"><label data-i18n="Date">Date</label><input type="date" id="reDate"></div>
     <div class="fr">
-      <div class="fg"><label>Start Time</label><input type="time" id="reStart" value="19:00"></div>
-      <div class="fg"><label>End Time</label><input type="time" id="reEnd" value="22:00"></div>
+      <div class="fg"><label data-i18n="Start Time">Start Time</label><input type="time" id="reStart" value="19:00"></div>
+      <div class="fg"><label data-i18n="End Time">End Time</label><input type="time" id="reEnd" value="22:00"></div>
     </div>
-    <div class="fg"><label>Location</label><input id="reLocation" placeholder="Studio De Muziek, Brussels"></div>
-    <div class="fg"><label>Notes <span style="font-weight:400;color:var(--ink3)">(optional)</span></label>
-      <textarea id="reNotes" style="min-height:60px" placeholder="Focus areas, what to bring…"></textarea>
+    <div class="fg"><label data-i18n="Location">Location</label><input id="reLocation" placeholder="Studio De Muziek, Brussels"></div>
+    <div class="fg"><label><span data-i18n="Notes">Notes</span> <span style="font-weight:400;color:var(--ink3)" data-i18n="(optional)">(optional)</span></label>
+      <textarea id="reNotes" style="min-height:60px" data-i18n-placeholder="Focus areas, what to bring…" placeholder="Focus areas, what to bring…"></textarea>
     </div>
     <div style="height:1px;background:var(--bd);margin:4px 0 14px"></div>
-    <div style="font-size:.69rem;font-weight:700;color:var(--ink2);margin-bottom:9px;letter-spacing:.04em;text-transform:uppercase">Rehearsal Photos</div>
+    <div style="font-size:.69rem;font-weight:700;color:var(--ink2);margin-bottom:9px;letter-spacing:.04em;text-transform:uppercase" data-i18n="Rehearsal Photos">Rehearsal Photos</div>
     <div id="rePhotoArea" style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:8px"></div>
   </div>
   <div style="padding:13px 25px 20px;border-top:1px solid var(--bd);display:flex;gap:7px;justify-content:flex-end;background:var(--w);flex-shrink:0">
-    <button class="btn btn-g" onclick="closeMod('reMod')">Cancel</button>
-    <button class="btn btn-p" onclick="saveRehEdit()">Save Rehearsal</button>
+    <button class="btn btn-g" onclick="closeMod('reMod')" data-i18n="Cancel">Cancel</button>
+    <button class="btn btn-p" onclick="saveRehEdit()" data-i18n="Save Rehearsal">Save Rehearsal</button>
   </div>
 </div>
 </div>
@@ -5785,13 +5797,13 @@ async function saveSettings(){
 <!-- INVITE MESSAGE MODAL -->
 <div class="mov" id="invMsgMod" style="display:none" onclick="closeMB(event,'invMsgMod')">
 <div class="mod" style="max-width:480px">
-  <div class="mott">Review Invitation Message</div>
-  <div class="most">Edit the message before sending via <strong id="invMsgChannel">Email</strong>. All changes are for this send only.</div>
+  <div class="mott" data-i18n="Review Invitation Message">Review Invitation Message</div>
+  <div class="most"><span data-i18n="Edit the message before sending via">Edit the message before sending via</span> <strong id="invMsgChannel">Email</strong>. <span data-i18n="All changes are for this send only.">All changes are for this send only.</span></div>
   <textarea id="invMsgText" style="width:100%;min-height:160px;padding:13px;background:var(--bg);border:1.5px solid var(--bd);border-radius:var(--rad);color:var(--ink);font-family:var(--font);font-size:.84rem;line-height:1.65;outline:none;resize:vertical;box-sizing:border-box;transition:border-color .13s" onfocus="this.style.borderColor='var(--a)'" onblur="this.style.borderColor='var(--bd)'"></textarea>
-  <div style="font-size:.72rem;color:var(--ink3);margin-top:6px;margin-bottom:14px">You can personalise this message before sending. The recipient will receive exactly what you see above.</div>
+  <div style="font-size:.72rem;color:var(--ink3);margin-top:6px;margin-bottom:14px" data-i18n="You can personalise this message before sending. The recipient will receive exactly what you see above.">You can personalise this message before sending. The recipient will receive exactly what you see above.</div>
   <div class="moft">
-    <button class="btn btn-g" onclick="closeMod('invMsgMod');showMod('invMod')">← Back</button>
-    <button class="btn btn-p" id="invSendBtn" onclick="sendInvitation()">✉️ Send via Email</button>
+    <button class="btn btn-g" onclick="closeMod('invMsgMod');showMod('invMod')" data-i18n="← Back">← Back</button>
+    <button class="btn btn-p" id="invSendBtn" onclick="sendInvitation()" data-i18n="✉️ Send via Email">✉️ Send via Email</button>
   </div>
 </div>
 </div>
@@ -5800,9 +5812,9 @@ async function saveSettings(){
 <div class="mov" id="mediaPicker" style="display:none" onclick="closeMB(event,'mediaPicker')">
 <div class="mod" style="max-width:320px">
   <div class="mott" id="mediaPickerTitle"></div>
-  <div class="most">Choose where to listen:</div>
+  <div class="most" data-i18n="Choose where to listen:">Choose where to listen:</div>
   <div id="mediaPickerList" style="display:flex;flex-direction:column;gap:8px"></div>
-  <div style="margin-top:12px"><button class="btn btn-g btn-fw" onclick="closeMod('mediaPicker')">Cancel</button></div>
+  <div style="margin-top:12px"><button class="btn btn-g btn-fw" onclick="closeMod('mediaPicker')" data-i18n="Cancel">Cancel</button></div>
 </div>
 </div>
 
@@ -5811,15 +5823,15 @@ async function saveSettings(){
 <div class="mov" id="deleteBandMod" style="display:none" onclick="closeMB(event,'deleteBandMod')">
 <div class="mod" style="max-width:420px">
   <div style="font-size:2.5rem;text-align:center;margin-bottom:8px">⚠️</div>
-  <div class="mott" style="text-align:center;color:var(--r)">Delete Band</div>
-  <div class="most" style="text-align:center">This will permanently delete <strong id="deleteBandName"></strong> and all its data — concerts, rehearsals, set lists, and member assignments. <strong>This cannot be undone.</strong></div>
+  <div class="mott" style="text-align:center;color:var(--r)" data-i18n="Delete Band">Delete Band</div>
+  <div class="most" style="text-align:center"><span data-i18n="This will permanently delete">This will permanently delete</span> <strong id="deleteBandName"></strong> <span data-i18n="and all its data — concerts, rehearsals, set lists, and member assignments.">and all its data — concerts, rehearsals, set lists, and member assignments.</span> <strong data-i18n="This cannot be undone.">This cannot be undone.</strong></div>
   <div style="background:var(--r2);border:1px solid #FECACA;border-radius:var(--rad);padding:11px 14px;margin-bottom:16px;font-size:.8rem;color:var(--r)">
-    To confirm, type the band name exactly as it appears above.
+    <span data-i18n="To confirm, type the band name exactly as it appears above.">To confirm, type the band name exactly as it appears above.</span>
   </div>
-  <div class="fg"><label>Confirm band name</label><input id="deleteBandConfirmInput" placeholder="Type band name here…"></div>
+  <div class="fg"><label data-i18n="Confirm band name">Confirm band name</label><input id="deleteBandConfirmInput" data-i18n-placeholder="Type band name here…" placeholder="Type band name here…"></div>
   <div style="display:flex;flex-direction:column;gap:8px;margin-top:4px">
-    <button class="btn btn-fw" style="background:var(--r);color:#fff;border:none;padding:11px;border-radius:var(--rad);font-family:var(--font);font-weight:600;font-size:.9rem;cursor:pointer" onclick="confirmDeleteBand()">Yes, permanently delete this band</button>
-    <button class="btn btn-g btn-fw" onclick="closeMod('deleteBandMod')">Cancel — keep the band</button>
+    <button class="btn btn-fw" style="background:var(--r);color:#fff;border:none;padding:11px;border-radius:var(--rad);font-family:var(--font);font-weight:600;font-size:.9rem;cursor:pointer" onclick="confirmDeleteBand()" data-i18n="Yes, permanently delete this band">Yes, permanently delete this band</button>
+    <button class="btn btn-g btn-fw" onclick="closeMod('deleteBandMod')" data-i18n="Cancel — keep the band">Cancel — keep the band</button>
   </div>
 </div>
 </div>
@@ -5889,18 +5901,18 @@ async function saveSettings(){
 <!-- GUEST CONVERT MODAL -->
 <div class="mov" id="guestConvertMod" style="display:none" onclick="closeMB(event,'guestConvertMod')">
 <div class="mod" style="max-width:400px">
-  <div class="mott" id="gcModalTitle">Convert to Guest</div>
-  <div class="most">Set the active date range for <strong id="gcName"></strong>. They'll have full member access during this period and move to the Guest Directory after.</div>
+  <div class="mott" id="gcModalTitle" data-i18n="Convert to Guest">Convert to Guest</div>
+  <div class="most"><span data-i18n="Set the active date range for">Set the active date range for</span> <strong id="gcName"></strong>. <span data-i18n="They'll have full member access during this period and move to the Guest Directory after.">They'll have full member access during this period and move to the Guest Directory after.</span></div>
   <div class="fr">
-    <div class="fg"><label>Start Date</label><input type="date" id="gcStart"></div>
-    <div class="fg"><label>End Date</label><input type="date" id="gcEnd"></div>
+    <div class="fg"><label data-i18n="Start Date">Start Date</label><input type="date" id="gcStart"></div>
+    <div class="fg"><label data-i18n="End Date">End Date</label><input type="date" id="gcEnd"></div>
   </div>
-  <div style="padding:10px 13px;background:var(--amb2);border:1px solid rgba(217,119,6,.3);border-radius:var(--rad);font-size:.77rem;color:var(--amb);margin-bottom:4px">
+  <div style="padding:10px 13px;background:var(--amb2);border:1px solid rgba(217,119,6,.3);border-radius:var(--rad);font-size:.77rem;color:var(--amb);margin-bottom:4px" data-i18n="⚠ After the end date, this musician will automatically move to the Guest Directory and lose active access.">
     ⚠ After the end date, this musician will automatically move to the Guest Directory and lose active access.
   </div>
   <div class="moft">
-    <button class="btn btn-g" onclick="closeMod('guestConvertMod')">Cancel</button>
-    <button class="btn btn-p" onclick="confirmGuestConvert()">Confirm Guest Role</button>
+    <button class="btn btn-g" onclick="closeMod('guestConvertMod')" data-i18n="Cancel">Cancel</button>
+    <button class="btn btn-p" onclick="confirmGuestConvert()" data-i18n="Confirm Guest Role">Confirm Guest Role</button>
   </div>
 </div>
 </div>
