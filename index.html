@@ -625,6 +625,7 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
         <button class="chip" onclick="filtG('Funk',this)">Funk</button>
         <button class="chip" onclick="filtG('Soul',this)">Soul</button>
         <button class="chip" onclick="filtG('Blues',this)">Blues</button>
+        <button class="chip" onclick="filtG('Country',this)">Country</button>
         <button class="chip" onclick="filtG('Pop',this)">Pop</button>
       </div>
 
@@ -917,7 +918,7 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
                   <div class="fg" style="flex:1;min-width:110px"><label style="font-size:.69rem">Genre</label>
                     <select id="beGenreInline" style="font-size:.83rem">
                       <option>Jazz</option><option>Funk</option><option>Soul</option><option>Blues</option>
-                      <option>Rock</option><option>Pop</option><option>Latin</option><option>R&amp;B</option>
+                      <option>Country</option><option>Rock</option><option>Pop</option><option>Latin</option><option>R&amp;B</option>
                       <option>Classical</option><option>Electronic</option><option>Mixed / Other</option>
                     </select>
                   </div>
@@ -1337,7 +1338,7 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
     <div class="fg"><label>Genre</label>
       <select id="nsg">
         <option>Jazz</option><option>Funk</option><option>Soul</option><option>Blues</option>
-        <option>Pop</option><option>Rock</option><option>Latin</option><option>R&amp;B</option><option>Other</option>
+        <option>Country</option><option>Pop</option><option>Rock</option><option>Latin</option><option>R&amp;B</option><option>Other</option>
       </select>
     </div>
     <div class="fg"><label>Key</label>
@@ -1448,7 +1449,7 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
   <div class="fg"><label>Genre / Style</label>
     <select id="nbGenre">
       <option>Jazz</option><option>Funk</option><option>Soul</option><option>Blues</option>
-      <option>Rock</option><option>Pop</option><option>Latin</option><option>R&amp;B</option>
+      <option>Country</option><option>Rock</option><option>Pop</option><option>Latin</option><option>R&amp;B</option>
       <option>Classical</option><option>Mixed / Other</option>
     </select>
   </div>
@@ -2911,7 +2912,7 @@ function updateSidebarCounts(){
 }
 
 // ── SPREADSHEET ───────────────────────────────────────────
-const GENRES_LIST=['Jazz','Funk','Soul','Blues','Pop','Rock','Latin','R&B','Other'];
+const GENRES_LIST=['Jazz','Funk','Soul','Blues','Country','Pop','Rock','Latin','R&B','Other'];
 const KEYS_LIST=['Am','C','G','D','Dm','F','Bb','Eb','Gm','Em','A','E','Fm','Cm','Bm','Ab','Db'];
 
 // Duration formatting: seconds → X:YY:ZZ
@@ -5245,7 +5246,7 @@ async function saveSettings(){
     <div class="fg"><label>Genre</label>
       <select id="seGenre">
         <option>Jazz</option><option>Funk</option><option>Soul</option>
-        <option>Blues</option><option>Pop</option><option>Rock</option><option>Latin</option><option>R&amp;B</option><option>Other</option>
+        <option>Blues</option><option>Country</option><option>Pop</option><option>Rock</option><option>Latin</option><option>R&amp;B</option><option>Other</option>
       </select>
     </div>
     <div class="fg"><label>Key</label>
