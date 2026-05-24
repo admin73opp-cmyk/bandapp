@@ -686,6 +686,36 @@ window.PT_BR = {
   '(min. 6 chars)': '(mín. 6 caracteres)',
   'Default: Email notification only.': 'Padrão: Apenas notificação por e-mail.',
 
+  /* ── DASHBOARD ────────────────────────────────────────── */
+  'Band Members': 'Membros da Banda',
+  'See calendar →': 'Ver calendário →',
+  'Manage →': 'Gerenciar →',
+
+  /* ── INSTRUMENTS ──────────────────────────────────────── */
+  'Guitar': 'Guitarra',
+  'Bass Guitar': 'Baixo',
+  'Piano / Keys': 'Piano / Teclado',
+  'Drums': 'Bateria',
+  'Percussion': 'Percussão',
+  'Saxophone': 'Saxofone',
+  'Trumpet': 'Trompete',
+  'Trombone': 'Trombone',
+  'Clarinet': 'Clarinete',
+  'Flute': 'Flauta',
+  'Violin': 'Violino',
+  'Viola': 'Viola',
+  'Cello': 'Violoncelo',
+  'Double Bass': 'Contrabaixo',
+  'Harp': 'Harpa',
+  'Harmonica': 'Gaita',
+  'Banjo': 'Banjo',
+  'Ukulele': 'Ukulele',
+  'Mandolin': 'Mandolim',
+  'Accordion': 'Acordeão',
+  'Organ': 'Órgão',
+  'Synthesizer': 'Sintetizador',
+  'DJ / Turntables': 'DJ / Pick-ups',
+
   /* ── MISC ─────────────────────────────────────────────── */
   'No band selected': 'Nenhuma banda selecionada',
   'Export': 'Exportar',

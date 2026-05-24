@@ -521,11 +521,11 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
       <div class="sg" id="dshStats"></div>
       <div class="dg">
         <div class="card">
-          <div class="ch"><div class="ct">Upcoming</div><div class="cl" onclick="nav('calendar')">See calendar →</div></div>
+          <div class="ch"><div class="ct" data-i18n="Upcoming">Upcoming</div><div class="cl" onclick="nav('calendar')" data-i18n="See calendar →">See calendar →</div></div>
           <div id="dshUpcoming"></div>
         </div>
         <div class="card">
-          <div class="ch"><div class="ct">Band Members</div><div class="cl" onclick="nav('members')">Manage →</div></div>
+          <div class="ch"><div class="ct" data-i18n="Band Members">Band Members</div><div class="cl" onclick="nav('members')" data-i18n="Manage →">Manage →</div></div>
           <div id="dshMembers"></div>
         </div>
       </div>
@@ -2912,8 +2912,8 @@ function renderSlLinkList(){
       ${(c.setlistIds||[]).length&&!(c.setlistIds||[]).includes(activeSetlistId)?`<span class="pill pgray" style="font-size:.66rem">Has setlist</span>`:''}
       ${(c.setlistIds||[]).includes(activeSetlistId)?`<span class="pill pg" style="font-size:.66rem">✓ Linked</span>`:''}
     </div>`;
-  el.innerHTML=(upcoming.length?`<div class="t1" style="margin-bottom:7px">Upcoming</div>${upcoming.map(makeItem).join('')}`:'')
-    +(past.length?`<div class="t1" style="margin-top:12px;margin-bottom:7px">Past</div>${past.map(makeItem).join('')}`:'');
+  el.innerHTML=(upcoming.length?`<div class="t1" style="margin-bottom:7px">${t('Upcoming')}</div>${upcoming.map(makeItem).join('')}`:'')
+    +(past.length?`<div class="t1" style="margin-top:12px;margin-bottom:7px">${t('Past')}</div>${past.map(makeItem).join('')}`:'');
 }
 function openSlMod(){
   if(!activeBandId){toast2('Create a band first before adding set lists','w');return;}
@@ -4309,8 +4309,8 @@ function renderMembers(){
             ${m.name}${flag?`<span title="${isoName(ex.nat)}" style="font-size:.95rem;line-height:1">${flag}</span>`:''}
           </div>
           <div class="mci" style="display:flex;align-items:center;gap:5px;flex-wrap:wrap;margin-top:3px">
-            <span style="display:inline-flex;align-items:center;gap:3px">${icon1} ${m.instrument}</span>
-            ${m.inst2?`<span style="color:var(--bd)">·</span><span style="display:inline-flex;align-items:center;gap:3px;color:var(--ink3)">${icon2} ${m.inst2}</span>`:''}
+            <span style="display:inline-flex;align-items:center;gap:3px">${icon1} ${t(m.instrument)}</span>
+            ${m.inst2?`<span style="color:var(--bd)">·</span><span style="display:inline-flex;align-items:center;gap:3px;color:var(--ink3)">${icon2} ${t(m.inst2)}</span>`:''}
           </div>
           <div style="margin-top:4px;display:flex;align-items:center;gap:5px;flex-wrap:wrap">${rolePill}</div>
         </div>
@@ -4358,7 +4358,7 @@ function renderGuestDir(){
       <div style="flex:1;min-width:0">
         <div style="font-weight:700;font-size:.88rem">${g.name}</div>
         <div style="font-size:.74rem;color:var(--ink2);margin-top:2px;display:flex;gap:10px;flex-wrap:wrap">
-          <span>${instIcon(g.instrument)} ${g.instrument}</span>
+          <span>${instIcon(g.instrument)} ${t(g.instrument)}</span>
           <span>\u{1F4C5} ${g.guestStart} \u2192 ${g.guestEnd}</span>
           <span>\u{1F3B5} ${g.band||'The Jazz Cats'}</span>
           <span style="color:var(--ink3)">${daysActive} days</span>
@@ -4384,7 +4384,7 @@ function openGuestDetail(idx){
   document.getElementById('gdAv').textContent=g.init||g.name.slice(0,2).toUpperCase();
   document.getElementById('gdName').textContent=g.name;
   document.getElementById('gdFlag').textContent=flag;
-  document.getElementById('gdInstrument').textContent=`${instIcon(g.instrument)} ${g.instrument}${g.inst2?' · '+instIcon(g.inst2)+' '+g.inst2:''}`;
+  document.getElementById('gdInstrument').textContent=`${instIcon(g.instrument)} ${t(g.instrument)}${g.inst2?' · '+instIcon(g.inst2)+' '+t(g.inst2):''}`;
   document.getElementById('gdBand').textContent=g.band||'The Jazz Cats';
   document.getElementById('gdDates').textContent=`${g.guestStart} → ${g.guestEnd} (${daysActive} days)`;
   document.getElementById('gdBio').textContent=ex.bio||t('No bio available.');
@@ -4733,7 +4733,7 @@ function renderDashboard(){
     const active = activeMembers();
     dshMembers.innerHTML = active.length ? active.slice(0,6).map(m=>{
       const avToday=(m.avail||[])[new Date().getDay()]?'on':'off';
-      const instLine=[m.instrument,m.vocals&&m.vocals!=='None'?m.vocals:''].filter(Boolean).join(' · ');
+      const instLine=[m.instrument?t(m.instrument):'',m.vocals&&m.vocals!=='None'?t(m.vocals):''].filter(Boolean).join(' · ');
       return`<div class="mr2"><div class="mav2" style="background:${m.color}">${m.init}</div><div style="flex:1"><div class="mn">${m.name}</div><div class="mi">${instLine}</div></div><div class="ad ${avToday}"></div></div>`;
     }).join('') : empty('No members yet. Invite someone to join!');
   }
@@ -5009,7 +5009,7 @@ function openProfile(idx){
   document.getElementById('profAv').textContent=memberPhotos[idx]?'':m.init;
   document.getElementById('profName').textContent=m.name;
   const guestSuffix=m.role==='guest'?` <span class="pill pamb" style="font-size:.66rem">Guest until ${m.guestEnd}</span>`:'';
-  document.getElementById('profRole').innerHTML=`<span class="pill ${m.role==='admin'?'pp':m.role==='guest'?'pamb':'pgray'}">${m.role==='admin'?'Admin':m.role==='guest'?'Guest':'Member'}</span>&nbsp;<span style="font-size:.72rem;color:var(--ink2)">${m.instrument}</span>${guestSuffix}`;
+  document.getElementById('profRole').innerHTML=`<span class="pill ${m.role==='admin'?'pp':m.role==='guest'?'pamb':'pgray'}">${m.role==='admin'?t('Admin'):m.role==='guest'?t('Guest'):t('Member')}</span>&nbsp;<span style="font-size:.72rem;color:var(--ink2)">${t(m.instrument)}</span>${guestSuffix}`;
   document.getElementById('profOwnBadge').style.display=isOwn?'':'none';
 
   // show/hide edit controls, make fields read-only for others
@@ -5060,7 +5060,7 @@ function openProfile(idx){
   // availability toggles — read-only for others
   const dayNames=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
   document.getElementById('pfAvailDays').innerHTML=dayNames.map((d,i)=>`
-    <div class="dtog ${m.avail[i]?'on':''}" ${isOwn?`onclick="this.classList.toggle('on')"`:'style="pointer-events:none;opacity:.8"'} data-di="${i}">${d}</div>
+    <div class="dtog ${m.avail[i]?'on':''}" ${isOwn?`onclick="this.classList.toggle('on')"`:'style="pointer-events:none;opacity:.8"'} data-di="${i}">${t(d)}</div>
   `).join('');
 
   // equipment & links
@@ -5176,7 +5176,7 @@ async function populateMpPage(){
   const nd=document.getElementById('mpNameDisplay');
   const rd=document.getElementById('mpRoleDisplay');
   if(nd)nd.textContent=[fn,ln].filter(Boolean).join(' ')||'Your Profile';
-  if(rd)rd.textContent=m?(m.instrument?m.instrument+' · ':'')+( m.role==='admin'?'Admin':m.role==='guest'?'Guest':'Member'):'New member';
+  if(rd)rd.textContent=m?(m.instrument?t(m.instrument)+' · ':'')+( m.role==='admin'?t('Admin'):m.role==='guest'?t('Guest'):t('Member')):t('New member');
 
   // Personal info
   populateCountrySelects();
@@ -5201,7 +5201,7 @@ async function populateMpPage(){
   // Availability
   const dayNames=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
   document.getElementById('mpAvailDays').innerHTML=dayNames.map((d,i)=>
-    `<div class="dtog ${(m?.avail||currentUser.avail||[1,1,1,1,1,1,1])[i]?'on':''}" onclick="this.classList.toggle('on')" data-di="${i}">${d}</div>`
+    `<div class="dtog ${(m?.avail||currentUser.avail||[1,1,1,1,1,1,1])[i]?'on':''}" onclick="this.classList.toggle('on')" data-di="${i}">${t(d)}</div>`
   ).join('');
 
   // Gear & Links
@@ -5331,11 +5331,11 @@ function renderMpReadViews(){
   const inst2=m?.inst2||document.getElementById('mpInst2')?.value||'';
   const instEl=document.getElementById('mpv-inst');
   instEl.innerHTML=[inst1,inst2].filter(Boolean)
-    .map(i=>`<span class="pill pgray" style="font-size:.75rem">${i}</span>`).join('')||'<span style="color:var(--ink3);font-size:.84rem">—</span>';
+    .map(i=>`<span class="pill pgray" style="font-size:.75rem">${t(i)}</span>`).join('')||'<span style="color:var(--ink3);font-size:.84rem">—</span>';
   const vmap={'Lead':'Lead vocals','Backing':'Backing vocals','None':'No vocals','Both':'Lead & backing'};
   const vback2={'No vocals':'None','Lead vocals':'Lead','Backing vocals':'Backing','Lead & backing':'Both'};
   const vocalsCode=m?.vocals||vback2[document.getElementById('mpVocals')?.value||'']||'None';
-  document.getElementById('mpv-vocals').textContent=vmap[vocalsCode]||vocalsCode||'—';
+  document.getElementById('mpv-vocals').textContent=t(vmap[vocalsCode]||vocalsCode||'—');
   const gear=ex.gear||m?.gear||document.getElementById('mpGear')?.value||'';
   const gearWrap=document.getElementById('mpv-gear-wrap');
   document.getElementById('mpv-gear').textContent=gear; gearWrap.style.display=gear?'':'none';
@@ -5346,7 +5346,7 @@ function renderMpReadViews(){
     `<div style="display:flex;flex-direction:row;flex-wrap:wrap;gap:6px">` +
     dayNames.map((d,i)=>{
       const on=(m?.avail||currentUser.avail||[1,1,1,1,1,1,1])[i];
-      return`<div class="dtog ${on?'on':''}" style="pointer-events:none">${d}</div>`;
+      return`<div class="dtog ${on?'on':''}" style="pointer-events:none">${t(d)}</div>`;
     }).join('') +
     `</div>`;
 
