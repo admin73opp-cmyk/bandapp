@@ -1223,7 +1223,7 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
           <div style="font-size:.75rem;color:var(--ink3);margin-bottom:14px">Choose your preferred color scheme.</div>
           <div class="fg" style="max-width:280px">
             <label>Color scheme</label>
-            <select id="settAppearance" onchange="applyTheme(this.value)">
+            <select id="settAppearance" onchange="applyTheme(this.value);localStorage.setItem('appearance',this.value)">
               <option value="default">Default (browser settings)</option>
               <option value="light">Light</option>
               <option value="dark">Dark</option>
