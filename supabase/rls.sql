@@ -13,6 +13,31 @@ create or replace function is_band_admin(bid uuid)
 returns bool language sql security definer as
 $$select exists(select 1 from band_members where band_id = bid and user_id = auth.uid() and role = 'admin')$$;
 
+-- ── Band creation helper (bypasses RLS so any authenticated user can create a band) ──
+
+create or replace function create_band_with_admin(
+  p_name      text,
+  p_initials  text default null,
+  p_color     text default '#6C63FF',
+  p_city      text default null,
+  p_country   text default null,
+  p_genre     text default null,
+  p_bio       text default null
+) returns uuid language plpgsql security definer set search_path = public as $$
+declare
+  v_id uuid;
+begin
+  insert into bands (name, initials, color, city, country, genre, bio)
+  values (p_name, p_initials, p_color, p_city, p_country, p_genre, p_bio)
+  returning id into v_id;
+
+  insert into band_members (band_id, user_id, role)
+  values (v_id, auth.uid(), 'admin');
+
+  return v_id;
+end;
+$$;
+
 -- ── Enable RLS on all tables ──────────────────────────────────
 
 alter table bands            enable row level security;

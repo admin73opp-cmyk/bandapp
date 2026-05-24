@@ -39,6 +39,22 @@ const BandsDB = {
     return data;
   },
 
+  // Creates a new band and adds the caller as admin atomically via SECURITY DEFINER RPC.
+  // Returns the new band's UUID, or null on error.
+  async createWithAdmin(fields) {
+    const { data, error } = await supabase.rpc('create_band_with_admin', {
+      p_name:     fields.name     || '',
+      p_initials: fields.initials || null,
+      p_color:    fields.color    || '#6C63FF',
+      p_city:     fields.city     || null,
+      p_country:  fields.country  || null,
+      p_genre:    fields.genre    || null,
+      p_bio:      fields.bio      || null,
+    });
+    if (error) { handleDbError(error); return null; }
+    return data; // UUID string
+  },
+
   async addMember(bandId, userId, role = 'admin') {
     const { error } = await supabase
       .from('band_members')
