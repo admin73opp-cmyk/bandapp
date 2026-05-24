@@ -5086,7 +5086,7 @@ function renderMpReadViews(){
   document.getElementById('mpv-avail').innerHTML=
     `<div style="display:flex;flex-direction:row;flex-wrap:wrap;gap:6px">` +
     dayNames.map((d,i)=>{
-      const on=(m?.avail||[])[i];
+      const on=(m?.avail||[1,1,1,1,1,1,1])[i];
       return`<div class="dtog ${on?'on':''}" style="pointer-events:none">${d}</div>`;
     }).join('') +
     `</div>`;
