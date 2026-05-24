@@ -255,6 +255,7 @@ supabase.auth.onAuthStateChange(async (event, session) => {
     // Pre-fill signup form from invite URL params
     const p = new URLSearchParams(window.location.search);
     // Store all invite params in sessionStorage so they survive the email confirmation redirect
+    if (p.get('bandname'))   sessionStorage.setItem('inviteBandName',   p.get('bandname'));
     if (p.get('fname'))      sessionStorage.setItem('inviteFirst',      p.get('fname'));
     if (p.get('lname'))      sessionStorage.setItem('inviteLast',       p.get('lname'));
     if (p.get('email'))      sessionStorage.setItem('inviteEmail',      p.get('email'));
@@ -262,11 +263,21 @@ supabase.auth.onAuthStateChange(async (event, session) => {
     if (p.get('instrument')) sessionStorage.setItem('inviteInstrument', p.get('instrument'));
     if (p.get('band'))       sessionStorage.setItem('pendingBandId',    p.get('band'));
 
-    if (p.get('fname') || p.get('email') || p.get('band')) {
+    // Switch to signup and show invite UI if ANY invite param is present
+    const _hasInvite = ['bandname','fname','lname','email','phone','instrument','band'].some(k => p.get(k));
+    if (_hasInvite) {
       if (typeof switchTab === 'function') switchTab('signup');
       if (p.get('fname')) { const el = document.getElementById('signupFirst'); if (el) el.value = p.get('fname'); }
       if (p.get('lname')) { const el = document.getElementById('signupLast');  if (el) el.value = p.get('lname'); }
       if (p.get('email')) { const el = document.getElementById('signupEmail'); if (el) el.value = p.get('email'); }
+      // Show invite banner with band name
+      const _banner   = document.getElementById('sf-invite-banner');
+      const _bandEl   = document.getElementById('sf-invite-band');
+      const _bandField = document.getElementById('sfBandField');
+      const _bandName = p.get('bandname') || '';
+      if (_banner) _banner.style.display = '';
+      if (_bandEl && _bandName) _bandEl.textContent = _bandName;
+      if (_bandField) _bandField.style.display = 'none'; // hide "create band" field for invitees
     }
   }
   // If session exists, onAuthStateChange fires automatically
