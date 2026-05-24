@@ -2400,9 +2400,8 @@ function openInviteMessage(){
   const lastName=(document.getElementById('invLastName')?.value||'').trim();
   const fullName=[firstName,lastName].filter(Boolean).join(' ');
 
-  const appUrl=localStorage.getItem('appUrl')||'';
-  const linkLine=appUrl?`\n\nClick the link below to sign up and join the band:\n${appUrl}`:'';
-  const defaultMsg=`Dear ${fullName},\n\nI am very happy to invite you to join band "${band?band.name:'our band'}" on Bandapp.${linkLine}\n\nCheers,\n${adminName}`;
+  const appUrl=localStorage.getItem('appUrl')||window.location.origin+window.location.pathname;
+  const defaultMsg=`Dear ${fullName},\n\nI am very happy to invite you to join band "${band?band.name:'our band'}" on Bandapp.\n\nClick the link below to sign up and join the band:\n${appUrl}\n\nCheers,\n${adminName}`;
 
   document.getElementById('invMsgText').value=defaultMsg;
 
