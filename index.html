@@ -4950,8 +4950,8 @@ async function populateMpPage(){
   document.getElementById('mpNat').value=ex.nat||m?.nat||'';
   document.getElementById('mpEmail').value=currentUser.email||'';
   document.getElementById('mpCountry').value=ex.country||m?.country||'';
-  initPhoneField('mpPhoneCc','mpPhoneNum',ex.phone||[m.phoneDial,m.phoneNum].filter(Boolean).join(' ')||'');
-  document.getElementById('mpBio').value=ex.bio||m.bio||'';
+  initPhoneField('mpPhoneCc','mpPhoneNum',ex.phone||[m?.phoneDial,m?.phoneNum].filter(Boolean).join(' ')||'');
+  document.getElementById('mpBio').value=ex.bio||m?.bio||'';
   renderMpNatFlag();
 
   // Music
@@ -5071,13 +5071,13 @@ function renderMpReadViews(){
   bioEl.textContent=bio; bioEl.style.display=bio?'':'none';
 
   // Music
-  const inst1=m.instrument||''; const inst2=m.inst2||'';
+  const inst1=m?.instrument||''; const inst2=m?.inst2||'';
   const instEl=document.getElementById('mpv-inst');
   instEl.innerHTML=[inst1,inst2].filter(Boolean)
     .map(i=>`<span class="pill pgray" style="font-size:.75rem">${i}</span>`).join('')||'<span style="color:var(--ink3);font-size:.84rem">—</span>';
   const vmap={'Lead':'Lead vocals','Backing':'Backing vocals','None':'No vocals','Both':'Lead & backing'};
-  document.getElementById('mpv-vocals').textContent=vmap[m.vocals]||m.vocals||'—';
-  const gear=ex.gear||m.gear||'';
+  document.getElementById('mpv-vocals').textContent=vmap[m?.vocals]||m?.vocals||'—';
+  const gear=ex.gear||m?.gear||'';
   const gearWrap=document.getElementById('mpv-gear-wrap');
   document.getElementById('mpv-gear').textContent=gear; gearWrap.style.display=gear?'':'none';
 
@@ -5086,7 +5086,7 @@ function renderMpReadViews(){
   document.getElementById('mpv-avail').innerHTML=
     `<div style="display:flex;flex-direction:row;flex-wrap:wrap;gap:6px">` +
     dayNames.map((d,i)=>{
-      const on=(m.avail||[])[i];
+      const on=(m?.avail||[])[i];
       return`<div class="dtog ${on?'on':''}" style="pointer-events:none">${d}</div>`;
     }).join('') +
     `</div>`;
