@@ -157,8 +157,17 @@ window.PT_BR = {
   'Birthday': 'Aniversário',
   'Nationality': 'Nacionalidade',
   'Country of Residence': 'País de Residência',
+  'Phone': 'Telefone',
   'Phone / WhatsApp': 'Telefone / WhatsApp',
+  'WhatsApp / Phone': 'WhatsApp / Telefone',
   'Bio': 'Bio',
+  '(cannot be changed here)': '(não pode ser alterado aqui)',
+  '— Select nationality —': '— Selecione a nacionalidade —',
+  '— Select country —': '— Selecione o país —',
+  'Instrument(s)': 'Instrumento(s)',
+  'Secondary': 'Secundário',
+  'None': 'Nenhum',
+  'Preview': 'Prévia',
   'Main Instrument': 'Instrumento Principal',
   'Secondary Instrument (optional)': 'Instrumento Secundário (opcional)',
   'Vocals': 'Vocais',
@@ -340,6 +349,7 @@ window.PT_BR = {
   '♩ Link Set List': '♩ Vincular Setlist',
 
   /* ── MEMBERS PAGE ─────────────────────────────────────── */
+  'Invite Member': 'Convidar Membro',
   'View Profile': 'Ver Perfil',
   'Available days': 'Dias disponíveis',
   'until': 'até',
@@ -355,6 +365,40 @@ window.PT_BR = {
   'Bandapp account found': 'Conta Bandapp encontrada',
   'Your profile': 'Seu perfil',
   'Guest Detail': 'Detalhes do Convidado',
+  'No bio available.': 'Nenhuma bio disponível.',
+  'Past and expired guest musicians · all members can view · admin can edit': 'Músicos convidados passados e expirados · todos podem ver · admin pode editar',
+  'Guests whose end date has passed are automatically moved here. Admins can promote them to full Members at any time.': 'Convidados cujo prazo expirou são movidos automaticamente para cá. Admins podem promovê-los a Membros a qualquer momento.',
+  'No past guests yet': 'Nenhum convidado passado ainda',
+  'Expired guest musicians will appear here automatically.': 'Músicos convidados expirados aparecerão aqui automaticamente.',
+
+  /* ── BAND PROFILE PAGE ─────────────────────────────────── */
+  'Edit Profile': 'Editar Perfil',
+  'Save Changes': 'Salvar Alterações',
+  'Edit cover': 'Alterar capa',
+  'Band Code': 'Código da Banda',
+  'Rehearsal Days': 'Dias de Ensaio',
+  'Days available for the whole band': 'Dias disponíveis para toda a banda',
+  'Blackout Periods & Closures': 'Períodos de Bloqueio',
+  '+ Add Period': '+ Adicionar Período',
+  'Block any date range — holidays, festivals, school breaks, or individual absences. Excluded from rehearsal suggestions.': 'Bloqueie qualquer intervalo — feriados, festivais, férias ou ausências. Excluído das sugestões de ensaio.',
+  'blocks everyone': 'bloqueia todos',
+  'Specific members': 'Membros específicos',
+  'selected people only': 'apenas pessoas selecionadas',
+  'Band Photos': 'Fotos da Banda',
+  '+ Add Photo': '+ Adicionar Foto',
+  'No band photos yet.': 'Nenhuma foto da banda ainda.',
+  'Invite Link': 'Link de Convite',
+  'Share to invite musicians directly': 'Compartilhe para convidar músicos diretamente',
+  'Paste your band\'s WhatsApp group invite link. Members can join with one tap from any device.': 'Cole o link de convite do grupo do WhatsApp da sua banda. Os membros podem entrar com um toque em qualquer dispositivo.',
+  'Choose the default channel for notifying members when a rehearsal is confirmed. Admins can override this per rehearsal.': 'Escolha o canal padrão para notificar os membros quando um ensaio for confirmado. Os admins podem alterar isso por ensaio.',
+
+  /* ── MY PROFILE PAGE ────────────────────────────────────── */
+  'Change cover': 'Alterar capa',
+  'Which days are you generally available? Used for rehearsal planning.': 'Em quais dias você geralmente está disponível? Usado para planejar ensaios.',
+  'Individual days can still be blocked separately on the calendar.': 'Dias individuais ainda podem ser bloqueados separadamente no calendário.',
+
+  /* ── CONCERTS PAGE ──────────────────────────────────────── */
+  'Past Concerts': 'Shows Passados',
 
   /* ── CALENDAR PAGE ────────────────────────────────────── */
   '⚡ Best Rehearsal Days': '⚡ Melhores Dias de Ensaio',

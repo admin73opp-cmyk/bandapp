@@ -788,7 +788,7 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
         </div>
         <div id="cancelledRehearsalSection" style="margin-top:24px;display:none">
           <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
-            <div style="font-size:.78rem;font-weight:700;color:var(--r);text-transform:uppercase;letter-spacing:.07em">🚫 Cancelled</div>
+            <div style="font-size:.78rem;font-weight:700;color:var(--r);text-transform:uppercase;letter-spacing:.07em" data-i18n="🚫 Cancelled">🚫 Cancelled</div>
             <div style="flex:1;height:1px;background:var(--r2)"></div>
           </div>
           <div class="clist" id="rehearsalListCancelled"></div>
@@ -812,14 +812,14 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
         <div class="clist" id="concertListUpcoming"></div>
         <div id="pastConcertSection" style="margin-top:24px">
           <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
-            <div style="font-size:.78rem;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.07em">Past Concerts</div>
+            <div style="font-size:.78rem;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.07em" data-i18n="Past Concerts">Past Concerts</div>
             <div style="flex:1;height:1px;background:var(--bd)"></div>
           </div>
           <div class="clist" id="concertListPast"></div>
         </div>
         <div id="cancelledConcertSection" style="margin-top:24px;display:none">
           <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
-            <div style="font-size:.78rem;font-weight:700;color:var(--r);text-transform:uppercase;letter-spacing:.07em">🚫 Cancelled</div>
+            <div style="font-size:.78rem;font-weight:700;color:var(--r);text-transform:uppercase;letter-spacing:.07em" data-i18n="🚫 Cancelled">🚫 Cancelled</div>
             <div style="flex:1;height:1px;background:var(--r2)"></div>
           </div>
           <div class="clist" id="concertListCancelled"></div>
@@ -840,8 +840,8 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
       <!-- Content (hidden when no band) -->
       <div id="membersContent">
         <div style="display:flex;gap:9px;align-items:center;margin-bottom:15px;flex-wrap:wrap">
-          <div style="flex:1"><div style="font-size:1.12rem;font-weight:700;letter-spacing:-.03em">Members</div><div style="font-size:.74rem;color:var(--ink2);margin-top:2px" id="memberCount"></div></div>
-          <button class="btn btn-g btn-sm" onclick="openInvMod()">Invite Member</button>
+          <div style="flex:1"><div style="font-size:1.12rem;font-weight:700;letter-spacing:-.03em" data-i18n="Members">Members</div><div style="font-size:.74rem;color:var(--ink2);margin-top:2px" id="memberCount"></div></div>
+          <button class="btn btn-g btn-sm" onclick="openInvMod()" data-i18n="Invite Member">Invite Member</button>
         </div>
         <div class="memgrid" id="memGrid"></div>
       </div>
@@ -861,19 +861,19 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
       <div id="guestDirContent">
         <div style="display:flex;gap:9px;align-items:center;margin-bottom:6px;flex-wrap:wrap">
           <div style="flex:1">
-            <div style="font-size:1.12rem;font-weight:700;letter-spacing:-.03em">Guest Directory</div>
-            <div style="font-size:.74rem;color:var(--ink2);margin-top:2px">Past and expired guest musicians · all members can view · admin can edit</div>
+            <div style="font-size:1.12rem;font-weight:700;letter-spacing:-.03em" data-i18n="Guest Directory">Guest Directory</div>
+            <div style="font-size:.74rem;color:var(--ink2);margin-top:2px" data-i18n="Past and expired guest musicians · all members can view · admin can edit">Past and expired guest musicians · all members can view · admin can edit</div>
           </div>
         </div>
         <div style="padding:10px 13px;background:var(--bg2);border:1px solid var(--bd);border-radius:var(--rad);font-size:.78rem;color:var(--ink2);margin-bottom:16px;display:flex;align-items:center;gap:8px">
           <span style="font-size:1rem">📋</span>
-          Guests whose end date has passed are automatically moved here. Admins can promote them to full Members at any time.
+          <span data-i18n="Guests whose end date has passed are automatically moved here. Admins can promote them to full Members at any time.">Guests whose end date has passed are automatically moved here. Admins can promote them to full Members at any time.</span>
         </div>
         <div id="guestDirList" style="display:flex;flex-direction:column;gap:8px"></div>
         <div id="guestDirEmpty" style="display:none;text-align:center;padding:40px 20px;color:var(--ink3)">
           <div style="font-size:2rem;margin-bottom:10px;opacity:.4">👤</div>
-          <div style="font-size:.88rem;font-weight:600;color:var(--ink2);margin-bottom:4px">No past guests yet</div>
-          <div style="font-size:.78rem">Expired guest musicians will appear here automatically.</div>
+          <div style="font-size:.88rem;font-weight:600;color:var(--ink2);margin-bottom:4px" data-i18n="No past guests yet">No past guests yet</div>
+          <div style="font-size:.78rem" data-i18n="Expired guest musicians will appear here automatically.">Expired guest musicians will appear here automatically.</div>
         </div>
       </div>
     </div>
@@ -952,45 +952,45 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
               </div>
             </div>
             <div style="display:flex;gap:6px;flex-shrink:0;flex-wrap:wrap" id="bpAdminActions" style="display:none">
-              <button class="btn btn-g btn-sm" id="bpEditBtn" onclick="toggleBandEdit(true)">Edit Profile</button>
-              <button class="btn btn-p btn-sm" id="bpSaveBtn" onclick="saveBandEditInline()" style="display:none">Save Changes</button>
-              <button class="btn btn-g btn-sm" id="bpCancelBtn" onclick="toggleBandEdit(false)" style="display:none">Cancel</button>
-              <button class="btn btn-g btn-sm" style="color:var(--r);border-color:var(--r2)" onclick="promptDeleteBand()">Delete Band</button>
+              <button class="btn btn-g btn-sm" id="bpEditBtn" onclick="toggleBandEdit(true)" data-i18n="Edit Profile">Edit Profile</button>
+              <button class="btn btn-p btn-sm" id="bpSaveBtn" onclick="saveBandEditInline()" style="display:none" data-i18n="Save Changes">Save Changes</button>
+              <button class="btn btn-g btn-sm" id="bpCancelBtn" onclick="toggleBandEdit(false)" style="display:none" data-i18n="Cancel">Cancel</button>
+              <button class="btn btn-g btn-sm" style="color:var(--r);border-color:var(--r2)" onclick="promptDeleteBand()" data-i18n="Delete Band">Delete Band</button>
             </div>
           </div>
         </div>
         <div class="bp-code-row" style="display:none;margin-top:10px;padding:8px 12px;background:var(--bg2);border:1px solid var(--bd);border-radius:var(--rad);display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-          <span style="font-size:.7rem;font-weight:700;color:var(--ink2);letter-spacing:.04em;text-transform:uppercase;white-space:nowrap">Band Code</span>
+          <span style="font-size:.7rem;font-weight:700;color:var(--ink2);letter-spacing:.04em;text-transform:uppercase;white-space:nowrap" data-i18n="Band Code">Band Code</span>
           <code id="bpJoinCode" style="font-size:.72rem;color:var(--ink);flex:1;word-break:break-all"></code>
-          <button class="btn btn-g btn-sm" style="flex-shrink:0;font-size:.72rem" onclick="navigator.clipboard.writeText(document.getElementById('bpJoinCode').textContent).then(()=>toast2('Band code copied!'))">Copy</button>
+          <button class="btn btn-g btn-sm" style="flex-shrink:0;font-size:.72rem" onclick="navigator.clipboard.writeText(document.getElementById('bpJoinCode').textContent).then(()=>toast2('Band code copied!'))" data-i18n="Copy">Copy</button>
         </div>
       </div>
 
       <div class="settg">
         <div class="card">
-          <div class="ch"><div class="ct">Rehearsal Days</div></div>
-          <div style="font-size:.74rem;color:var(--ink2);margin-bottom:10px">Days available for the whole band</div>
+          <div class="ch"><div class="ct" data-i18n="Rehearsal Days">Rehearsal Days</div></div>
+          <div style="font-size:.74rem;color:var(--ink2);margin-bottom:10px" data-i18n="Days available for the whole band">Days available for the whole band</div>
           <div class="dtogs" id="dtogs"></div>
         </div>
         <div class="card" style="grid-column:1/-1">
-          <div class="ch"><div class="ct">Blackout Periods &amp; Closures</div><button class="btn btn-p btn-sm" onclick="openAddBO()">+ Add Period</button></div>
-          <div style="font-size:.75rem;color:var(--ink2);margin-bottom:12px;line-height:1.6">Block any date range — holidays, festivals, school breaks, or individual absences. Excluded from rehearsal suggestions.</div>
+          <div class="ch"><div class="ct" data-i18n="Blackout Periods & Closures">Blackout Periods &amp; Closures</div><button class="btn btn-p btn-sm" onclick="openAddBO()" data-i18n="+ Add Period">+ Add Period</button></div>
+          <div style="font-size:.75rem;color:var(--ink2);margin-bottom:12px;line-height:1.6" data-i18n="Block any date range — holidays, festivals, school breaks, or individual absences. Excluded from rehearsal suggestions.">Block any date range — holidays, festivals, school breaks, or individual absences. Excluded from rehearsal suggestions.</div>
           <div style="display:flex;gap:13px;margin-bottom:12px;flex-wrap:wrap">
-            <div style="display:flex;align-items:center;gap:5px;font-size:.71rem;color:var(--ink2)"><div style="width:3px;height:12px;border-radius:2px;background:var(--r)"></div><strong>Whole band</strong> — blocks everyone</div>
-            <div style="display:flex;align-items:center;gap:5px;font-size:.71rem;color:var(--ink2)"><div style="width:3px;height:12px;border-radius:2px;background:var(--bl)"></div><strong>Specific members</strong> — selected people only</div>
+            <div style="display:flex;align-items:center;gap:5px;font-size:.71rem;color:var(--ink2)"><div style="width:3px;height:12px;border-radius:2px;background:var(--r)"></div><strong data-i18n="Whole band">Whole band</strong> — <span data-i18n="blocks everyone">blocks everyone</span></div>
+            <div style="display:flex;align-items:center;gap:5px;font-size:.71rem;color:var(--ink2)"><div style="width:3px;height:12px;border-radius:2px;background:var(--bl)"></div><strong data-i18n="Specific members">Specific members</strong> — <span data-i18n="selected people only">selected people only</span></div>
           </div>
           <div id="boList" style="display:flex;flex-direction:column;gap:7px"></div>
         </div>
         <div class="card">
-          <div class="ch"><div class="ct">Band Photos</div><div id="bpPhotosAdminBtn" style="display:none"><label class="btn btn-p btn-sm" style="cursor:pointer"><input type="file" accept="image/*" style="display:none" onchange="addBandPhoto(event)">+ Add Photo</label></div></div>
+          <div class="ch"><div class="ct" data-i18n="Band Photos">Band Photos</div><div id="bpPhotosAdminBtn" style="display:none"><label class="btn btn-p btn-sm" style="cursor:pointer"><input type="file" accept="image/*" style="display:none" onchange="addBandPhoto(event)"><span data-i18n="+ Add Photo">+ Add Photo</span></label></div></div>
           <div id="bpPhotosGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(90px,1fr));gap:8px"></div>
-          <div id="bpPhotosEmpty" style="font-size:.78rem;color:var(--ink3);padding:8px 0">No band photos yet.</div>
+          <div id="bpPhotosEmpty" style="font-size:.78rem;color:var(--ink3);padding:8px 0" data-i18n="No band photos yet.">No band photos yet.</div>
         </div>
         <div class="card">
-          <div class="ch"><div class="ct">Invite Link</div></div>
-          <div style="font-size:.75rem;color:var(--ink2);margin-bottom:9px">Share to invite musicians directly</div>
+          <div class="ch"><div class="ct" data-i18n="Invite Link">Invite Link</div></div>
+          <div style="font-size:.75rem;color:var(--ink2);margin-bottom:9px" data-i18n="Share to invite musicians directly">Share to invite musicians directly</div>
           <div style="background:var(--bg);border:1.5px solid var(--bd);border-radius:8px;padding:9px 11px;font-family:var(--mono);font-size:.72rem;color:var(--a);margin-bottom:9px">bandapp.io/join/jazzc-8x4k2</div>
-          <div style="display:flex;gap:5px"><button class="btn btn-g btn-sm" onclick="toast2('Link copied!')">Copy</button><button class="btn btn-g btn-sm" onclick="openInvMod()">Send Invite</button></div>
+          <div style="display:flex;gap:5px"><button class="btn btn-g btn-sm" onclick="toast2('Link copied!')" data-i18n="Copy">Copy</button><button class="btn btn-g btn-sm" onclick="openInvMod()" data-i18n="Send Invite">Send Invite</button></div>
         </div>
 
         <!-- WhatsApp Group card -->
@@ -998,7 +998,7 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
           <div class="ch">
             <div class="ct" style="display:flex;align-items:center;gap:7px"><span style="font-size:1.05rem">💬</span> WhatsApp Group</div>
           </div>
-          <div style="font-size:.75rem;color:var(--ink2);margin-bottom:12px">Paste your band's WhatsApp group invite link. Members can join with one tap from any device.</div>
+          <div style="font-size:.75rem;color:var(--ink2);margin-bottom:12px" data-i18n="Paste your band's WhatsApp group invite link. Members can join with one tap from any device.">Paste your band's WhatsApp group invite link. Members can join with one tap from any device.</div>
           <!-- Connected state -->
           <div id="waLinkDisplay" style="display:none;margin-bottom:10px">
             <div style="background:var(--g2);border:1.5px solid #86EFAC;border-radius:8px;padding:10px 13px;display:flex;align-items:center;gap:10px">
@@ -1018,37 +1018,37 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
           <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">
             <button class="btn btn-sm" style="background:#25D366;color:#fff;border:none;display:inline-flex;align-items:center;gap:6px;box-shadow:0 2px 8px rgba(37,211,102,.25);font-family:var(--font);font-weight:600;padding:8px 14px;border-radius:var(--rad);cursor:pointer;font-size:.845rem" onclick="openWhatsApp()">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.117.554 4.103 1.523 5.824L.057 23.882l6.233-1.632A11.935 11.935 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.894a9.877 9.877 0 01-5.031-1.378l-.361-.214-3.741.981.998-3.648-.235-.374A9.856 9.856 0 012.105 12C2.105 6.533 6.533 2.105 12 2.105S21.895 6.533 21.895 12 17.467 21.894 12 21.894z"/></svg>
-              Open Group
+              <span data-i18n="Open Group">Open Group</span>
             </button>
-            <button class="btn btn-g btn-sm" onclick="copyWaLink()">Copy Link</button>
-            <button class="btn btn-g btn-sm" onclick="saveWaLink()">Save</button>
-            <button id="waRemoveBtn" class="btn btn-g btn-sm" style="display:none;color:var(--r);border-color:var(--r2)" onclick="removeWaLink()">Remove</button>
+            <button class="btn btn-g btn-sm" onclick="copyWaLink()" data-i18n="Copy Link">Copy Link</button>
+            <button class="btn btn-g btn-sm" onclick="saveWaLink()" data-i18n="Save">Save</button>
+            <button id="waRemoveBtn" class="btn btn-g btn-sm" style="display:none;color:var(--r);border-color:var(--r2)" onclick="removeWaLink()" data-i18n="Remove">Remove</button>
           </div>
         </div>
 
         <!-- Notification Preference card -->
         <div class="card" style="grid-column:1/-1">
           <div class="ch">
-            <div class="ct" style="display:flex;align-items:center;gap:7px"><span style="font-size:1.05rem">📣</span> Rehearsal Notifications</div>
+            <div class="ct" style="display:flex;align-items:center;gap:7px"><span style="font-size:1.05rem">📣</span> <span data-i18n="Rehearsal Notifications">Rehearsal Notifications</span></div>
           </div>
-          <div style="font-size:.75rem;color:var(--ink2);margin-bottom:13px">
+          <div style="font-size:.75rem;color:var(--ink2);margin-bottom:13px" data-i18n="Choose the default channel for notifying members when a rehearsal is confirmed. Admins can override this per rehearsal.">
             Choose the default channel for notifying members when a rehearsal is confirmed. Admins can override this per rehearsal.
           </div>
           <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px">
             <div class="popt" id="settOptEmail" onclick="setNotifPref('email')" style="flex:1;min-width:120px">
-              <div class="poi">✉️</div><div class="pol">Email only</div>
+              <div class="poi">✉️</div><div class="pol" data-i18n="Email only">Email only</div>
             </div>
             <div class="popt" id="settOptWa" onclick="setNotifPref('whatsapp')" style="flex:1;min-width:120px">
-              <div class="poi">💬</div><div class="pol">WhatsApp only</div>
+              <div class="poi">💬</div><div class="pol" data-i18n="WhatsApp only">WhatsApp only</div>
             </div>
             <div class="popt on" id="settOptBoth" onclick="setNotifPref('both')" style="flex:1;min-width:120px">
-              <div class="poi">📣</div><div class="pol">Both</div>
+              <div class="poi">📣</div><div class="pol" data-i18n="Both">Both</div>
             </div>
           </div>
-          <div id="settNotifWarn" style="display:none;padding:9px 12px;background:var(--amb2);border:1px solid rgba(217,119,6,.35);border-radius:var(--rad);font-size:.75rem;color:var(--amb)">
+          <div id="settNotifWarn" style="display:none;padding:9px 12px;background:var(--amb2);border:1px solid rgba(217,119,6,.35);border-radius:var(--rad);font-size:.75rem;color:var(--amb)" data-i18n="⚠ WhatsApp group is not linked. Add your group link above before enabling WhatsApp notifications.">
             ⚠ WhatsApp group is not linked. Add your group link above before enabling WhatsApp notifications.
           </div>
-          <div id="settNotifNote" style="font-size:.74rem;color:var(--ink3);margin-top:6px">Default: Both email and WhatsApp group notification.</div>
+          <div id="settNotifNote" style="font-size:.74rem;color:var(--ink3);margin-top:6px" data-i18n="Default: Both email and WhatsApp group notification.">Default: Both email and WhatsApp group notification.</div>
         </div>
 
       </div>
@@ -1062,7 +1062,7 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
           <input type="file" id="mpCoverInput" accept="image/*" style="display:none" onchange="handleMpCover(event)">
           <div style="position:absolute;bottom:10px;right:14px;background:rgba(0,0,0,.38);border-radius:var(--rad);padding:5px 10px;font-size:.73rem;color:#fff;display:flex;align-items:center;gap:5px;pointer-events:none">
             <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="#fff" stroke-width="1.5"><path d="M2 5a1 1 0 011-1h1.5l1-2h5l1 2H13a1 1 0 011 1v7a1 1 0 01-1 1H3a1 1 0 01-1-1V5z"/><circle cx="8" cy="8.5" r="2"/></svg>
-            Change cover
+            <span data-i18n="Change cover">Change cover</span>
           </div>
         </div>
         <div style="padding:0 22px 22px;display:flex;align-items:flex-end;gap:16px;margin-top:-36px;flex-wrap:wrap;position:relative;z-index:1">
@@ -1085,45 +1085,45 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
         <!-- PERSONAL INFO -->
         <div class="card" id="mp-card-personal">
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
-            <div class="ct">Personal Info</div>
+            <div class="ct" data-i18n="Personal Info">Personal Info</div>
             <div style="display:flex;gap:6px">
-              <button class="btn btn-g btn-sm" id="mp-btn-edit-personal" onclick="mpEdit('personal')">Edit</button>
-              <button class="btn btn-p btn-sm" id="mp-btn-save-personal" style="display:none" onclick="mpSave('personal')">Save</button>
-              <button class="btn btn-g btn-sm" id="mp-btn-cancel-personal" style="display:none" onclick="mpCancel('personal')">Cancel</button>
+              <button class="btn btn-g btn-sm" id="mp-btn-edit-personal" onclick="mpEdit('personal')" data-i18n="Edit">Edit</button>
+              <button class="btn btn-p btn-sm" id="mp-btn-save-personal" style="display:none" onclick="mpSave('personal')" data-i18n="Save">Save</button>
+              <button class="btn btn-g btn-sm" id="mp-btn-cancel-personal" style="display:none" onclick="mpCancel('personal')" data-i18n="Cancel">Cancel</button>
             </div>
           </div>
           <!-- Read view -->
           <div id="mpv-personal">
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px 24px">
-              <div><div class="mp-lbl">First Name</div><div id="mpv-first" class="mp-val">—</div></div>
-              <div><div class="mp-lbl">Last Name</div><div id="mpv-last" class="mp-val">—</div></div>
-              <div><div class="mp-lbl">Birthday</div><div id="mpv-bday" class="mp-val">—</div></div>
-              <div><div class="mp-lbl">Nationality</div><div id="mpv-nat" class="mp-val">—</div></div>
-              <div><div class="mp-lbl">Email</div><div id="mpv-email" class="mp-val">—</div></div>
-              <div><div class="mp-lbl">Country of Residence</div><div id="mpv-country" class="mp-val">—</div></div>
-              <div><div class="mp-lbl">Phone</div><div id="mpv-phone" class="mp-val">—</div></div>
+              <div><div class="mp-lbl" data-i18n="First Name">First Name</div><div id="mpv-first" class="mp-val">—</div></div>
+              <div><div class="mp-lbl" data-i18n="Last Name">Last Name</div><div id="mpv-last" class="mp-val">—</div></div>
+              <div><div class="mp-lbl" data-i18n="Birthday">Birthday</div><div id="mpv-bday" class="mp-val">—</div></div>
+              <div><div class="mp-lbl" data-i18n="Nationality">Nationality</div><div id="mpv-nat" class="mp-val">—</div></div>
+              <div><div class="mp-lbl" data-i18n="Email">Email</div><div id="mpv-email" class="mp-val">—</div></div>
+              <div><div class="mp-lbl" data-i18n="Country of Residence">Country of Residence</div><div id="mpv-country" class="mp-val">—</div></div>
+              <div><div class="mp-lbl" data-i18n="Phone">Phone</div><div id="mpv-phone" class="mp-val">—</div></div>
             </div>
             <div id="mpv-bio" style="margin-top:12px;font-size:.84rem;color:var(--ink2);line-height:1.55;display:none"></div>
           </div>
           <!-- Edit view -->
           <div id="mpe-personal" style="display:none">
             <div class="fr">
-              <div class="fg"><label>First Name</label><input id="mpFirst" placeholder="Marco"></div>
-              <div class="fg"><label>Last Name</label><input id="mpLast" placeholder="Rossi"></div>
+              <div class="fg"><label data-i18n="First Name">First Name</label><input id="mpFirst" placeholder="Marco"></div>
+              <div class="fg"><label data-i18n="Last Name">Last Name</label><input id="mpLast" placeholder="Rossi"></div>
             </div>
             <div class="fr">
-              <div class="fg"><label>Birthday</label><input type="date" id="mpBday"></div>
+              <div class="fg"><label data-i18n="Birthday">Birthday</label><input type="date" id="mpBday"></div>
               <div class="fg">
-                <label>Nationality <span id="mpNatFlagPreview" style="font-size:1.1rem"></span></label>
-                <select id="mpNat" onchange="renderMpNatFlag()"><option value="">— Select nationality —</option></select>
+                <label><span data-i18n="Nationality">Nationality</span> <span id="mpNatFlagPreview" style="font-size:1.1rem"></span></label>
+                <select id="mpNat" onchange="renderMpNatFlag()"><option value="" data-i18n="— Select nationality —">— Select nationality —</option></select>
               </div>
             </div>
             <div class="fr">
-              <div class="fg"><label>Email <span style="font-weight:400;color:var(--ink3)">(cannot be changed here)</span></label><input type="email" id="mpEmail" readonly style="opacity:.7;cursor:default"></div>
-              <div class="fg"><label>Country of Residence</label><select id="mpCountry"><option value="">— Select country —</option></select></div>
+              <div class="fg"><label><span data-i18n="Email">Email</span> <span style="font-weight:400;color:var(--ink3)" data-i18n="(cannot be changed here)">(cannot be changed here)</span></label><input type="email" id="mpEmail" readonly style="opacity:.7;cursor:default"></div>
+              <div class="fg"><label data-i18n="Country of Residence">Country of Residence</label><select id="mpCountry"><option value="" data-i18n="— Select country —">— Select country —</option></select></div>
             </div>
             <div class="fg">
-              <label>WhatsApp / Phone</label>
+              <label data-i18n="WhatsApp / Phone">WhatsApp / Phone</label>
               <div class="phone-row">
                 <div class="phone-cc-wrap">
                   <div class="phone-cc-display" id="mpPhoneCcDisplay">+32 <svg width="10" height="10" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6l4 4 4-4"/></svg></div>
@@ -1132,71 +1132,71 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
                 <input class="phone-num" type="tel" id="mpPhoneNum" placeholder="479 123 456">
               </div>
             </div>
-            <div class="fg"><label>Bio</label><textarea id="mpBio" style="min-height:70px" placeholder="A few words about yourself…"></textarea></div>
+            <div class="fg"><label data-i18n="Bio">Bio</label><textarea id="mpBio" style="min-height:70px" placeholder="A few words about yourself…"></textarea></div>
           </div>
         </div>
 
         <!-- MUSIC -->
         <div class="card" id="mp-card-music">
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
-            <div class="ct">Music</div>
+            <div class="ct" data-i18n="Music">Music</div>
             <div style="display:flex;gap:6px">
-              <button class="btn btn-g btn-sm" id="mp-btn-edit-music" onclick="mpEdit('music')">Edit</button>
-              <button class="btn btn-p btn-sm" id="mp-btn-save-music" style="display:none" onclick="mpSave('music')">Save</button>
-              <button class="btn btn-g btn-sm" id="mp-btn-cancel-music" style="display:none" onclick="mpCancel('music')">Cancel</button>
+              <button class="btn btn-g btn-sm" id="mp-btn-edit-music" onclick="mpEdit('music')" data-i18n="Edit">Edit</button>
+              <button class="btn btn-p btn-sm" id="mp-btn-save-music" style="display:none" onclick="mpSave('music')" data-i18n="Save">Save</button>
+              <button class="btn btn-g btn-sm" id="mp-btn-cancel-music" style="display:none" onclick="mpCancel('music')" data-i18n="Cancel">Cancel</button>
             </div>
           </div>
           <!-- Read view -->
           <div id="mpv-music">
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px 24px">
-              <div><div class="mp-lbl">Instrument(s)</div><div id="mpv-inst" style="display:flex;gap:6px;flex-wrap:wrap;margin-top:4px"></div></div>
-              <div><div class="mp-lbl">Vocals</div><div id="mpv-vocals" class="mp-val" style="margin-top:4px">—</div></div>
+              <div><div class="mp-lbl" data-i18n="Instrument(s)">Instrument(s)</div><div id="mpv-inst" style="display:flex;gap:6px;flex-wrap:wrap;margin-top:4px"></div></div>
+              <div><div class="mp-lbl" data-i18n="Vocals">Vocals</div><div id="mpv-vocals" class="mp-val" style="margin-top:4px">—</div></div>
             </div>
             <div id="mpv-gear-wrap" style="margin-top:12px;display:none">
-              <div class="mp-lbl">Equipment &amp; Gear</div>
+              <div class="mp-lbl" data-i18n="Equipment & Gear">Equipment &amp; Gear</div>
               <div id="mpv-gear" style="font-size:.84rem;color:var(--ink2);margin-top:3px;line-height:1.5"></div>
             </div>
           </div>
           <!-- Edit view -->
           <div id="mpe-music" style="display:none">
             <div class="fr">
-              <div class="fg"><label>Main Instrument</label><select id="mpInst1" onchange="renderMpInstPreview()"><option value="">— Select —</option></select></div>
-              <div class="fg"><label>Secondary <span style="font-weight:400;color:var(--ink3)">(optional)</span></label><select id="mpInst2" onchange="renderMpInstPreview()"><option value="">None</option></select></div>
+              <div class="fg"><label data-i18n="Main Instrument">Main Instrument</label><select id="mpInst1" onchange="renderMpInstPreview()"><option value="" data-i18n="— Select —">— Select —</option></select></div>
+              <div class="fg"><label><span data-i18n="Secondary">Secondary</span> <span style="font-weight:400;color:var(--ink3)" data-i18n="(optional)">(optional)</span></label><select id="mpInst2" onchange="renderMpInstPreview()"><option value="" data-i18n="None">None</option></select></div>
             </div>
-            <div id="mpInstPreview" style="display:none;margin-bottom:10px"><div style="font-size:.72rem;color:var(--ink3);margin-bottom:5px">Preview</div><div id="mpInstPills" style="display:flex;gap:6px;flex-wrap:wrap"></div></div>
-            <div class="fg"><label>Vocals</label><select id="mpVocals"><option>No vocals</option><option>Lead vocals</option><option>Backing vocals</option><option>Lead &amp; backing</option></select></div>
-            <div class="fg"><label>Equipment &amp; Gear <span style="font-weight:400;color:var(--ink3)">(optional)</span></label><textarea id="mpGear" style="min-height:60px" placeholder="e.g. Fender Stratocaster, Boss pedalboard…"></textarea></div>
+            <div id="mpInstPreview" style="display:none;margin-bottom:10px"><div style="font-size:.72rem;color:var(--ink3);margin-bottom:5px" data-i18n="Preview">Preview</div><div id="mpInstPills" style="display:flex;gap:6px;flex-wrap:wrap"></div></div>
+            <div class="fg"><label data-i18n="Vocals">Vocals</label><select id="mpVocals"><option data-i18n="No vocals">No vocals</option><option data-i18n="Lead vocals">Lead vocals</option><option data-i18n="Backing vocals">Backing vocals</option><option data-i18n="Lead & backing">Lead &amp; backing</option></select></div>
+            <div class="fg"><label><span data-i18n="Equipment & Gear">Equipment &amp; Gear</span> <span style="font-weight:400;color:var(--ink3)" data-i18n="(optional)">(optional)</span></label><textarea id="mpGear" style="min-height:60px" placeholder="e.g. Fender Stratocaster, Boss pedalboard…"></textarea></div>
           </div>
         </div>
 
         <!-- AVAILABILITY -->
         <div class="card" id="mp-card-avail">
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
-            <div class="ct">Weekly Availability</div>
+            <div class="ct" data-i18n="Weekly Availability">Weekly Availability</div>
             <div style="display:flex;gap:6px">
-              <button class="btn btn-g btn-sm" id="mp-btn-edit-avail" onclick="mpEdit('avail')">Edit</button>
-              <button class="btn btn-p btn-sm" id="mp-btn-save-avail" style="display:none" onclick="mpSave('avail')">Save</button>
-              <button class="btn btn-g btn-sm" id="mp-btn-cancel-avail" style="display:none" onclick="mpCancel('avail')">Cancel</button>
+              <button class="btn btn-g btn-sm" id="mp-btn-edit-avail" onclick="mpEdit('avail')" data-i18n="Edit">Edit</button>
+              <button class="btn btn-p btn-sm" id="mp-btn-save-avail" style="display:none" onclick="mpSave('avail')" data-i18n="Save">Save</button>
+              <button class="btn btn-g btn-sm" id="mp-btn-cancel-avail" style="display:none" onclick="mpCancel('avail')" data-i18n="Cancel">Cancel</button>
             </div>
           </div>
-          <div style="font-size:.74rem;color:var(--ink3);margin-bottom:12px">Which days are you generally available? Used for rehearsal planning.</div>
+          <div style="font-size:.74rem;color:var(--ink3);margin-bottom:12px" data-i18n="Which days are you generally available? Used for rehearsal planning.">Which days are you generally available? Used for rehearsal planning.</div>
           <!-- Read view -->
           <div id="mpv-avail"></div>
           <!-- Edit view -->
           <div id="mpe-avail" style="display:none;margin-top:4px">
             <div id="mpAvailDays" style="display:flex;gap:6px;flex-wrap:wrap"></div>
-            <div style="font-size:.72rem;color:var(--ink3);margin-top:10px">Individual days can still be blocked separately on the calendar.</div>
+            <div style="font-size:.72rem;color:var(--ink3);margin-top:10px" data-i18n="Individual days can still be blocked separately on the calendar.">Individual days can still be blocked separately on the calendar.</div>
           </div>
         </div>
 
         <!-- LINKS & SOCIAL -->
         <div class="card" id="mp-card-links">
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
-            <div class="ct">Links &amp; Social</div>
+            <div class="ct" data-i18n="Links & Social">Links &amp; Social</div>
             <div style="display:flex;gap:6px">
-              <button class="btn btn-g btn-sm" id="mp-btn-edit-links" onclick="mpEdit('links')">Edit</button>
-              <button class="btn btn-p btn-sm" id="mp-btn-save-links" style="display:none" onclick="mpSave('links')">Save</button>
-              <button class="btn btn-g btn-sm" id="mp-btn-cancel-links" style="display:none" onclick="mpCancel('links')">Cancel</button>
+              <button class="btn btn-g btn-sm" id="mp-btn-edit-links" onclick="mpEdit('links')" data-i18n="Edit">Edit</button>
+              <button class="btn btn-p btn-sm" id="mp-btn-save-links" style="display:none" onclick="mpSave('links')" data-i18n="Save">Save</button>
+              <button class="btn btn-g btn-sm" id="mp-btn-cancel-links" style="display:none" onclick="mpCancel('links')" data-i18n="Cancel">Cancel</button>
             </div>
           </div>
           <!-- Read view -->
@@ -1209,7 +1209,7 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
             <div class="fg"><label>Instagram</label><input id="mpInstagram" placeholder="https://instagram.com/…" oninput="renderMpLinkPreview()"></div>
             <div class="fg"><label>Facebook</label><input id="mpFacebook" placeholder="https://facebook.com/…" oninput="renderMpLinkPreview()"></div>
             <div class="fg"><label>Website</label><input id="mpWebsite" placeholder="https://yoursite.com" oninput="renderMpLinkPreview()"></div>
-            <div id="mpLinkPreview" style="display:none;margin-top:4px"><div style="font-size:.72rem;color:var(--ink3);margin-bottom:7px">Preview</div><div id="mpLinkPills" class="bpplat"></div></div>
+            <div id="mpLinkPreview" style="display:none;margin-top:4px"><div style="font-size:.72rem;color:var(--ink3);margin-bottom:7px" data-i18n="Preview">Preview</div><div id="mpLinkPills" class="bpplat"></div></div>
           </div>
         </div>
 
@@ -4387,7 +4387,7 @@ function openGuestDetail(idx){
   document.getElementById('gdInstrument').textContent=`${instIcon(g.instrument)} ${g.instrument}${g.inst2?' · '+instIcon(g.inst2)+' '+g.inst2:''}`;
   document.getElementById('gdBand').textContent=g.band||'The Jazz Cats';
   document.getElementById('gdDates').textContent=`${g.guestStart} → ${g.guestEnd} (${daysActive} days)`;
-  document.getElementById('gdBio').textContent=ex.bio||'No bio available.';
+  document.getElementById('gdBio').textContent=ex.bio||t('No bio available.');
   document.getElementById('gdGear').textContent=ex.gear||'—';
   document.getElementById('gdGearRow').style.display=ex.gear?'':'none';
 
@@ -4528,7 +4528,7 @@ function renderBP(){
   // Settings cards
   const days=['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
   const active=[0,1,0,1,1,0,0];
-  document.getElementById('dtogs').innerHTML=days.map((d,i)=>`<div class="dtog ${active[i]?'on':''}" onclick="${isAdmin?"this.classList.toggle('on')":''}" style="${isAdmin?'':'pointer-events:none;opacity:.7'}">${d.slice(0,3)}</div>`).join('');
+  document.getElementById('dtogs').innerHTML=days.map((d,i)=>`<div class="dtog ${active[i]?'on':''}" onclick="${isAdmin?"this.classList.toggle('on')":''}" style="${isAdmin?'':'pointer-events:none;opacity:.7'}">${t(d).slice(0,3)}</div>`).join('');
   const mc=document.getElementById('boMC');
   if(mc)mc.innerHTML=members.map(m=>`<div class="bomc chip" data-mid="${m.id}" onclick="togBOMc(this)" style="display:flex;align-items:center;gap:6px"><div class="mav2" style="width:18px;height:18px;font-size:.5rem;background:${m.color}">${m.init}</div>${m.name.split(' ')[0]}</div>`).join('');
   renderBOList();syncBOPill();
