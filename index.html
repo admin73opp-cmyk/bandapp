@@ -1715,7 +1715,7 @@ function renderRehearsals(){
   const upcoming =active.filter(r=>!isRehPast(r)).sort((a,b)=>rehearsalDate(a)-rehearsalDate(b));
   const past     =active.filter(r=> isRehPast(r)).sort((a,b)=>rehearsalDate(b)-rehearsalDate(a));
   const countEl  =document.getElementById('rehearsalCount');
-  if(countEl)countEl.textContent=`${upcoming.length} upcoming · ${past.length} past${cancelled.length?` · ${cancelled.length} cancelled`:''}`;
+  if(countEl)countEl.textContent=`${upcoming.length} ${t('upcoming')} · ${past.length} ${t('past')}${cancelled.length?` · ${cancelled.length} ${t('cancelled')}`:''}`;
   document.getElementById('rehearsalListUpcoming').innerHTML=upcoming.length
     ?upcoming.map(r=>rehearsalCard(r,'upcoming')).join('')
     :`<div style="padding:20px;text-align:center;font-size:.82rem;color:var(--ink3)">${t('No upcoming rehearsals — click + New Rehearsal to schedule one.')}</div>`;
@@ -1733,12 +1733,12 @@ function rehearsalCard(r,style){
     :cancelStyle?'':`<div class="concert-photos"><label class="concert-thumb-add" onclick="event.stopPropagation()"><input type="file" accept="image/*" style="display:none" onchange="addRehPhoto(event,'${r.id}')">📷</label></div>`;
   const slLinked=r.setlistId?setlists.find(x=>x.id===r.setlistId):null;
   const badge=cancelStyle
-    ?`<span style="margin-left:8px;font-size:.66rem;padding:2px 7px;border-radius:99px;background:var(--r2);color:var(--r);font-weight:600;vertical-align:middle">Cancelled</span>`
-    :pastStyle?`<span style="margin-left:8px;font-size:.66rem;padding:2px 7px;border-radius:99px;background:var(--bg2);color:var(--ink3);font-weight:600;vertical-align:middle">Past</span>`:'';
+    ?`<span style="margin-left:8px;font-size:.66rem;padding:2px 7px;border-radius:99px;background:var(--r2);color:var(--r);font-weight:600;vertical-align:middle">${t('Cancelled')}</span>`
+    :pastStyle?`<span style="margin-left:8px;font-size:.66rem;padding:2px 7px;border-radius:99px;background:var(--bg2);color:var(--ink3);font-weight:600;vertical-align:middle">${t('Past')}</span>`:'';
   const actions=cancelStyle||pastStyle
-    ?`<button class="btn btn-g btn-sm" data-action="view">View</button>`
-    :`<button class="btn btn-g btn-sm" style="color:var(--amb);border-color:var(--amb2)" data-action="cancel">Cancel</button>
-      <button class="btn btn-g btn-sm" data-action="view">View</button>`;
+    ?`<button class="btn btn-g btn-sm" data-action="view">${t('View')}</button>`
+    :`<button class="btn btn-g btn-sm" style="color:var(--amb);border-color:var(--amb2)" data-action="cancel">${t('Cancel')}</button>
+      <button class="btn btn-g btn-sm" data-action="view">${t('View')}</button>`;
   return`<div class="ccrd${pastStyle?' past':''}${cancelStyle?' cancelled':''}" data-rid="${r.id}" onclick="handleRehCardClick(event,'${r.id}')">
     <div class="cdb">
       <div class="cdmo">${r.month}</div>
@@ -1752,7 +1752,7 @@ function rehearsalCard(r,style){
         <span class="cmi"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M8 4v4l3 2"/></svg>${r.start}–${r.end}</span>
       </div>
       <div class="cbadges">
-        <span class="pill ${cancelStyle?'pr':'pg'}">${cancelStyle?'🚫 Cancelled':'Rehearsal'}</span>
+        <span class="pill ${cancelStyle?'pr':'pg'}">${cancelStyle?t('🚫 Cancelled'):t('Rehearsal')}</span>
         ${slLinked&&!cancelStyle?`<span class="pill pp" style="cursor:pointer" data-action="setlist" data-slid="${r.setlistId}">♩ ${slLinked.name}</span>`:''}
       </div>
       ${photoHtml}
@@ -1819,18 +1819,18 @@ function openRehView(id){
   const photos=r.photos||[];
   document.getElementById('rvPhotos').innerHTML=photos.length
     ?photos.map((p,i)=>`<img src="${p}" style="width:72px;height:72px;border-radius:8px;object-fit:cover;border:1.5px solid var(--bd);cursor:pointer" onclick="openRehPhotoLightbox('${r.id}',${i})">`).join('')
-    :`<span style="font-size:.76rem;color:var(--ink3)">No photos yet</span>`;
+    :`<span style="font-size:.76rem;color:var(--ink3)">${t('No photos yet')}</span>`;
 
   // Action buttons — past: delete only; upcoming: share + edit + delete
   const actions=document.getElementById('rvActions');
   if(past||r.cancelled){
-    actions.innerHTML=`<button class="btn btn-g" onclick="closeMod('reViewMod')">Close</button>`;
+    actions.innerHTML=`<button class="btn btn-g" onclick="closeMod('reViewMod')">${t('Close')}</button>`;
   } else {
     actions.innerHTML=`
-      <button class="btn btn-g" onclick="closeMod('reViewMod')">Close</button>
-      <button class="btn btn-g btn-sm" style="color:var(--amb);border-color:var(--amb2)" onclick="closeMod('reViewMod');promptCancel('rehearsal','${r.id}')">🚫 Cancel</button>
-      <button class="btn btn-g btn-sm" onclick="closeMod('reViewMod');openRehEdit('${r.id}')">Edit</button>
-      <button class="btn btn-p btn-sm" onclick="closeMod('reViewMod');shareRehearsal('${r.id}')">Share</button>`;
+      <button class="btn btn-g" onclick="closeMod('reViewMod')">${t('Close')}</button>
+      <button class="btn btn-g btn-sm" style="color:var(--amb);border-color:var(--amb2)" onclick="closeMod('reViewMod');promptCancel('rehearsal','${r.id}')">🚫 ${t('Cancel')}</button>
+      <button class="btn btn-g btn-sm" onclick="closeMod('reViewMod');openRehEdit('${r.id}')">${t('Edit')}</button>
+      <button class="btn btn-p btn-sm" onclick="closeMod('reViewMod');shareRehearsal('${r.id}')">${t('Share')}</button>`;
   }
 
   showMod('reViewMod');
@@ -1847,7 +1847,7 @@ async function deleteRehearsal(id){
 }
 function openNewRehearsal(){
   editingRehId=null;
-  document.getElementById('reModalTitle').textContent='New Rehearsal';
+  document.getElementById('reModalTitle').textContent=t('New Rehearsal');
   ['reTitle','reLocation','reNotes'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
   document.getElementById('reDate').value='';
   document.getElementById('reStart').value='19:00';
@@ -1858,7 +1858,7 @@ function openNewRehearsal(){
 function openRehEdit(id){
   const r=rehearsals.find(x=>x.id===id);if(!r)return;
   editingRehId=id;
-  document.getElementById('reModalTitle').textContent='Edit Rehearsal';
+  document.getElementById('reModalTitle').textContent=t('Edit Rehearsal');
   document.getElementById('reTitle').value=r.title||'';
   document.getElementById('reLocation').value=r.location||'';
   document.getElementById('reStart').value=r.start||'19:00';
@@ -2997,7 +2997,7 @@ function renderLib(filter='All',search=''){
   }
   grid.innerHTML=f.map(s=>`
     <div class="songcard${s.hidden?' hidden-song':''}" onclick="openSongEdit('${s.id}')">
-      ${s.hidden?`<div style="position:absolute;top:10px;right:10px;font-size:.62rem;font-weight:700;color:var(--ink3);background:var(--bg2);border:1px solid var(--bd);border-radius:99px;padding:2px 7px;letter-spacing:.04em">HIDDEN</div>`:''}
+      ${s.hidden?`<div style="position:absolute;top:10px;right:10px;font-size:.62rem;font-weight:700;color:var(--ink3);background:var(--bg2);border:1px solid var(--bd);border-radius:99px;padding:2px 7px;letter-spacing:.04em">${t('HIDDEN')}</div>`:''}
       <div class="sctt" style="padding-right:${s.hidden?'52px':'0'}">${s.title}</div>
       <div class="scar">${s.artist}${s.dur?`<span style="float:right;font-family:var(--mono);font-size:.72rem;color:var(--ink3)">${fmtDur(s.dur)}</span>`:''}</div>
       <div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:2px">
@@ -3017,14 +3017,14 @@ function renderLib(filter='All',search=''){
       </div>
       <!-- corner action buttons — visible on hover -->
       <div class="sc-actions" onclick="event.stopPropagation()">
-        <div class="sc-act-btn" onclick="toggleHideSong('${s.id}')" title="${s.hidden?'Unhide':'Hide'} song">
+        <div class="sc-act-btn" onclick="toggleHideSong('${s.id}')" title="${s.hidden?t('Unhide song'):t('Hide song')}">
           <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
             ${s.hidden
               ? '<path d="M1 8s2.5-5 7-5 7 5 7 5-2.5 5-7 5-7-5-7-5z"/><circle cx="8" cy="8" r="2"/>'
               : '<path d="M1 8s2.5-5 7-5 7 5 7 5-2.5 5-7 5-7-5-7-5z"/><circle cx="8" cy="8" r="2"/><path d="M2 2l12 12" stroke-linecap="round"/>'}
           </svg>
         </div>
-        <div class="sc-act-btn del" onclick="deleteSong('${s.id}')" title="Delete song">
+        <div class="sc-act-btn del" onclick="deleteSong('${s.id}')" title="${t('Delete song')}">
           <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
             <path d="M2 4h12M5 4V2h6v2M6 7v5M10 7v5M3 4l1 10h8l1-10"/>
           </svg>
@@ -3784,7 +3784,7 @@ function renderConcerts(){
   const upcoming = active.filter(c=>!isPast(c)).sort((a,b)=>concertDate(a)-concertDate(b));
   const past     = active.filter(c=> isPast(c)).sort((a,b)=>concertDate(b)-concertDate(a));
   const countEl  = document.getElementById('concertCount');
-  if(countEl) countEl.textContent=`${upcoming.length} upcoming · ${past.length} past${cancelled.length?` · ${cancelled.length} cancelled`:''}`;
+  if(countEl) countEl.textContent=`${upcoming.length} ${t('upcoming')} · ${past.length} ${t('past')}${cancelled.length?` · ${cancelled.length} ${t('cancelled')}`:''}`;
   document.getElementById('concertListUpcoming').innerHTML=upcoming.length
     ?upcoming.map(c=>concertCard(c,'upcoming')).join('')
     :`<div style="padding:20px;text-align:center;font-size:.82rem;color:var(--ink3)">${t('No upcoming concerts — click + New Concert to add one.')}</div>`;
@@ -3801,12 +3801,12 @@ function concertCard(c,style){
     ?`<div class="concert-photos">${photos.map((p,i)=>`<img class="concert-thumb" src="${p}" alt="Concert photo ${i+1}" onclick="event.stopPropagation();openPhotoLightbox('${c.id}',${i})">`).join('')}${!cancelStyle?`<label class="concert-thumb-add" onclick="event.stopPropagation()"><input type="file" accept="image/*" style="display:none" onchange="addConcertPhoto(event,'${c.id}')">+</label>`:''}</div>`
     :cancelStyle?``:
     `<div class="concert-photos"><label class="concert-thumb-add" onclick="event.stopPropagation()"><input type="file" accept="image/*" style="display:none" onchange="addConcertPhoto(event,'${c.id}')">📷</label></div>`;
-  const badge=cancelStyle?`<span style="margin-left:8px;font-size:.66rem;padding:2px 7px;border-radius:99px;background:var(--r2);color:var(--r);font-weight:600;vertical-align:middle">Cancelled</span>`
-    :pastStyle?`<span style="margin-left:8px;font-size:.66rem;padding:2px 7px;border-radius:99px;background:var(--bg2);color:var(--ink3);font-weight:600;vertical-align:middle">Past</span>`:'';
+  const badge=cancelStyle?`<span style="margin-left:8px;font-size:.66rem;padding:2px 7px;border-radius:99px;background:var(--r2);color:var(--r);font-weight:600;vertical-align:middle">${t('Cancelled')}</span>`
+    :pastStyle?`<span style="margin-left:8px;font-size:.66rem;padding:2px 7px;border-radius:99px;background:var(--bg2);color:var(--ink3);font-weight:600;vertical-align:middle">${t('Past')}</span>`:'';
   const actions=cancelStyle||pastStyle
-    ?`<button class="btn btn-g btn-sm" data-action="view">View</button>`
-    :`<button class="btn btn-g btn-sm" style="color:var(--amb);border-color:var(--amb2)" data-action="cancel">Cancel</button>
-      <button class="btn btn-g btn-sm" data-action="view">View</button>`;
+    ?`<button class="btn btn-g btn-sm" data-action="view">${t('View')}</button>`
+    :`<button class="btn btn-g btn-sm" style="color:var(--amb);border-color:var(--amb2)" data-action="cancel">${t('Cancel')}</button>
+      <button class="btn btn-g btn-sm" data-action="view">${t('View')}</button>`;
   return`<div class="ccrd${pastStyle?' past':''}${cancelStyle?' cancelled':''}" data-cid="${c.id}" onclick="handleConcertCardClick(event,'${c.id}')">
     <div class="cdb">
       <div class="cdmo">${c.month}</div>
@@ -3821,8 +3821,8 @@ function concertCard(c,style){
         <span class="cmi"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 14s1-3 6-3 6 3 6 3M8 8a3 3 0 100-6 3 3 0 000 6z"/></svg>~${c.audience}</span>
       </div>
       <div class="cbadges">
-        <span class="pill ${cancelStyle?'pr':'pp'}">${cancelStyle?'🚫 Cancelled':'Concert'}</span>
-        ${!cancelStyle&&c.paid?`<span class="pill pg">€ ${c.total}</span><span class="pill pgray">${c.price}</span>`:!cancelStyle?'<span class="pill pgray">Free</span>':''}
+        <span class="pill ${cancelStyle?'pr':'pp'}">${cancelStyle?t('🚫 Cancelled'):t('Concert')}</span>
+        ${!cancelStyle&&c.paid?`<span class="pill pg">€ ${c.total}</span><span class="pill pgray">${c.price}</span>`:!cancelStyle?`<span class="pill pgray">${t('Free')}</span>`:''}
         ${(c.setlistIds||[]).map(sid=>{const sl=setlists.find(x=>x.id===sid);return sl?`<span class="pill pp" style="cursor:pointer" data-action="setlist" data-slid="${sid}">♩ ${sl.name}</span>`:''}).join('')}
 
       </div>
@@ -3909,17 +3909,17 @@ function openConcertView(id){
   const photos=c.photos||[];
   document.getElementById('cvPhotos').innerHTML=photos.length
     ?photos.map((p,i)=>`<img src="${p}" style="width:72px;height:72px;border-radius:8px;object-fit:cover;border:1.5px solid var(--bd);cursor:pointer" onclick="openPhotoLightbox('${c.id}',${i})">`).join('')
-    :`<span style="font-size:.76rem;color:var(--ink3)">No photos yet</span>`;
+    :`<span style="font-size:.76rem;color:var(--ink3)">${t('No photos yet')}</span>`;
   const actions=document.getElementById('cvActions');
   if(c.cancelled||past){
-    actions.innerHTML=`<button class="btn btn-g" onclick="closeMod('cvMod')">Close</button>`;
+    actions.innerHTML=`<button class="btn btn-g" onclick="closeMod('cvMod')">${t('Close')}</button>`;
   } else {
     const slBtns=(c.setlistIds||[]).map(sid=>{const sl=setlists.find(x=>x.id===sid);return sl?`<button class="btn btn-p btn-sm" onclick="openSetlistFromConcert('${sid}')">♩ ${sl.name}</button>`:''}).join('');
     actions.innerHTML=`
-      <button class="btn btn-g" onclick="closeMod('cvMod')">Close</button>
-      <button class="btn btn-g btn-sm" style="color:var(--amb);border-color:var(--amb2)" onclick="closeMod('cvMod');promptCancel('concert','${c.id}')">🚫 Cancel</button>
-      <button class="btn btn-g btn-sm" onclick="closeMod('cvMod');openConcertEdit('${c.id}')">Edit</button>
-      <button class="btn btn-g btn-sm" onclick="closeMod('cvMod');openConcertLinkFromConcert('${c.id}')">♩ Link Set List</button>
+      <button class="btn btn-g" onclick="closeMod('cvMod')">${t('Close')}</button>
+      <button class="btn btn-g btn-sm" style="color:var(--amb);border-color:var(--amb2)" onclick="closeMod('cvMod');promptCancel('concert','${c.id}')">🚫 ${t('Cancel')}</button>
+      <button class="btn btn-g btn-sm" onclick="closeMod('cvMod');openConcertEdit('${c.id}')">${t('Edit')}</button>
+      <button class="btn btn-g btn-sm" onclick="closeMod('cvMod');openConcertLinkFromConcert('${c.id}')">${t('♩ Link Set List')}</button>
       ${slBtns}`;
   }
   showMod('cvMod');
@@ -4292,10 +4292,10 @@ function renderMembers(){
     const icon2=m.inst2?instIcon(m.inst2):'';
     const isGuest=m.role==='guest';
     const rolePill=m.role==='admin'
-      ?`<span class="pill pp">Admin</span>`
+      ?`<span class="pill pp">${t('Admin')}</span>`
       :isGuest
-        ?`<span class="pill pamb">Guest</span><span style="font-size:.67rem;color:var(--ink3);margin-left:4px">until ${m.guestEnd}</span>`
-        :`<span class="pill pgray">Member</span>`;
+        ?`<span class="pill pamb">${t('Guest')}</span><span style="font-size:.67rem;color:var(--ink3);margin-left:4px">${t('until')} ${m.guestEnd}</span>`
+        :`<span class="pill pgray">${t('Member')}</span>`;
     const guestBorder=isGuest?'border:1.5px dashed var(--amb);':''
     return`<div class="memcard" style="${guestBorder}">
       <div class="mctop">
@@ -4311,13 +4311,13 @@ function renderMembers(){
           <div style="margin-top:4px;display:flex;align-items:center;gap:5px;flex-wrap:wrap">${rolePill}</div>
         </div>
       </div>
-      <div class="t1" style="margin-bottom:6px">Available days</div>
+      <div class="t1" style="margin-bottom:6px">${t('Available days')}</div>
       <div class="mcdays">${m.avail.map((a,di)=>`<div class="mcd ${a?'y':'n'}">${days[di]}</div>`).join('')}</div>
-      <div style="font-size:.7rem;color:var(--ink2);margin-top:9px">Vocals: ${m.vocals}</div>
+      <div style="font-size:.7rem;color:var(--ink2);margin-top:9px">${t('Vocals')}: ${m.vocals}</div>
       <div class="mcfoot">
-        <button class="btn btn-g btn-sm" onclick="openProfile(${idx})">View Profile</button>
-        ${m.role==='admin'?'':`<button class="btn btn-g btn-sm" onclick="openChangeRoleModal(${idx})">${isGuest?'Make Member':'Make Guest'}</button>`}
-        ${idx!==currentUser.memberIdx?`<button class="btn btn-g btn-sm" style="color:var(--r);border-color:var(--r2)" onclick="removeMember(${idx})" title="Remove from band">Remove</button>`:''}
+        <button class="btn btn-g btn-sm" onclick="openProfile(${idx})">${t('View Profile')}</button>
+        ${m.role==='admin'?'':`<button class="btn btn-g btn-sm" onclick="openChangeRoleModal(${idx})">${isGuest?t('Make Member'):t('Make Guest')}</button>`}
+        ${idx!==currentUser.memberIdx?`<button class="btn btn-g btn-sm" style="color:var(--r);border-color:var(--r2)" onclick="removeMember(${idx})" title="${t('Remove from band')}">${t('Remove')}</button>`:''}
       </div>
     </div>`;
   }).join('');
@@ -4361,9 +4361,9 @@ function renderGuestDir(){
         </div>
       </div>
       <div style="display:flex;flex-direction:column;gap:6px;flex-shrink:0;width:100px">
-        <span style="display:block;width:100%;text-align:center;padding:6px 0;background:var(--bg2);border:1.5px solid var(--bd);border-radius:99px;font-size:.75rem;font-weight:600;color:var(--ink3)">Expired</span>
-        <button style="width:100%;padding:7px 0;text-align:center;font-family:var(--font);font-size:.75rem;font-weight:600;background:transparent;border:1.5px solid var(--bd);border-radius:99px;color:var(--ink);cursor:pointer;transition:border-color .13s,color .13s" onclick="event.stopPropagation();promoteGuestToMember(${members.indexOf(g)},'${g.name}')" onmouseover="this.style.borderColor='var(--a)';this.style.color='var(--a)'" onmouseout="this.style.borderColor='var(--bd)';this.style.color='var(--ink)'">↑ Member</button>
-        <button style="width:100%;padding:7px 0;text-align:center;font-family:var(--font);font-size:.75rem;font-weight:600;background:transparent;border:1.5px solid rgba(217,119,6,.4);border-radius:99px;color:var(--amb);cursor:pointer;transition:border-color .13s,background .13s" onclick="event.stopPropagation();openReactivateAsGuest(${members.indexOf(g)},'${g.name}')" onmouseover="this.style.background='var(--amb2)'" onmouseout="this.style.background='transparent'">↑ Guest</button>
+        <span style="display:block;width:100%;text-align:center;padding:6px 0;background:var(--bg2);border:1.5px solid var(--bd);border-radius:99px;font-size:.75rem;font-weight:600;color:var(--ink3)">${t('Expired')}</span>
+        <button style="width:100%;padding:7px 0;text-align:center;font-family:var(--font);font-size:.75rem;font-weight:600;background:transparent;border:1.5px solid var(--bd);border-radius:99px;color:var(--ink);cursor:pointer;transition:border-color .13s,color .13s" onclick="event.stopPropagation();promoteGuestToMember(${members.indexOf(g)},'${g.name}')" onmouseover="this.style.borderColor='var(--a)';this.style.color='var(--a)'" onmouseout="this.style.borderColor='var(--bd)';this.style.color='var(--ink)'">${t('↑ Member')}</button>
+        <button style="width:100%;padding:7px 0;text-align:center;font-family:var(--font);font-size:.75rem;font-weight:600;background:transparent;border:1.5px solid rgba(217,119,6,.4);border-radius:99px;color:var(--amb);cursor:pointer;transition:border-color .13s,background .13s" onclick="event.stopPropagation();openReactivateAsGuest(${members.indexOf(g)},'${g.name}')" onmouseover="this.style.background='var(--amb2)'" onmouseout="this.style.background='transparent'">${t('↑ Guest')}</button>
       </div>
     </div>`;
   }).join('');
@@ -4702,24 +4702,24 @@ function renderDashboard(){
   const cCount = concerts.filter(c=>!c.cancelled&&c.date>=todayStr&&c.date.slice(0,7)===thisMonth).length;
   if(dshS){
     const parts=[];
-    if(rCount) parts.push(`${rCount} rehearsal${rCount>1?'s':''}`);
-    if(cCount) parts.push(`${cCount} concert${cCount>1?'s':''}`);
-    dshS.textContent = parts.length ? `${parts.join(' and ')} coming up this month.` : 'Nothing scheduled this month yet.';
+    if(rCount) parts.push(`${rCount} ${rCount>1?t('rehearsals'):t('rehearsal')}`);
+    if(cCount) parts.push(`${cCount} ${cCount>1?t('concerts'):t('concert')}`);
+    dshS.textContent = parts.length ? `${parts.join(` ${t('and')} `)} ${t('coming up this month.')}` : t('Nothing scheduled this month yet.');
   }
 
   // Stat cards
   const nextGig = concerts.filter(c=>!c.cancelled&&c.date>=todayStr).sort((a,b)=>a.date.localeCompare(b.date))[0];
   if(dshStats) dshStats.innerHTML =
-    `<div class="sc" onclick="nav('members')"><div class="t1">Members</div><div class="sv">${members.length}</div><div class="ss">${members.length===1?'1 member':'Active band'}</div></div>`+
-    `<div class="sc" onclick="nav('library')"><div class="t1">Songs</div><div class="sv">${songs.length}</div><div class="ss">In library</div></div>`+
-    `<div class="sc" onclick="nav('setlists')"><div class="t1">Set Lists</div><div class="sv">${setlists.length}</div><div class="ss">${setlists.length?'Ready to play':'None yet'}</div></div>`+
-    `<div class="sc" onclick="nav('concerts')"><div class="t1">Next Gig</div><div class="sv">${nextGig?new Date(nextGig.date+'T00:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric'}):'—'}</div><div class="ss">${nextGig?.venue||'None scheduled'}</div></div>`;
+    `<div class="sc" onclick="nav('members')"><div class="t1">${t('Members')}</div><div class="sv">${members.length}</div><div class="ss">${members.length===1?t('1 member'):t('Active band')}</div></div>`+
+    `<div class="sc" onclick="nav('library')"><div class="t1">${t('Songs')}</div><div class="sv">${songs.length}</div><div class="ss">${t('In library')}</div></div>`+
+    `<div class="sc" onclick="nav('setlists')"><div class="t1">${t('Set Lists')}</div><div class="sv">${setlists.length}</div><div class="ss">${setlists.length?t('Ready to play'):t('None yet')}</div></div>`+
+    `<div class="sc" onclick="nav('concerts')"><div class="t1">${t('Next Gig')}</div><div class="sv">${nextGig?new Date(nextGig.date+'T00:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric'}):'—'}</div><div class="ss">${nextGig?.venue||t('None scheduled')}</div></div>`;
 
   // Upcoming events list
   if(dshUpcoming){
     dshUpcoming.innerHTML = upEv.length ? upEv.map(ev=>{
       const d=new Date(ev.date+'T00:00:00');
-      const pill=ev.type==='concert'?'<span class="pill pp">Concert</span>':'<span class="pill pg">Rehearsal</span>';
+      const pill=ev.type==='concert'?`<span class="pill pp">${t('Concert')}</span>`:`<span class="pill pg">${t('Rehearsal')}</span>`;
       return`<div class="er"><div class="edb"><div class="edd">${d.toLocaleDateString('en-GB',{weekday:'short'})}</div><div class="edn">${d.getDate()}</div></div><div style="flex:1"><div class="en">${ev.title}</div><div class="em">${ev.detail}</div></div>${pill}</div>`;
     }).join('') : empty('No upcoming events.');
   }
