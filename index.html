@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='16' fill='%236C63FF'/><text x='16' y='22' text-anchor='middle' font-size='18' fill='white'>♪</text></svg>">
 <title>Bandapp v26</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -118,12 +118,12 @@ select option{background:var(--w)}
 .sb-band{padding:9px;border-bottom:1px solid var(--bd)}
 .bb{width:100%;display:flex;align-items:center;gap:9px;padding:9px 10px;background:var(--bg);border:none;border-radius:var(--rad);cursor:pointer;transition:background .13s;text-align:left;color:var(--ink)}.bb:hover{background:var(--bg2)}
 .bav{width:29px;height:29px;border-radius:8px;background:var(--a);display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:700;color:#fff;flex-shrink:0}
-.sb-nav{flex:1;padding:8px;overflow-y:auto}
+.sb-nav{flex:1;padding:8px;overflow-y:auto;scrollbar-width:thin}
 .ns{margin-bottom:17px}.nsl{font-size:.64rem;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--ink3);padding:3px 9px 6px}
 .ni{display:flex;align-items:center;gap:8px;padding:8px 9px;border-radius:8px;color:var(--ink2);font-size:.82rem;font-weight:500;cursor:pointer;transition:all .11s;margin-bottom:1px}
 .ni:hover{background:var(--bg);color:var(--ink)}.ni.on{background:var(--a2);color:var(--a);font-weight:600}.ni svg{width:15px;height:15px;flex-shrink:0}
 .nb{margin-left:auto;background:var(--a);color:#fff;font-size:.61rem;font-weight:700;padding:2px 6px;border-radius:99px}
-.sb-foot{padding:10px;border-top:1px solid var(--bd);display:flex;align-items:center;gap:9px}
+.sb-foot{padding:10px;padding-bottom:max(10px,calc(10px + env(safe-area-inset-bottom,0px)));border-top:1px solid var(--bd);display:flex;align-items:center;gap:9px}
 .uav{width:31px;height:31px;border-radius:50%;background:var(--a2);border:2px solid var(--a);display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:700;color:var(--a);flex-shrink:0}
 .lt{display:flex;border:1.5px solid var(--bd);border-radius:7px;overflow:hidden;margin-left:auto}
 
