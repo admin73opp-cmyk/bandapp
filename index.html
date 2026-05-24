@@ -5056,20 +5056,23 @@ function renderMpReadViews(){
   const m=members[idx];
   const ex=extraData[idx]||{};
 
-  // Personal
+  // Personal — fall back to form inputs for no-band users where m/ex are empty
   document.getElementById('mpv-first').textContent=m?.firstName||currentUser.firstName||'—';
   document.getElementById('mpv-last').textContent=m?.lastName||currentUser.lastName||'—';
-  const bday=ex.bday||m?.bday||'';
+  const bday=ex.bday||m?.bday||document.getElementById('mpBday')?.value||'';
   document.getElementById('mpv-bday').textContent=bday
     ?new Date(bday+'T12:00').toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}):'—';
-  const natOpt=document.querySelector(`#mpNat option[value="${ex.nat||m?.nat||''}"]`);
-  document.getElementById('mpv-nat').textContent=natOpt&&natOpt.value?natOpt.textContent:(ex.nat||m?.nat||'—');
+  const natVal=ex.nat||m?.nat||document.getElementById('mpNat')?.value||'';
+  const natOpt=document.querySelector(`#mpNat option[value="${natVal}"]`);
+  document.getElementById('mpv-nat').textContent=natOpt&&natOpt.value?natOpt.textContent:(natVal||'—');
   document.getElementById('mpv-email').textContent=currentUser.email||'—';
-  const ctryOpt=document.querySelector(`#mpCountry option[value="${ex.country||m?.country||''}"]`);
-  document.getElementById('mpv-country').textContent=ctryOpt&&ctryOpt.value?ctryOpt.textContent:(ex.country||m?.country||'—');
-  const phone=ex.phone||[m?.phoneDial,m?.phoneNum].filter(Boolean).join(' ')||'';
+  const ctryVal=ex.country||m?.country||document.getElementById('mpCountry')?.value||'';
+  const ctryOpt=document.querySelector(`#mpCountry option[value="${ctryVal}"]`);
+  document.getElementById('mpv-country').textContent=ctryOpt&&ctryOpt.value?ctryOpt.textContent:(ctryVal||'—');
+  const phone=ex.phone||[m?.phoneDial,m?.phoneNum].filter(Boolean).join(' ')
+    ||[document.getElementById('mpPhoneCc')?.value,document.getElementById('mpPhoneNum')?.value].filter(Boolean).join(' ')||'';
   document.getElementById('mpv-phone').textContent=phone||'—';
-  const bio=ex.bio||m?.bio||'';
+  const bio=ex.bio||m?.bio||document.getElementById('mpBio')?.value||'';
   const bioEl=document.getElementById('mpv-bio');
   bioEl.textContent=bio; bioEl.style.display=bio?'':'none';
 
