@@ -11,6 +11,9 @@ const BandsDB = {
     return (data || []).map(b => {
       const myRow = (b.band_members || []).find(m => m.user_id === currentUser.id);
       const rawRole = myRow?.role || 'member';
+      // Populate in-memory WhatsApp link cache
+      if (b.whatsapp_link) bandWaLinks[b.id] = b.whatsapp_link;
+      else delete bandWaLinks[b.id];
       return {
         ...b,
         role:        rawRole.charAt(0).toUpperCase() + rawRole.slice(1), // 'Admin'|'Member'|'Guest'

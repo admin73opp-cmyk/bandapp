@@ -8,17 +8,21 @@
 
 -- ── BANDS ────────────────────────────────────────────────────
 create table if not exists bands (
-  id         uuid primary key default gen_random_uuid(),
-  name       text not null,
-  initials   text,
-  color      text,
-  city       text,
-  country    text,
-  genre      text,
-  formed     text,
-  bio        text,
-  created_at timestamptz not null default now()
+  id             uuid primary key default gen_random_uuid(),
+  name           text not null,
+  initials       text,
+  color          text,
+  city           text,
+  country        text,
+  genre          text,
+  formed         text,
+  bio            text,
+  whatsapp_link  text,
+  created_at     timestamptz not null default now()
 );
+
+-- Add whatsapp_link to existing deployments (no-op if already present)
+alter table bands add column if not exists whatsapp_link text;
 
 -- ── PROFILES (extends auth.users 1:1) ────────────────────────
 create table if not exists profiles (

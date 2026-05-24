@@ -2102,19 +2102,23 @@ function validateWaLink(input){
   input.style.borderColor = valid ? '' : 'var(--r)';
 }
 
-function saveWaLink(){
+async function saveWaLink(){
   const val=document.getElementById('waLinkInput').value.trim();
   if(val&&!val.startsWith('https://chat.whatsapp.com/')){
     toast2('Please enter a valid WhatsApp group link','w');return;
   }
   bandWaLinks[activeBandId]=val||null;
+  const b=getActiveBand();
+  if(b) await BandsDB.upsert({...b, whatsapp_link:val||null});
   refreshWaUI();refreshNotifSettUI();
   toast2(val?'WhatsApp group link saved!':'Link removed');
 }
 
-function removeWaLink(){
+async function removeWaLink(){
   bandWaLinks[activeBandId]=null;
   document.getElementById('waLinkInput').value='';
+  const b=getActiveBand();
+  if(b) await BandsDB.upsert({...b, whatsapp_link:null});
   refreshWaUI();refreshNotifSettUI();
   toast2('WhatsApp link removed','w');
 }
