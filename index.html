@@ -4380,6 +4380,9 @@ async function saveBandEditInline(){
     city: document.getElementById('beCityInline').value.trim(),
     country: document.getElementById('beCountryInline').value.trim(),
     bio: document.getElementById('beBioInline').value.trim(),
+    platforms: PLATFORM_DEFS
+      .map(d=>({label:d.label,icon:d.icon,url:(document.getElementById('bePlat_'+d.key)?.value||'').trim()}))
+      .filter(p=>p.url),
   });
   if(!saved)return;
   await loadBands();
@@ -4736,6 +4739,9 @@ function attachPfLinkListeners(){
     if(el)el.addEventListener('input',renderPfLinkPreview);
   });
 }
+function bpCoverClick() { document.getElementById('bpCoverInput').click(); }
+function bpLogoClick()  { document.getElementById('bpLogoInput').click(); }
+
 function handleBpCover(event) {
   const file = event.target.files[0]; if (!file) return;
   const reader = new FileReader();
