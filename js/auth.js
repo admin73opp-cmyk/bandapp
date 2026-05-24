@@ -87,15 +87,28 @@ async function doSignUp() {
   if (!email || !pw) { toast2('Enter email and password', 'w'); return; }
   if (pw.length < 6) { toast2('Password must be at least 6 characters', 'w'); return; }
 
-  const pendingBandId = sessionStorage.getItem('pendingBandId') || new URLSearchParams(window.location.search).get('band') || '';
+  const pendingBandId   = sessionStorage.getItem('pendingBandId')   || new URLSearchParams(window.location.search).get('band') || '';
+  const pendingPhone    = sessionStorage.getItem('invitePhone')      || '';
+  const pendingInstrument = sessionStorage.getItem('inviteInstrument') || '';
   const baseUrl = localStorage.getItem('appUrl') || (window.location.origin + window.location.pathname);
-  const redirectTo = pendingBandId ? `${baseUrl}?band=${encodeURIComponent(pendingBandId)}` : baseUrl;
+  // Embed all invite params in the confirmation-email redirect URL so they survive new-tab opens
+  const _rp = new URLSearchParams();
+  if (pendingBandId)    _rp.set('band',       pendingBandId);
+  if (pendingPhone)     _rp.set('phone',       pendingPhone);
+  if (pendingInstrument) _rp.set('instrument', pendingInstrument);
+  const redirectTo = _rp.toString() ? `${baseUrl}?${_rp.toString()}` : baseUrl;
 
   const { data, error } = await supabase.auth.signUp({
     email,
     password: pw,
     options: {
-      data: { first_name: firstName, last_name: lastName, ...(pendingBandId ? { pending_band_id: pendingBandId } : {}) },
+      data: {
+        first_name: firstName,
+        last_name:  lastName,
+        ...(pendingBandId     ? { pending_band_id:     pendingBandId }     : {}),
+        ...(pendingPhone      ? { pending_phone:        pendingPhone }      : {}),
+        ...(pendingInstrument ? { pending_instrument:   pendingInstrument } : {}),
+      },
       emailRedirectTo: redirectTo,
     },
   });
@@ -220,9 +233,17 @@ supabase.auth.onAuthStateChange(async (event, session) => {
   }
   await loadCurrentUser(session.user.id, session.user.email);
 
-  // Auto-join band from invite link (?band=UUID) or sessionStorage
+  // Restore invite params from confirmation-email URL into sessionStorage (new-tab safe)
   const _urlParams = new URLSearchParams(window.location.search);
-  const _pendingBandId = _urlParams.get('band') || sessionStorage.getItem('pendingBandId');
+  if (_urlParams.get('phone'))      sessionStorage.setItem('invitePhone',      _urlParams.get('phone'));
+  if (_urlParams.get('instrument')) sessionStorage.setItem('inviteInstrument', _urlParams.get('instrument'));
+  // Also fall back to user metadata (set during signup) if sessionStorage is empty
+  const _meta = session.user.user_metadata || {};
+  if (!sessionStorage.getItem('invitePhone')      && _meta.pending_phone)      sessionStorage.setItem('invitePhone',      _meta.pending_phone);
+  if (!sessionStorage.getItem('inviteInstrument') && _meta.pending_instrument) sessionStorage.setItem('inviteInstrument', _meta.pending_instrument);
+
+  // Auto-join band from invite link (?band=UUID) or sessionStorage or user metadata
+  const _pendingBandId = _urlParams.get('band') || sessionStorage.getItem('pendingBandId') || _meta.pending_band_id || '';
   if (_pendingBandId) {
     const { data: joinData, error: joinErr } = await supabase.rpc('join_band_by_code', { p_code: _pendingBandId });
     if (joinData?.success) {
