@@ -4965,7 +4965,7 @@ async function populateMpPage(){
   // Availability
   const dayNames=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
   document.getElementById('mpAvailDays').innerHTML=dayNames.map((d,i)=>
-    `<div class="dtog ${(m?.avail||[1,1,1,1,1,1,1])[i]?'on':''}" onclick="this.classList.toggle('on')" data-di="${i}">${d}</div>`
+    `<div class="dtog ${(m?.avail||currentUser.avail||[1,1,1,1,1,1,1])[i]?'on':''}" onclick="this.classList.toggle('on')" data-di="${i}">${d}</div>`
   ).join('');
 
   // Gear & Links
@@ -5020,16 +5020,19 @@ async function mpSave(sec){
     currentUser.lastName=ln||currentUser.lastName;
   } else if(sec==='music'){
     const vback={'No vocals':'None','Lead vocals':'Lead','Backing vocals':'Backing','Lead & backing':'Both'};
+    const inst1val=document.getElementById('mpInst1').value;
     await MembersDB.upsertProfile(profileId,{
-      instrument:document.getElementById('mpInst1').value,
+      instrument:inst1val,
       instrument2:document.getElementById('mpInst2').value,
       vocals:vback[document.getElementById('mpVocals').value]||'None',
       gear:document.getElementById('mpGear').value,
     });
+    currentUser.instrument=inst1val;
   } else if(sec==='avail'){
     const chips=document.querySelectorAll('#mpAvailDays .dtog');
     const avail=[...chips].map(c=>c.classList.contains('on')?1:0);
     await MembersDB.upsertProfile(profileId,{availability:avail});
+    currentUser.avail=avail;
   } else if(sec==='links'){
     await MembersDB.upsertProfile(profileId,{
       spotify_url:document.getElementById('mpSpotify').value,
@@ -5089,8 +5092,7 @@ function renderMpReadViews(){
   document.getElementById('mpv-avail').innerHTML=
     `<div style="display:flex;flex-direction:row;flex-wrap:wrap;gap:6px">` +
     dayNames.map((d,i)=>{
-      const chips=document.querySelectorAll('#mpAvailDays .dtog');
-      const on=m?.avail?m.avail[i]:(chips[i]?chips[i].classList.contains('on')?1:0:1);
+      const on=(m?.avail||currentUser.avail||[1,1,1,1,1,1,1])[i];
       return`<div class="dtog ${on?'on':''}" style="pointer-events:none">${d}</div>`;
     }).join('') +
     `</div>`;

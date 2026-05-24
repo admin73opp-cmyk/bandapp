@@ -41,6 +41,7 @@ async function loadCurrentUser(uid, email) {
   currentUser.instrument = profile.instrument  || '';
   currentUser.color      = profile.color       || '#6C63FF';
   currentUser.lang       = profile.lang        || 'en';
+  currentUser.avail      = profile.availability || [1,1,1,1,1,1,1];
 
   // Load band membership for this user to determine role in active band
   const { data: memberships, error: memErr } = await supabase
