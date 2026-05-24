@@ -1220,77 +1220,77 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
       <div style="display:flex;flex-direction:column;gap:16px;max-width:620px">
 
         <div class="card">
-          <div class="ct" style="margin-bottom:4px">App URL</div>
-          <div style="font-size:.75rem;color:var(--ink3);margin-bottom:14px">The public link shared in WhatsApp and email invites. Use your production URL, not a Vercel preview link.</div>
+          <div class="ct" style="margin-bottom:4px" data-i18n="App URL">App URL</div>
+          <div style="font-size:.75rem;color:var(--ink3);margin-bottom:14px" data-i18n="The public link shared in WhatsApp and email invites. Use your production URL, not a Vercel preview link.">The public link shared in WhatsApp and email invites. Use your production URL, not a Vercel preview link.</div>
           <div class="fg" style="max-width:420px">
-            <label>Public app URL</label>
+            <label data-i18n="Public app URL">Public app URL</label>
             <input id="settAppUrl" type="url" placeholder="https://your-app.com">
           </div>
           <div style="margin-top:14px">
-            <button class="btn btn-p btn-sm" onclick="saveAppUrl()">Save</button>
+            <button class="btn btn-p btn-sm" onclick="saveAppUrl()" data-i18n="Save">Save</button>
           </div>
         </div>
 
         <div class="card">
-          <div class="ct" style="margin-bottom:4px">Default View</div>
-          <div style="font-size:.75rem;color:var(--ink3);margin-bottom:14px">The page shown when you open the app.</div>
+          <div class="ct" style="margin-bottom:4px" data-i18n="Default View">Default View</div>
+          <div style="font-size:.75rem;color:var(--ink3);margin-bottom:14px" data-i18n="The page shown when you open the app.">The page shown when you open the app.</div>
           <div class="fg" style="max-width:280px">
-            <label>On startup, go to</label>
+            <label data-i18n="On startup, go to">On startup, go to</label>
             <select id="settDefaultView">
-              <option value="dashboard">Dashboard</option>
-              <option value="calendar">Calendar</option>
-              <option value="bandprofile">Band Profile</option>
-              <option value="myprofile">My Profile</option>
+              <option value="dashboard" data-i18n="Dashboard">Dashboard</option>
+              <option value="calendar" data-i18n="Calendar">Calendar</option>
+              <option value="bandprofile" data-i18n="Band Profile">Band Profile</option>
+              <option value="myprofile" data-i18n="My Profile">My Profile</option>
             </select>
           </div>
           <div style="margin-top:14px">
-            <button class="btn btn-p btn-sm" onclick="saveSettings()">Save</button>
+            <button class="btn btn-p btn-sm" onclick="saveSettings()" data-i18n="Save">Save</button>
           </div>
         </div>
 
         <div class="card">
-          <div class="ct" style="margin-bottom:4px">Appearance</div>
-          <div style="font-size:.75rem;color:var(--ink3);margin-bottom:14px">Choose your preferred color scheme.</div>
+          <div class="ct" style="margin-bottom:4px" data-i18n="Appearance">Appearance</div>
+          <div style="font-size:.75rem;color:var(--ink3);margin-bottom:14px" data-i18n="Choose your preferred color scheme.">Choose your preferred color scheme.</div>
           <div class="fg" style="max-width:280px">
-            <label>Color scheme</label>
+            <label data-i18n="Color scheme">Color scheme</label>
             <select id="settAppearance" onchange="applyTheme(this.value);localStorage.setItem('appearance',this.value)">
-              <option value="default">Default (browser settings)</option>
-              <option value="light">Light</option>
-              <option value="dark">Dark</option>
+              <option value="default" data-i18n="Default (browser settings)">Default (browser settings)</option>
+              <option value="light" data-i18n="Light">Light</option>
+              <option value="dark" data-i18n="Dark">Dark</option>
             </select>
           </div>
           <div style="margin-top:14px">
-            <button class="btn btn-p btn-sm" onclick="saveSettings()">Save</button>
+            <button class="btn btn-p btn-sm" onclick="saveSettings()" data-i18n="Save">Save</button>
           </div>
         </div>
 
         <div class="card">
-          <div class="ct" style="margin-bottom:4px">App Language</div>
-          <div style="font-size:.75rem;color:var(--ink3);margin-bottom:14px">Controls date formats, day names, and interface labels.</div>
-          <div class="fg" style="max-width:280px"><label>Language</label><select id="settLang"></select></div>
+          <div class="ct" style="margin-bottom:4px" data-i18n="App Language">App Language</div>
+          <div style="font-size:.75rem;color:var(--ink3);margin-bottom:14px" data-i18n="Controls date formats, day names, and interface labels.">Controls date formats, day names, and interface labels.</div>
+          <div class="fg" style="max-width:280px"><label data-i18n="Language">Language</label><select id="settLang"></select></div>
           <div style="margin-top:14px">
-            <button class="btn btn-p btn-sm" onclick="saveSettings()">Save</button>
+            <button class="btn btn-p btn-sm" onclick="saveSettings()" data-i18n="Save">Save</button>
           </div>
         </div>
 
         <div class="card">
-          <div class="ct" style="margin-bottom:4px">Change Password</div>
-          <div style="font-size:.75rem;color:var(--ink3);margin-bottom:14px">Set a new password for your account.</div>
+          <div class="ct" style="margin-bottom:4px" data-i18n="Change Password">Change Password</div>
+          <div style="font-size:.75rem;color:var(--ink3);margin-bottom:14px" data-i18n="Set a new password for your account.">Set a new password for your account.</div>
           <div class="fg" style="max-width:280px">
-            <label>New password <span style="font-weight:400;color:var(--ink3)">(min. 6 chars)</span></label>
+            <label><span data-i18n="New password">New password</span> <span style="font-weight:400;color:var(--ink3)" data-i18n="(min. 6 chars)">(min. 6 chars)</span></label>
             <input id="settNewPw" type="password" placeholder="••••••••" autocomplete="new-password">
           </div>
           <div class="fg" style="max-width:280px">
-            <label>Confirm new password</label>
+            <label data-i18n="Confirm new password">Confirm new password</label>
             <input id="settConfirmPw" type="password" placeholder="••••••••" autocomplete="new-password">
           </div>
           <div style="margin-top:14px">
-            <button class="btn btn-p btn-sm" onclick="doChangePassword()">Update Password</button>
+            <button class="btn btn-p btn-sm" onclick="doChangePassword()" data-i18n="Update Password">Update Password</button>
           </div>
         </div>
 
         <div class="card">
-          <div class="ct" style="margin-bottom:4px">Integrations</div>
+          <div class="ct" style="margin-bottom:4px" data-i18n="Integrations">Integrations</div>
           <div style="display:flex;align-items:flex-start;gap:9px;padding:11px 13px;background:var(--bl2);border:1px solid rgba(96,165,250,.25);border-radius:var(--rad);font-size:.76rem;color:var(--bl);margin-top:10px">
             <span style="font-size:1rem;flex-shrink:0">📅</span>
             <span><strong>Google Calendar sync</strong> — connect your Google Calendar so rehearsals and concerts appear automatically. <span style="text-decoration:underline;cursor:pointer" onclick="toast2('Google Calendar sync coming soon')">Set up →</span></span>
@@ -2363,7 +2363,7 @@ const SUPPORTED_LANGUAGES = [
   { code: 'en',    flag: '🇬🇧', native: 'English',    english: 'English'    },
   { code: 'nl',    flag: '🇳🇱', native: 'Nederlands',  english: 'Dutch'      },
   { code: 'fr',    flag: '🇫🇷', native: 'Français',    english: 'French'     },
-  { code: 'pt',    flag: '🇵🇹', native: 'Português',   english: 'Portuguese' },
+  { code: 'pt',    flag: '🇧🇷', native: 'Português',   english: 'Portuguese' },
   { code: 'es',    flag: '🇪🇸', native: 'Español',     english: 'Spanish'    },
   { code: 'de',    flag: '🇩🇪', native: 'Deutsch',     english: 'German'     },
   { code: 'it',    flag: '🇮🇹', native: 'Italiano',    english: 'Italian'    },
@@ -2408,6 +2408,7 @@ function nav(p){
   document.getElementById('pgT').textContent=T[p]||p;
   if(p==='myprofile') populateMpPage().catch(console.error);
   if(p==='settings') populateSettingsPage();
+  applyI18n();
   closeSb();
 }
 function toggleSbMinimize(){
