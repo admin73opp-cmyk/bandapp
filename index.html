@@ -2728,7 +2728,12 @@ let aG='All';
 function renderLib(filter='All',search=''){
   const grid=document.getElementById('libGrid');
   const f=songs.filter(s=>(filter==='All'||s.genre===filter)&&(s.title+s.artist).toLowerCase().includes(search.toLowerCase()));
-  if(!f.length){grid.innerHTML=`<div class="es" style="grid-column:1/-1"><div class="es-ico">🎵</div><h3>No songs found</h3><p>Try another filter.</p></div>`;return;}
+  if(!f.length){
+    const msg=songs.length
+      ?`<div class="es" style="grid-column:1/-1"><div class="es-ico">🔍</div><h3>No songs found</h3><p>Try another filter or search term.</p></div>`
+      :`<div class="es" style="grid-column:1/-1"><div class="es-ico">🎵</div><h3>Your library is empty</h3><p>Start by adding songs to your library.</p></div>`;
+    grid.innerHTML=msg;return;
+  }
   grid.innerHTML=f.map(s=>`
     <div class="songcard${s.hidden?' hidden-song':''}" onclick="openSongEdit('${s.id}')">
       ${s.hidden?`<div style="position:absolute;top:10px;right:10px;font-size:.62rem;font-weight:700;color:var(--ink3);background:var(--bg2);border:1px solid var(--bd);border-radius:99px;padding:2px 7px;letter-spacing:.04em">HIDDEN</div>`:''}
