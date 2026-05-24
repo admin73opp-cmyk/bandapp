@@ -38,6 +38,61 @@ begin
 end;
 $$;
 
+-- ── Member management helpers ─────────────────────────────────
+
+-- Look up an existing Bandapp user by email (bypasses profiles RLS)
+create or replace function find_user_by_email(p_email text)
+returns table(id uuid, first_name text, last_name text)
+language plpgsql security definer set search_path = public as $$
+begin
+  return query
+    select p.id, p.first_name, p.last_name
+    from profiles p
+    join auth.users u on u.id = p.id
+    where lower(u.email) = lower(p_email)
+    limit 1;
+end;
+$$;
+
+-- Add an existing user to a band by user_id (admin only, bypasses RLS)
+create or replace function add_band_member_direct(
+  p_band_id   uuid,
+  p_user_id   uuid,
+  p_role      text    default 'member',
+  p_guest_start date  default null,
+  p_guest_end   date  default null,
+  p_guest_band  text  default null
+) returns jsonb language plpgsql security definer set search_path = public as $$
+declare v_name text;
+begin
+  if not is_band_admin(p_band_id) then raise exception 'Not authorized'; end if;
+  if exists (select 1 from band_members where band_id=p_band_id and user_id=p_user_id) then
+    return jsonb_build_object('error','already_member');
+  end if;
+  select coalesce(first_name||' '||last_name, '') into v_name from profiles where id=p_user_id;
+  insert into band_members (band_id, user_id, role, guest_start, guest_end, guest_band)
+  values (p_band_id, p_user_id, p_role, p_guest_start, p_guest_end, p_guest_band);
+  return jsonb_build_object('success',true,'name',v_name);
+end;
+$$;
+
+-- Join a band using its UUID as the "band code" (any authenticated user)
+create or replace function join_band_by_code(p_code text)
+returns jsonb language plpgsql security definer set search_path = public as $$
+declare v_bid uuid; v_bname text;
+begin
+  begin v_bid := trim(p_code)::uuid;
+  exception when others then return jsonb_build_object('error','invalid_code','message','Invalid band code'); end;
+  select name into v_bname from bands where id=v_bid;
+  if v_bname is null then return jsonb_build_object('error','not_found','message','Band not found'); end if;
+  if exists (select 1 from band_members where band_id=v_bid and user_id=auth.uid()) then
+    return jsonb_build_object('error','already_member','message','You are already a member of '||v_bname);
+  end if;
+  insert into band_members (band_id, user_id, role) values (v_bid, auth.uid(), 'member');
+  return jsonb_build_object('success',true,'band_id',v_bid,'band_name',v_bname);
+end;
+$$;
+
 -- ── Enable RLS on all tables ──────────────────────────────────
 
 alter table bands            enable row level security;
