@@ -5070,14 +5070,17 @@ function renderMpReadViews(){
   const bioEl=document.getElementById('mpv-bio');
   bioEl.textContent=bio; bioEl.style.display=bio?'':'none';
 
-  // Music
-  const inst1=m?.instrument||''; const inst2=m?.inst2||'';
+  // Music — fall back to form inputs for no-band users where m is undefined
+  const inst1=m?.instrument||document.getElementById('mpInst1')?.value||'';
+  const inst2=m?.inst2||document.getElementById('mpInst2')?.value||'';
   const instEl=document.getElementById('mpv-inst');
   instEl.innerHTML=[inst1,inst2].filter(Boolean)
     .map(i=>`<span class="pill pgray" style="font-size:.75rem">${i}</span>`).join('')||'<span style="color:var(--ink3);font-size:.84rem">—</span>';
   const vmap={'Lead':'Lead vocals','Backing':'Backing vocals','None':'No vocals','Both':'Lead & backing'};
-  document.getElementById('mpv-vocals').textContent=vmap[m?.vocals]||m?.vocals||'—';
-  const gear=ex.gear||m?.gear||'';
+  const vback2={'No vocals':'None','Lead vocals':'Lead','Backing vocals':'Backing','Lead & backing':'Both'};
+  const vocalsCode=m?.vocals||vback2[document.getElementById('mpVocals')?.value||'']||'None';
+  document.getElementById('mpv-vocals').textContent=vmap[vocalsCode]||vocalsCode||'—';
+  const gear=ex.gear||m?.gear||document.getElementById('mpGear')?.value||'';
   const gearWrap=document.getElementById('mpv-gear-wrap');
   document.getElementById('mpv-gear').textContent=gear; gearWrap.style.display=gear?'':'none';
 
@@ -5086,7 +5089,8 @@ function renderMpReadViews(){
   document.getElementById('mpv-avail').innerHTML=
     `<div style="display:flex;flex-direction:row;flex-wrap:wrap;gap:6px">` +
     dayNames.map((d,i)=>{
-      const on=(m?.avail||[1,1,1,1,1,1,1])[i];
+      const chips=document.querySelectorAll('#mpAvailDays .dtog');
+      const on=m?.avail?m.avail[i]:(chips[i]?chips[i].classList.contains('on')?1:0:1);
       return`<div class="dtog ${on?'on':''}" style="pointer-events:none">${d}</div>`;
     }).join('') +
     `</div>`;
