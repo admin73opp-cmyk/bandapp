@@ -614,7 +614,7 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
             Spreadsheet
           </button>
         </div>
-        <button class="btn btn-p btn-sm" onclick="showMod('alsMod')">+ Add Song</button>
+        <button class="btn btn-p btn-sm" onclick="openAddSong()">+ Add Song</button>
       </div>
 
       <!-- Filters (cards view only) -->
@@ -2713,6 +2713,7 @@ function renderSlLinkList(){
     +(past.length?`<div class="t1" style="margin-top:12px;margin-bottom:7px">Past</div>${past.map(makeItem).join('')}`:'');
 }
 function openSlMod(){
+  if(!activeBandId){toast2('Create a band first before adding set lists','w');return;}
   // Populate concert dropdown with upcoming concerts
   const sel=document.getElementById('slNewConcert');
   const upcoming=concerts.filter(c=>!isPast(c)&&!c.cancelled).sort((a,b)=>concertDate(a)-concertDate(b));
@@ -2834,6 +2835,10 @@ function renderLib(filter='All',search=''){
 }
 function filtG(g,el){document.querySelectorAll('.lf .chip').forEach(c=>c.classList.remove('on'));el.classList.add('on');aG=g;renderLib(g);}
 function filterLib(v){renderLib(aG,v);}
+function openAddSong(){
+  if(!activeBandId){toast2('Create a band first before adding songs','w');return;}
+  showMod('alsMod');
+}
 async function addSong(){
   if(!activeBandId){toast2('No band selected — please create or join a band first','w');return;}
   const title=document.getElementById('nst').value.trim();
@@ -3747,6 +3752,7 @@ function populateCeSetlistSelect(linkedIds){
 }
 
 function openNewConcert(){
+  if(!activeBandId){toast2('Create a band first before adding concerts','w');return;}
   editingConcertId = null;
   document.getElementById('ceModalTitle').textContent = 'New Concert';
   ['ceTitle','ceVenue','ceAddress','ceTime','ceDuration','ceAudience','ceNotes'].forEach(id=>{
