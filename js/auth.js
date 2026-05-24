@@ -169,7 +169,6 @@ async function doDemo() {
 }
 
 async function doLogout() {
-  if (!confirm('Log out of Bandapp?')) return;
   await supabase.auth.signOut();
 }
 

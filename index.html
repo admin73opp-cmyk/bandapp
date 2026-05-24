@@ -2241,7 +2241,7 @@ function syncCurrentUserToUI(){
   // Sidebar footer (user)
   const uav = document.querySelector('.uav');
   if(uav){
-    const photo = memberPhotos[u.memberIdx];
+    const photo = memberPhotos[u.memberIdx] || localStorage.getItem(`mpPhoto_${u.id}`) || null;
     if(photo){
       uav.style.backgroundImage = `url(${photo})`;
       uav.style.backgroundSize = 'cover';
@@ -4923,7 +4923,7 @@ async function populateMpPage(){
   // Avatar
   const av=document.getElementById('mpAv');
   if(av){
-    const photo=m?memberPhotos[idx]:null;
+    const photo=memberPhotos[idx]||localStorage.getItem(`mpPhoto_${currentUser.id}`)||null;
     if(photo){av.style.backgroundImage=`url(${photo})`;av.style.backgroundSize='cover';av.style.backgroundPosition='center';av.textContent='';}
     else{av.style.backgroundImage='';av.style.background=m?.color||currentUser.color||'#6C63FF';av.textContent=m?.init||currentUser.initials||'?';}
   }
@@ -5124,6 +5124,7 @@ function handleMpPhoto(event){
     const dataUrl=e.target.result;
     const idx=currentUser.memberIdx;
     memberPhotos[idx]=dataUrl;
+    try{localStorage.setItem(`mpPhoto_${currentUser.id}`,dataUrl);}catch(e){}
     const av=document.getElementById('mpAv');
     if(av){av.style.backgroundImage=`url(${dataUrl})`;av.style.backgroundSize='cover';av.style.backgroundPosition='center';av.textContent='';}
     syncCurrentUserToUI();
