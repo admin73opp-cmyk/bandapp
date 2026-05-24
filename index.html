@@ -4916,7 +4916,8 @@ async function populateMpPage(){
   const idx=currentUser.memberIdx;
   const m=members[idx];
   const ex=extraData[idx]||{};
-  // New users with no band membership won't have an m — fall back to currentUser
+  const cp=currentUser._profile||{}; // full profile row loaded at login
+  // New users with no band membership won't have an m — fall back to currentUser/cp
   const fn=m?.firstName||currentUser.firstName||'';
   const ln=m?.lastName||currentUser.lastName||'';
 
@@ -4946,21 +4947,21 @@ async function populateMpPage(){
   populateCountrySelects();
   document.getElementById('mpFirst').value=fn;
   document.getElementById('mpLast').value=ln;
-  document.getElementById('mpBday').value=ex.bday||m?.bday||'';
-  document.getElementById('mpNat').value=ex.nat||m?.nat||'';
+  document.getElementById('mpBday').value=ex.bday||m?.bday||cp.bday||'';
+  document.getElementById('mpNat').value=ex.nat||m?.nat||cp.nationality||'';
   document.getElementById('mpEmail').value=currentUser.email||'';
-  document.getElementById('mpCountry').value=ex.country||m?.country||'';
-  initPhoneField('mpPhoneCc','mpPhoneNum',ex.phone||[m?.phoneDial,m?.phoneNum].filter(Boolean).join(' ')||'');
-  document.getElementById('mpBio').value=ex.bio||m?.bio||'';
+  document.getElementById('mpCountry').value=ex.country||m?.country||cp.country||'';
+  initPhoneField('mpPhoneCc','mpPhoneNum',ex.phone||[m?.phoneDial,m?.phoneNum].filter(Boolean).join(' ')||[cp.phone_dial,cp.phone_number].filter(Boolean).join(' ')||'');
+  document.getElementById('mpBio').value=ex.bio||m?.bio||cp.bio||'';
   renderMpNatFlag();
 
   // Music
   populateInstrumentSelects();
-  document.getElementById('mpInst1').value=m?.instrument||'';
-  document.getElementById('mpInst2').value=m?.inst2||'';
+  document.getElementById('mpInst1').value=m?.instrument||currentUser.instrument||cp.instrument||'';
+  document.getElementById('mpInst2').value=m?.inst2||cp.instrument2||'';
   renderMpInstPreview();
   const vmap={'Lead':'Lead vocals','Backing':'Backing vocals','None':'No vocals','Both':'Lead & backing'};
-  document.getElementById('mpVocals').value=vmap[m?.vocals]||'No vocals';
+  document.getElementById('mpVocals').value=vmap[m?.vocals]||vmap[cp.vocals]||'No vocals';
 
   // Availability
   const dayNames=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
@@ -4969,13 +4970,13 @@ async function populateMpPage(){
   ).join('');
 
   // Gear & Links
-  document.getElementById('mpGear').value=ex.gear||m?.gear||'';
-  document.getElementById('mpSpotify').value=ex.spotify||m?.spotify||'';
-  document.getElementById('mpApple').value=ex.apple||m?.apple||'';
-  document.getElementById('mpYoutube').value=ex.youtube||m?.youtube||'';
-  document.getElementById('mpInstagram').value=ex.instagram||m?.instagram||'';
-  document.getElementById('mpFacebook').value=ex.facebook||m?.facebook||'';
-  document.getElementById('mpWebsite').value=ex.website||m?.website||'';
+  document.getElementById('mpGear').value=ex.gear||m?.gear||cp.gear||'';
+  document.getElementById('mpSpotify').value=ex.spotify||m?.spotify||cp.spotify_url||'';
+  document.getElementById('mpApple').value=ex.apple||m?.apple||cp.apple_url||'';
+  document.getElementById('mpYoutube').value=ex.youtube||m?.youtube||cp.youtube_url||'';
+  document.getElementById('mpInstagram').value=ex.instagram||m?.instagram||cp.instagram_url||'';
+  document.getElementById('mpFacebook').value=ex.facebook||m?.facebook||cp.facebook_url||'';
+  document.getElementById('mpWebsite').value=ex.website||m?.website||cp.website_url||'';
 
   // Render all read views and ensure all sections start in read mode
   renderMpReadViews();
@@ -5044,6 +5045,9 @@ async function mpSave(sec){
     });
   }
   await loadMembers();
+  // Refresh _profile cache so populateMpPage re-reads correct data on next nav
+  const {data:freshProfile}=await supabase.from('profiles').select('*').eq('id',currentUser.id).single();
+  if(freshProfile) currentUser._profile=freshProfile;
   renderMpReadViews();
   mpCancel(sec);
   document.getElementById('mpNameDisplay').textContent=`${currentUser.firstName} ${currentUser.lastName}`.trim();
