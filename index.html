@@ -665,6 +665,17 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
     <!-- CALENDAR -->
     <div class="pg-area" id="pg-calendar">
 
+      <!-- Empty state: no band yet -->
+      <div id="calNoBand" style="display:none;text-align:center;padding:60px 20px">
+        <div style="font-size:2.5rem;margin-bottom:12px">🎸</div>
+        <div style="font-size:1.1rem;font-weight:700;margin-bottom:8px">No Band Yet</div>
+        <p style="font-size:.84rem;color:var(--ink2);margin-bottom:20px">Start by creating a band.</p>
+        <button class="btn btn-p btn-sm" onclick="openNewBand()">+ Create a Band</button>
+      </div>
+
+      <!-- Content (hidden when no band) -->
+      <div id="calContent">
+
       <!-- HEADER ROW -->
       <div class="calhdr">
         <div class="calnav">
@@ -739,48 +750,69 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
         </div>
       </div>
 
+      </div><!-- /calContent -->
     </div>
 
 
     <!-- REHEARSALS -->
     <div class="pg-area" id="pg-rehearsals">
-      <div style="display:flex;gap:9px;align-items:center;margin-bottom:15px;flex-wrap:wrap">
-        <div style="flex:1"><div style="font-size:1.12rem;font-weight:700;letter-spacing:-.03em">Rehearsals</div><div style="font-size:.74rem;color:var(--ink2);margin-top:2px" id="rehearsalCount">2 upcoming · 3 past</div></div>
+      <!-- Empty state: no band yet -->
+      <div id="rehearsalsNoBand" style="display:none;text-align:center;padding:60px 20px">
+        <div style="font-size:2.5rem;margin-bottom:12px">🎸</div>
+        <div style="font-size:1.1rem;font-weight:700;margin-bottom:8px">No Band Yet</div>
+        <p style="font-size:.84rem;color:var(--ink2);margin-bottom:20px">Start by creating a band.</p>
+        <button class="btn btn-p btn-sm" onclick="openNewBand()">+ Create a Band</button>
       </div>
-      <div class="clist" id="rehearsalListUpcoming"></div>
-      <div id="pastRehearsalSection" style="margin-top:24px">
-        <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
-          <div style="font-size:.78rem;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.07em">Past Rehearsals</div>
-          <div style="flex:1;height:1px;background:var(--bd)"></div>
+      <!-- Content (hidden when no band) -->
+      <div id="rehearsalsContent">
+        <div style="display:flex;gap:9px;align-items:center;margin-bottom:15px;flex-wrap:wrap">
+          <div style="flex:1"><div style="font-size:1.12rem;font-weight:700;letter-spacing:-.03em">Rehearsals</div><div style="font-size:.74rem;color:var(--ink2);margin-top:2px" id="rehearsalCount"></div></div>
         </div>
-        <div class="clist" id="rehearsalListPast"></div>
-      </div>
-      <div id="cancelledRehearsalSection" style="margin-top:24px;display:none">
-        <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
-          <div style="font-size:.78rem;font-weight:700;color:var(--r);text-transform:uppercase;letter-spacing:.07em">🚫 Cancelled</div>
-          <div style="flex:1;height:1px;background:var(--r2)"></div>
+        <div class="clist" id="rehearsalListUpcoming"></div>
+        <div id="pastRehearsalSection" style="margin-top:24px">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+            <div style="font-size:.78rem;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.07em">Past Rehearsals</div>
+            <div style="flex:1;height:1px;background:var(--bd)"></div>
+          </div>
+          <div class="clist" id="rehearsalListPast"></div>
         </div>
-        <div class="clist" id="rehearsalListCancelled"></div>
+        <div id="cancelledRehearsalSection" style="margin-top:24px;display:none">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+            <div style="font-size:.78rem;font-weight:700;color:var(--r);text-transform:uppercase;letter-spacing:.07em">🚫 Cancelled</div>
+            <div style="flex:1;height:1px;background:var(--r2)"></div>
+          </div>
+          <div class="clist" id="rehearsalListCancelled"></div>
+        </div>
       </div>
     </div>
     <div class="pg-area" id="pg-concerts">
-      <div style="display:flex;gap:9px;align-items:center;margin-bottom:15px;flex-wrap:wrap">
-        <div style="flex:1"><div style="font-size:1.12rem;font-weight:700;letter-spacing:-.03em">Concerts</div><div style="font-size:.74rem;color:var(--ink2);margin-top:2px" id="concertCount">3 upcoming · 2 past</div></div>
+      <!-- Empty state: no band yet -->
+      <div id="concertsNoBand" style="display:none;text-align:center;padding:60px 20px">
+        <div style="font-size:2.5rem;margin-bottom:12px">🎸</div>
+        <div style="font-size:1.1rem;font-weight:700;margin-bottom:8px">No Band Yet</div>
+        <p style="font-size:.84rem;color:var(--ink2);margin-bottom:20px">Start by creating a band.</p>
+        <button class="btn btn-p btn-sm" onclick="openNewBand()">+ Create a Band</button>
       </div>
-      <div class="clist" id="concertListUpcoming"></div>
-      <div id="pastConcertSection" style="margin-top:24px">
-        <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
-          <div style="font-size:.78rem;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.07em">Past Concerts</div>
-          <div style="flex:1;height:1px;background:var(--bd)"></div>
+      <!-- Content (hidden when no band) -->
+      <div id="concertsContent">
+        <div style="display:flex;gap:9px;align-items:center;margin-bottom:15px;flex-wrap:wrap">
+          <div style="flex:1"><div style="font-size:1.12rem;font-weight:700;letter-spacing:-.03em">Concerts</div><div style="font-size:.74rem;color:var(--ink2);margin-top:2px" id="concertCount"></div></div>
         </div>
-        <div class="clist" id="concertListPast"></div>
-      </div>
-      <div id="cancelledConcertSection" style="margin-top:24px;display:none">
-        <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
-          <div style="font-size:.78rem;font-weight:700;color:var(--r);text-transform:uppercase;letter-spacing:.07em">🚫 Cancelled</div>
-          <div style="flex:1;height:1px;background:var(--r2)"></div>
+        <div class="clist" id="concertListUpcoming"></div>
+        <div id="pastConcertSection" style="margin-top:24px">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+            <div style="font-size:.78rem;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.07em">Past Concerts</div>
+            <div style="flex:1;height:1px;background:var(--bd)"></div>
+          </div>
+          <div class="clist" id="concertListPast"></div>
         </div>
-        <div class="clist" id="concertListCancelled"></div>
+        <div id="cancelledConcertSection" style="margin-top:24px;display:none">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+            <div style="font-size:.78rem;font-weight:700;color:var(--r);text-transform:uppercase;letter-spacing:.07em">🚫 Cancelled</div>
+            <div style="flex:1;height:1px;background:var(--r2)"></div>
+          </div>
+          <div class="clist" id="concertListCancelled"></div>
+        </div>
       </div>
     </div>
 
@@ -1603,6 +1635,15 @@ function rehearsalDate(r){
 function isRehPast(r){return rehearsalDate(r)<TODAY;}
 
 function renderRehearsals(){
+  const noBand=document.getElementById('rehearsalsNoBand');
+  const content=document.getElementById('rehearsalsContent');
+  if(!activeBandId){
+    if(noBand)noBand.style.display='';
+    if(content)content.style.display='none';
+    return;
+  }
+  if(noBand)noBand.style.display='none';
+  if(content)content.style.display='';
   const cancelled=rehearsals.filter(r=>r.cancelled);
   const active   =rehearsals.filter(r=>!r.cancelled);
   const upcoming =active.filter(r=>!isRehPast(r)).sort((a,b)=>rehearsalDate(a)-rehearsalDate(b));
@@ -3282,6 +3323,15 @@ window.addEventListener('orientationchange',()=>setTimeout(checkLandscapeHint,20
 
 // ── CALENDAR RENDER ──────────────────────────────────────
 function renderCal(){
+  const noBand=document.getElementById('calNoBand');
+  const content=document.getElementById('calContent');
+  if(!activeBandId){
+    if(noBand)noBand.style.display='';
+    if(content)content.style.display='none';
+    return;
+  }
+  if(noBand)noBand.style.display='none';
+  if(content)content.style.display='';
   const yr=curMonth.getFullYear(),mo=curMonth.getMonth();
   const lbl=`${MN[mo]} ${yr}`;
   document.getElementById('calLbl').textContent=lbl;
@@ -3507,6 +3557,15 @@ function concertDate(c){
 function isPast(c){ return concertDate(c) < TODAY; }
 
 function renderConcerts(){
+  const noBand=document.getElementById('concertsNoBand');
+  const content=document.getElementById('concertsContent');
+  if(!activeBandId){
+    if(noBand)noBand.style.display='';
+    if(content)content.style.display='none';
+    return;
+  }
+  if(noBand)noBand.style.display='none';
+  if(content)content.style.display='';
   const cancelled= concerts.filter(c=>c.cancelled);
   const active   = concerts.filter(c=>!c.cancelled);
   const upcoming = active.filter(c=>!isPast(c)).sort((a,b)=>concertDate(a)-concertDate(b));
