@@ -18,7 +18,22 @@ function t(key) {
  */
 function applyI18n() {
   document.querySelectorAll('[data-i18n]').forEach(el => {
-    el.textContent = t(el.getAttribute('data-i18n'));
+    const key = el.getAttribute('data-i18n');
+    if (el.children.length === 0) {
+      // Leaf element — safe to replace text directly
+      el.textContent = t(key);
+    } else {
+      // Container — translate the most appropriate child text node
+      // (.sb-label for sidebar nav items, <label> for form groups)
+      const sbLabel = el.querySelector(':scope > .sb-label');
+      const label = el.querySelector(':scope > label');
+      if (sbLabel && sbLabel.children.length === 0) {
+        sbLabel.textContent = t(key);
+      } else if (label && label.children.length === 0) {
+        label.textContent = t(key);
+      }
+      // else skip — don't clobber complex containers
+    }
   });
   document.querySelectorAll('[data-i18n-html]').forEach(el => {
     const key = el.getAttribute('data-i18n-html');
