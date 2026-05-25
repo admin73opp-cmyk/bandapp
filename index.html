@@ -2084,18 +2084,18 @@ async function saveWaLink(){
   if(val&&!val.startsWith('https://chat.whatsapp.com/')){
     toast2('Please enter a valid WhatsApp group link','w');return;
   }
+  const {error}=await supabase.from('bands').update({whatsapp_link:val||null}).eq('id',activeBandId);
+  if(error){handleDbError(error);return;}
   bandWaLinks[activeBandId]=val||null;
-  const b=getActiveBand();
-  if(b) await BandsDB.upsert({...b, whatsapp_link:val||null});
   refreshWaUI();refreshNotifSettUI();
   toast2(val?'WhatsApp group link saved!':'Link removed');
 }
 
 async function removeWaLink(){
+  const {error}=await supabase.from('bands').update({whatsapp_link:null}).eq('id',activeBandId);
+  if(error){handleDbError(error);return;}
   bandWaLinks[activeBandId]=null;
   document.getElementById('waLinkInput').value='';
-  const b=getActiveBand();
-  if(b) await BandsDB.upsert({...b, whatsapp_link:null});
   refreshWaUI();refreshNotifSettUI();
   toast2('WhatsApp link removed','w');
 }
