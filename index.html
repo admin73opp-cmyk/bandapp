@@ -2573,8 +2573,6 @@ function openInviteMessage(){
   if(lastName) params.set('lname',lastName);
   const invEmail=(document.getElementById('invEmail')?.value||'').trim();
   if(invEmail) params.set('email',invEmail);
-  const phone=getFullPhone('invPhoneCc','invPhoneNum');
-  if(phone) params.set('phone',phone);
   const instrument=(document.getElementById('invInstrument')?.value||'').trim();
   if(instrument) params.set('instrument',instrument);
   if(bandId) params.set('band',bandId);
@@ -2599,7 +2597,6 @@ function openInviteMessage(){
 function sendInvitation(){
   const channel=document.getElementById('invMsgChannel').textContent;
   const msg=document.getElementById('invMsgText').value;
-  const phone=getFullPhone('invPhoneCc','invPhoneNum');
 
   if(channel==='WhatsApp'){
     const waLinked=!!bandWaLinks[activeBandId];
@@ -4719,10 +4716,13 @@ function openBandPhotoLightbox(idx){
 
 // INIT
 function openInvMod(){
-  populatePhoneCc('invPhoneCc','+32');
-  document.getElementById('invPhoneNum').value='';
   const invInst=document.getElementById('invInstrument');
-  if(invInst) invInst.value='';
+  if(invInst){populateInstrumentSelects();invInst.value='';}
+  ['invFirstName','invLastName','invEmail'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  const invRole=document.getElementById('invRole');if(invRole)invRole.value='Member';
+  const gd=document.getElementById('invGuestDates');if(gd)gd.style.display='none';
+  const lr=document.getElementById('invLookupResult');if(lr)lr.style.display='none';
+  const le=document.getElementById('invLookupEmail');if(le)le.value='';
   showMod('invMod');
 }
 
