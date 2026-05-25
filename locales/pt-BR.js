@@ -733,6 +733,23 @@ window.PT_BR = {
   'Synthesizer': 'Sintetizador',
   'DJ / Turntables': 'DJ / Pick-ups',
 
+  /* ── FEEDBACK ───────────────────────────────────────── */
+  'Share Feedback': 'Enviar Feedback',
+  'Help us improve Bandapp': 'Ajude-nos a melhorar o Bandapp',
+  'Category': 'Categoria',
+  'Bug': 'Bug',
+  'Feedback': 'Feedback',
+  'Suggestion': 'Sugestão',
+  'Description': 'Descrição',
+  'Describe the bug, feedback, or suggestion…': 'Descreva o bug, feedback ou sugestão…',
+  'Page': 'Página',
+  'User': 'Usuário',
+  'Submit': 'Enviar',
+  'Submitting…': 'Enviando…',
+  'Please select a category and enter a description.': 'Por favor, selecione uma categoria e descreva o problema.',
+  'Thank you! Your feedback has been submitted.': 'Obrigado! Seu feedback foi enviado.',
+  'Failed to submit feedback. Please try again.': 'Falha ao enviar feedback. Tente novamente.',
+
   /* ── MISC ─────────────────────────────────────────────── */
   'No band selected': 'Nenhuma banda selecionada',
   'Export': 'Exportar',

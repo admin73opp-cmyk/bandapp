@@ -331,3 +331,13 @@ create policy "band_assets_delete" on storage.objects
     bucket_id = 'band-assets'
     and is_band_admin((string_to_array(name, '/'))[2]::uuid)
   );
+
+-- ── FEEDBACK ─────────────────────────────────────────────────
+-- The Edge Function inserts feedback with service role (bypasses RLS).
+-- SELECT: each authenticated user can read their own submissions.
+-- No client-side INSERT/UPDATE/DELETE — all mutations go through the Edge Function.
+
+alter table feedback enable row level security;
+
+create policy "feedback_select_own" on feedback
+  for select using (auth.uid() = user_id);

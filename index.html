@@ -331,6 +331,17 @@ select option{background:var(--w)}
 .toast{position:fixed;bottom:17px;right:17px;background:var(--ink);color:#fff;border-radius:var(--rad);padding:10px 15px;font-size:.79rem;font-weight:500;display:flex;align-items:center;gap:7px;box-shadow:var(--shl);z-index:9999;transform:translateY(48px);opacity:0;transition:all .27s cubic-bezier(.2,.8,.4,1)}
 .toast.on{transform:none;opacity:1}
 .td{width:6px;height:6px;border-radius:50%;background:var(--g);flex-shrink:0}.td.w{background:var(--amb)}
+/* floating feedback button */
+.fb-btn{position:fixed;bottom:76px;right:17px;z-index:1000;width:42px;height:42px;border-radius:50%;background:var(--a);color:#fff;border:none;cursor:pointer;font-size:1.1rem;display:none;align-items:center;justify-content:center;box-shadow:0 2px 10px rgba(108,99,255,.4);transition:transform .14s,box-shadow .14s;padding:0}
+.fb-btn:hover{transform:scale(1.1);box-shadow:0 4px 16px rgba(108,99,255,.55)}
+.fb-btn:active{transform:scale(.93)}
+#app.vis .fb-btn{display:flex}
+/* feedback category picker */
+.fbcats{display:flex;gap:7px}
+.fbcat{flex:1;padding:9px 5px;border:1.5px solid var(--bd);border-radius:var(--rad);background:var(--bg);cursor:pointer;text-align:center;transition:all .12s;font-size:.77rem;font-weight:600;color:var(--ink2);line-height:1.5;user-select:none}
+.fbcat:hover{border-color:var(--a)}.fbcat.on{border-color:var(--a);background:var(--a2);color:var(--a)}
+.fbcat[data-cat=bug].on{border-color:var(--r);background:var(--r2);color:var(--r)}
+.fbcat[data-cat=suggestion].on{border-color:var(--g);background:var(--g2);color:var(--g)}
 /* pdf note */
 .pdfn{font-size:.69rem;color:var(--ink3);display:flex;align-items:center;gap:3px}
 /* empty */
@@ -1558,6 +1569,47 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
 </div>
 
 <div class="toast" id="toast"><div class="td" id="toastDot"></div><span id="toastMsg">Done!</span></div>
+
+<!-- Floating feedback button — visible whenever #app.vis is active -->
+<button class="fb-btn" id="fbBtn" onclick="openFeedbackMod()" title="Report a bug or share feedback">💬</button>
+
+<!-- Feedback modal -->
+<div class="mov" id="fbMod" style="display:none" onclick="if(event.target===this)closeMod('fbMod')">
+<div class="mod" style="max-width:460px">
+  <button class="mod-x" onclick="closeMod('fbMod')">✕</button>
+  <div class="mott" data-i18n="Share Feedback">Share Feedback</div>
+  <div class="most" data-i18n="Help us improve Bandapp">Help us improve Bandapp</div>
+  <div class="fg">
+    <label><span data-i18n="Category">Category</span> <span style="color:var(--r)">*</span></label>
+    <div class="fbcats" id="fbCats">
+      <div class="fbcat" data-cat="bug" onclick="selectFbCat('bug')">
+        <div style="font-size:1.1rem;margin-bottom:2px">🐛</div>
+        <div data-i18n="Bug">Bug</div>
+      </div>
+      <div class="fbcat" data-cat="feedback" onclick="selectFbCat('feedback')">
+        <div style="font-size:1.1rem;margin-bottom:2px">💬</div>
+        <div data-i18n="Feedback">Feedback</div>
+      </div>
+      <div class="fbcat" data-cat="suggestion" onclick="selectFbCat('suggestion')">
+        <div style="font-size:1.1rem;margin-bottom:2px">💡</div>
+        <div data-i18n="Suggestion">Suggestion</div>
+      </div>
+    </div>
+  </div>
+  <div class="fg">
+    <label><span data-i18n="Description">Description</span> <span style="color:var(--r)">*</span></label>
+    <textarea id="fbDesc" rows="4" style="min-height:88px" placeholder="Describe the bug, feedback, or suggestion…" data-i18n-placeholder="Describe the bug, feedback, or suggestion…"></textarea>
+  </div>
+  <div style="font-size:.71rem;color:var(--ink3);background:var(--bg);border-radius:8px;padding:7px 10px;margin-bottom:11px;line-height:1.7">
+    📍 <span data-i18n="Page">Page</span>: <strong id="fbPageLabel">—</strong>&nbsp;&nbsp;·&nbsp;&nbsp;👤 <span data-i18n="User">User</span>: <strong id="fbUserLabel">—</strong>
+  </div>
+  <div id="fbErr" style="display:none;font-size:.78rem;color:var(--r);background:var(--r2);border-radius:8px;padding:8px 11px;margin-bottom:11px"></div>
+  <div class="moft">
+    <button class="btn btn-g" onclick="closeMod('fbMod')" data-i18n="Cancel">Cancel</button>
+    <button class="btn btn-p" id="fbSubmitBtn" onclick="submitFeedback()" data-i18n="Submit">Submit</button>
+  </div>
+</div>
+</div>
 
 <script>
 // DATA
@@ -4879,6 +4931,74 @@ async function initApp(){
   // New users with no band go to My Profile to complete their info first
   const isNewUser = !currentUser._memberships?.length;
   nav(isNewUser ? 'myprofile' : (localStorage.getItem('defaultView')||'dashboard'));
+}
+
+// ── Feedback ──────────────────────────────────────────────────
+let _fbCat = '';
+
+const _FB_PAGE_NAMES = () => ({
+  dashboard:'Dashboard', setlists:t('Set Lists'), library:t('Song Library'),
+  calendar:t('Calendar'), rehearsals:t('Rehearsals'), concerts:t('Concerts'),
+  members:t('Members'), guestdir:t('Guest Directory'), bandprofile:t('Band Profile'),
+  myprofile:t('My Profile'), settings:t('Settings'),
+});
+
+function openFeedbackMod() {
+  _fbCat = '';
+  document.querySelectorAll('.fbcat').forEach(el => el.classList.remove('on'));
+  document.getElementById('fbDesc').value = '';
+  document.getElementById('fbErr').style.display = 'none';
+  const fbBtn = document.getElementById('fbSubmitBtn');
+  fbBtn.disabled = false; fbBtn.textContent = t('Submit');
+  // Auto-fill page + user
+  const pageEl = document.querySelector('.pg-area.on');
+  const pageId = pageEl?.id?.replace('pg-', '') || 'dashboard';
+  document.getElementById('fbPageLabel').textContent = _FB_PAGE_NAMES()[pageId] || pageId;
+  const uname = [currentUser.firstName, currentUser.lastName].filter(Boolean).join(' ') || currentUser.email || '—';
+  document.getElementById('fbUserLabel').textContent = uname;
+  showMod('fbMod');
+}
+
+function selectFbCat(cat) {
+  _fbCat = cat;
+  document.querySelectorAll('.fbcat').forEach(el => el.classList.toggle('on', el.dataset.cat === cat));
+  document.getElementById('fbErr').style.display = 'none';
+}
+
+async function submitFeedback() {
+  const desc  = document.getElementById('fbDesc').value.trim();
+  const errEl = document.getElementById('fbErr');
+  if (!_fbCat || !desc) {
+    errEl.textContent = t('Please select a category and enter a description.');
+    errEl.style.display = '';
+    return;
+  }
+  const btn = document.getElementById('fbSubmitBtn');
+  btn.disabled = true;
+  btn.textContent = t('Submitting…');
+  errEl.style.display = 'none';
+  const pageEl = document.querySelector('.pg-area.on');
+  const pageId = pageEl?.id?.replace('pg-', '') || '';
+  try {
+    const { error } = await supabase.functions.invoke('submit-feedback', {
+      body: {
+        category:    _fbCat,
+        description: desc,
+        page:        pageId,
+        band_id:     activeBandId || null,
+        band_name:   document.querySelector('.sb-band-name')?.textContent?.trim() || '',
+      },
+    });
+    if (error) throw new Error(error.message || 'Unknown error');
+    closeMod('fbMod');
+    toast2(t('Thank you! Your feedback has been submitted.'));
+  } catch (e) {
+    errEl.textContent = t('Failed to submit feedback. Please try again.');
+    errEl.style.display = '';
+    console.error('[feedback]', e);
+    btn.disabled = false;
+    btn.textContent = t('Submit');
+  }
 }
 </script>
 <!-- MUSICIAN PROFILE MODAL -->

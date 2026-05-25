@@ -225,3 +225,21 @@ create table if not exists event_photos (
 );
 
 create index if not exists event_photos_event_idx on event_photos(event_type, event_id);
+
+-- ── FEEDBACK ─────────────────────────────────────────────────
+create table if not exists feedback (
+  id                   uuid primary key default gen_random_uuid(),
+  user_id              uuid references profiles(id) on delete set null,
+  user_name            text,
+  user_email           text,
+  band_id              uuid references bands(id) on delete set null,
+  page                 text,
+  category             text not null check (category in ('bug','feedback','suggestion')),
+  description          text not null,
+  github_issue_number  int,
+  github_issue_url     text,
+  created_at           timestamptz not null default now()
+);
+
+create index if not exists feedback_user_id_idx on feedback(user_id);
+create index if not exists feedback_category_idx on feedback(category);
