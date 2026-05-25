@@ -31,7 +31,8 @@ alter table bands add column if not exists youtube_url    text;
 alter table bands add column if not exists instagram_url  text;
 alter table bands add column if not exists facebook_url   text;
 alter table bands add column if not exists website_url    text;
-alter table bands add column if not exists photos         text[] not null default '{}';
+alter table bands add column if not exists photos              text[] not null default '{}';
+alter table bands add column if not exists notification_pref   text not null default 'both';
 
 alter table blackouts add column if not exists scope       text not null default 'band';
 alter table blackouts add column if not exists member_ids  uuid[] not null default '{}';

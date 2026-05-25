@@ -2024,7 +2024,10 @@ function setNotifPref(pref){
     both:t('Default: Both email and WhatsApp group notification.'),
   };
   const n=document.getElementById('settNotifNote');if(n)n.textContent=notes[pref];
-  toast2('Notification preference saved!');
+  supabase.from('bands').update({notification_pref:pref}).eq('id',activeBandId).then(({error})=>{
+    if(error) handleDbError(error);
+    else toast2('Notification preference saved!');
+  });
 }
 
 function refreshNotifSettUI(){
