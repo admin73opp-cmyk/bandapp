@@ -4570,11 +4570,14 @@ async function submitFeedback(){
   const btn=document.getElementById('fbSubmitBtn');
   btn.disabled=true;btn.textContent='Submitting…';
   try{
-    const{data,error}=await supabase.functions.invoke('create-github-issue',{
-      body:{title,body,labels:cat==='bug'?['bug']:['enhancement']},
+    const res=await fetch(`${SUPABASE_URL}/functions/v1/create-github-issue`,{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':`Bearer ${SUPABASE_ANON_KEY}`},
+      body:JSON.stringify({title,body,labels:cat==='bug'?['bug']:['enhancement']}),
     });
-    if(error||data?.message){toast2((error?.message||data?.message||'Failed to submit. Please try again.'),'w');}
-    else{closeMod('feedbackMod');toast2('Thanks! Your feedback has been submitted.');}
+    const data=await res.json().catch(()=>({}));
+    if(res.ok){closeMod('feedbackMod');toast2('Thanks! Your feedback has been submitted.');}
+    else{toast2(data.message||`Error ${res.status}. Please try again.`,'w');}
   }catch(e){toast2('Network error. Please try again.','w');}
   btn.disabled=false;btn.textContent='Submit';
 }
