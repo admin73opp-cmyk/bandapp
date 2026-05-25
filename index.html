@@ -327,6 +327,7 @@ select option{background:var(--w)}
 .invic{font-size:1.15rem;margin-bottom:3px}.invl{font-size:.7rem;font-weight:600}
 /* toast */
 .toast{position:fixed;bottom:17px;right:17px;background:var(--ink);color:#fff;border-radius:var(--rad);padding:10px 15px;font-size:.79rem;font-weight:500;display:flex;align-items:center;gap:7px;box-shadow:var(--shl);z-index:9999;transform:translateY(48px);opacity:0;transition:all .27s cubic-bezier(.2,.8,.4,1)}
+#feedbackFab{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);z-index:300;background:var(--a);color:#fff;border:none;border-radius:99px;padding:8px 16px;font-family:var(--font);font-size:.73rem;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:5px;box-shadow:0 4px 16px rgba(108,99,255,.35);transition:background .14s,box-shadow .14s,transform .14s}#feedbackFab:hover{background:#5851e0;box-shadow:0 6px 20px rgba(108,99,255,.45);transform:translateX(-50%) translateY(-2px)}
 .toast.on{transform:none;opacity:1}
 .td{width:6px;height:6px;border-radius:50%;background:var(--g);flex-shrink:0}.td.w{background:var(--amb)}
 /* pdf note */
@@ -434,6 +435,7 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
 
 <!-- APP -->
 <div id="app">
+  <button id="feedbackFab" onclick="openFeedbackModal()">🐛 Bug / Feedback</button>
   <div class="sb-ov" id="sbOv" onclick="toggleSb()"></div>
   <nav class="sb" id="sb">
     <!-- minimize toggle -->
@@ -4544,6 +4546,40 @@ async function initApp(){
   const isNewUser = !currentUser._memberships?.length;
   nav(isNewUser ? 'myprofile' : (localStorage.getItem('defaultView')||'dashboard'));
 }
+
+// ── Bug / Feedback reporting ──────────────────────────────────
+function openFeedbackModal(){
+  document.getElementById('fbCat').value='bug';
+  document.getElementById('fbDesc').value='';
+  document.getElementById('feedbackMod').style.display='flex';
+  setTimeout(()=>document.getElementById('fbDesc').focus(),80);
+}
+
+async function submitFeedback(){
+  const cat=document.getElementById('fbCat').value;
+  const desc=document.getElementById('fbDesc').value.trim();
+  if(!desc){toast2('Please describe the issue or feedback','w');return;}
+  const page=document.getElementById('pgT')?.textContent||'Unknown';
+  const band=getActiveBand();
+  const bandName=band?.name||'No band';
+  const userName=[currentUser.firstName,currentUser.lastName].filter(Boolean).join(' ')||'Unknown';
+  const today=new Date().toISOString().split('T')[0];
+  const catLabel={bug:'Bug',feedback:'Feedback',suggestion:'Suggestion'}[cat]||cat;
+  const title=`[${catLabel}] ${desc.split('\n')[0].substring(0,60)}`;
+  const body=`**Category:** ${cat}\n**Page:** ${page}\n**Band:** ${bandName}\n**User:** ${userName} (${currentUser.email||''})\n\n**Description:**\n${desc}\n\n---\n_Submitted via Bandapp on ${today}_`;
+  const btn=document.getElementById('fbSubmitBtn');
+  btn.disabled=true;btn.textContent='Submitting…';
+  try{
+    const res=await fetch('https://api.github.com/repos/admin73opp-cmyk/bandapp/issues',{
+      method:'POST',
+      headers:{'Authorization':`Bearer ${GITHUB_FEEDBACK_TOKEN}`,'Content-Type':'application/json','Accept':'application/vnd.github+json'},
+      body:JSON.stringify({title,body,labels:cat==='bug'?['bug']:['enhancement']}),
+    });
+    if(res.ok){closeMod('feedbackMod');toast2('Thanks! Your feedback has been submitted.');}
+    else{const e=await res.json().catch(()=>({}));toast2(e.message||'Failed to submit. Please try again.','w');}
+  }catch(e){toast2('Network error. Please try again.','w');}
+  btn.disabled=false;btn.textContent='Submit';
+}
 </script>
 <!-- MUSICIAN PROFILE MODAL -->
 <div class="mov" id="profMod" style="display:none" onclick="closeMB(event,'profMod')">
@@ -5687,6 +5723,30 @@ async function saveSettings(){
   <div class="moft">
     <button class="btn btn-g" onclick="closeMod('guestConvertMod')">Cancel</button>
     <button class="btn btn-p" onclick="confirmGuestConvert()">Confirm Guest Role</button>
+  </div>
+</div>
+</div>
+
+<!-- Feedback / Bug Report Modal -->
+<div class="mov" id="feedbackMod" style="display:none" onclick="closeMB(event,'feedbackMod')">
+<div class="mod" style="max-width:460px">
+  <button class="mod-x" onclick="closeMod('feedbackMod')">✕</button>
+  <div class="mott" style="margin-bottom:16px">Report a Bug / Give Feedback</div>
+  <div class="fg">
+    <label>Category</label>
+    <select id="fbCat">
+      <option value="bug">🐛 Bug</option>
+      <option value="feedback">💬 Feedback</option>
+      <option value="suggestion">💡 Suggestion</option>
+    </select>
+  </div>
+  <div class="fg">
+    <label>Description</label>
+    <textarea id="fbDesc" placeholder="Describe the issue or your feedback…" style="min-height:110px"></textarea>
+  </div>
+  <div style="display:flex;gap:9px;justify-content:flex-end;margin-top:6px">
+    <button class="btn btn-g" onclick="closeMod('feedbackMod')">Cancel</button>
+    <button class="btn btn-p" id="fbSubmitBtn" onclick="submitFeedback()">Submit</button>
   </div>
 </div>
 </div>
