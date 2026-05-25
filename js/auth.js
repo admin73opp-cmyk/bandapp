@@ -266,6 +266,11 @@ supabase.auth.onAuthStateChange(async (event, session) => {
   document.getElementById('app').classList.add('vis');
   initSbState();
   await initApp();
+
+  // Invited users land with needs_onboarding=true — show password-setup overlay
+  if (_meta.needs_onboarding) {
+    if (typeof showOnboarding === 'function') showOnboarding();
+  }
 });
 
 // On first load, restore an existing session without waiting for the event

@@ -1429,24 +1429,12 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
     <div style="flex:1;height:1px;background:var(--bd)"></div>
   </div>
 
-  <!-- Option B message channel -->
-  <div class="invopts">
-    <div class="invopt on" onclick="selInv(this)"><div class="invic">✉️</div><div class="invl">Email</div></div>
-    <div class="invopt" onclick="selInv(this)"><div class="invic">💬</div><div class="invl">WhatsApp</div></div>
-    <div class="invopt" onclick="selInv(this)"><div class="invic">🔗</div><div class="invl">Link</div></div>
+  <!-- Option B: new user — invite via Supabase email -->
+  <div style="font-size:.75rem;color:var(--ink2);padding:8px 11px;background:var(--a2);border:1px solid rgba(108,99,255,.2);border-radius:var(--rad);margin-bottom:12px">
+    📧 An invite email will be sent. The musician clicks the link, sets a password, and lands straight in the band — no sign-up form needed.
   </div>
   <div class="fr"><div class="fg"><label>First Name</label><input id="invFirstName" placeholder="Sophie"></div><div class="fg"><label>Last Name</label><input id="invLastName" placeholder="Vandenberghe"></div></div>
   <div class="fg"><label>Email</label><input type="email" id="invEmail" placeholder="sophie@email.com"></div>
-  <div class="fg">
-    <label>Phone / WhatsApp</label>
-    <div class="phone-row">
-      <div class="phone-cc-wrap">
-        <div class="phone-cc-display" id="invPhoneCcDisplay">+32 <svg width="10" height="10" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6l4 4 4-4"/></svg></div>
-        <select id="invPhoneCc" onchange="updatePhoneCcDisplay('invPhoneCc','invPhoneCcDisplay')"></select>
-      </div>
-      <input class="phone-num" type="tel" id="invPhoneNum" placeholder="479 123 456">
-    </div>
-  </div>
   <div class="fr"><div class="fg"><label>Instrument</label><select id="invInstrument"><option value="">— Instrument —</option></select></div><div class="fg"><label>Role</label><select id="invRole" onchange="toggleInvGuestDates(this)"><option>Member</option><option>Admin</option><option>Guest</option></select></div></div>
   <div id="invGuestDates" style="display:none">
     <div style="padding:9px 12px;background:var(--amb2);border:1px solid rgba(217,119,6,.3);border-radius:var(--rad);font-size:.76rem;color:var(--amb);margin-bottom:10px">Guests have full member access during the active date range, then move to the Guest Directory.</div>
@@ -1455,7 +1443,7 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
       <div class="fg"><label>Guest End Date</label><input type="date" id="invGuestEnd"></div>
     </div>
   </div>
-  <div class="moft"><button class="btn btn-g" onclick="closeMod('invMod')">Cancel</button><button class="btn btn-p" onclick="openInviteMessage()">Next: Review Message →</button></div>
+  <div class="moft"><button class="btn btn-g" onclick="closeMod('invMod')">Cancel</button><button class="btn btn-p" id="invSendBtn" onclick="sendInviteViaEdgeFunction()">Send Invite Email 📧</button></div>
 </div>
 </div>
 
@@ -2637,6 +2625,62 @@ function selPay(t){
   document.getElementById('paidFlds').style.display=t==='paid'?'':'none';
   updPayPill();
 }
+// ── Invite via Edge Function ──────────────────────────────────
+async function sendInviteViaEdgeFunction(){
+  if(!activeBandId){toast2('Select a band first','w');return;}
+  const email=(document.getElementById('invEmail')?.value||'').trim();
+  const firstName=(document.getElementById('invFirstName')?.value||'').trim();
+  const lastName=(document.getElementById('invLastName')?.value||'').trim();
+  const instrument=(document.getElementById('invInstrument')?.value||'').trim();
+  const role=(document.getElementById('invRole')?.value||'member').toLowerCase();
+  if(!email){toast2('Email address is required','w');return;}
+  const btn=document.getElementById('invSendBtn');
+  if(btn){btn.disabled=true;btn.textContent='Sending…';}
+  try{
+    const {data:{session}}=await supabase.auth.getSession();
+    const res=await fetch(`${SUPABASE_URL}/functions/v1/invite-member`,{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':`Bearer ${session.access_token}`},
+      body:JSON.stringify({band_id:activeBandId,email,first_name:firstName,last_name:lastName,instrument,role}),
+    });
+    const result=await res.json();
+    if(!res.ok){
+      toast2(result.message||result.error||'Failed to send invite','w');
+      return;
+    }
+    await loadMembers();
+    renderMembers();
+    updateSidebarCounts();
+    closeMod('invMod');
+    toast2(`Invite sent to ${email}! They'll receive an email to join the band. 🎉`);
+  }finally{
+    if(btn){btn.disabled=false;btn.textContent='Send Invite Email 📧';}
+  }
+}
+
+// ── First-login onboarding for invited users ──────────────────
+function showOnboarding(){
+  const band=getActiveBand();
+  const msg=document.getElementById('onboardingBandMsg');
+  if(msg&&band){msg.textContent=`You've been added to "${band.name}". Set a password to secure your account, then complete your profile.`;}
+  document.getElementById('onboardingMod').style.display='flex';
+}
+
+async function saveOnboardingPassword(){
+  const pw=(document.getElementById('onboardingPw')?.value||'');
+  const pw2=(document.getElementById('onboardingPwConfirm')?.value||'');
+  if(pw.length<6){toast2('Password must be at least 6 characters','w');return;}
+  if(pw!==pw2){toast2('Passwords do not match','w');return;}
+  const btn=document.getElementById('onboardingSaveBtn');
+  if(btn){btn.disabled=true;btn.textContent='Saving…';}
+  const {error}=await supabase.auth.updateUser({password:pw,data:{needs_onboarding:null}});
+  if(btn){btn.disabled=false;btn.textContent='Set Password & Continue →';}
+  if(error){toast2(error.message,'w');return;}
+  document.getElementById('onboardingMod').style.display='none';
+  nav('myprofile');
+  toast2('Password set! Please complete your profile.');
+}
+
 function updPayPill(){
   const pill=document.getElementById('payPill');if(!pill)return;
   if(payT==='free'){pill.className='pill pgray';pill.textContent='Free gig';return;}
@@ -5802,6 +5846,22 @@ async function saveSettings(){
   <div style="padding:13px 25px 20px;border-top:1px solid var(--bd);display:flex;gap:7px;justify-content:flex-end;background:var(--w);flex-shrink:0">
     <button class="btn btn-g" onclick="closeMod('reMod')" data-i18n="Cancel">Cancel</button>
     <button class="btn btn-p" onclick="saveRehEdit()" data-i18n="Save Rehearsal">Save Rehearsal</button>
+  </div>
+</div>
+</div>
+
+<!-- ONBOARDING MODAL — shown to invited users on first login -->
+<div class="mov" id="onboardingMod" style="display:none">
+<div class="mod" style="max-width:420px">
+  <div style="text-align:center;margin-bottom:18px">
+    <div style="font-size:2.2rem;margin-bottom:8px">🎸</div>
+    <div class="mott" style="margin-bottom:6px">Welcome to the band!</div>
+    <div class="most" id="onboardingBandMsg">You've been added to the band. Set a password to secure your account, then complete your profile.</div>
+  </div>
+  <div class="fg"><label>New Password</label><input type="password" id="onboardingPw" placeholder="At least 6 characters" autocomplete="new-password"></div>
+  <div class="fg"><label>Confirm Password</label><input type="password" id="onboardingPwConfirm" placeholder="Repeat password" autocomplete="new-password"></div>
+  <div style="margin-top:4px">
+    <button class="btn btn-p btn-fw" id="onboardingSaveBtn" onclick="saveOnboardingPassword()">Set Password &amp; Continue →</button>
   </div>
 </div>
 </div>
