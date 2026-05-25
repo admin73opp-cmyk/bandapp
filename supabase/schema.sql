@@ -31,6 +31,10 @@ alter table bands add column if not exists youtube_url    text;
 alter table bands add column if not exists instagram_url  text;
 alter table bands add column if not exists facebook_url   text;
 alter table bands add column if not exists website_url    text;
+alter table bands add column if not exists photos         text[] not null default '{}';
+
+alter table blackouts add column if not exists scope       text not null default 'band';
+alter table blackouts add column if not exists member_ids  uuid[] not null default '{}';
 
 -- Storage bucket for band cover images and logos (run once per project)
 insert into storage.buckets (id, name, public)

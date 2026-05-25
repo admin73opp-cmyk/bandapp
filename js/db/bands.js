@@ -31,13 +31,13 @@ const BandsDB = {
         platforms: _PLAT_DEFS
           .filter(p => b[p.key + '_url'])
           .map(p => ({ key: p.key, icon: p.icon, label: p.label, url: b[p.key + '_url'] })),
+        photos: b.photos || [],
         // Derived stats (computed from loaded arrays after initApp)
         songCount:     0,
         setlistCount:  0,
         upcomingCount: 0,
         pastCount:     0,
         nextGig:       { label: '—', sub: 'No gigs yet' },
-        photos:        [],
       };
     });
   },

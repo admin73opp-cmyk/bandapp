@@ -951,9 +951,9 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
           </div>
         </div>
         <div class="bp-code-row" style="display:none;margin-top:10px;padding:8px 12px;background:var(--bg2);border:1px solid var(--bd);border-radius:var(--rad);display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-          <span style="font-size:.7rem;font-weight:700;color:var(--ink2);letter-spacing:.04em;text-transform:uppercase;white-space:nowrap" data-i18n="Band Code">Band Code</span>
+          <span style="font-size:.7rem;font-weight:700;color:var(--ink2);letter-spacing:.04em;text-transform:uppercase;white-space:nowrap" data-i18n="Invite Link">Invite Link</span>
           <code id="bpJoinCode" style="font-size:.72rem;color:var(--ink);flex:1;word-break:break-all"></code>
-          <button class="btn btn-g btn-sm" style="flex-shrink:0;font-size:.72rem" onclick="navigator.clipboard.writeText(document.getElementById('bpJoinCode').textContent).then(()=>toast2('Band code copied!'))" data-i18n="Copy">Copy</button>
+          <button class="btn btn-g btn-sm" style="flex-shrink:0;font-size:.72rem" onclick="copyBandInviteLink()" data-i18n="Copy">Copy</button>
         </div>
       </div>
 
@@ -3521,7 +3521,7 @@ async function savBO(){
   const to=document.getElementById('boTo').value||from;
   const scope=document.getElementById('boSc').value;
   if(!label||!from){toast2('Fill in label and start date','w');return;}
-  const mids=scope==='members'?[...document.querySelectorAll('.bomc.on')].map(c=>c.dataset.mid):[];
+  const mids=scope==='members'?[...document.querySelectorAll('.bomc.on')].map(c=>c.dataset.mid).filter(id=>id&&id!=='null'):[];
   const payload={label,from,to,scope,mids};
   if(id) payload.id=id;
   const saved=await BlackoutsDB.upsert(payload);
@@ -4561,9 +4561,13 @@ function renderBP(){
   const adminActions=document.getElementById('bpAdminActions');
   if(adminActions)adminActions.style.display=isAdmin?'flex':'none';
 
-  // Band join code (admin only)
+  // Band invite link (admin only) — full URL so recipients can just click/paste
   const codeEl=document.getElementById('bpJoinCode');
-  if(codeEl){codeEl.textContent=b?b.id:'';codeEl.closest('.bp-code-row').style.display=isAdmin&&b?'':'none';}
+  if(codeEl){
+    const _base=localStorage.getItem('appUrl')||window.location.origin+window.location.pathname;
+    codeEl.textContent=b?`${_base}?band=${b.id}`:'';
+    codeEl.closest('.bp-code-row').style.display=isAdmin&&b?'':'none';
+  }
 
   // Cover/logo clickable only for admin
   const cover=document.getElementById('bpCover');
@@ -4722,16 +4726,41 @@ function renderBandPhotos(){
       ${isAdmin?`<button onclick="removeBandPhoto(${i})" style="position:absolute;top:-5px;right:-5px;width:18px;height:18px;border-radius:50%;background:var(--r);border:2px solid var(--w);color:#fff;font-size:.5rem;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1">✕</button>`:''}
     </div>`).join('');
 }
-function addBandPhoto(event){
+async function addBandPhoto(event){
   const file=event.target.files[0];if(!file)return;
-  const b=getActiveBand();if(!b)return;
+  const b=getActiveBand();if(!b||b.role!=='Admin')return;
+  if(!b.photos)b.photos=[];
+  // Optimistic preview
   const reader=new FileReader();
-  reader.onload=e=>{if(!b.photos)b.photos=[];b.photos.push(e.target.result);renderBandPhotos();toast2('Photo added!');};
-  reader.readAsDataURL(file);event.target.value='';
+  reader.onload=e=>{b.photos.push(e.target.result);renderBandPhotos();};
+  reader.readAsDataURL(file);
+  // Upload to Storage
+  const ext=file.name.split('.').pop().toLowerCase();
+  const path=`bands/${b.id}/photos/${Date.now()}.${ext}`;
+  const{error:upErr}=await supabase.storage.from('band-assets').upload(path,file,{upsert:false});
+  if(upErr){b.photos.pop();renderBandPhotos();toast2('Upload failed: '+upErr.message,'w');event.target.value='';return;}
+  const{data:urlData}=supabase.storage.from('band-assets').getPublicUrl(path);
+  const url=urlData.publicUrl;
+  // Replace the optimistic DataURL with the real URL
+  b.photos[b.photos.length-1]=url;
+  const{error}=await supabase.from('bands').update({photos:b.photos}).eq('id',b.id);
+  if(error){handleDbError(error);event.target.value='';return;}
+  renderBandPhotos();toast2('Photo added!');
+  event.target.value='';
 }
-function removeBandPhoto(idx){
+async function removeBandPhoto(idx){
   const b=getActiveBand();if(!b||!b.photos)return;
-  b.photos.splice(idx,1);renderBandPhotos();toast2('Photo removed','w');
+  const url=b.photos[idx];
+  b.photos.splice(idx,1);
+  renderBandPhotos();
+  const{error}=await supabase.from('bands').update({photos:b.photos}).eq('id',b.id);
+  if(error){handleDbError(error);return;}
+  // Also remove from Storage (best-effort; don't block on failure)
+  if(url&&url.includes('/band-assets/')){
+    const path=url.split('/band-assets/')[1];
+    supabase.storage.from('band-assets').remove([path]);
+  }
+  toast2('Photo removed','w');
 }
 function openBandPhotoLightbox(idx){
   const b=getActiveBand();if(!b||!b.photos||!b.photos[idx])return;
@@ -5035,6 +5064,20 @@ function attachPfLinkListeners(){
 }
 function bpCoverClick() { document.getElementById('bpCoverInput').click(); }
 function bpLogoClick()  { document.getElementById('bpLogoInput').click(); }
+
+function copyBandInviteLink() {
+  const text = document.getElementById('bpJoinCode').textContent;
+  if (!text) return;
+  navigator.clipboard.writeText(text)
+    .then(() => toast2('Invite link copied!'))
+    .catch(() => {
+      const ta = document.createElement('textarea');
+      ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+      document.body.appendChild(ta); ta.select();
+      try { document.execCommand('copy'); toast2('Invite link copied!'); } catch(e) { toast2('Copy failed — please copy manually', 'w'); }
+      document.body.removeChild(ta);
+    });
+}
 
 async function handleBpCover(event) {
   const file = event.target.files[0]; if (!file) return;

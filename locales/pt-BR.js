@@ -367,6 +367,7 @@ window.PT_BR = {
   'Invite a Musician': 'Convidar um Músico',
   'Guest access expires on the end date and they move to the Guest Directory.': 'O acesso de convidado expira na data de término e eles vão para o Diretório de Convidados.',
   'No Bandapp account found for this email. Use the invite form below to send them a signup link.': 'Nenhuma conta Bandapp encontrada para este e-mail. Use o formulário abaixo para enviar um link de cadastro.',
+  'Invite Link': 'Link de Convite',
   'Already have a Bandapp account? Use this band code to join directly': 'Já tem uma conta Bandapp? Use este código de banda para entrar diretamente',
   'Bandapp account found': 'Conta Bandapp encontrada',
   'Your profile': 'Seu perfil',

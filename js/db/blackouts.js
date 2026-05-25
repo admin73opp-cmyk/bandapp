@@ -26,7 +26,7 @@ const BlackoutsDB = {
     const { from, to, mids, ...fields } = blackout;
     fields.from_date  = from   || null;
     fields.to_date    = to     || null;
-    fields.member_ids = mids   || [];
+    fields.member_ids = (mids || []).filter(id => id && id !== 'null');
     if (!fields.band_id) fields.band_id = activeBandId;
     const { data, error } = await supabase
       .from('blackouts')
