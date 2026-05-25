@@ -24,6 +24,7 @@ create table if not exists bands (
 -- Add columns to existing deployments (no-op if already present)
 alter table bands add column if not exists whatsapp_link  text;
 alter table bands add column if not exists cover_url      text;
+alter table profiles add column if not exists cover_url   text;
 alter table bands add column if not exists logo_url       text;
 alter table bands add column if not exists spotify_url    text;
 alter table bands add column if not exists apple_url      text;
@@ -40,6 +41,11 @@ alter table blackouts add column if not exists member_ids  uuid[] not null defau
 -- Storage bucket for band cover images and logos (run once per project)
 insert into storage.buckets (id, name, public)
 values ('band-assets', 'band-assets', true)
+on conflict (id) do nothing;
+
+-- Storage bucket for user profile photos and covers
+insert into storage.buckets (id, name, public)
+values ('avatars', 'avatars', true)
 on conflict (id) do nothing;
 
 -- ── PROFILES (extends auth.users 1:1) ────────────────────────

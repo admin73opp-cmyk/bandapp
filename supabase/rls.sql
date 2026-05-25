@@ -332,6 +332,31 @@ create policy "band_assets_delete" on storage.objects
     and is_band_admin((string_to_array(name, '/'))[2]::uuid)
   );
 
+-- ── AVATARS bucket (user profile photos + covers) ────────────
+-- Public read; each user can only write under their own UUID prefix.
+
+create policy "avatars_select" on storage.objects
+  for select using (bucket_id = 'avatars');
+
+create policy "avatars_insert" on storage.objects
+  for insert with check (
+    bucket_id = 'avatars'
+    and auth.role() = 'authenticated'
+    and (string_to_array(name, '/'))[1] = auth.uid()::text
+  );
+
+create policy "avatars_update" on storage.objects
+  for update using (
+    bucket_id = 'avatars'
+    and (string_to_array(name, '/'))[1] = auth.uid()::text
+  );
+
+create policy "avatars_delete" on storage.objects
+  for delete using (
+    bucket_id = 'avatars'
+    and (string_to_array(name, '/'))[1] = auth.uid()::text
+  );
+
 -- ── FEEDBACK ─────────────────────────────────────────────────
 -- The Edge Function inserts feedback with service role (bypasses RLS).
 -- SELECT: each authenticated user can read their own submissions.

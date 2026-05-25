@@ -1660,6 +1660,8 @@ async function loadMembers(){
     spotify:m.spotify, apple:m.apple, youtube:m.youtube,
     instagram:m.instagram, facebook:m.facebook, website:m.website,
   }));
+  // Seed memberPhotos from DB photo_url so avatars load on every device
+  members.forEach((m,idx)=>{ if(m.photo) memberPhotos[idx]=m.photo; });
   // Resolve currentUser's index from their auth UUID
   const newIdx=members.findIndex(m=>m.id===currentUser.id);
   if(newIdx>=0) currentUser.memberIdx=newIdx;
@@ -5439,18 +5441,18 @@ async function populateMpPage(){
   const fn=m?.firstName||currentUser.firstName||cp.first_name||'';
   const ln=m?.lastName||currentUser.lastName||cp.last_name||'';
 
-  // Avatar
+  // Avatar — prefer DB photo_url over in-memory cache
   const av=document.getElementById('mpAv');
   if(av){
-    const photo=memberPhotos[idx]||localStorage.getItem(`mpPhoto_${currentUser.id}`)||null;
+    const photo=currentUser._profile?.photo_url||memberPhotos[idx]||null;
     if(photo){av.style.backgroundImage=`url(${photo})`;av.style.backgroundSize='cover';av.style.backgroundPosition='center';av.textContent='';}
     else{av.style.backgroundImage='';av.style.background=m?.color||currentUser.color||'#6C63FF';av.textContent=m?.init||currentUser.initials||'?';}
   }
 
-  // Cover photo (persisted in localStorage)
+  // Cover photo — prefer DB cover_url
   const cover=document.getElementById('mpCover');
   if(cover){
-    const savedCover=localStorage.getItem(`mpCover_${currentUser.id}`)||'';
+    const savedCover=currentUser._profile?.cover_url||'';
     if(savedCover){cover.style.backgroundImage=`url(${savedCover})`;cover.style.backgroundSize='cover';cover.style.backgroundPosition='center';}
     else{cover.style.backgroundImage='';}
   }
@@ -5648,33 +5650,51 @@ function renderMpReadViews(){
   }
 }
 
-function handleMpCover(event){
+async function handleMpCover(event){
   const file=event.target.files[0];if(!file)return;
+  // Immediate local preview
   const reader=new FileReader();
   reader.onload=e=>{
-    const dataUrl=e.target.result;
     const cover=document.getElementById('mpCover');
-    if(cover){cover.style.backgroundImage=`url(${dataUrl})`;cover.style.backgroundSize='cover';cover.style.backgroundPosition='center';}
-    try{localStorage.setItem(`mpCover_${currentUser.id}`,dataUrl);}catch(e){}
-    toast2('Cover photo updated!');
+    if(cover){cover.style.backgroundImage=`url(${e.target.result})`;cover.style.backgroundSize='cover';cover.style.backgroundPosition='center';}
   };
-  reader.readAsDataURL(file);event.target.value='';
+  reader.readAsDataURL(file);
+  // Upload to Supabase Storage
+  const ext=(file.name.split('.').pop()||'jpg').toLowerCase();
+  const path=`${currentUser.id}/cover.${ext}`;
+  const{error:upErr}=await supabase.storage.from('avatars').upload(path,file,{upsert:true});
+  if(upErr){toast2('Upload failed: '+upErr.message,'w');event.target.value='';return;}
+  const{data:urlData}=supabase.storage.from('avatars').getPublicUrl(path);
+  const url=urlData.publicUrl;
+  await MembersDB.upsertProfile(currentUser.id,{cover_url:url});
+  if(currentUser._profile)currentUser._profile.cover_url=url;
+  toast2(t('Cover photo saved!'));
+  event.target.value='';
 }
 
-function handleMpPhoto(event){
+async function handleMpPhoto(event){
   const file=event.target.files[0];if(!file)return;
+  // Immediate local preview
   const reader=new FileReader();
   reader.onload=e=>{
-    const dataUrl=e.target.result;
-    const idx=currentUser.memberIdx;
-    memberPhotos[idx]=dataUrl;
-    try{localStorage.setItem(`mpPhoto_${currentUser.id}`,dataUrl);}catch(e){}
     const av=document.getElementById('mpAv');
-    if(av){av.style.backgroundImage=`url(${dataUrl})`;av.style.backgroundSize='cover';av.style.backgroundPosition='center';av.textContent='';}
-    syncCurrentUserToUI();
-    toast2('Photo updated!');
+    if(av){av.style.backgroundImage=`url(${e.target.result})`;av.style.backgroundSize='cover';av.style.backgroundPosition='center';av.textContent='';}
   };
-  reader.readAsDataURL(file);event.target.value='';
+  reader.readAsDataURL(file);
+  // Upload to Supabase Storage
+  const ext=(file.name.split('.').pop()||'jpg').toLowerCase();
+  const path=`${currentUser.id}/photo.${ext}`;
+  const{error:upErr}=await supabase.storage.from('avatars').upload(path,file,{upsert:true});
+  if(upErr){toast2('Upload failed: '+upErr.message,'w');event.target.value='';return;}
+  const{data:urlData}=supabase.storage.from('avatars').getPublicUrl(path);
+  const url=urlData.publicUrl;
+  await MembersDB.upsertProfile(currentUser.id,{photo_url:url});
+  if(currentUser._profile)currentUser._profile.photo_url=url;
+  const idx=currentUser.memberIdx;
+  if(idx>=0)memberPhotos[idx]=url;
+  syncCurrentUserToUI();
+  toast2(t('Photo saved!'));
+  event.target.value='';
 }
 
 function renderMpNatFlag(){
