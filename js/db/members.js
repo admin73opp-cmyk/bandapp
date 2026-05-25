@@ -56,7 +56,8 @@ const MembersDB = {
     const { error } = await supabase
       .from('profiles')
       .upsert({ id: userId, ...fields });
-    if (error) { handleDbError(error); }
+    if (error) { handleDbError(error); return false; }
+    return true;
   },
 
   // Update role / guest dates on a band_members row

@@ -5236,7 +5236,7 @@ async function saveProfile(){
   const dialCode=document.getElementById('pfPhoneCc')?.value||'';
   const phoneNum=document.getElementById('pfPhoneNum')?.value.trim()||'';
 
-  await MembersDB.upsertProfile(m.id, {
+  const ok=await MembersDB.upsertProfile(m.id, {
     first_name:    fn,
     last_name:     ln,
     initials:      ((fn[0]||'')+(ln[0]||'')).toUpperCase(),
@@ -5258,6 +5258,7 @@ async function saveProfile(){
     facebook_url:  document.getElementById('pfFacebook').value,
     website_url:   document.getElementById('pfWebsite').value,
   });
+  if(!ok) return;
 
   if(editingIdx===currentUser.memberIdx){
     currentUser.firstName=fn||currentUser.firstName;
@@ -5396,12 +5397,14 @@ async function mpSave(sec){
   const m=members[idx];
   const profileId=m?.id||currentUser.id;
   if(!profileId){toast2('Profile not loaded','w');return;}
+  const MSG={personal:'Personal details saved!',music:'Music profile saved!',avail:'Availability saved!',links:'Social links saved!'};
+  let ok=false;
   if(sec==='personal'){
     const fn=document.getElementById('mpFirst').value.trim();
     const ln=document.getElementById('mpLast').value.trim();
     const dialCode=document.getElementById('mpPhoneCc')?.value||'';
     const phoneNum=document.getElementById('mpPhoneNum')?.value.trim()||'';
-    await MembersDB.upsertProfile(profileId,{
+    ok=await MembersDB.upsertProfile(profileId,{
       first_name:fn,last_name:ln,
       initials:((fn[0]||'')+(ln[0]||'')).toUpperCase(),
       bday:document.getElementById('mpBday').value||null,
@@ -5410,25 +5413,24 @@ async function mpSave(sec){
       bio:document.getElementById('mpBio').value,
       phone_dial:dialCode,phone_number:phoneNum,
     });
-    currentUser.firstName=fn||currentUser.firstName;
-    currentUser.lastName=ln||currentUser.lastName;
+    if(ok){currentUser.firstName=fn||currentUser.firstName;currentUser.lastName=ln||currentUser.lastName;}
   } else if(sec==='music'){
     const vback={'No vocals':'None','Lead vocals':'Lead','Backing vocals':'Backing','Lead & backing':'Both'};
     const inst1val=document.getElementById('mpInst1').value;
-    await MembersDB.upsertProfile(profileId,{
+    ok=await MembersDB.upsertProfile(profileId,{
       instrument:inst1val,
       instrument2:document.getElementById('mpInst2').value,
       vocals:vback[document.getElementById('mpVocals').value]||'None',
       gear:document.getElementById('mpGear').value,
     });
-    currentUser.instrument=inst1val;
+    if(ok) currentUser.instrument=inst1val;
   } else if(sec==='avail'){
     const chips=document.querySelectorAll('#mpAvailDays .dtog');
     const avail=[...chips].map(c=>c.classList.contains('on')?1:0);
-    await MembersDB.upsertProfile(profileId,{availability:avail});
-    currentUser.avail=avail;
+    ok=await MembersDB.upsertProfile(profileId,{availability:avail});
+    if(ok) currentUser.avail=avail;
   } else if(sec==='links'){
-    await MembersDB.upsertProfile(profileId,{
+    ok=await MembersDB.upsertProfile(profileId,{
       spotify_url:document.getElementById('mpSpotify').value,
       apple_url:document.getElementById('mpApple').value,
       youtube_url:document.getElementById('mpYoutube').value,
@@ -5437,6 +5439,7 @@ async function mpSave(sec){
       website_url:document.getElementById('mpWebsite').value,
     });
   }
+  if(!ok) return;
   await loadMembers();
   // Refresh _profile cache so populateMpPage re-reads correct data on next nav
   const {data:freshProfile}=await supabase.from('profiles').select('*').eq('id',currentUser.id).single();
@@ -5446,7 +5449,7 @@ async function mpSave(sec){
   document.getElementById('mpNameDisplay').textContent=`${currentUser.firstName} ${currentUser.lastName}`.trim();
   syncCurrentUserToUI();
   ['inviteBandName','inviteFirst','inviteLast','inviteEmail','invitePhone','inviteInstrument'].forEach(k=>sessionStorage.removeItem(k));
-  toast2('Saved!');
+  toast2(MSG[sec]||'Saved!');
 }
 
 function renderMpReadViews(){
