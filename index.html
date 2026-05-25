@@ -4570,13 +4570,11 @@ async function submitFeedback(){
   const btn=document.getElementById('fbSubmitBtn');
   btn.disabled=true;btn.textContent='Submitting…';
   try{
-    const res=await fetch('https://api.github.com/repos/admin73opp-cmyk/bandapp/issues',{
-      method:'POST',
-      headers:{'Authorization':`Bearer ${GITHUB_FEEDBACK_TOKEN}`,'Content-Type':'application/json','Accept':'application/vnd.github+json'},
-      body:JSON.stringify({title,body,labels:cat==='bug'?['bug']:['enhancement']}),
+    const{data,error}=await supabase.functions.invoke('create-github-issue',{
+      body:{title,body,labels:cat==='bug'?['bug']:['enhancement']},
     });
-    if(res.ok){closeMod('feedbackMod');toast2('Thanks! Your feedback has been submitted.');}
-    else{const e=await res.json().catch(()=>({}));toast2(e.message||'Failed to submit. Please try again.','w');}
+    if(error||data?.message){toast2((error?.message||data?.message||'Failed to submit. Please try again.'),'w');}
+    else{closeMod('feedbackMod');toast2('Thanks! Your feedback has been submitted.');}
   }catch(e){toast2('Network error. Please try again.','w');}
   btn.disabled=false;btn.textContent='Submit';
 }

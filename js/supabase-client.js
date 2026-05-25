@@ -5,9 +5,6 @@
 const SUPABASE_URL      = 'https://yhnoxgoibtbwcavzwddj.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inlobm94Z29pYnRid2Nhdnp3ZGRqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkzNjQyNDQsImV4cCI6MjA5NDk0MDI0NH0.gisqe_pVf9oB3-hCTZeAQBZCtNA4I1T0ep8PcywTrgo';
 
-// Fine-grained PAT with issues:write scope — used by the in-app feedback button
-const GITHUB_FEEDBACK_TOKEN = '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';
-
 // Use var (not const) so it coexists with the CDN's own 'supabase' global
 var supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
   auth: {
