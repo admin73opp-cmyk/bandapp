@@ -4774,6 +4774,14 @@ function attachPfLinkListeners(){
     if(el)el.addEventListener('input',renderPfLinkPreview);
   });
 }
+function bpCoverClick(){
+  if(currentUser.role!=='admin')return;
+  document.getElementById('bpCoverInput').click();
+}
+function bpLogoClick(){
+  if(currentUser.role!=='admin')return;
+  document.getElementById('bpLogoInput').click();
+}
 function handleBpCover(event) {
   const file = event.target.files[0]; if (!file) return;
   const reader = new FileReader();
