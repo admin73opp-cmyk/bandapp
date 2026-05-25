@@ -3713,10 +3713,21 @@ function confReh(){
   if(pendKey)calEv[pendKey]=['rehearsal'];
   closeMod('rehMod');
   renderCal();
+  // Build and send WhatsApp message when channel requires it
+  if(ch==='whatsapp'||ch==='both'){
+    const nm=document.getElementById('rmNm')?.value||'Rehearsal';
+    const st=document.getElementById('rmSt')?.value||'';
+    const en=document.getElementById('rmEn')?.value||'';
+    const loc=document.getElementById('rmLoc')?.value||'';
+    const nt=document.getElementById('rmNt')?.value||'';
+    const datePart=pendKey?new Date(pendKey+'T12:00').toLocaleDateString(dateLoc(),{weekday:'long',day:'numeric',month:'long'}):'';
+    const msg=`🎵 *Rehearsal Confirmed!*\n📅 ${datePart}${st?` · ${st}–${en}`:''}${loc?'\n📍 '+loc:''}${nt?'\n📝 '+nt:''}`;
+    window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`,'_blank','noopener,noreferrer');
+  }
   const msgs={
     email:'Rehearsal confirmed! Band notified by email ✓',
-    whatsapp:'Rehearsal confirmed! WhatsApp group notified 💬',
-    both:'Rehearsal confirmed! Email + WhatsApp group notified 📣',
+    whatsapp:'Rehearsal confirmed! WhatsApp message ready to send 💬',
+    both:'Rehearsal confirmed! WhatsApp message ready to send 📣',
   };
   toast2(msgs[ch]||'Rehearsal scheduled!');
 }
