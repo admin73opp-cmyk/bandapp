@@ -535,7 +535,7 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
     <div class="pg-area" id="pg-setlists">
       <div style="display:flex;gap:9px;align-items:center;margin-bottom:15px;flex-wrap:wrap">
         <div style="flex:1"><div style="font-size:1.12rem;font-weight:700;letter-spacing:-.03em">Set Lists</div><div id="slSubtitle" style="font-size:.74rem;color:var(--ink2);margin-top:2px"></div></div>
-        <button class="btn btn-g btn-sm" onclick="openAsMod()">+ Songs</button>
+        <button class="btn btn-g btn-sm" onclick="openAsMod()" data-i18n="+ Songs">+ Songs</button>
         <button class="btn btn-p btn-sm" onclick="openSlMod()">+ Set List</button>
       </div>
       <!-- Empty states -->
@@ -543,7 +543,7 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
         <div style="font-size:2rem;margin-bottom:10px">🎵</div>
         <div style="font-weight:700;font-size:1rem;margin-bottom:8px" data-i18n="No songs in library yet">No songs in library yet</div>
         <p style="font-size:.84rem;color:var(--ink2);margin-bottom:18px" data-i18n="Start by adding songs to your library.">Add songs to the library first, then you can build set lists.</p>
-        <button class="btn btn-p btn-sm" onclick="nav('library')">Go to Song Library →</button>
+        <button class="btn btn-p btn-sm" onclick="nav('library')" data-i18n="Go to Song Library →">Go to Song Library →</button>
       </div>
       <div id="slEmptyNoLists" style="display:none;text-align:center;padding:50px 20px">
         <div style="font-size:2rem;margin-bottom:10px">📋</div>
@@ -3677,12 +3677,13 @@ function renderBest(){
   for(let d=1;d<=dim;d++){const key=`${yr}-${String(mo+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;const ev=calEv[key]||[];if(ev.includes('concert')||ev.includes('rehearsal'))continue;if(isBO(key))continue;if(new Date(yr,mo,d)<today)continue;const cnt=cntAv(yr,mo,d);if(cnt<2)continue;res.push({d,key,cnt,avs:getMAvail(yr,mo,d),full:cnt===members.length});}
   res.sort((a,b)=>b.cnt-a.cnt||a.d-b.d);const best=res.slice(0,3);
   const fn=best.filter(b=>b.full).length;
-  document.getElementById('bestSub').textContent=fn>0?`${fn} day${fn>1?'s':''} where all ${members.length} members are free this month.`:'Showing best partial availability — no full-band days found.';
-  const dn2=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];const rl=['bc1','',''];const rlbl=['⚡ Best day','2nd choice','3rd choice'];
+  const _isBR=(currentUser.lang==='pt');
+  document.getElementById('bestSub').textContent=fn>0?(_isBR?`${fn} dia${fn>1?'s':''} em que todos os ${members.length} membros estão livres este mês.`:`${fn} day${fn>1?'s':''} where all ${members.length} members are free this month.`):t('Showing best partial availability — no full-band days found.');
+  const dn2=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].map(d=>t(d));const rl=['bc1','',''];const rlbl=[t('⚡ Best day'),t('2nd choice'),t('3rd choice')];
   document.getElementById('bestList').innerHTML=best.map((b,i)=>{
     const dow=dn2[new Date(yr,mo,b.d).getDay()];
     const avs=members.map((m,mi)=>`<div class="bcav" style="background:${b.avs[mi]?m.color:'#CCC'}">${m.init}</div>`).join('');
-    return`<div class="bcard ${rl[i]}" onclick="openRehMod(${b.d},'${b.key}',${b.full})"><div class="bcrk">${b.full?'⚡ ':''}${rlbl[i]}</div><div class="bcdt">${dow} ${b.d}</div><div class="bcdw">${MAb[mo]} ${yr}</div><div class="bcavs">${avs}</div><div class="bccnt"><strong>${b.cnt}/${members.length}</strong> available</div><button class="bcbtn" onclick="event.stopPropagation();openRehMod(${b.d},'${b.key}',${b.full})">Set as rehearsal →</button></div>`;
+    return`<div class="bcard ${rl[i]}" onclick="openRehMod(${b.d},'${b.key}',${b.full})"><div class="bcrk">${b.full?'⚡ ':''}${rlbl[i]}</div><div class="bcdt">${dow} ${b.d}</div><div class="bcdw">${MAb[mo]} ${yr}</div><div class="bcavs">${avs}</div><div class="bccnt"><strong>${b.cnt}/${members.length}</strong> ${t('available')}</div><button class="bcbtn" onclick="event.stopPropagation();openRehMod(${b.d},'${b.key}',${b.full})">${t('Set as rehearsal →')}</button></div>`;
   }).join('');
 }
 
