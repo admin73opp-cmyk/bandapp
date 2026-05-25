@@ -2244,7 +2244,7 @@ function syncCurrentUserToUI(){
   // Sidebar footer (user)
   const uav = document.querySelector('.uav');
   if(uav){
-    const photo = memberPhotos[u.memberIdx] || localStorage.getItem(`mpPhoto_${u.id}`) || null;
+    const photo = memberPhotos[u.memberIdx] || currentUser._profile?.photo_url || localStorage.getItem(`mpPhoto_${u.id}`) || null;
     if(photo){
       uav.style.backgroundImage = `url(${photo})`;
       uav.style.backgroundSize = 'cover';
@@ -4942,15 +4942,15 @@ async function populateMpPage(){
   // Avatar
   const av=document.getElementById('mpAv');
   if(av){
-    const photo=memberPhotos[idx]||localStorage.getItem(`mpPhoto_${currentUser.id}`)||null;
+    const photo=m?.photo||currentUser._profile?.photo_url||memberPhotos[idx]||localStorage.getItem(`mpPhoto_${currentUser.id}`)||null;
     if(photo){av.style.backgroundImage=`url(${photo})`;av.style.backgroundSize='cover';av.style.backgroundPosition='center';av.textContent='';}
     else{av.style.backgroundImage='';av.style.background=m?.color||currentUser.color||'#6C63FF';av.textContent=m?.init||currentUser.initials||'?';}
   }
 
-  // Cover photo (persisted in localStorage)
+  // Cover photo (DB-first, localStorage as cache)
   const cover=document.getElementById('mpCover');
   if(cover){
-    const savedCover=localStorage.getItem(`mpCover_${currentUser.id}`)||'';
+    const savedCover=currentUser._profile?.cover_url||localStorage.getItem(`mpCover_${currentUser.id}`)||'';
     if(savedCover){cover.style.backgroundImage=`url(${savedCover})`;cover.style.backgroundSize='cover';cover.style.backgroundPosition='center';}
     else{cover.style.backgroundImage='';}
   }
@@ -5138,11 +5138,13 @@ function renderMpReadViews(){
 function handleMpCover(event){
   const file=event.target.files[0];if(!file)return;
   const reader=new FileReader();
-  reader.onload=e=>{
+  reader.onload=async e=>{
     const dataUrl=e.target.result;
     const cover=document.getElementById('mpCover');
     if(cover){cover.style.backgroundImage=`url(${dataUrl})`;cover.style.backgroundSize='cover';cover.style.backgroundPosition='center';}
     try{localStorage.setItem(`mpCover_${currentUser.id}`,dataUrl);}catch(e){}
+    await MembersDB.upsertProfile(currentUser.id,{cover_url:dataUrl});
+    if(currentUser._profile)currentUser._profile.cover_url=dataUrl;
     toast2('Cover photo updated!');
   };
   reader.readAsDataURL(file);event.target.value='';
@@ -5151,13 +5153,15 @@ function handleMpCover(event){
 function handleMpPhoto(event){
   const file=event.target.files[0];if(!file)return;
   const reader=new FileReader();
-  reader.onload=e=>{
+  reader.onload=async e=>{
     const dataUrl=e.target.result;
     const idx=currentUser.memberIdx;
     memberPhotos[idx]=dataUrl;
     try{localStorage.setItem(`mpPhoto_${currentUser.id}`,dataUrl);}catch(e){}
     const av=document.getElementById('mpAv');
     if(av){av.style.backgroundImage=`url(${dataUrl})`;av.style.backgroundSize='cover';av.style.backgroundPosition='center';av.textContent='';}
+    await MembersDB.upsertProfile(currentUser.id,{photo_url:dataUrl});
+    if(currentUser._profile)currentUser._profile.photo_url=dataUrl;
     syncCurrentUserToUI();
     toast2('Photo updated!');
   };
