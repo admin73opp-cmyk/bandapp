@@ -2283,7 +2283,8 @@ function syncCurrentUserToUI(){
   if(greet){
     const h = new Date().getHours();
     const tod = h < 12 ? 'morning' : h < 18 ? 'afternoon' : 'evening';
-    greet.textContent = u.firstName ? `Good ${tod}, ${u.firstName} 👋` : `Good ${tod} 👋`;
+    const todStr = tod.charAt(0).toUpperCase() + tod.slice(1);
+    greet.textContent = u.firstName ? `${t('Good '+tod)}, ${u.firstName} 👋` : `${t('Good '+tod)} 👋`;
   }
 }
 
@@ -2444,7 +2445,7 @@ function updPayPill(){
 
 // TOAST
 let toastT;
-function toast2(msg,type='ok'){const t=document.getElementById('toast');document.getElementById('toastMsg').textContent=msg;document.getElementById('toastDot').className='td'+(type==='w'?' w':'');t.classList.add('on');clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('on'),3000);}
+function toast2(msg,type='ok'){const el=document.getElementById('toast');document.getElementById('toastMsg').textContent=typeof t==='function'?t(msg)||msg:msg;document.getElementById('toastDot').className='td'+(type==='w'?' w':'');el.classList.add('on');clearTimeout(toastT);toastT=setTimeout(()=>el.classList.remove('on'),3000);}
 
 // SETLIST
 function renderSL(){
