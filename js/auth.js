@@ -220,6 +220,8 @@ supabase.auth.onAuthStateChange(async (event, session) => {
   if (event === 'SIGNED_OUT') {
     document.getElementById('app').classList.remove('vis');
     document.getElementById('authScreen').style.display = 'flex';
+    const fbBtn = document.getElementById('fbBtn');
+    if (fbBtn) fbBtn.style.display = 'none';
     if (typeof switchTab === 'function') switchTab('login');
     return;
   }
