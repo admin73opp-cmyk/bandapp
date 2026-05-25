@@ -4570,9 +4570,9 @@ async function submitFeedback(){
   const btn=document.getElementById('fbSubmitBtn');
   btn.disabled=true;btn.textContent='Submitting…';
   try{
-    const res=await fetch(`${SUPABASE_URL}/functions/v1/create-github-issue`,{
+    const res=await fetch('/api/feedback',{
       method:'POST',
-      headers:{'Content-Type':'application/json','Authorization':`Bearer ${SUPABASE_ANON_KEY}`},
+      headers:{'Content-Type':'application/json'},
       body:JSON.stringify({title,body,labels:cat==='bug'?['bug']:['enhancement']}),
     });
     const data=await res.json().catch(()=>({}));
