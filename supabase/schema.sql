@@ -21,8 +21,21 @@ create table if not exists bands (
   created_at     timestamptz not null default now()
 );
 
--- Add whatsapp_link to existing deployments (no-op if already present)
-alter table bands add column if not exists whatsapp_link text;
+-- Add columns to existing deployments (no-op if already present)
+alter table bands add column if not exists whatsapp_link  text;
+alter table bands add column if not exists cover_url      text;
+alter table bands add column if not exists logo_url       text;
+alter table bands add column if not exists spotify_url    text;
+alter table bands add column if not exists apple_url      text;
+alter table bands add column if not exists youtube_url    text;
+alter table bands add column if not exists instagram_url  text;
+alter table bands add column if not exists facebook_url   text;
+alter table bands add column if not exists website_url    text;
+
+-- Storage bucket for band cover images and logos (run once per project)
+insert into storage.buckets (id, name, public)
+values ('band-assets', 'band-assets', true)
+on conflict (id) do nothing;
 
 -- ── PROFILES (extends auth.users 1:1) ────────────────────────
 create table if not exists profiles (

@@ -305,3 +305,29 @@ create policy "event_photos_insert" on event_photos
 
 create policy "event_photos_delete" on event_photos
   for delete using (uploaded_by = auth.uid());
+
+-- ── STORAGE: band-assets bucket ──────────────────────────────
+-- Anyone can read (bucket is public); only band admins can upload/delete.
+-- The path convention is bands/<band_id>/cover.<ext> and bands/<band_id>/logo.<ext>
+
+create policy "band_assets_select" on storage.objects
+  for select using (bucket_id = 'band-assets');
+
+create policy "band_assets_insert" on storage.objects
+  for insert with check (
+    bucket_id = 'band-assets'
+    and auth.role() = 'authenticated'
+    and is_band_admin((string_to_array(name, '/'))[2]::uuid)
+  );
+
+create policy "band_assets_update" on storage.objects
+  for update using (
+    bucket_id = 'band-assets'
+    and is_band_admin((string_to_array(name, '/'))[2]::uuid)
+  );
+
+create policy "band_assets_delete" on storage.objects
+  for delete using (
+    bucket_id = 'band-assets'
+    and is_band_admin((string_to_array(name, '/'))[2]::uuid)
+  );

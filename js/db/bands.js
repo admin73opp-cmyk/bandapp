@@ -1,5 +1,14 @@
 // ── Bands data layer — BandsDB namespace ─────────────────────
 
+const _PLAT_DEFS = [
+  { key: 'spotify',   icon: '🎵', label: 'Spotify' },
+  { key: 'apple',     icon: '🍎', label: 'Apple Music' },
+  { key: 'youtube',   icon: '▶',  label: 'YouTube' },
+  { key: 'instagram', icon: '📸', label: 'Instagram' },
+  { key: 'facebook',  icon: '📘', label: 'Facebook' },
+  { key: 'website',   icon: '🌐', label: 'Website' },
+];
+
 const BandsDB = {
 
   async fetch() {
@@ -18,13 +27,16 @@ const BandsDB = {
         ...b,
         role:        rawRole.charAt(0).toUpperCase() + rawRole.slice(1), // 'Admin'|'Member'|'Guest'
         memberCount: (b.band_members || []).length,
+        // Reconstruct platforms array from individual URL columns
+        platforms: _PLAT_DEFS
+          .filter(p => b[p.key + '_url'])
+          .map(p => ({ key: p.key, icon: p.icon, label: p.label, url: b[p.key + '_url'] })),
         // Derived stats (computed from loaded arrays after initApp)
         songCount:     0,
         setlistCount:  0,
         upcomingCount: 0,
         pastCount:     0,
         nextGig:       { label: '—', sub: 'No gigs yet' },
-        platforms:     [],
         photos:        [],
       };
     });
@@ -33,6 +45,13 @@ const BandsDB = {
   async upsert(band) {
     const { role, memberCount, songCount, setlistCount, upcomingCount, pastCount,
             nextGig, platforms, photos, band_members, ...fields } = band;
+    // Map platforms array to individual URL columns if provided by caller
+    if (Array.isArray(platforms)) {
+      _PLAT_DEFS.forEach(p => {
+        const match = platforms.find(x => x.key === p.key || x.label === p.label);
+        fields[p.key + '_url'] = match?.url || null;
+      });
+    }
     const { data, error } = await supabase
       .from('bands')
       .upsert(fields)

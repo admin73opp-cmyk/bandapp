@@ -4567,11 +4567,33 @@ function renderBP(){
 
   // Cover/logo clickable only for admin
   const cover=document.getElementById('bpCover');
-  if(cover)cover.style.cursor=isAdmin?'pointer':'default';
+  if(cover){
+    cover.style.cursor=isAdmin?'pointer':'default';
+    if(b.cover_url){
+      cover.style.backgroundImage=`url(${b.cover_url})`;
+      cover.style.backgroundSize='cover';
+      cover.style.backgroundPosition='center';
+      const ov=cover.querySelector('[data-overlay]');if(ov)ov.style.display='none';
+    } else {
+      cover.style.backgroundImage='';
+      const ov=cover.querySelector('[data-overlay]');if(ov)ov.style.display='';
+    }
+  }
   const coverBadge=document.getElementById('bpCoverEditBadge');
   if(coverBadge)coverBadge.style.display=isAdmin?'flex':'none';
   const logo=document.getElementById('bpLogo');
-  if(logo)logo.style.cursor=isAdmin?'pointer':'default';
+  if(logo){
+    logo.style.cursor=isAdmin?'pointer':'default';
+    if(b.logo_url){
+      logo.style.backgroundImage=`url(${b.logo_url})`;
+      logo.style.backgroundSize='cover';
+      logo.style.backgroundPosition='center';
+      logo.textContent='';
+    } else {
+      logo.style.backgroundImage='';
+      logo.textContent=b.initials||b.name?.slice(0,2).toUpperCase()||'';
+    }
+  }
   const logoCam=document.getElementById('bpLogoCamBadge');
   if(logoCam)logoCam.style.display=isAdmin?'flex':'none';
 
@@ -4638,9 +4660,12 @@ async function saveBandEditInline(){
     city: document.getElementById('beCityInline').value.trim(),
     country: document.getElementById('beCountryInline').value.trim(),
     bio: document.getElementById('beBioInline').value.trim(),
-    platforms: PLATFORM_DEFS
-      .map(d=>({label:d.label,icon:d.icon,url:(document.getElementById('bePlat_'+d.key)?.value||'').trim()}))
-      .filter(p=>p.url),
+    spotify_url:   (document.getElementById('bePlat_spotify')?.value||'').trim()||null,
+    apple_url:     (document.getElementById('bePlat_apple')?.value||'').trim()||null,
+    youtube_url:   (document.getElementById('bePlat_youtube')?.value||'').trim()||null,
+    instagram_url: (document.getElementById('bePlat_instagram')?.value||'').trim()||null,
+    facebook_url:  (document.getElementById('bePlat_facebook')?.value||'').trim()||null,
+    website_url:   (document.getElementById('bePlat_website')?.value||'').trim()||null,
   });
   if(!saved)return;
   await loadBands();
@@ -5011,33 +5036,45 @@ function attachPfLinkListeners(){
 function bpCoverClick() { document.getElementById('bpCoverInput').click(); }
 function bpLogoClick()  { document.getElementById('bpLogoInput').click(); }
 
-function handleBpCover(event) {
+async function handleBpCover(event) {
   const file = event.target.files[0]; if (!file) return;
+  const b = getActiveBand(); if (!b || b.role !== 'Admin') return;
+  // Preview immediately
+  const cover = document.getElementById('bpCover');
   const reader = new FileReader();
   reader.onload = e => {
-    const cover = document.getElementById('bpCover');
     cover.style.backgroundImage = `url(${e.target.result})`;
     cover.style.backgroundSize = 'cover';
     cover.style.backgroundPosition = 'center';
-    // hide decorative emoji overlay once a real photo is set
     const overlay = cover.querySelector('[data-overlay]');
     if (overlay) overlay.style.display = 'none';
-    toast2('Cover photo updated!');
   };
   reader.readAsDataURL(file);
+  // Upload to Supabase Storage
+  const ext = file.name.split('.').pop().toLowerCase();
+  const path = `bands/${b.id}/cover.${ext}`;
+  const { error: upErr } = await supabase.storage.from('band-assets').upload(path, file, { upsert: true });
+  if (upErr) { toast2('Upload failed: ' + upErr.message, 'w'); event.target.value = ''; return; }
+  const { data: urlData } = supabase.storage.from('band-assets').getPublicUrl(path);
+  const url = urlData.publicUrl;
+  const { error } = await supabase.from('bands').update({ cover_url: url }).eq('id', b.id);
+  if (error) { toast2('Failed to save cover', 'w'); event.target.value = ''; return; }
+  b.cover_url = url;
+  toast2('Cover photo saved!');
   event.target.value = '';
 }
 
-function handleBpLogo(event) {
+async function handleBpLogo(event) {
   const file = event.target.files[0]; if (!file) return;
+  const b = getActiveBand(); if (!b || b.role !== 'Admin') return;
+  // Preview immediately
+  const logo = document.getElementById('bpLogo');
   const reader = new FileReader();
   reader.onload = e => {
-    const logo = document.getElementById('bpLogo');
     logo.style.backgroundImage = `url(${e.target.result})`;
     logo.style.backgroundSize = 'cover';
     logo.style.backgroundPosition = 'center';
     logo.textContent = '';
-    // also update sidebar band avatar
     const sav = document.querySelector('.bav');
     if (sav) {
       sav.style.backgroundImage = `url(${e.target.result})`;
@@ -5045,9 +5082,22 @@ function handleBpLogo(event) {
       sav.style.backgroundPosition = 'center';
       sav.textContent = '';
     }
-    toast2('Band logo updated!');
   };
   reader.readAsDataURL(file);
+  // Upload to Supabase Storage
+  const ext = file.name.split('.').pop().toLowerCase();
+  const path = `bands/${b.id}/logo.${ext}`;
+  const { error: upErr } = await supabase.storage.from('band-assets').upload(path, file, { upsert: true });
+  if (upErr) { toast2('Upload failed: ' + upErr.message, 'w'); event.target.value = ''; return; }
+  const { data: urlData } = supabase.storage.from('band-assets').getPublicUrl(path);
+  const url = urlData.publicUrl;
+  const { error } = await supabase.from('bands').update({ logo_url: url }).eq('id', b.id);
+  if (error) { toast2('Failed to save logo', 'w'); event.target.value = ''; return; }
+  b.logo_url = url;
+  // Also update sidebar band avatar
+  const sav = document.querySelector('.bav');
+  if (sav) { sav.style.backgroundImage = `url(${url})`; sav.style.backgroundSize = 'cover'; sav.style.backgroundPosition = 'center'; sav.textContent = ''; }
+  toast2('Band logo saved!');
   event.target.value = '';
 }
 let extraData=[];
