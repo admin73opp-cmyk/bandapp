@@ -627,13 +627,7 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
       <!-- Filters (cards view only) -->
       <div class="lf" id="libFilters">
         <input class="sb2" id="libSearch" data-i18n-placeholder="Search songs…" placeholder="Search songs…" oninput="filterLib(this.value)">
-        <button class="chip on" onclick="filtG('All',this)" data-i18n="All">All</button>
-        <button class="chip" onclick="filtG('Jazz',this)">Jazz</button>
-        <button class="chip" onclick="filtG('Funk',this)">Funk</button>
-        <button class="chip" onclick="filtG('Soul',this)">Soul</button>
-        <button class="chip" onclick="filtG('Blues',this)">Blues</button>
-        <button class="chip" onclick="filtG('Country',this)">Country</button>
-        <button class="chip" onclick="filtG('Pop',this)">Pop</button>
+        <div id="libGenreChips" style="display:contents"></div>
       </div>
 
       <!-- Cards view -->
@@ -930,9 +924,6 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
                 <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:7px">
                   <div class="fg" style="flex:1;min-width:110px"><label style="font-size:.69rem">Genre</label>
                     <select id="beGenreInline" style="font-size:.83rem">
-                      <option>Jazz</option><option>Funk</option><option>Soul</option><option>Blues</option>
-                      <option>Country</option><option>Rock</option><option>Pop</option><option>Latin</option><option>R&amp;B</option>
-                      <option>Classical</option><option>Electronic</option><option>Mixed / Other</option>
                     </select>
                   </div>
                   <div class="fg" style="flex:1;min-width:80px"><label style="font-size:.69rem">Formed</label><input id="beFormedInline" placeholder="2019" maxlength="4"></div>
@@ -1366,10 +1357,7 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
   </div>
   <div class="fr">
     <div class="fg"><label data-i18n="Genre">Genre</label>
-      <select id="nsg">
-        <option>Jazz</option><option>Funk</option><option>Soul</option><option>Blues</option>
-        <option>Country</option><option>Pop</option><option>Rock</option><option>Latin</option><option>R&amp;B</option><option>Other</option>
-      </select>
+      <select id="nsg"></select>
     </div>
     <div class="fg"><label data-i18n="Key">Key</label>
       <select id="nsk">
@@ -1501,9 +1489,6 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
   </div>
   <div class="fg"><label data-i18n="Genre / Style">Genre / Style</label>
     <select id="nbGenre">
-      <option>Jazz</option><option>Funk</option><option>Soul</option><option>Blues</option>
-      <option>Country</option><option>Rock</option><option>Pop</option><option>Latin</option><option>R&amp;B</option>
-      <option>Classical</option><option>Mixed / Other</option>
     </select>
   </div>
   <div class="fg"><label><span data-i18n="Short Bio">Short Bio</span> <span style="font-weight:400;color:var(--ink3)">(optional)</span></label>
@@ -3035,7 +3020,14 @@ async function createNewSetList(){
 
 // LIBRARY
 let aG='All';
+function renderLibChips(){
+  const chips=document.getElementById('libGenreChips');if(!chips)return;
+  const used=new Set(songs.map(s=>s.genre).filter(Boolean));
+  const visible=['All',...GENRES_LIST.filter(g=>used.has(g))];
+  chips.innerHTML=visible.map(g=>`<button class="chip${g===aG?' on':''}" onclick="filtG('${g}',this)">${g==='All'?t('All'):g}</button>`).join('');
+}
 function renderLib(filter='All',search=''){
+  renderLibChips();
   const grid=document.getElementById('libGrid');
   const f=songs.filter(s=>(filter==='All'||s.genre===filter)&&(s.title+s.artist).toLowerCase().includes(search.toLowerCase()));
   if(!f.length){
@@ -3157,7 +3149,9 @@ function updateSidebarCounts(){
 }
 
 // ── SPREADSHEET ───────────────────────────────────────────
-const GENRES_LIST=['Jazz','Funk','Soul','Blues','Country','Pop','Rock','Latin','R&B','Other'];
+const GENRES_LIST=['Jazz','Funk','Soul','Blues','Country','Pop','Rock','Latin','R&B',
+  'Samba','Bossa Nova','MPB','Forró','Axé','Pagode','Choro','Maracatu','Frevo','Baião','Lambada','Sertanejo','Afoxé','Batuque','Maxixe',
+  'Other'];
 const KEYS_LIST=['Am','C','G','D','Dm','F','Bb','Eb','Gm','Em','A','E','Fm','Cm','Bm','Ab','Db'];
 
 // Duration formatting: seconds → X:YY:ZZ
@@ -4295,6 +4289,14 @@ function instIcon(name){
   return found?found.i:'🎵';
 }
 
+function populateGenreSelects(){
+  const opts=GENRES_LIST.map(g=>`<option value="${g}">${g}</option>`).join('');
+  ['nsg','seGenre'].forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML=opts;});
+  // Band genre selects include extra options not in GENRES_LIST
+  const bandOpts=GENRES_LIST.map(g=>`<option value="${g}">${g}</option>`).join('');
+  ['nbGenre','beGenreInline'].forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML=bandOpts;});
+}
+
 function populateInstrumentSelects(){
   const opts=INSTRUMENTS.map(x=>`<option value="${x.v}">${x.i} ${x.label}</option>`).join('');
   [{id:'pfInst1',blank:'— Select —'},{id:'pfInst2',blank:'None'},{id:'mpInst1',blank:'— Select —'},{id:'mpInst2',blank:'None'},{id:'invInstrument',blank:'— Instrument —'}].forEach(({id,blank})=>{
@@ -4795,6 +4797,7 @@ function renderDashboard(){
 }
 
 async function initApp(){
+  populateGenreSelects();
   populateCountrySelects();
   populateInstrumentSelects();
   await loadBands();
@@ -5536,10 +5539,7 @@ async function saveSettings(){
   </div>
   <div class="fr">
     <div class="fg"><label data-i18n="Genre">Genre</label>
-      <select id="seGenre">
-        <option>Jazz</option><option>Funk</option><option>Soul</option>
-        <option>Blues</option><option>Country</option><option>Pop</option><option>Rock</option><option>Latin</option><option>R&amp;B</option><option>Other</option>
-      </select>
+      <select id="seGenre"></select>
     </div>
     <div class="fg"><label data-i18n="Key">Key</label>
       <select id="seKey">
