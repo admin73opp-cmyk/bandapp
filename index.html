@@ -326,7 +326,8 @@ select option{background:var(--w)}
 .invopt{flex:1;padding:10px 6px;border:1.5px solid var(--bd);border-radius:var(--rad);background:var(--bg);cursor:pointer;text-align:center;transition:all .13s}.invopt:hover{border-color:var(--a)}.invopt.on{border-color:var(--a);background:var(--a2)}
 .invic{font-size:1.15rem;margin-bottom:3px}.invl{font-size:.7rem;font-weight:600}
 /* toast */
-.toast{position:fixed;bottom:17px;right:17px;background:var(--ink);color:#fff;border-radius:var(--rad);padding:10px 15px;font-size:.79rem;font-weight:500;display:flex;align-items:center;gap:7px;box-shadow:var(--shl);z-index:9999;transform:translateY(48px);opacity:0;transition:all .27s cubic-bezier(.2,.8,.4,1)}
+.toast{position:fixed;bottom:17px;right:17px;background:#111118;color:#fff;border-radius:var(--rad);padding:10px 15px;font-size:.79rem;font-weight:500;display:flex;align-items:center;gap:7px;box-shadow:var(--shl);z-index:9999;transform:translateY(48px);opacity:0;transition:all .27s cubic-bezier(.2,.8,.4,1)}
+@media(prefers-color-scheme:dark){.toast{background:#2A2A38;color:#F0F0F8}}
 #feedbackFab{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);z-index:300;background:var(--a);color:#fff;border:none;border-radius:99px;padding:8px 16px;font-family:var(--font);font-size:.73rem;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:5px;box-shadow:0 4px 16px rgba(108,99,255,.35);transition:background .14s,box-shadow .14s,transform .14s}#feedbackFab:hover{background:#5851e0;box-shadow:0 6px 20px rgba(108,99,255,.45);transform:translateX(-50%) translateY(-2px)}
 .toast.on{transform:none;opacity:1}
 .td{width:6px;height:6px;border-radius:50%;background:var(--g);flex-shrink:0}.td.w{background:var(--amb)}
@@ -364,7 +365,8 @@ html[data-theme="dark"] ::-webkit-scrollbar-thumb{background:var(--bd)}
 html[data-theme="dark"] select option{background:var(--w);color:var(--ink)}
 html[data-theme="dark"] .sb-ov{background:rgba(0,0,0,.55)}
 html[data-theme="dark"] input:-webkit-autofill,html[data-theme="dark"] input:-webkit-autofill:focus{-webkit-box-shadow:0 0 0 100px var(--bg) inset;-webkit-text-fill-color:var(--ink)}
-html[data-theme="dark"] .toast{background:var(--bd);color:var(--ink)}
+html[data-theme="dark"] .toast{background:#2A2A38;color:#F0F0F8}
+html[data-theme="light"] .toast{background:#111118;color:#fff}
 html[data-theme="dark"] .sb.minimized .ni:hover::after{background:var(--bd);color:var(--ink)}
 html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
 </style>
@@ -1048,15 +1050,15 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
             Change cover
           </div>
         </div>
-        <div style="padding:0 22px 22px;display:flex;align-items:flex-end;gap:16px;margin-top:-36px;flex-wrap:wrap;position:relative;z-index:1">
-          <div style="position:relative;flex-shrink:0">
+        <div style="padding:0 22px 14px;margin-top:-36px;position:relative;z-index:1">
+          <div style="position:relative;display:inline-block">
             <div id="mpAv" onclick="document.getElementById('mpPhotoInput').click()" style="width:72px;height:72px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.4rem;font-weight:700;color:#fff;background:#6C63FF;border:3px solid var(--w);cursor:pointer;overflow:hidden;box-shadow:var(--sh)" title="Change photo"></div>
             <div onclick="document.getElementById('mpPhotoInput').click()" style="position:absolute;bottom:1px;right:1px;width:22px;height:22px;border-radius:50%;background:var(--a);border:2px solid var(--w);display:flex;align-items:center;justify-content:center;cursor:pointer">
               <svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="#fff" stroke-width="1.5"><path d="M2 5a1 1 0 011-1h1.5l1-2h5l1 2H13a1 1 0 011 1v7a1 1 0 01-1 1H3a1 1 0 01-1-1V5z"/><circle cx="8" cy="8.5" r="2"/></svg>
             </div>
             <input type="file" id="mpPhotoInput" accept="image/*" style="display:none" onchange="handleMpPhoto(event)">
           </div>
-          <div style="flex:1;min-width:160px;padding-bottom:6px">
+          <div style="margin-top:10px">
             <div id="mpNameDisplay" style="font-size:1.2rem;font-weight:700;letter-spacing:-.02em"></div>
             <div id="mpRoleDisplay" style="font-size:.78rem;color:var(--ink2);margin-top:3px"></div>
           </div>
