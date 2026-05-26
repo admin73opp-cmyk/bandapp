@@ -1155,7 +1155,7 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
               <div class="fg" data-i18n="Secondary" data-i18n="(optional)" data-i18n="None"><label>Secondary <span style="font-weight:400;color:var(--ink3)">(optional)</span></label><select id="mpInst2" onchange="renderMpInstPreview()"><option value="">None</option></select></div>
             </div>
             <div id="mpInstPreview" style="display:none;margin-bottom:10px" data-i18n="Preview"><div style="font-size:.72rem;color:var(--ink3);margin-bottom:5px">Preview</div><div id="mpInstPills" style="display:flex;gap:6px;flex-wrap:wrap"></div></div>
-            <div class="fg" data-i18n="Vocals" data-i18n="No vocals" data-i18n="Lead vocals" data-i18n="Backing vocals" data-i18n="Lead & backing"><label>Vocals</label><select id="mpVocals"><option>No vocals</option><option>Lead vocals</option><option>Backing vocals</option><option>Lead &amp; backing</option></select></div>
+            <div class="fg"><label data-i18n="Vocals">Vocals</label><select id="mpVocals"><option value="None" data-i18n="No vocals">No vocals</option><option value="Lead" data-i18n="Lead vocals">Lead vocals</option><option value="Backing" data-i18n="Backing vocals">Backing vocals</option><option value="Both" data-i18n="Lead &amp; backing">Lead &amp; backing</option></select></div>
             <div class="fg" data-i18n="Equipment & Gear" data-i18n="(optional)"><label>Equipment &amp; Gear <span style="font-weight:400;color:var(--ink3)">(optional)</span></label><textarea id="mpGear" style="min-height:60px" placeholder="e.g. Fender Stratocaster, Boss pedalboard…"></textarea></div>
           </div>
         </div>
@@ -4140,7 +4140,7 @@ function renderMembers(){
   }
   if(noBand)noBand.style.display='none';
   if(content)content.style.display='';
-  const days=['Mo','Tu','We','Th','Fr','Sa','Su'];
+  const days=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].map(d=>t(d));
   const active=activeMembers();
   // sort: admin first, then members, then guests at bottom
   const sorted=[...active].sort((a,b)=>{
@@ -4159,11 +4159,13 @@ function renderMembers(){
     const icon2=m.inst2?instIcon(m.inst2):'';
     const isGuest=m.role==='guest';
     const rolePill=m.role==='admin'
-      ?`<span class="pill pp">Admin</span>`
+      ?`<span class="pill pp">${t('Admin')}</span>`
       :isGuest
-        ?`<span class="pill pamb">Guest</span><span style="font-size:.67rem;color:var(--ink3);margin-left:4px">until ${m.guestEnd}</span>`
-        :`<span class="pill pgray">Member</span>`;
-    const guestBorder=isGuest?'border:1.5px dashed var(--amb);':''
+        ?`<span class="pill pamb">${t('Guest')}</span><span style="font-size:.67rem;color:var(--ink3);margin-left:4px">until ${m.guestEnd}</span>`
+        :`<span class="pill pgray">${t('Member')}</span>`;
+    const guestBorder=isGuest?'border:1.5px dashed var(--amb);':'';
+    const vmap={'Lead':'Lead vocals','Backing':'Backing vocals','None':'No vocals','Both':'Lead & backing'};
+    const vocalsText=m.vocals&&m.vocals!=='None'?`${t('Vocals')}: ${t(vmap[m.vocals]||m.vocals)}`:'';
     return`<div class="memcard" style="${guestBorder}">
       <div class="mctop">
         <div class="mcav" style="background:${m.color};cursor:pointer;${memberPhotos[idx]?`background-image:url(${memberPhotos[idx]});background-size:cover;background-position:center`:''}" onclick="openProfile(${idx})">${memberPhotos[idx]?'':m.init}</div>
@@ -4172,19 +4174,19 @@ function renderMembers(){
             ${m.name}${flag?`<span title="${isoName(ex.nat)}" style="font-size:.95rem;line-height:1">${flag}</span>`:''}
           </div>
           <div class="mci" style="display:flex;align-items:center;gap:5px;flex-wrap:wrap;margin-top:3px">
-            <span style="display:inline-flex;align-items:center;gap:3px">${icon1} ${m.instrument}</span>
-            ${m.inst2?`<span style="color:var(--bd)">·</span><span style="display:inline-flex;align-items:center;gap:3px;color:var(--ink3)">${icon2} ${m.inst2}</span>`:''}
+            <span style="display:inline-flex;align-items:center;gap:3px">${icon1} ${t(m.instrument)}</span>
+            ${m.inst2?`<span style="color:var(--bd)">·</span><span style="display:inline-flex;align-items:center;gap:3px;color:var(--ink3)">${icon2} ${t(m.inst2)}</span>`:''}
           </div>
           <div style="margin-top:4px;display:flex;align-items:center;gap:5px;flex-wrap:wrap">${rolePill}</div>
         </div>
       </div>
-      <div class="t1" style="margin-bottom:6px" data-i18n="Integrations">Available days</div>
+      <div class="t1" style="margin-bottom:6px">${t('Available days')}</div>
       <div class="mcdays">${m.avail.map((a,di)=>`<div class="mcd ${a?'y':'n'}">${days[di]}</div>`).join('')}</div>
-      <div style="font-size:.7rem;color:var(--ink2);margin-top:9px">Vocals: ${m.vocals}</div>
+      ${vocalsText?`<div style="font-size:.7rem;color:var(--ink2);margin-top:9px">${vocalsText}</div>`:''}
       <div class="mcfoot">
-        <button class="btn btn-g btn-sm" onclick="openProfile(${idx})">View Profile</button>
-        ${m.role==='admin'?'':`<button class="btn btn-g btn-sm" onclick="openChangeRoleModal(${idx})">${isGuest?'Make Member':'Make Guest'}</button>`}
-        ${idx!==currentUser.memberIdx?`<button class="btn btn-g btn-sm" style="color:var(--r);border-color:var(--r2)" onclick="removeMember(${idx})" title="Remove from band">Remove</button>`:''}
+        <button class="btn btn-g btn-sm" onclick="openProfile(${idx})">${t('View Profile')}</button>
+        ${m.role==='admin'?'':`<button class="btn btn-g btn-sm" onclick="openChangeRoleModal(${idx})">${t(isGuest?'Make Member':'Make Guest')}</button>`}
+        ${idx!==currentUser.memberIdx?`<button class="btn btn-g btn-sm" style="color:var(--r);border-color:var(--r2)" onclick="removeMember(${idx})" title="${t('Remove')}">${t('Remove')}</button>`:''}
       </div>
     </div>`;
   }).join('');
@@ -4417,7 +4419,7 @@ function renderBP(){
   // Settings cards
   const days=['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
   const active=[0,1,0,1,1,0,0];
-  document.getElementById('dtogs').innerHTML=days.map((d,i)=>`<div class="dtog ${active[i]?'on':''}" onclick="${isAdmin?"this.classList.toggle('on')":''}" style="${isAdmin?'':'pointer-events:none;opacity:.7'}">${d.slice(0,3)}</div>`).join('');
+  document.getElementById('dtogs').innerHTML=days.map((d,i)=>`<div class="dtog ${active[i]?'on':''}" onclick="${isAdmin?"this.classList.toggle('on')":''}" style="${isAdmin?'':'pointer-events:none;opacity:.7'}">${t(d).slice(0,3)}</div>`).join('');
   const mc=document.getElementById('boMC');
   if(mc)mc.innerHTML=members.map(m=>`<div class="bomc chip" data-mid="${m.id}" onclick="togBOMc(this)" style="display:flex;align-items:center;gap:6px"><div class="mav2" style="width:18px;height:18px;font-size:.5rem;background:${m.color}">${m.init}</div>${m.name.split(' ')[0]}</div>`).join('');
   renderBOList();syncBOPill();
@@ -4930,7 +4932,7 @@ async function submitFeedback(){
   </div>
   <div class="fg"><label>Vocals</label>
     <select id="pfVocals">
-      <option>No vocals</option><option>Lead vocals</option><option>Backing vocals</option><option>Lead &amp; backing</option>
+      <option value="None" data-i18n="No vocals">No vocals</option><option value="Lead" data-i18n="Lead vocals">Lead vocals</option><option value="Backing" data-i18n="Backing vocals">Backing vocals</option><option value="Both" data-i18n="Lead &amp; backing">Lead &amp; backing</option>
     </select>
   </div>
 
@@ -5152,13 +5154,12 @@ function openProfile(idx){
   document.getElementById('pfInst1').value=m.instrument||'';
   document.getElementById('pfInst2').value=m.inst2||'';
   renderPfInstIcons();
-  const vmap={'Lead':'Lead vocals','Backing':'Backing vocals','None':'No vocals'};
-  document.getElementById('pfVocals').value=vmap[m.vocals]||'No vocals';
+  document.getElementById('pfVocals').value=m.vocals||'None';
 
   // availability toggles — read-only for others
   const dayNames=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
   document.getElementById('pfAvailDays').innerHTML=dayNames.map((d,i)=>`
-    <div class="dtog ${m.avail[i]?'on':''}" ${isOwn?`onclick="this.classList.toggle('on')"`:'style="pointer-events:none;opacity:.8"'} data-di="${i}">${d}</div>
+    <div class="dtog ${m.avail[i]?'on':''}" ${isOwn?`onclick="this.classList.toggle('on')"`:'style="pointer-events:none;opacity:.8"'} data-di="${i}">${t(d)}</div>
   `).join('');
 
   // equipment & links
@@ -5179,7 +5180,7 @@ async function saveProfile(){
   const m=members[editingIdx];if(!m)return;
   const fn=document.getElementById('pfFirst').value.trim();
   const ln=document.getElementById('pfLast').value.trim();
-  const vback={'No vocals':'None','Lead vocals':'Lead','Backing vocals':'Backing','Lead & backing':'Lead'};
+
   const chips=document.querySelectorAll('#pfAvailDays .dtog');
   const avail=[...chips].map(c=>c.classList.contains('on')?1:0);
   const fullPhone=getFullPhone('pfPhoneCc','pfPhoneNum');
@@ -5192,7 +5193,7 @@ async function saveProfile(){
     initials:      ((fn[0]||'')+(ln[0]||'')).toUpperCase(),
     instrument:    document.getElementById('pfInst1').value,
     instrument2:   document.getElementById('pfInst2').value,
-    vocals:        vback[document.getElementById('pfVocals').value]||'None',
+    vocals:        document.getElementById('pfVocals').value||'None',
     availability:  avail,
     bday:          document.getElementById('pfBday').value||null,
     nationality:   document.getElementById('pfNat').value,
@@ -5293,13 +5294,12 @@ async function populateMpPage(){
   document.getElementById('mpInst1').value=m?.instrument||currentUser.instrument||cp.instrument||'';
   document.getElementById('mpInst2').value=m?.inst2||cp.instrument2||'';
   renderMpInstPreview();
-  const vmap={'Lead':'Lead vocals','Backing':'Backing vocals','None':'No vocals','Both':'Lead & backing'};
-  document.getElementById('mpVocals').value=vmap[m?.vocals]||vmap[cp.vocals]||'No vocals';
+  document.getElementById('mpVocals').value=m?.vocals||cp.vocals||'None';
 
   // Availability
   const dayNames=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
   document.getElementById('mpAvailDays').innerHTML=dayNames.map((d,i)=>
-    `<div class="dtog ${(m?.avail||currentUser.avail||[1,1,1,1,1,1,1])[i]?'on':''}" onclick="this.classList.toggle('on')" data-di="${i}">${d}</div>`
+    `<div class="dtog ${(m?.avail||currentUser.avail||[1,1,1,1,1,1,1])[i]?'on':''}" onclick="this.classList.toggle('on')" data-di="${i}">${t(d)}</div>`
   ).join('');
 
   // Gear & Links
@@ -5353,12 +5353,12 @@ async function mpSave(sec){
     currentUser.firstName=fn||currentUser.firstName;
     currentUser.lastName=ln||currentUser.lastName;
   } else if(sec==='music'){
-    const vback={'No vocals':'None','Lead vocals':'Lead','Backing vocals':'Backing','Lead & backing':'Both'};
+
     const inst1val=document.getElementById('mpInst1').value;
     await MembersDB.upsertProfile(profileId,{
       instrument:inst1val,
       instrument2:document.getElementById('mpInst2').value,
-      vocals:vback[document.getElementById('mpVocals').value]||'None',
+      vocals:document.getElementById('mpVocals').value||'None',
       gear:document.getElementById('mpGear').value,
     });
     currentUser.instrument=inst1val;
@@ -5420,9 +5420,8 @@ function renderMpReadViews(){
   instEl.innerHTML=[inst1,inst2].filter(Boolean)
     .map(i=>`<span class="pill pgray" style="font-size:.75rem">${i}</span>`).join('')||'<span style="color:var(--ink3);font-size:.84rem">—</span>';
   const vmap={'Lead':'Lead vocals','Backing':'Backing vocals','None':'No vocals','Both':'Lead & backing'};
-  const vback2={'No vocals':'None','Lead vocals':'Lead','Backing vocals':'Backing','Lead & backing':'Both'};
-  const vocalsCode=m?.vocals||vback2[document.getElementById('mpVocals')?.value||'']||'None';
-  document.getElementById('mpv-vocals').textContent=vmap[vocalsCode]||vocalsCode||'—';
+  const vocalsCode=m?.vocals||document.getElementById('mpVocals')?.value||'None';
+  document.getElementById('mpv-vocals').textContent=t(vmap[vocalsCode])||'—';
   const gear=ex.gear||m?.gear||document.getElementById('mpGear')?.value||'';
   const gearWrap=document.getElementById('mpv-gear-wrap');
   document.getElementById('mpv-gear').textContent=gear; gearWrap.style.display=gear?'':'none';
@@ -5433,7 +5432,7 @@ function renderMpReadViews(){
     `<div style="display:flex;flex-direction:row;flex-wrap:wrap;gap:6px">` +
     dayNames.map((d,i)=>{
       const on=(m?.avail||currentUser.avail||[1,1,1,1,1,1,1])[i];
-      return`<div class="dtog ${on?'on':''}" style="pointer-events:none">${d}</div>`;
+      return`<div class="dtog ${on?'on':''}" style="pointer-events:none">${t(d)}</div>`;
     }).join('') +
     `</div>`;
 
