@@ -49,4 +49,38 @@ const RehearsalsDB = {
     if (error) { handleDbError(error); }
   },
 
+  async fetchPhotos(rehearsalIds) {
+    if (!rehearsalIds.length) return {};
+    const { data, error } = await supabase
+      .from('event_photos')
+      .select('id, event_id, url')
+      .eq('event_type', 'rehearsal')
+      .in('event_id', rehearsalIds);
+    if (error) { console.error('[bandapp] fetchPhotos error:', error); return {}; }
+    const map = {};
+    (data || []).forEach(p => {
+      if (!map[p.event_id]) map[p.event_id] = [];
+      map[p.event_id].push({ id: p.id, url: p.url });
+    });
+    return map;
+  },
+
+  async addPhoto(rehearsalId, url) {
+    const { data, error } = await supabase
+      .from('event_photos')
+      .insert({ event_type: 'rehearsal', event_id: rehearsalId, url, uploaded_by: currentUser.id })
+      .select('id, url')
+      .single();
+    if (error) { console.error('[bandapp] addPhoto error:', error); throw error; }
+    return { id: data.id, url: data.url };
+  },
+
+  async removePhoto(photoId) {
+    const { error } = await supabase
+      .from('event_photos')
+      .delete()
+      .eq('id', photoId);
+    if (error) { console.error('[bandapp] removePhoto error:', error); }
+  },
+
 };

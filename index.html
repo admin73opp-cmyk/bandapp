@@ -1651,6 +1651,8 @@ let concerts=[];
 
 async function loadConcerts(){
   concerts = await ConcertsDB.fetch(activeBandId);
+  const photoMap = await ConcertsDB.fetchPhotos(concerts.map(c=>c.id));
+  concerts.forEach(c=>{ c.photos=photoMap[c.id]||[]; });
   buildCalEv();
 }
 // Derives a concert/rehearsal dot map from the live arrays.
@@ -1682,6 +1684,8 @@ let rehearsals=[];
 
 async function loadRehearsals(){
   rehearsals = await RehearsalsDB.fetch(activeBandId);
+  const photoMap = await RehearsalsDB.fetchPhotos(rehearsals.map(r=>r.id));
+  rehearsals.forEach(r=>{ r.photos=photoMap[r.id]||[]; });
   buildCalEv();
 }
 
@@ -1720,7 +1724,7 @@ function rehearsalCard(r,style){
   const pastStyle=style==='past', cancelStyle=style==='cancelled';
   const photos=(r.photos||[]).slice(0,4);
   const photoHtml=photos.length
-    ?`<div class="concert-photos">${photos.map((p,i)=>`<img class="concert-thumb" src="${p}" alt="Photo ${i+1}" onclick="event.stopPropagation();openRehPhotoLightbox('${r.id}',${i})">`).join('')}${!cancelStyle?`<label class="concert-thumb-add" onclick="event.stopPropagation()"><input type="file" accept="image/*" style="display:none" onchange="addRehPhoto(event,'${r.id}')">+</label>`:''}</div>`
+    ?`<div class="concert-photos">${photos.map((p,i)=>`<img class="concert-thumb" src="${p.url}" alt="Photo ${i+1}" onclick="event.stopPropagation();openRehPhotoLightbox('${r.id}',${i})">`).join('')}${!cancelStyle?`<label class="concert-thumb-add" onclick="event.stopPropagation()"><input type="file" accept="image/*" style="display:none" onchange="addRehPhoto(event,'${r.id}')">+</label>`:''}</div>`
     :cancelStyle?'':`<div class="concert-photos"><label class="concert-thumb-add" onclick="event.stopPropagation()"><input type="file" accept="image/*" style="display:none" onchange="addRehPhoto(event,'${r.id}')">📷</label></div>`;
   const slLinked=r.setlistId?setlists.find(x=>x.id===r.setlistId):null;
   const badge=cancelStyle
@@ -1809,7 +1813,7 @@ function openRehView(id){
   // Photos
   const photos=r.photos||[];
   document.getElementById('rvPhotos').innerHTML=photos.length
-    ?photos.map((p,i)=>`<img src="${p}" style="width:72px;height:72px;border-radius:8px;object-fit:cover;border:1.5px solid var(--bd);cursor:pointer" onclick="openRehPhotoLightbox('${r.id}',${i})">`).join('')
+    ?photos.map((p,i)=>`<img src="${p.url}" style="width:72px;height:72px;border-radius:8px;object-fit:cover;border:1.5px solid var(--bd);cursor:pointer" onclick="openRehPhotoLightbox('${r.id}',${i})">`).join('')
     :`<span style="font-size:.76rem;color:var(--ink3)">No photos yet</span>`;
 
   // Action buttons — past: delete only; upcoming: share + edit + delete
@@ -1882,22 +1886,30 @@ async function saveRehEdit(){
 function addRehPhoto(event,id){
   const file=event.target.files[0];if(!file)return;
   const r=rehearsals.find(x=>x.id===id);if(!r)return;
-  const reader=new FileReader();
-  reader.onload=e=>{if(!r.photos)r.photos=[];r.photos.push(e.target.result);renderRehearsals();if(editingRehId===id)renderRehPhotoArea(id);toast2('Photo added!');};
-  reader.readAsDataURL(file);event.target.value='';
+  event.target.value='';
+  compressImage(file).then(async url=>{
+    try{
+      const photo=await RehearsalsDB.addPhoto(id,url);
+      if(!r.photos)r.photos=[];
+      r.photos.push(photo);
+      renderRehearsals();
+      if(editingRehId===id)renderRehPhotoArea(id);
+      toast2('Photo added!');
+    }catch(e){toast2('Failed to save photo','w');}
+  });
 }
 function renderRehPhotoArea(id){
   const r=rehearsals.find(x=>x.id===id);
   const area=document.getElementById('rePhotoArea');if(!area)return;
   const photos=r?r.photos||[]:[];
-  area.innerHTML=photos.map((p,i)=>`<div style="position:relative;display:inline-block"><img src="${p}" style="width:64px;height:64px;border-radius:8px;object-fit:cover;border:1.5px solid var(--bd)"><button onclick="removeRehPhoto('${id}',${i})" style="position:absolute;top:-6px;right:-6px;width:18px;height:18px;border-radius:50%;background:var(--r);border:2px solid var(--w);color:#fff;font-size:.55rem;cursor:pointer;display:flex;align-items:center;justify-content:center">✕</button></div>`).join('')
+  area.innerHTML=photos.map((p,i)=>`<div style="position:relative;display:inline-block"><img src="${p.url}" style="width:64px;height:64px;border-radius:8px;object-fit:cover;border:1.5px solid var(--bd)"><button onclick="removeRehPhoto('${id}',${i})" style="position:absolute;top:-6px;right:-6px;width:18px;height:18px;border-radius:50%;background:var(--r);border:2px solid var(--w);color:#fff;font-size:.55rem;cursor:pointer;display:flex;align-items:center;justify-content:center">✕</button></div>`).join('')
     +`<label style="width:64px;height:64px;border-radius:8px;border:2px dashed var(--bd);display:inline-flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;color:var(--ink3);font-size:.65rem;gap:3px" onmouseover="this.style.borderColor='var(--a)'" onmouseout="this.style.borderColor='var(--bd)'"><span style="font-size:1.3rem">📷</span>Add photo<input type="file" accept="image/*" style="display:none" onchange="addRehPhoto(event,'${id||editingRehId||''}')"></label>`;
 }
-function removeRehPhoto(id,idx){const r=rehearsals.find(x=>x.id===id);if(!r||!r.photos)return;r.photos.splice(idx,1);renderRehPhotoArea(id);renderRehearsals();toast2('Photo removed','w');}
+async function removeRehPhoto(id,idx){const r=rehearsals.find(x=>x.id===id);if(!r||!r.photos)return;const photo=r.photos[idx];if(photo?.id)await RehearsalsDB.removePhoto(photo.id);r.photos.splice(idx,1);renderRehPhotoArea(id);renderRehearsals();toast2('Photo removed','w');}
 function openRehPhotoLightbox(id,idx){
   const r=rehearsals.find(x=>x.id===id);if(!r||!r.photos||!r.photos[idx])return;
   const o=document.createElement('div');o.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:9000;display:flex;align-items:center;justify-content:center;cursor:pointer';o.onclick=()=>document.body.removeChild(o);
-  o.innerHTML=`<img src="${r.photos[idx]}" style="max-width:90vw;max-height:90vh;border-radius:12px;object-fit:contain">`;document.body.appendChild(o);
+  o.innerHTML=`<img src="${r.photos[idx].url}" style="max-width:90vw;max-height:90vh;border-radius:12px;object-fit:contain">`;document.body.appendChild(o);
 }
 
 // ── COUNTRY DIAL CODES ───────────────────────────────────
@@ -3713,7 +3725,7 @@ function concertCard(c,style){
   const pastStyle=style==='past', cancelStyle=style==='cancelled';
   const photos=(c.photos||[]).slice(0,4);
   const photoHtml=photos.length
-    ?`<div class="concert-photos">${photos.map((p,i)=>`<img class="concert-thumb" src="${p}" alt="Concert photo ${i+1}" onclick="event.stopPropagation();openPhotoLightbox('${c.id}',${i})">`).join('')}${!cancelStyle?`<label class="concert-thumb-add" onclick="event.stopPropagation()"><input type="file" accept="image/*" style="display:none" onchange="addConcertPhoto(event,'${c.id}')">+</label>`:''}</div>`
+    ?`<div class="concert-photos">${photos.map((p,i)=>`<img class="concert-thumb" src="${p.url}" alt="Concert photo ${i+1}" onclick="event.stopPropagation();openPhotoLightbox('${c.id}',${i})">`).join('')}${!cancelStyle?`<label class="concert-thumb-add" onclick="event.stopPropagation()"><input type="file" accept="image/*" style="display:none" onchange="addConcertPhoto(event,'${c.id}')">+</label>`:''}</div>`
     :cancelStyle?``:
     `<div class="concert-photos"><label class="concert-thumb-add" onclick="event.stopPropagation()"><input type="file" accept="image/*" style="display:none" onchange="addConcertPhoto(event,'${c.id}')">📷</label></div>`;
   const badge=cancelStyle?`<span style="margin-left:8px;font-size:.66rem;padding:2px 7px;border-radius:99px;background:var(--r2);color:var(--r);font-weight:600;vertical-align:middle">${t('Cancelled')}</span>`
@@ -3823,7 +3835,7 @@ function openConcertView(id){
   } else cvSlRow.style.display='none';
   const photos=c.photos||[];
   document.getElementById('cvPhotos').innerHTML=photos.length
-    ?photos.map((p,i)=>`<img src="${p}" style="width:72px;height:72px;border-radius:8px;object-fit:cover;border:1.5px solid var(--bd);cursor:pointer" onclick="openPhotoLightbox('${c.id}',${i})">`).join('')
+    ?photos.map((p,i)=>`<img src="${p.url}" style="width:72px;height:72px;border-radius:8px;object-fit:cover;border:1.5px solid var(--bd);cursor:pointer" onclick="openPhotoLightbox('${c.id}',${i})">`).join('')
     :`<span style="font-size:.76rem;color:var(--ink3)">${t('No photos yet')}</span>`;
   const actions=document.getElementById('cvActions');
   if(c.cancelled||past){
@@ -3960,19 +3972,36 @@ async function saveConcertEdit(){
 }
 
 // ── CONCERT PHOTOS ────────────────────────────────────────
-function addConcertPhoto(event, id){
+function compressImage(file){
+  return new Promise(resolve=>{
+    const img=new Image();
+    const url=URL.createObjectURL(file);
+    img.onload=()=>{
+      URL.revokeObjectURL(url);
+      const maxW=1024,maxH=768;
+      let w=img.width,h=img.height;
+      if(w>maxW||h>maxH){const r=Math.min(maxW/w,maxH/h);w=Math.round(w*r);h=Math.round(h*r);}
+      const c=document.createElement('canvas');c.width=w;c.height=h;
+      c.getContext('2d').drawImage(img,0,0,w,h);
+      resolve(c.toDataURL('image/jpeg',0.75));
+    };
+    img.src=url;
+  });
+}
+function addConcertPhoto(event,id){
   const file=event.target.files[0];if(!file)return;
   const c=concerts.find(x=>x.id===id);if(!c)return;
-  const reader=new FileReader();
-  reader.onload=e=>{
-    if(!c.photos)c.photos=[];
-    c.photos.push(e.target.result);
-    renderConcerts();
-    if(editingConcertId===id)renderConcertPhotoArea(id);
-    toast2('Photo added!');
-  };
-  reader.readAsDataURL(file);
   event.target.value='';
+  compressImage(file).then(async url=>{
+    try{
+      const photo=await ConcertsDB.addPhoto(id,url);
+      if(!c.photos)c.photos=[];
+      c.photos.push(photo);
+      renderConcerts();
+      if(editingConcertId===id)renderConcertPhotoArea(id);
+      toast2('Photo added!');
+    }catch(e){toast2('Failed to save photo','w');}
+  });
 }
 
 function renderConcertPhotoArea(id){
@@ -3981,7 +4010,7 @@ function renderConcertPhotoArea(id){
   const photos=c?c.photos||[]:[];
   area.innerHTML=photos.map((p,i)=>`
     <div style="position:relative;display:inline-block">
-      <img src="${p}" style="width:64px;height:64px;border-radius:8px;object-fit:cover;border:1.5px solid var(--bd)">
+      <img src="${p.url}" style="width:64px;height:64px;border-radius:8px;object-fit:cover;border:1.5px solid var(--bd)">
       <button onclick="removeConcertPhoto('${id}',${i})" style="position:absolute;top:-6px;right:-6px;width:18px;height:18px;border-radius:50%;background:var(--r);border:2px solid var(--w);color:#fff;font-size:.55rem;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1">✕</button>
     </div>`).join('')
     +`<label style="width:64px;height:64px;border-radius:8px;border:2px dashed var(--bd);display:inline-flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;color:var(--ink3);font-size:.65rem;gap:3px;transition:border-color .12s" onmouseover="this.style.borderColor='var(--a)'" onmouseout="this.style.borderColor='var(--bd)'">
@@ -3990,8 +4019,10 @@ function renderConcertPhotoArea(id){
     </label>`;
 }
 
-function removeConcertPhoto(id,idx){
+async function removeConcertPhoto(id,idx){
   const c=concerts.find(x=>x.id===id);if(!c||!c.photos)return;
+  const photo=c.photos[idx];
+  if(photo?.id)await ConcertsDB.removePhoto(photo.id);
   c.photos.splice(idx,1);renderConcertPhotoArea(id);renderConcerts();toast2('Photo removed','w');
 }
 
@@ -4001,7 +4032,7 @@ function openPhotoLightbox(id,idx){
   const overlay=document.createElement('div');
   overlay.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:9000;display:flex;align-items:center;justify-content:center;cursor:pointer';
   overlay.onclick=()=>document.body.removeChild(overlay);
-  overlay.innerHTML=`<img src="${c.photos[idx]}" style="max-width:90vw;max-height:90vh;border-radius:12px;object-fit:contain">`;
+  overlay.innerHTML=`<img src="${c.photos[idx].url}" style="max-width:90vw;max-height:90vh;border-radius:12px;object-fit:contain">`;
   document.body.appendChild(overlay);
 }
 
