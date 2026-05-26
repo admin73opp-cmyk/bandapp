@@ -3601,8 +3601,8 @@ function renderAvail(){
 
 function renderBest(){
   const yr=curMonth.getFullYear(),mo=curMonth.getMonth();
-  const today=new Date(2026,4,19);const dim=new Date(yr,mo+1,0).getDate();const res=[];
-  for(let d=1;d<=dim;d++){const key=`${yr}-${String(mo+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;const ev=calEv[key]||[];if(ev.includes('concert')||ev.includes('rehearsal'))continue;if(isBO(key))continue;if(new Date(yr,mo,d)<today)continue;const cnt=cntAv(yr,mo,d);if(cnt<2)continue;res.push({d,key,cnt,avs:getMAvail(yr,mo,d),full:cnt===members.length});}
+  const dim=new Date(yr,mo+1,0).getDate();const res=[];
+  for(let d=1;d<=dim;d++){const key=`${yr}-${String(mo+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;const ev=calEv[key]||[];if(ev.includes('concert')||ev.includes('rehearsal'))continue;if(isBO(key))continue;if(key<TODAY_STR)continue;const cnt=cntAv(yr,mo,d);if(cnt<2)continue;res.push({d,key,cnt,avs:getMAvail(yr,mo,d),full:cnt===members.length});}
   res.sort((a,b)=>b.cnt-a.cnt||a.d-b.d);const best=res.slice(0,3);
   const fn=best.filter(b=>b.full).length;
   document.getElementById('bestSub').textContent=fn>0?`${fn} day${fn>1?'s':''} where all ${members.length} members are free this month.`:t('Showing best partial availability — no full-band days found.');
