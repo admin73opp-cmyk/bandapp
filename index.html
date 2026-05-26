@@ -588,12 +588,12 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
         </div>
         <div style="display:flex;gap:5px;margin-bottom:12px">
           <button class="stb on" onclick="switchV('main',this)" data-i18n="Main_tab">Main</button>
-          <button class="stb" onclick="switchV('my',this)">My View (Marco)</button>
+          <button class="stb" id="myViewBtn" onclick="switchV('my',this)">My View</button>
         </div>
         <div id="vMain" data-i18n="Title" data-i18n="Artist" data-i18n="Key" data-i18n="Time" data-i18n="Links" data-i18n="Notes"><div style="overflow-x:auto"><table class="slt" id="slTbl"><thead><tr><th style="width:28px"></th><th style="width:32px">#</th><th>Title</th><th>Artist</th><th style="width:60px">Key</th><th style="width:60px">Time</th><th class="lkcol">Links</th><th>Notes</th><th style="width:60px"></th></tr></thead><tbody id="slBody"></tbody></table></div></div>
         <div id="vMy" style="display:none">
           <div style="padding:10px 12px;background:var(--a2);border-radius:var(--rad);margin-bottom:12px;border:1px solid rgba(108,99,255,.2)">
-            <div style="font-size:.77rem;font-weight:600;color:var(--a);margin-bottom:2px">✦ Personal view — Marco Rossi (Guitar)</div>
+            <div id="pvHeader" style="font-size:.77rem;font-weight:600;color:var(--a);margin-bottom:2px">✦ Personal view</div>
             <div style="font-size:.71rem;color:var(--ink2)" data-i18n="Your notes are private. Stays in sync with the main list.">Your notes are private. Stays in sync with the main list.</div>
           </div>
           <div style="overflow-x:auto" data-i18n="Title" data-i18n="Artist" data-i18n="Key" data-i18n="Band Notes"><table class="slt"><thead><tr><th>#</th><th>Title</th><th>Artist</th><th>Key</th><th>Band Notes</th><th>My Notes</th></tr></thead><tbody id="myBody"></tbody></table></div>
@@ -2752,6 +2752,15 @@ function selSL(el,id){
 function renderSlMeta(){
   const sl=setlists.find(x=>x.id===activeSetlistId);
   if(!sl)return;
+
+  // Update "My View" button and personal view header with current user's name
+  const myViewBtn=document.getElementById('myViewBtn');
+  if(myViewBtn) myViewBtn.textContent=`${t('My View')} (${currentUser.firstName||currentUser.name||'Me'})`;
+  const pvHeader=document.getElementById('pvHeader');
+  if(pvHeader){
+    const inst=currentUser.instrument;
+    pvHeader.textContent=`✦ Personal view — ${currentUser.name}${inst?' ('+t(inst)+')':''}`;
+  }
 
   // Meta pills
   const meta=document.getElementById('slMeta');
