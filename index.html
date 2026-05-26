@@ -392,11 +392,16 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
       <button class="btn btn-g btn-fw" onclick="doDemo()">Continue as demo</button>
     </div>
     <div id="sf" style="display:none">
-      <div class="fr"><div class="fg"><label>First name</label><input id="signupFirst" placeholder="Marco" autocomplete="given-name"></div><div class="fg"><label>Last name</label><input id="signupLast" placeholder="Rossi" autocomplete="family-name"></div></div>
-      <div class="fg"><label>Email</label><input id="signupEmail" type="email" placeholder="you@email.com" autocomplete="email"></div>
-      <div class="fg"><label>Password <span style="font-weight:400;color:var(--ink3)">(min. 6 chars)</span></label><input id="signupPassword" type="password" placeholder="••••••••" autocomplete="new-password"></div>
-      <div class="fg"><label>Band name (optional)</label><input id="signupBand" placeholder="The Jazz Cats"></div>
-      <button class="btn btn-p btn-fw" onclick="doSignUp()">Create account</button>
+      <div id="sf-invite-banner" style="display:none;padding:10px 14px;background:var(--a2);border:1px solid rgba(108,99,255,.3);border-radius:var(--rad);margin-bottom:14px;font-size:.85rem;text-align:center">
+        <div style="font-size:1.4rem;margin-bottom:4px">🎸</div>
+        <div style="font-weight:700;color:var(--a);margin-bottom:2px" data-i18n="You've been invited!">You've been invited!</div>
+        <div style="color:var(--ink2)"><span data-i18n="Sign up to join">Sign up to join</span> <strong id="sf-invite-band">the band</strong></div>
+      </div>
+      <div class="fr" data-i18n="First name" data-i18n="Last name"><div class="fg"><label>First name</label><input id="signupFirst" placeholder="Marco" autocomplete="given-name"></div><div class="fg"><label>Last name</label><input id="signupLast" placeholder="Rossi" autocomplete="family-name"></div></div>
+      <div class="fg" data-i18n="Email"><label>Email</label><input id="signupEmail" type="email" placeholder="you@email.com" autocomplete="email"></div>
+      <div class="fg" data-i18n="Password" data-i18n="(min. 6 chars)"><label>Password <span style="font-weight:400;color:var(--ink3)">(min. 6 chars)</span></label><input id="signupPassword" type="password" placeholder="••••••••" autocomplete="new-password"></div>
+      <div class="fg" id="sfBandField" data-i18n="Band name (optional)"><label>Band name (optional)</label><input id="signupBand" placeholder="The Jazz Cats"></div>
+      <button class="btn btn-p btn-fw" onclick="doSignUp()" data-i18n="Create account">Create account</button>
     </div>
     <!-- Post-signup: check email -->
     <div id="sf-confirm" style="display:none;text-align:center;padding:8px 0">
@@ -947,6 +952,11 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
             </div>
           </div>
         </div>
+        <div class="bp-code-row" style="display:none;margin-top:10px;padding:8px 12px;background:var(--bg2);border:1px solid var(--bd);border-radius:var(--rad);display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+          <span style="font-size:.7rem;font-weight:700;color:var(--ink2);letter-spacing:.04em;text-transform:uppercase;white-space:nowrap" data-i18n="Invite Link">Invite Link</span>
+          <input id="bpJoinCode" readonly onclick="this.select()" style="font-size:.72rem;color:var(--ink);flex:1;min-width:0;background:transparent;border:none;outline:none;cursor:text;font-family:monospace">
+          <button class="btn btn-g btn-sm" style="flex-shrink:0;font-size:.72rem" onclick="copyBandInviteLink()" data-i18n="Copy">Copy</button>
+        </div>
       </div>
 
       <div class="settg">
@@ -1379,28 +1389,35 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
 
 <!-- EVENT / CONCERT -->
 <!-- INVITE -->
+<!-- INVITE -->
 <div class="mov" id="invMod" style="display:none" onclick="closeMB(event,'invMod')">
 <div class="mod">
   <div class="mott">Invite a Musician</div>
-  <div class="most">They'll get a pre-filled profile and temporary password.</div>
-  <div class="invopts">
-    <div class="invopt on" onclick="selInv(this)"><div class="invic">✉️</div><div class="invl">Email</div></div>
-    <div class="invopt" onclick="selInv(this)"><div class="invic">💬</div><div class="invl">WhatsApp</div></div>
-    <div class="invopt" onclick="selInv(this)"><div class="invic">🔗</div><div class="invl">Link</div></div>
+
+  <!-- Option A: existing user lookup -->
+  <div style="padding:12px;background:var(--a2);border:1px solid rgba(108,99,255,.3);border-radius:var(--rad);margin-bottom:16px">
+    <div style="font-size:.72rem;font-weight:700;color:var(--a);letter-spacing:.04em;text-transform:uppercase;margin-bottom:8px">Already on Bandapp?</div>
+    <div style="display:flex;gap:7px;align-items:flex-end">
+      <div class="fg" style="margin:0;flex:1"><label>Their email address</label><input type="email" id="invLookupEmail" placeholder="musician@email.com" onkeydown="if(event.key==='Enter')lookupInvitee()"></div>
+      <button class="btn btn-p btn-sm" id="invLookupBtn" onclick="lookupInvitee()" style="flex-shrink:0">Find →</button>
+    </div>
+    <div id="invLookupResult" style="display:none;margin-top:10px"></div>
+  </div>
+
+  <!-- Divider -->
+  <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px">
+    <div style="flex:1;height:1px;background:var(--bd)"></div>
+    <div style="font-size:.68rem;color:var(--ink3);font-weight:700;letter-spacing:.05em">OR INVITE A NEW USER</div>
+    <div style="flex:1;height:1px;background:var(--bd)"></div>
+  </div>
+
+  <!-- Option B: new user — invite via Supabase email -->
+  <div style="font-size:.75rem;color:var(--ink2);padding:8px 11px;background:var(--a2);border:1px solid rgba(108,99,255,.2);border-radius:var(--rad);margin-bottom:12px">
+    📧 An invite email will be sent. The musician clicks the link, sets a password, and lands straight in the band — no sign-up form needed.
   </div>
   <div class="fr"><div class="fg"><label>First Name</label><input id="invFirstName" placeholder="Sophie"></div><div class="fg"><label>Last Name</label><input id="invLastName" placeholder="Vandenberghe"></div></div>
-  <div class="fg"><label>Email</label><input type="email" placeholder="sophie@email.com"></div>
-  <div class="fg">
-    <label>Phone / WhatsApp</label>
-    <div class="phone-row">
-      <div class="phone-cc-wrap">
-        <div class="phone-cc-display" id="invPhoneCcDisplay">+32 <svg width="10" height="10" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6l4 4 4-4"/></svg></div>
-        <select id="invPhoneCc" onchange="updatePhoneCcDisplay('invPhoneCc','invPhoneCcDisplay')"></select>
-      </div>
-      <input class="phone-num" type="tel" id="invPhoneNum" placeholder="479 123 456">
-    </div>
-  </div>
-  <div class="fr"><div class="fg"><label>Instrument</label><select><option>Guitar</option><option>Piano / Keys</option><option>Bass</option><option>Drums</option><option>Saxophone</option><option>Trumpet</option><option>Violin</option><option>Vocals</option><option>Other</option></select></div><div class="fg"><label>Role</label><select id="invRole" onchange="toggleInvGuestDates(this)"><option>Member</option><option>Admin</option><option>Guest</option></select></div></div>
+  <div class="fg"><label>Email</label><input type="email" id="invEmail" placeholder="sophie@email.com"></div>
+  <div class="fr"><div class="fg"><label>Instrument</label><select id="invInstrument"><option value="">— Instrument —</option></select></div><div class="fg"><label>Role</label><select id="invRole" onchange="toggleInvGuestDates(this)"><option>Member</option><option>Admin</option><option>Guest</option></select></div></div>
   <div id="invGuestDates" style="display:none">
     <div style="padding:9px 12px;background:var(--amb2);border:1px solid rgba(217,119,6,.3);border-radius:var(--rad);font-size:.76rem;color:var(--amb);margin-bottom:10px">Guests have full member access during the active date range, then move to the Guest Directory.</div>
     <div class="fr">
@@ -1408,7 +1425,37 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
       <div class="fg"><label>Guest End Date</label><input type="date" id="invGuestEnd"></div>
     </div>
   </div>
-  <div class="moft"><button class="btn btn-g" onclick="closeMod('invMod')">Cancel</button><button class="btn btn-p" onclick="openInviteMessage()">Next: Review Message →</button></div>
+  <div class="moft"><button class="btn btn-g" onclick="closeMod('invMod')">Cancel</button><button class="btn btn-p" id="invSendBtn" onclick="sendInviteViaEdgeFunction()">Send Invite Email 📧</button></div>
+</div>
+</div>
+
+<!-- JOIN BAND -->
+<div class="mov" id="joinBandMod" style="display:none" onclick="closeMB(event,'joinBandMod')">
+<div class="mod" style="max-width:420px">
+  <div class="mott">Join a Band</div>
+  <div class="most">Paste the band code shared by your admin to join as a member.</div>
+  <div class="fg"><label>Band Code</label><input id="joinBandCode" placeholder="Paste code here…" style="font-family:monospace;font-size:.85rem" onkeydown="if(event.key==='Enter')joinBandByCode()"></div>
+  <div id="joinBandResult" style="display:none;margin-bottom:8px"></div>
+  <div class="moft">
+    <button class="btn btn-g" onclick="closeMod('joinBandMod')">Cancel</button>
+    <button class="btn btn-p" id="joinBandBtn" onclick="joinBandByCode()">Join Band</button>
+  </div>
+</div>
+</div>
+
+<!-- ONBOARDING MODAL — shown to invited users on first login -->
+<div class="mov" id="onboardingMod" style="display:none">
+<div class="mod" style="max-width:420px">
+  <div style="text-align:center;margin-bottom:18px">
+    <div style="font-size:2.2rem;margin-bottom:8px">🎸</div>
+    <div class="mott" style="margin-bottom:6px">Welcome to the band!</div>
+    <div class="most" id="onboardingBandMsg">You've been added to the band. Set a password to secure your account, then complete your profile.</div>
+  </div>
+  <div class="fg"><label>New Password</label><input type="password" id="onboardingPw" placeholder="At least 6 characters" autocomplete="new-password"></div>
+  <div class="fg"><label>Confirm Password</label><input type="password" id="onboardingPwConfirm" placeholder="Repeat password" autocomplete="new-password"></div>
+  <div style="margin-top:4px">
+    <button class="btn btn-p btn-fw" id="onboardingSaveBtn" onclick="saveOnboardingPassword()">Set Password &amp; Continue →</button>
+  </div>
 </div>
 </div>
 
@@ -1431,7 +1478,10 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
   <div class="mott">Your Bands</div>
   <div style="font-size:.75rem;color:var(--ink2);margin-bottom:12px">Switch between bands or create a new one.</div>
   <div style="display:flex;flex-direction:column;gap:7px;margin-bottom:14px" id="bandList"></div>
-  <button class="btn btn-g btn-fw" onclick="closeMod('bswMod');openNewBand()">+ Create New Band</button>
+  <div style="display:flex;gap:7px">
+    <button class="btn btn-g" style="flex:1" onclick="closeMod('bswMod');openNewBand()" data-i18n="+ Create New Band">+ Create New Band</button>
+    <button class="btn btn-g" style="flex:1" onclick="closeMod('bswMod');openJoinBandMod()" data-i18n="Join a Band">Join a Band</button>
+  </div>
 </div>
 </div>
 
@@ -4308,13 +4358,43 @@ function renderBP(){
   const adminActions=document.getElementById('bpAdminActions');
   if(adminActions)adminActions.style.display=isAdmin?'flex':'none';
 
+  // Band invite link (admin only) — full URL so recipients can just click/paste
+  const codeEl=document.getElementById('bpJoinCode');
+  if(codeEl){
+    const _raw=(localStorage.getItem('appUrl')||window.location.origin+'/').replace(/[?#].*/,'').replace(/\/+$/,'');
+    codeEl.value=b?`${_raw}/?band=${b.id}`:'';
+    codeEl.closest('.bp-code-row').style.display=isAdmin&&b?'':'none';
+  }
+
   // Cover/logo clickable only for admin
   const cover=document.getElementById('bpCover');
-  if(cover)cover.style.cursor=isAdmin?'pointer':'default';
+  if(cover){
+    cover.style.cursor=isAdmin?'pointer':'default';
+    if(b.cover_url){
+      cover.style.backgroundImage=`url(${b.cover_url})`;
+      cover.style.backgroundSize='cover';
+      cover.style.backgroundPosition='center';
+      const ov=cover.querySelector('[data-overlay]');if(ov)ov.style.display='none';
+    } else {
+      cover.style.backgroundImage='';
+      const ov=cover.querySelector('[data-overlay]');if(ov)ov.style.display='';
+    }
+  }
   const coverBadge=document.getElementById('bpCoverEditBadge');
   if(coverBadge)coverBadge.style.display=isAdmin?'flex':'none';
   const logo=document.getElementById('bpLogo');
-  if(logo)logo.style.cursor=isAdmin?'pointer':'default';
+  if(logo){
+    logo.style.cursor=isAdmin?'pointer':'default';
+    if(b.logo_url){
+      logo.style.backgroundImage=`url(${b.logo_url})`;
+      logo.style.backgroundSize='cover';
+      logo.style.backgroundPosition='center';
+      logo.textContent='';
+    } else {
+      logo.style.backgroundImage='';
+      logo.textContent=b.initials||b.name?.slice(0,2).toUpperCase()||'';
+    }
+  }
   const logoCam=document.getElementById('bpLogoCamBadge');
   if(logoCam)logoCam.style.display=isAdmin?'flex':'none';
 
@@ -4458,7 +4538,186 @@ function openBandPhotoLightbox(idx){
 }
 
 // INIT
-function openInvMod(){populatePhoneCc('invPhoneCc','+32');document.getElementById('invPhoneNum').value='';showMod('invMod');}
+function openInvMod(){
+  const invInst=document.getElementById('invInstrument');
+  if(invInst){populateInstrumentSelects();invInst.value='';}
+  ['invFirstName','invLastName','invEmail'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  const invRole=document.getElementById('invRole');if(invRole)invRole.value='Member';
+  const gd=document.getElementById('invGuestDates');if(gd)gd.style.display='none';
+  const lr=document.getElementById('invLookupResult');if(lr)lr.style.display='none';
+  const le=document.getElementById('invLookupEmail');if(le)le.value='';
+  showMod('invMod');
+}
+
+function openJoinBandMod(){
+  document.getElementById('joinBandCode').value='';
+  const r=document.getElementById('joinBandResult');
+  if(r){r.style.display='none';r.innerHTML='';}
+  showMod('joinBandMod');
+}
+
+async function joinBandByCode(){
+  const code=document.getElementById('joinBandCode').value.trim();
+  if(!code){toast2('Paste a band code first','w');return;}
+  const btn=document.getElementById('joinBandBtn');
+  if(btn){btn.disabled=true;btn.textContent='Joining…';}
+  const {data,error}=await supabase.rpc('join_band_by_code',{p_code:code});
+  if(btn){btn.disabled=false;btn.textContent='Join Band';}
+  const res=document.getElementById('joinBandResult');
+  if(error||!data){
+    if(res){res.style.display='';res.innerHTML=`<div style="font-size:.78rem;color:var(--r);padding:8px 10px;background:var(--r2);border-radius:var(--rad)">${error?.message||'Something went wrong'}</div>`;}
+    return;
+  }
+  if(data.error){
+    if(res){res.style.display='';res.innerHTML=`<div style="font-size:.78rem;color:var(--r);padding:8px 10px;background:var(--r2);border-radius:var(--rad)">${data.message||data.error}</div>`;}
+    return;
+  }
+  closeMod('joinBandMod');
+  await loadBands();
+  await switchBand(data.band_id);
+  toast2(`Welcome to ${data.band_name}! 🎉`);
+}
+
+async function lookupInvitee(){
+  const email=document.getElementById('invLookupEmail').value.trim();
+  if(!email){toast2('Enter an email address','w');return;}
+  const btn=document.getElementById('invLookupBtn');
+  if(btn){btn.disabled=true;btn.textContent='Finding…';}
+  const {data,error}=await supabase.rpc('find_user_by_email',{p_email:email});
+  if(btn){btn.disabled=false;btn.textContent='Find →';}
+  const res=document.getElementById('invLookupResult');
+  res.style.display='';
+  if(error||!data||data.length===0){
+    res.innerHTML=`<div style="font-size:.75rem;color:var(--ink2);padding:7px 10px;background:var(--bg2);border-radius:var(--rad)">No Bandapp account found for this email. Use the invite form below to send them a signup link.</div>`;
+    return;
+  }
+  const u=data[0];
+  const name=[u.first_name,u.last_name].filter(Boolean).join(' ')||'User';
+  res.innerHTML=`
+    <div style="padding:10px 12px;background:var(--g2);border:1px solid var(--g);border-radius:var(--rad)">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+        <span style="color:var(--g);font-size:1.1rem">✓</span>
+        <div style="flex:1"><div style="font-size:.82rem;font-weight:700">${name}</div><div style="font-size:.72rem;color:var(--ink2)">Bandapp account found</div></div>
+      </div>
+      <div class="fr" style="margin-bottom:8px">
+        <div class="fg" style="margin:0"><label style="font-size:.69rem">Role</label>
+          <select id="invFoundRole" onchange="toggleInvFoundGuest(this)" style="font-size:.8rem">
+            <option value="member">Member</option>
+            <option value="admin">Admin</option>
+            <option value="guest">Guest</option>
+          </select>
+        </div>
+      </div>
+      <div id="invFoundGuestFields" style="display:none;margin-bottom:8px">
+        <div style="padding:7px 9px;background:var(--amb2);border:1px solid rgba(217,119,6,.25);border-radius:var(--rad);font-size:.73rem;color:var(--amb);margin-bottom:8px">Guest access expires on the end date and they move to the Guest Directory.</div>
+        <div class="fr" style="margin-bottom:6px">
+          <div class="fg" style="margin:0"><label style="font-size:.69rem">Guest Start</label><input type="date" id="invFoundGuestStart"></div>
+          <div class="fg" style="margin:0"><label style="font-size:.69rem">Guest End</label><input type="date" id="invFoundGuestEnd"></div>
+        </div>
+        <div class="fg" style="margin:0"><label style="font-size:.69rem">Home Band (optional)</label><input id="invFoundGuestBand" placeholder="e.g. Brussels Big Band"></div>
+      </div>
+      <button class="btn btn-p btn-sm" onclick="addFoundMember('${u.id}')">+ Add to Band</button>
+    </div>`;
+}
+
+function toggleInvFoundGuest(sel){
+  const f=document.getElementById('invFoundGuestFields');
+  if(f)f.style.display=sel.value==='guest'?'':'none';
+}
+
+async function addFoundMember(userId){
+  const role=document.getElementById('invFoundRole')?.value||'member';
+  const guestStart=document.getElementById('invFoundGuestStart')?.value||null;
+  const guestEnd=document.getElementById('invFoundGuestEnd')?.value||null;
+  const guestBand=document.getElementById('invFoundGuestBand')?.value.trim()||null;
+  const btn=document.querySelector(`#invMod button[onclick*="addFoundMember"]`);
+  if(btn){btn.disabled=true;btn.textContent='Adding…';}
+  const {data,error}=await supabase.rpc('add_band_member_direct',{
+    p_band_id:activeBandId,
+    p_user_id:userId,
+    p_role:role,
+    p_guest_start:guestStart||null,
+    p_guest_end:guestEnd||null,
+    p_guest_band:guestBand||null,
+  });
+  if(btn){btn.disabled=false;btn.textContent='+ Add to Band';}
+  if(error){handleDbError(error);return;}
+  if(data?.error){toast2(data.message||data.error,'w');return;}
+  await loadMembers();
+  closeMod('invMod');
+  renderMembers();
+  updateSidebarCounts();
+  toast2(`${data?.name||'Member'} added to the band! 🎉`);
+}
+
+async function sendInviteViaEdgeFunction(){
+  if(!activeBandId){toast2('Select a band first','w');return;}
+  const email=(document.getElementById('invEmail')?.value||'').trim();
+  const firstName=(document.getElementById('invFirstName')?.value||'').trim();
+  const lastName=(document.getElementById('invLastName')?.value||'').trim();
+  const instrument=(document.getElementById('invInstrument')?.value||'').trim();
+  const role=(document.getElementById('invRole')?.value||'member').toLowerCase();
+  if(!email){toast2('Email address is required','w');return;}
+  const btn=document.getElementById('invSendBtn');
+  if(btn){btn.disabled=true;btn.textContent='Sending…';}
+  try{
+    const {data:{session}}=await supabase.auth.getSession();
+    const res=await fetch(`${SUPABASE_URL}/functions/v1/invite-member`,{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':`Bearer ${session.access_token}`},
+      body:JSON.stringify({band_id:activeBandId,email,first_name:firstName,last_name:lastName,instrument,role}),
+    });
+    const result=await res.json();
+    if(!res.ok){
+      toast2(result.message||result.error||'Failed to send invite','w');
+      return;
+    }
+    await loadMembers();
+    renderMembers();
+    updateSidebarCounts();
+    closeMod('invMod');
+    toast2(`Invite sent to ${email}! They'll receive an email to join the band. 🎉`);
+  }finally{
+    if(btn){btn.disabled=false;btn.textContent='Send Invite Email 📧';}
+  }
+}
+
+function showOnboarding(){
+  const band=getActiveBand();
+  const msg=document.getElementById('onboardingBandMsg');
+  if(msg&&band){msg.textContent=`You've been added to "${band.name}". Set a password to secure your account, then complete your profile.`;}
+  document.getElementById('onboardingMod').style.display='flex';
+}
+
+async function saveOnboardingPassword(){
+  const pw=(document.getElementById('onboardingPw')?.value||'');
+  const pw2=(document.getElementById('onboardingPwConfirm')?.value||'');
+  if(pw.length<6){toast2('Password must be at least 6 characters','w');return;}
+  if(pw!==pw2){toast2('Passwords do not match','w');return;}
+  const btn=document.getElementById('onboardingSaveBtn');
+  if(btn){btn.disabled=true;btn.textContent='Saving…';}
+  const {error}=await supabase.auth.updateUser({password:pw,data:{needs_onboarding:null}});
+  if(btn){btn.disabled=false;btn.textContent='Set Password & Continue →';}
+  if(error){toast2(error.message,'w');return;}
+  document.getElementById('onboardingMod').style.display='none';
+  nav('myprofile');
+  toast2('Password set! Please complete your profile.');
+}
+
+function copyBandInviteLink(){
+  const inp=document.getElementById('bpJoinCode');
+  const text=inp?.value||'';
+  if(!text)return;
+  inp.select();
+  if(navigator.clipboard&&window.isSecureContext){
+    navigator.clipboard.writeText(text)
+      .then(()=>toast2('Invite link copied!'))
+      .catch(()=>{document.execCommand('copy');toast2('Invite link copied!');});
+  }else{
+    document.execCommand('copy');
+    toast2('Invite link copied!');
+  }
+}
 
 function renderDashboard(){
   const band = getActiveBand();

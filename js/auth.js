@@ -25,6 +25,11 @@ async function loadCurrentUser(uid, email) {
     const ln = meta.last_name || '';
     currentUser.firstName = fn;
     currentUser.lastName  = ln;
+    currentUser._memberships = [];
+    // Restore pending band from metadata if sessionStorage was cleared (e.g. after page refresh)
+    if (meta.pending_band_id && !sessionStorage.getItem('pendingBandId')) {
+      sessionStorage.setItem('pendingBandId', meta.pending_band_id);
+    }
     if (fn || ln) {
       await supabase.from('profiles').upsert({
         id:         uid,
@@ -82,10 +87,30 @@ async function doSignUp() {
   if (!email || !pw) { toast2('Enter email and password', 'w'); return; }
   if (pw.length < 6) { toast2('Password must be at least 6 characters', 'w'); return; }
 
+  const pendingBandId     = sessionStorage.getItem('pendingBandId')   || new URLSearchParams(window.location.search).get('band') || '';
+  const pendingPhone      = sessionStorage.getItem('invitePhone')      || '';
+  const pendingInstrument = sessionStorage.getItem('inviteInstrument') || '';
+  const baseUrl = localStorage.getItem('appUrl') || (window.location.origin + window.location.pathname);
+  // Embed all invite params in the confirmation-email redirect URL so they survive new-tab opens
+  const _rp = new URLSearchParams();
+  if (pendingBandId)     _rp.set('band',       pendingBandId);
+  if (pendingPhone)      _rp.set('phone',       pendingPhone);
+  if (pendingInstrument) _rp.set('instrument',  pendingInstrument);
+  const redirectTo = _rp.toString() ? `${baseUrl}?${_rp.toString()}` : baseUrl;
+
   const { data, error } = await supabase.auth.signUp({
     email,
     password: pw,
-    options: { data: { first_name: firstName, last_name: lastName } },
+    options: {
+      data: {
+        first_name: firstName,
+        last_name:  lastName,
+        ...(pendingBandId     ? { pending_band_id:    pendingBandId }     : {}),
+        ...(pendingPhone      ? { pending_phone:       pendingPhone }      : {}),
+        ...(pendingInstrument ? { pending_instrument:  pendingInstrument } : {}),
+      },
+      emailRedirectTo: redirectTo,
+    },
   });
 
   if (error) { toast2(error.message, 'w'); return; }
@@ -195,6 +220,8 @@ supabase.auth.onAuthStateChange(async (event, session) => {
   if (event === 'SIGNED_OUT') {
     document.getElementById('app').classList.remove('vis');
     document.getElementById('authScreen').style.display = 'flex';
+    const fbBtn = document.getElementById('fbBtn');
+    if (fbBtn) fbBtn.style.display = 'none';
     if (typeof switchTab === 'function') switchTab('login');
     return;
   }
@@ -207,10 +234,45 @@ supabase.auth.onAuthStateChange(async (event, session) => {
     return;
   }
   await loadCurrentUser(session.user.id, session.user.email);
+
+  // Restore invite params from confirmation-email URL into sessionStorage (new-tab safe)
+  const _urlParams = new URLSearchParams(window.location.search);
+  if (_urlParams.get('phone'))      sessionStorage.setItem('invitePhone',      _urlParams.get('phone'));
+  if (_urlParams.get('instrument')) sessionStorage.setItem('inviteInstrument', _urlParams.get('instrument'));
+  // Also fall back to user metadata (set during signup) if sessionStorage is empty
+  const _meta = session.user.user_metadata || {};
+  if (!sessionStorage.getItem('invitePhone')      && _meta.pending_phone)      sessionStorage.setItem('invitePhone',      _meta.pending_phone);
+  if (!sessionStorage.getItem('inviteInstrument') && _meta.pending_instrument) sessionStorage.setItem('inviteInstrument', _meta.pending_instrument);
+
+  // Auto-join band from invite link (?band=UUID) or sessionStorage or user metadata
+  const _pendingBandId = _urlParams.get('band') || sessionStorage.getItem('pendingBandId') || _meta.pending_band_id || '';
+  if (_pendingBandId) {
+    const { data: joinData, error: joinErr } = await supabase.rpc('join_band_by_code', { p_code: _pendingBandId });
+    if (joinData?.success) {
+      currentUser._memberships = [...(currentUser._memberships || []), { band_id: joinData.band_id, role: 'member' }];
+      activeBandId = joinData.band_id;
+      localStorage.setItem('activeBandId', joinData.band_id);
+      sessionStorage.removeItem('pendingBandId');
+      window.history.replaceState({}, '', window.location.pathname);
+    } else if (joinData?.error === 'already_member') {
+      sessionStorage.removeItem('pendingBandId');
+      window.history.replaceState({}, '', window.location.pathname);
+    } else {
+      // RPC not deployed or network error — clean URL but keep pendingBandId for retry on next login
+      window.history.replaceState({}, '', window.location.pathname);
+      if (joinErr) console.warn('[bandapp] join_band_by_code failed:', joinErr?.message);
+    }
+  }
+
   document.getElementById('authScreen').style.display = 'none';
   document.getElementById('app').classList.add('vis');
   initSbState();
   await initApp();
+
+  // Invited users land with needs_onboarding=true — show password-setup overlay
+  if (_meta.needs_onboarding) {
+    if (typeof showOnboarding === 'function') showOnboarding();
+  }
 });
 
 // On first load, restore an existing session without waiting for the event
@@ -218,6 +280,33 @@ supabase.auth.onAuthStateChange(async (event, session) => {
   const { data: { session } } = await supabase.auth.getSession();
   if (!session) {
     document.getElementById('authScreen').style.display = 'flex';
+    // Pre-fill signup form from invite URL params
+    const p = new URLSearchParams(window.location.search);
+    // Store all invite params in sessionStorage so they survive the email confirmation redirect
+    if (p.get('bandname'))   sessionStorage.setItem('inviteBandName',   p.get('bandname'));
+    if (p.get('fname'))      sessionStorage.setItem('inviteFirst',      p.get('fname'));
+    if (p.get('lname'))      sessionStorage.setItem('inviteLast',       p.get('lname'));
+    if (p.get('email'))      sessionStorage.setItem('inviteEmail',      p.get('email'));
+    if (p.get('phone'))      sessionStorage.setItem('invitePhone',      p.get('phone'));
+    if (p.get('instrument')) sessionStorage.setItem('inviteInstrument', p.get('instrument'));
+    if (p.get('band'))       sessionStorage.setItem('pendingBandId',    p.get('band'));
+
+    // Switch to signup and show invite UI if ANY invite param is present
+    const _hasInvite = ['bandname','fname','lname','email','phone','instrument','band'].some(k => p.get(k));
+    if (_hasInvite) {
+      if (typeof switchTab === 'function') switchTab('signup');
+      if (p.get('fname')) { const el = document.getElementById('signupFirst'); if (el) el.value = p.get('fname'); }
+      if (p.get('lname')) { const el = document.getElementById('signupLast');  if (el) el.value = p.get('lname'); }
+      if (p.get('email')) { const el = document.getElementById('signupEmail'); if (el) el.value = p.get('email'); }
+      // Show invite banner with band name
+      const _banner    = document.getElementById('sf-invite-banner');
+      const _bandEl    = document.getElementById('sf-invite-band');
+      const _bandField = document.getElementById('sfBandField');
+      const _bandName  = p.get('bandname') || '';
+      if (_banner) _banner.style.display = '';
+      if (_bandEl && _bandName) _bandEl.textContent = _bandName;
+      if (_bandField) _bandField.style.display = 'none'; // hide "create band" field for invitees
+    }
   }
   // If session exists, onAuthStateChange fires automatically
 })();
