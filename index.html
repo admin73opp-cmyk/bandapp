@@ -3285,27 +3285,34 @@ async function saveSongEdit(){
   const s=songByAnyId(editingSongId);if(!s)return;
   const seMin=parseInt(document.getElementById('seDurMin').value)||0;
   const seSec=parseInt(document.getElementById('seDurSec').value)||0;
-  await SongsDB.upsert({
-    id:s.id,
-    band_id:activeBandId,
-    title:document.getElementById('seName').value.trim()||s.title,
-    artist:document.getElementById('seArtist').value.trim()||s.artist,
-    genre:document.getElementById('seGenre').value,
-    key:document.getElementById('seKey').value,
-    note:document.getElementById('seNote').value,
-    dur:seMin*60+seSec||null,
-    spotify:document.getElementById('seSpotify').value,
-    youtube:document.getElementById('seYoutube').value,
-    apple:document.getElementById('seApple').value,
-    hidden:s.hidden,
-  });
+  try{
+    await SongsDB.upsert({
+      id:s.id,
+      band_id:activeBandId,
+      title:document.getElementById('seName').value.trim()||s.title,
+      artist:document.getElementById('seArtist').value.trim()||s.artist,
+      genre:document.getElementById('seGenre').value,
+      key:document.getElementById('seKey').value,
+      note:document.getElementById('seNote').value,
+      dur:seMin*60+seSec||null,
+      spotify:document.getElementById('seSpotify').value,
+      youtube:document.getElementById('seYoutube').value,
+      apple:document.getElementById('seApple').value,
+      hidden:s.hidden,
+    });
+  }catch(e){
+    const msg=e?.code==='42501'?t('Permission denied — only band admins can edit songs'):e.message||t('Failed to save song');
+    toast2(msg,'w');
+    console.error('[bandapp] saveSongEdit error:',e);
+    return;
+  }
   closeMod('seMod');await loadSongs();renderLib(aG);toast2('Song updated!');
 }
 
 async function toggleHideSong(id){
   const s=songByAnyId(id);if(!s)return;
   const hidden=!s.hidden;
-  await SongsDB.upsert({...s,hidden});
+  try{ await SongsDB.upsert({...s,hidden}); }catch(e){ toast2(e.message||t('Failed to save song'),'w');return; }
   await loadSongs();
   const updated=songByAnyId(s.id);
   if(editingSongId===s.id){

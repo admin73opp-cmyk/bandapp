@@ -745,7 +745,9 @@ window.PT_BR = {
   'No': 'Não',
   'Yes': 'Sim',
   'Permission denied — only band admins can add songs': 'Permissão negada — apenas admins da banda podem adicionar músicas',
+  'Permission denied — only band admins can edit songs': 'Permissão negada — apenas admins da banda podem editar músicas',
   'Failed to add song': 'Falha ao adicionar música',
   'Failed to add song — please try again': 'Falha ao adicionar música — tente novamente',
+  'Failed to save song': 'Falha ao salvar música',
   'added to library!': 'adicionada à biblioteca!',
 };
