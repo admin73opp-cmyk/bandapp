@@ -1626,7 +1626,7 @@ async function loadMembers(){
     bday:m.bday, nat:m.nat, country:m.country, lang:m.lang,
     bio:m.bio, gear:m.gear,
     phone:[m.phoneDial,m.phoneNum].filter(Boolean).join(' '),
-    email:'',
+    email:m.email||'',
     spotify:m.spotify, apple:m.apple, youtube:m.youtube,
     instagram:m.instagram, facebook:m.facebook, website:m.website,
   }));
@@ -5326,7 +5326,7 @@ function openProfile(idx){
   document.getElementById('pfLast').value=ln.join(' ');
   document.getElementById('pfBday').value=ex.bday||'';
   document.getElementById('pfNat').value=ex.nat||'';
-  document.getElementById('pfEmail').value=ex.email||`${fn.toLowerCase()}@email.com`;
+  document.getElementById('pfEmail').value=isOwn?currentUser.email||(ex.email||''):ex.email||'';
   // Phone — split into dial code + number
   initPhoneField('pfPhoneCc','pfPhoneNum',ex.phone||'');
   document.getElementById('pfCountry').value=ex.country||'';

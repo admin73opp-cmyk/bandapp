@@ -37,6 +37,7 @@ function memberFromRow(row) {
     facebook:    p.facebook_url   || '',
     website:     p.website_url    || '',
     photo:       p.photo_url      || null,
+    email:       p.email          || '',
   };
 }
 
