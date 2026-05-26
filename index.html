@@ -1244,7 +1244,7 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
         </div>
 
         <div class="card">
-          <div class="ct" style="margin-bottom:4px" data-i18n="App URL">App Language</div>
+          <div class="ct" style="margin-bottom:4px" data-i18n="App Language">App Language</div>
           <div style="font-size:.75rem;color:var(--ink3);margin-bottom:14px" data-i18n="Controls date formats, day names, and interface labels.">Controls date formats, day names, and interface labels.</div>
           <div class="fg" style="max-width:280px" data-i18n="Language"><label>Language</label><select id="settLang"></select></div>
           <div style="margin-top:14px">
@@ -1253,7 +1253,7 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
         </div>
 
         <div class="card">
-          <div class="ct" style="margin-bottom:4px" data-i18n="App Language">Change Password</div>
+          <div class="ct" style="margin-bottom:4px" data-i18n="Change Password">Change Password</div>
           <div style="font-size:.75rem;color:var(--ink3);margin-bottom:14px" data-i18n="Set a new password for your account.">Set a new password for your account.</div>
           <div class="fg" style="max-width:280px">
             <label data-i18n="New password" data-i18n="(min. 6 chars)">New password <span style="font-weight:400;color:var(--ink3)">(min. 6 chars)</span></label>
@@ -1269,10 +1269,10 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
         </div>
 
         <div class="card">
-          <div class="ct" style="margin-bottom:4px" data-i18n="Change Password">Integrations</div>
+          <div class="ct" style="margin-bottom:4px" data-i18n="Integrations">Integrations</div>
           <div style="display:flex;align-items:flex-start;gap:9px;padding:11px 13px;background:var(--bl2);border:1px solid rgba(96,165,250,.25);border-radius:var(--rad);font-size:.76rem;color:var(--bl);margin-top:10px">
             <span style="font-size:1rem;flex-shrink:0">📅</span>
-            <span><strong>Google Calendar sync</strong> — connect your Google Calendar so rehearsals and concerts appear automatically. <span style="text-decoration:underline;cursor:pointer" onclick="toast2('Google Calendar sync coming soon')">Set up →</span></span>
+            <span><strong>Google Calendar sync</strong> — connect your Google Calendar so rehearsals and concerts appear automatically. <span style="text-decoration:underline;cursor:pointer" onclick="toast2(t('Google Calendar sync coming soon'))">Set up →</span></span>
           </div>
         </div>
 
@@ -1699,11 +1699,11 @@ function renderRehearsals(){
   const upcoming =active.filter(r=>!isRehPast(r)).sort((a,b)=>rehearsalDate(a)-rehearsalDate(b));
   const past     =active.filter(r=> isRehPast(r)).sort((a,b)=>rehearsalDate(b)-rehearsalDate(a));
   const countEl  =document.getElementById('rehearsalCount');
-  if(countEl)countEl.textContent=`${upcoming.length} upcoming · ${past.length} past${cancelled.length?` · ${cancelled.length} cancelled`:''}`;
+  if(countEl)countEl.textContent=`${upcoming.length} ${t('upcoming')} · ${past.length} ${t('past')}${cancelled.length?` · ${cancelled.length} ${t('cancelled')}`:''}`;
   document.getElementById('rehearsalListUpcoming').innerHTML=upcoming.length
     ?upcoming.map(r=>rehearsalCard(r,'upcoming')).join('')
-    :`<div style="padding:20px;text-align:center;font-size:.82rem;color:var(--ink3)">No upcoming rehearsals — click + New Rehearsal to schedule one.</div>`;
-  document.getElementById('rehearsalListPast').innerHTML=past.length?past.map(r=>rehearsalCard(r,'past')).join(''):`<div style="padding:12px;font-size:.78rem;color:var(--ink3)">No past rehearsals yet.</div>`;
+    :`<div style="padding:20px;text-align:center;font-size:.82rem;color:var(--ink3)">${t('No upcoming rehearsals — click + New Rehearsal to schedule one.')}</div>`;
+  document.getElementById('rehearsalListPast').innerHTML=past.length?past.map(r=>rehearsalCard(r,'past')).join(''):`<div style="padding:12px;font-size:.78rem;color:var(--ink3)">${t('No past rehearsals yet.')}</div>`;
   const pastSec=document.getElementById('pastRehearsalSection');if(pastSec)pastSec.style.display=past.length?'':'none';
   const cancList=document.getElementById('rehearsalListCancelled');if(cancList)cancList.innerHTML=cancelled.map(r=>rehearsalCard(r,'cancelled')).join('');
   const cancSec=document.getElementById('cancelledRehearsalSection');if(cancSec)cancSec.style.display=cancelled.length?'':'none';
@@ -1717,12 +1717,12 @@ function rehearsalCard(r,style){
     :cancelStyle?'':`<div class="concert-photos"><label class="concert-thumb-add" onclick="event.stopPropagation()"><input type="file" accept="image/*" style="display:none" onchange="addRehPhoto(event,'${r.id}')">📷</label></div>`;
   const slLinked=r.setlistId?setlists.find(x=>x.id===r.setlistId):null;
   const badge=cancelStyle
-    ?`<span style="margin-left:8px;font-size:.66rem;padding:2px 7px;border-radius:99px;background:var(--r2);color:var(--r);font-weight:600;vertical-align:middle">Cancelled</span>`
-    :pastStyle?`<span style="margin-left:8px;font-size:.66rem;padding:2px 7px;border-radius:99px;background:var(--bg2);color:var(--ink3);font-weight:600;vertical-align:middle">Past</span>`:'';
+    ?`<span style="margin-left:8px;font-size:.66rem;padding:2px 7px;border-radius:99px;background:var(--r2);color:var(--r);font-weight:600;vertical-align:middle">${t('Cancelled')}</span>`
+    :pastStyle?`<span style="margin-left:8px;font-size:.66rem;padding:2px 7px;border-radius:99px;background:var(--bg2);color:var(--ink3);font-weight:600;vertical-align:middle">${t('Past')}</span>`:'';
   const actions=cancelStyle||pastStyle
-    ?`<button class="btn btn-g btn-sm" data-action="view">View</button>`
-    :`<button class="btn btn-g btn-sm" style="color:var(--amb);border-color:var(--amb2)" data-action="cancel">Cancel</button>
-      <button class="btn btn-g btn-sm" data-action="view">View</button>`;
+    ?`<button class="btn btn-g btn-sm" data-action="view">${t('View')}</button>`
+    :`<button class="btn btn-g btn-sm" style="color:var(--amb);border-color:var(--amb2)" data-action="cancel">${t('Cancel')}</button>
+      <button class="btn btn-g btn-sm" data-action="view">${t('View')}</button>`;
   return`<div class="ccrd${pastStyle?' past':''}${cancelStyle?' cancelled':''}" data-rid="${r.id}" onclick="handleRehCardClick(event,'${r.id}')">
     <div class="cdb">
       <div class="cdmo">${r.month}</div>
@@ -1736,7 +1736,7 @@ function rehearsalCard(r,style){
         <span class="cmi"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M8 4v4l3 2"/></svg>${r.start}–${r.end}</span>
       </div>
       <div class="cbadges">
-        <span class="pill ${cancelStyle?'pr':'pg'}">${cancelStyle?'🚫 Cancelled':'Rehearsal'}</span>
+        <span class="pill ${cancelStyle?'pr':'pg'}">${cancelStyle?t('🚫 Cancelled'):t('Rehearsal')}</span>
         ${slLinked&&!cancelStyle?`<span class="pill pp" style="cursor:pointer" data-action="setlist" data-slid="${r.setlistId}">♩ ${slLinked.name}</span>`:''}
       </div>
       ${photoHtml}
@@ -2086,18 +2086,22 @@ function validateWaLink(input){
   input.style.borderColor = valid ? '' : 'var(--r)';
 }
 
-function saveWaLink(){
+async function saveWaLink(){
   const val=document.getElementById('waLinkInput').value.trim();
   if(val&&!val.startsWith('https://chat.whatsapp.com/')){
     toast2('Please enter a valid WhatsApp group link','w');return;
   }
   bandWaLinks[activeBandId]=val||null;
+  const _wb=getActiveBand();if(_wb)_wb.wa_link=val||null;
+  await BandsDB.upsert({id:activeBandId,wa_link:val||null});
   refreshWaUI();refreshNotifSettUI();
   toast2(val?'WhatsApp group link saved!':'Link removed');
 }
 
-function removeWaLink(){
+async function removeWaLink(){
   bandWaLinks[activeBandId]=null;
+  const _wb=getActiveBand();if(_wb)_wb.wa_link=null;
+  await BandsDB.upsert({id:activeBandId,wa_link:null});
   document.getElementById('waLinkInput').value='';
   refreshWaUI();refreshNotifSettUI();
   toast2('WhatsApp link removed','w');
@@ -2134,6 +2138,7 @@ let activeBandId=null;
 
 async function loadBands(){
   BANDS=await BandsDB.fetch();
+  BANDS.forEach(b=>{ if(b.wa_link) bandWaLinks[b.id]=b.wa_link; });
 }
 
 function getActiveBand(){return BANDS.find(b=>b.id===activeBandId);}
@@ -2349,7 +2354,7 @@ const SUPPORTED_LANGUAGES = [
   { code: 'en',    flag: '🇬🇧', native: 'English',    english: 'English'    },
   { code: 'nl',    flag: '🇳🇱', native: 'Nederlands',  english: 'Dutch'      },
   { code: 'fr',    flag: '🇫🇷', native: 'Français',    english: 'French'     },
-  { code: 'pt',    flag: '🇵🇹', native: 'Português',   english: 'Portuguese' },
+  { code: 'pt',    flag: '🇧🇷', native: 'Português',   english: 'Portuguese' },
   { code: 'es',    flag: '🇪🇸', native: 'Español',     english: 'Spanish'    },
   { code: 'de',    flag: '🇩🇪', native: 'Deutsch',     english: 'German'     },
   { code: 'it',    flag: '🇮🇹', native: 'Italiano',    english: 'Italian'    },
@@ -3413,7 +3418,7 @@ function renderCal(){
   if(noBand)noBand.style.display='none';
   if(content)content.style.display='';
   const yr=curMonth.getFullYear(),mo=curMonth.getMonth();
-  const lbl=`${MN[mo]} ${yr}`;
+  const lbl=`${t(MN[mo])} ${yr}`;
   document.getElementById('calLbl').textContent=lbl;
   const calMS=document.getElementById('calMS');if(calMS)calMS.textContent=lbl;
 
@@ -3455,7 +3460,7 @@ function renderCal(){
   }
 }
 
-function calClk(d,key,isFull){const ev=calEv[key]||[];if(ev.includes('rehearsal')){toast2(`Rehearsal on ${d}`);return;}if(ev.includes('concert')){toast2(`Concert on ${d}`);return;}openRehMod(d,key,isFull);}
+function calClk(d,key,isFull){const ev=calEv[key]||[];if(ev.includes('rehearsal')){toast2(`${t('Rehearsal')} - ${d}`);return;}if(ev.includes('concert')){toast2(`${t('Concert')} - ${d}`);return;}openRehMod(d,key,isFull);}
 function chMonth(dir){curMonth.setMonth(curMonth.getMonth()+dir);renderCal();}
 
 
@@ -3465,7 +3470,7 @@ function renderAvail(){
   const boMap=getBOMap();const days=Array.from({length:dim},(_,i)=>i+1);
   const fullC=new Set(),boC=new Set();
   days.forEach(d=>{const key=`${yr}-${String(mo+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;if(boMap[key])boC.add(d);else if(isFB(yr,mo,d))fullC.add(d);});
-  document.getElementById('avHdr').innerHTML=`<th class="nc2" style="font-size:.68rem;font-weight:700;color:var(--ink3)">Member</th>`+
+  document.getElementById('avHdr').innerHTML=`<th class="nc2" style="font-size:.68rem;font-weight:700;color:var(--ink3)">${t('Member')}</th>`+
     days.map(d=>{let cls='';if(fullC.has(d))cls='cfl';if(boC.has(d))cls='cbl';const key=`${yr}-${String(mo+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;return`<th class="${cls}" title="${boMap[key]||''}">${d}${boC.has(d)?'*':''}</th>`;}).join('');
   document.getElementById('avBody').innerHTML=members.map((m,mi)=>{
     const cells=days.map(d=>{
@@ -3491,7 +3496,7 @@ function renderAvail(){
   }).join('');
   const chips=document.getElementById('fbChips');
   const fd=[...fullC].sort((a,b)=>a-b).filter(d=>{const key=`${yr}-${String(mo+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;const ev=calEv[key]||[];return!ev.includes('rehearsal')&&!ev.includes('concert');});
-  chips.innerHTML=fd.length?fd.map(d=>{const dow=DN[new Date(yr,mo,d).getDay()];return`<div class="fbc" onclick="openRehMod(${d},'${yr}-${String(mo+1).padStart(2,'0')}-${String(d).padStart(2,'0')}',true)">⚡ ${dow} ${d} ${MAb[mo]}</div>`;}).join(''):`<span style="font-size:.74rem;color:var(--ink3)">No full-band days this month</span>`;
+  chips.innerHTML=fd.length?fd.map(d=>{const dow=t(DN[new Date(yr,mo,d).getDay()]);return`<div class="fbc" onclick="openRehMod(${d},'${yr}-${String(mo+1).padStart(2,'0')}-${String(d).padStart(2,'0')}',true)">⚡ ${dow} ${d} ${t(MAb[mo])}</div>`;}).join(''):`<span style="font-size:.74rem;color:var(--ink3)">${t('No full-band days this month')}</span>`;
 }
 
 function renderBest(){
@@ -3500,12 +3505,12 @@ function renderBest(){
   for(let d=1;d<=dim;d++){const key=`${yr}-${String(mo+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;const ev=calEv[key]||[];if(ev.includes('concert')||ev.includes('rehearsal'))continue;if(isBO(key))continue;if(new Date(yr,mo,d)<today)continue;const cnt=cntAv(yr,mo,d);if(cnt<2)continue;res.push({d,key,cnt,avs:getMAvail(yr,mo,d),full:cnt===members.length});}
   res.sort((a,b)=>b.cnt-a.cnt||a.d-b.d);const best=res.slice(0,3);
   const fn=best.filter(b=>b.full).length;
-  document.getElementById('bestSub').textContent=fn>0?`${fn} day${fn>1?'s':''} where all ${members.length} members are free this month.`:'Showing best partial availability — no full-band days found.';
-  const dn2=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];const rl=['bc1','',''];const rlbl=['⚡ Best day','2nd choice','3rd choice'];
+  document.getElementById('bestSub').textContent=fn>0?`${fn} day${fn>1?'s':''} where all ${members.length} members are free this month.`:t('Showing best partial availability — no full-band days found.');
+  const dn2=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];const rl=['bc1','',''];const rlbl=[t('⚡ Best day'),t('2nd choice'),t('3rd choice')];
   document.getElementById('bestList').innerHTML=best.map((b,i)=>{
     const dow=dn2[new Date(yr,mo,b.d).getDay()];
     const avs=members.map((m,mi)=>`<div class="bcav" style="background:${b.avs[mi]?m.color:'#CCC'}">${m.init}</div>`).join('');
-    return`<div class="bcard ${rl[i]}" onclick="openRehMod(${b.d},'${b.key}',${b.full})"><div class="bcrk">${b.full?'⚡ ':''}${rlbl[i]}</div><div class="bcdt">${dow} ${b.d}</div><div class="bcdw">${MAb[mo]} ${yr}</div><div class="bcavs">${avs}</div><div class="bccnt"><strong>${b.cnt}/${members.length}</strong> available</div><button class="bcbtn" onclick="event.stopPropagation();openRehMod(${b.d},'${b.key}',${b.full})">Set as rehearsal →</button></div>`;
+    return`<div class="bcard ${rl[i]}" onclick="openRehMod(${b.d},'${b.key}',${b.full})"><div class="bcrk">${b.full?'⚡ ':''}${rlbl[i]}</div><div class="bcdt">${t(dow)} ${b.d}</div><div class="bcdw">${t(MAb[mo])} ${yr}</div><div class="bcavs">${avs}</div><div class="bccnt"><strong>${b.cnt}/${members.length}</strong> ${t('available')}</div><button class="bcbtn" onclick="event.stopPropagation();openRehMod(${b.d},'${b.key}',${b.full})">${t('Set as rehearsal →')}</button></div>`;
   }).join('');
 }
 
@@ -3514,7 +3519,7 @@ function openRehMod(d,key,isFull){
   const yr=curMonth.getFullYear(),mo=curMonth.getMonth();
   pendKey=key;
   const dows=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
-  document.getElementById('rmTt').textContent=`Rehearsal — ${dows[new Date(yr,mo,d).getDay()]}, ${MN[mo]} ${d}`;
+  document.getElementById('rmTt').textContent=`${t('Rehearsal')} — ${t(dows[new Date(yr,mo,d).getDay()])}, ${t(MN[mo])} ${d}`;
   document.getElementById('rmSub').textContent=isFull?`All ${members.length} members are available 🎉`:`${cntAv(yr,mo,d)} of ${members.length} members available.`;
   const avs=getMAvail(yr,mo,d);
   document.getElementById('rmMem').innerHTML=members.map((m,i)=>`<div style="display:flex;align-items:center;gap:5px;padding:5px 10px;border-radius:8px;background:${avs[i]?'var(--g2)':'var(--r2)'};border:1px solid ${avs[i]?'#86EFAC':'#FECACA'}"><div class="mav2" style="width:19px;height:19px;font-size:.52rem;background:${m.color}">${m.init}</div><span style="font-size:.74rem;font-weight:500;color:${avs[i]?'var(--g)':'var(--r)'}">${m.name.split(' ')[0]}</span></div>`).join('');
@@ -3651,11 +3656,11 @@ function renderConcerts(){
   const upcoming = active.filter(c=>!isPast(c)).sort((a,b)=>concertDate(a)-concertDate(b));
   const past     = active.filter(c=> isPast(c)).sort((a,b)=>concertDate(b)-concertDate(a));
   const countEl  = document.getElementById('concertCount');
-  if(countEl) countEl.textContent=`${upcoming.length} upcoming · ${past.length} past${cancelled.length?` · ${cancelled.length} cancelled`:''}`;
+  if(countEl) countEl.textContent=`${upcoming.length} ${t('upcoming')} · ${past.length} ${t('past')}${cancelled.length?` · ${cancelled.length} ${t('cancelled')}`:''}`;
   document.getElementById('concertListUpcoming').innerHTML=upcoming.length
     ?upcoming.map(c=>concertCard(c,'upcoming')).join('')
-    :`<div style="padding:20px;text-align:center;font-size:.82rem;color:var(--ink3)">No upcoming concerts — click + New Concert to add one.</div>`;
-  document.getElementById('concertListPast').innerHTML=past.length?past.map(c=>concertCard(c,'past')).join(''):`<div style="padding:12px;font-size:.78rem;color:var(--ink3)">No past concerts yet.</div>`;
+    :`<div style="padding:20px;text-align:center;font-size:.82rem;color:var(--ink3)">${t('No upcoming concerts — click + New Concert to add one.')}</div>`;
+  document.getElementById('concertListPast').innerHTML=past.length?past.map(c=>concertCard(c,'past')).join(''):`<div style="padding:12px;font-size:.78rem;color:var(--ink3)">${t('No past concerts yet.')}</div>`;
   document.getElementById('pastConcertSection').style.display=past.length?'':'none';
   document.getElementById('concertListCancelled').innerHTML=cancelled.map(c=>concertCard(c,'cancelled')).join('');
   document.getElementById('cancelledConcertSection').style.display=cancelled.length?'':'none';
@@ -3668,12 +3673,12 @@ function concertCard(c,style){
     ?`<div class="concert-photos">${photos.map((p,i)=>`<img class="concert-thumb" src="${p}" alt="Concert photo ${i+1}" onclick="event.stopPropagation();openPhotoLightbox('${c.id}',${i})">`).join('')}${!cancelStyle?`<label class="concert-thumb-add" onclick="event.stopPropagation()"><input type="file" accept="image/*" style="display:none" onchange="addConcertPhoto(event,'${c.id}')">+</label>`:''}</div>`
     :cancelStyle?``:
     `<div class="concert-photos"><label class="concert-thumb-add" onclick="event.stopPropagation()"><input type="file" accept="image/*" style="display:none" onchange="addConcertPhoto(event,'${c.id}')">📷</label></div>`;
-  const badge=cancelStyle?`<span style="margin-left:8px;font-size:.66rem;padding:2px 7px;border-radius:99px;background:var(--r2);color:var(--r);font-weight:600;vertical-align:middle">Cancelled</span>`
-    :pastStyle?`<span style="margin-left:8px;font-size:.66rem;padding:2px 7px;border-radius:99px;background:var(--bg2);color:var(--ink3);font-weight:600;vertical-align:middle">Past</span>`:'';
+  const badge=cancelStyle?`<span style="margin-left:8px;font-size:.66rem;padding:2px 7px;border-radius:99px;background:var(--r2);color:var(--r);font-weight:600;vertical-align:middle">${t('Cancelled')}</span>`
+    :pastStyle?`<span style="margin-left:8px;font-size:.66rem;padding:2px 7px;border-radius:99px;background:var(--bg2);color:var(--ink3);font-weight:600;vertical-align:middle">${t('Past')}</span>`:'';
   const actions=cancelStyle||pastStyle
-    ?`<button class="btn btn-g btn-sm" data-action="view">View</button>`
-    :`<button class="btn btn-g btn-sm" style="color:var(--amb);border-color:var(--amb2)" data-action="cancel">Cancel</button>
-      <button class="btn btn-g btn-sm" data-action="view">View</button>`;
+    ?`<button class="btn btn-g btn-sm" data-action="view">${t('View')}</button>`
+    :`<button class="btn btn-g btn-sm" style="color:var(--amb);border-color:var(--amb2)" data-action="cancel">${t('Cancel')}</button>
+      <button class="btn btn-g btn-sm" data-action="view">${t('View')}</button>`;
   return`<div class="ccrd${pastStyle?' past':''}${cancelStyle?' cancelled':''}" data-cid="${c.id}" onclick="handleConcertCardClick(event,'${c.id}')">
     <div class="cdb">
       <div class="cdmo">${c.month}</div>
@@ -3688,8 +3693,8 @@ function concertCard(c,style){
         <span class="cmi"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 14s1-3 6-3 6 3 6 3M8 8a3 3 0 100-6 3 3 0 000 6z"/></svg>~${c.audience}</span>
       </div>
       <div class="cbadges">
-        <span class="pill ${cancelStyle?'pr':'pp'}">${cancelStyle?'🚫 Cancelled':'Concert'}</span>
-        ${!cancelStyle&&c.paid?`<span class="pill pg">€ ${c.total}</span><span class="pill pgray">${c.price}</span>`:!cancelStyle?'<span class="pill pgray">Free</span>':''}
+        <span class="pill ${cancelStyle?'pr':'pp'}">${cancelStyle?t('🚫 Cancelled'):t('Concert')}</span>
+        ${!cancelStyle&&c.paid?`<span class="pill pg">€ ${c.total}</span><span class="pill pgray">${c.price}</span>`:!cancelStyle?`<span class="pill pgray">${t('Free')}</span>`:''}
         ${(c.setlistIds||[]).map(sid=>{const sl=setlists.find(x=>x.id===sid);return sl?`<span class="pill pp" style="cursor:pointer" data-action="setlist" data-slid="${sid}">♩ ${sl.name}</span>`:''}).join('')}
 
       </div>
@@ -4743,10 +4748,10 @@ function renderDashboard(){
   const empty = txt => `<div style="color:var(--ink3);font-size:.82rem;padding:4px 0">${txt}</div>`;
 
   if(!activeBandId || !band){
-    if(dshS) dshS.textContent = 'Create or join a band to get started.';
+    if(dshS) dshS.textContent = t('Create or join a band to get started.');
     if(dshStats) dshStats.innerHTML = '';
-    if(dshUpcoming) dshUpcoming.innerHTML = empty('No band selected.');
-    if(dshMembers) dshMembers.innerHTML = empty('No band selected.');
+    if(dshUpcoming) dshUpcoming.innerHTML = empty(t('No band selected.'));
+    if(dshMembers) dshMembers.innerHTML = empty(t('No band selected.'));
     return;
   }
 
@@ -4767,26 +4772,29 @@ function renderDashboard(){
   const cCount = concerts.filter(c=>!c.cancelled&&c.date>=todayStr&&c.date.slice(0,7)===thisMonth).length;
   if(dshS){
     const parts=[];
-    if(rCount) parts.push(`${rCount} rehearsal${rCount>1?'s':''}`);
-    if(cCount) parts.push(`${cCount} concert${cCount>1?'s':''}`);
-    dshS.textContent = parts.length ? `${parts.join(' and ')} coming up this month.` : 'Nothing scheduled this month yet.';
+    if(rCount) parts.push(`${rCount} ${t(rCount>1?'rehearsals':'rehearsal')}`);
+    if(cCount) parts.push(`${cCount} ${t(cCount>1?'concerts':'concert')}`);
+    dshS.textContent = parts.length ? `${parts.join(' '+t('and')+' ')} ${t('coming up this month.')}` : t('Nothing scheduled this month yet.');
   }
 
   // Stat cards
   const nextGig = concerts.filter(c=>!c.cancelled&&c.date>=todayStr).sort((a,b)=>a.date.localeCompare(b.date))[0];
+  const _ngd=nextGig?new Date(nextGig.date+'T00:00:00'):null;
+  const _ngLabel=_ngd?`${t(MAb[_ngd.getMonth()])} ${_ngd.getDate()}`:'—';
   if(dshStats) dshStats.innerHTML =
-    `<div class="sc" onclick="nav('members')"><div class="t1">Members</div><div class="sv">${members.length}</div><div class="ss">${members.length===1?'1 member':'Active band'}</div></div>`+
-    `<div class="sc" onclick="nav('library')"><div class="t1">Songs</div><div class="sv">${songs.length}</div><div class="ss">In library</div></div>`+
-    `<div class="sc" onclick="nav('setlists')"><div class="t1">Set Lists</div><div class="sv">${setlists.length}</div><div class="ss">${setlists.length?'Ready to play':'None yet'}</div></div>`+
-    `<div class="sc" onclick="nav('concerts')"><div class="t1">Next Gig</div><div class="sv">${nextGig?new Date(nextGig.date+'T00:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric'}):'—'}</div><div class="ss">${nextGig?.venue||'None scheduled'}</div></div>`;
+    `<div class="sc" onclick="nav('members')"><div class="t1">${t('Members')}</div><div class="sv">${members.length}</div><div class="ss">${members.length===1?t('1 member'):t('Active band')}</div></div>`+
+    `<div class="sc" onclick="nav('library')"><div class="t1">${t('Songs')}</div><div class="sv">${songs.length}</div><div class="ss">${t('In library')}</div></div>`+
+    `<div class="sc" onclick="nav('setlists')"><div class="t1">${t('Set Lists')}</div><div class="sv">${setlists.length}</div><div class="ss">${setlists.length?t('Ready to play'):t('None yet')}</div></div>`+
+    `<div class="sc" onclick="nav('concerts')"><div class="t1">${t('Next Gig')}</div><div class="sv">${_ngLabel}</div><div class="ss">${nextGig?.venue||t('None scheduled')}</div></div>`;
 
   // Upcoming events list
+  const _dows=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
   if(dshUpcoming){
     dshUpcoming.innerHTML = upEv.length ? upEv.map(ev=>{
       const d=new Date(ev.date+'T00:00:00');
-      const pill=ev.type==='concert'?'<span class="pill pp">Concert</span>':'<span class="pill pg">Rehearsal</span>';
-      return`<div class="er"><div class="edb"><div class="edd">${d.toLocaleDateString('en-GB',{weekday:'short'})}</div><div class="edn">${d.getDate()}</div></div><div style="flex:1"><div class="en">${ev.title}</div><div class="em">${ev.detail}</div></div>${pill}</div>`;
-    }).join('') : empty('No upcoming events.');
+      const pill=ev.type==='concert'?`<span class="pill pp">${t('Concert')}</span>`:`<span class="pill pg">${t('Rehearsal')}</span>`;
+      return`<div class="er"><div class="edb"><div class="edd">${t(_dows[d.getDay()])}</div><div class="edn">${d.getDate()}</div></div><div style="flex:1"><div class="en">${ev.title}</div><div class="em">${ev.detail}</div></div>${pill}</div>`;
+    }).join('') : empty(t('No upcoming events.'));
   }
 
   // Band members list
@@ -4796,7 +4804,7 @@ function renderDashboard(){
       const avToday=(m.avail||[])[new Date().getDay()]?'on':'off';
       const instLine=[m.instrument,m.vocals&&m.vocals!=='None'?m.vocals:''].filter(Boolean).join(' · ');
       return`<div class="mr2"><div class="mav2" style="background:${m.color}">${m.init}</div><div style="flex:1"><div class="mn">${m.name}</div><div class="mi">${instLine}</div></div><div class="ad ${avToday}"></div></div>`;
-    }).join('') : empty('No members yet. Invite someone to join!');
+    }).join('') : empty(t('No members yet. Invite someone to join!'));
   }
 }
 
@@ -5055,14 +5063,16 @@ function bpLogoClick(){
 function handleBpCover(event) {
   const file = event.target.files[0]; if (!file) return;
   const reader = new FileReader();
-  reader.onload = e => {
+  reader.onload = async e => {
+    const dataUrl = e.target.result;
     const cover = document.getElementById('bpCover');
-    cover.style.backgroundImage = `url(${e.target.result})`;
+    cover.style.backgroundImage = `url(${dataUrl})`;
     cover.style.backgroundSize = 'cover';
     cover.style.backgroundPosition = 'center';
-    // hide decorative emoji overlay once a real photo is set
     const overlay = cover.querySelector('[data-overlay]');
     if (overlay) overlay.style.display = 'none';
+    const _bc = getActiveBand(); if(_bc) _bc.cover_url = dataUrl;
+    await BandsDB.upsert({id: activeBandId, cover_url: dataUrl});
     toast2('Cover photo updated!');
   };
   reader.readAsDataURL(file);
@@ -5072,20 +5082,22 @@ function handleBpCover(event) {
 function handleBpLogo(event) {
   const file = event.target.files[0]; if (!file) return;
   const reader = new FileReader();
-  reader.onload = e => {
+  reader.onload = async e => {
+    const dataUrl = e.target.result;
     const logo = document.getElementById('bpLogo');
-    logo.style.backgroundImage = `url(${e.target.result})`;
+    logo.style.backgroundImage = `url(${dataUrl})`;
     logo.style.backgroundSize = 'cover';
     logo.style.backgroundPosition = 'center';
     logo.textContent = '';
-    // also update sidebar band avatar
     const sav = document.querySelector('.bav');
     if (sav) {
-      sav.style.backgroundImage = `url(${e.target.result})`;
+      sav.style.backgroundImage = `url(${dataUrl})`;
       sav.style.backgroundSize = 'cover';
       sav.style.backgroundPosition = 'center';
       sav.textContent = '';
     }
+    const _bl = getActiveBand(); if(_bl) _bl.logo_url = dataUrl;
+    await BandsDB.upsert({id: activeBandId, logo_url: dataUrl});
     toast2('Band logo updated!');
   };
   reader.readAsDataURL(file);
