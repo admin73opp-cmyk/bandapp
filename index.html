@@ -4227,6 +4227,7 @@ function renderMembers(){
   const guests=sorted.filter(m=>m.role==='guest');
   if(countEl)countEl.textContent=`${sorted.filter(m=>m.role!=='guest').length} members${guests.length?` · ${guests.length} guest${guests.length>1?'s':''}`:''}`;
 
+  const iAmAdmin=getActiveBand()?.role==='Admin';
   document.getElementById('memGrid').innerHTML=sorted.map((m,i)=>{
     const idx=members.indexOf(m);
     const ex=extraData[idx]||{};
@@ -4261,8 +4262,9 @@ function renderMembers(){
       ${vocalsText?`<div style="font-size:.7rem;color:var(--ink2);margin-top:9px">${vocalsText}</div>`:''}
       <div class="mcfoot">
         <button class="btn btn-g btn-sm" onclick="openProfile(${idx})">${t('View Profile')}</button>
-        ${m.role==='admin'?'':`<button class="btn btn-g btn-sm" onclick="openChangeRoleModal(${idx})">${t(isGuest?'Make Member':'Make Guest')}</button>`}
-        ${idx!==currentUser.memberIdx?`<button class="btn btn-g btn-sm" style="color:var(--r);border-color:var(--r2)" onclick="removeMember(${idx})" title="${t('Remove')}">${t('Remove')}</button>`:''}
+        ${iAmAdmin&&m.role!=='admin'?`<button class="btn btn-g btn-sm" onclick="openChangeRoleModal(${idx})">${t(isGuest?'Make Member':'Make Guest')}</button>`:''}
+        ${iAmAdmin&&m.role!=='admin'&&idx!==currentUser.memberIdx?`<button class="btn btn-g btn-sm" style="color:var(--a);border-color:rgba(108,99,255,.35)" onclick="makeAdmin(${idx})">⭐ ${t('Make Admin')}</button>`:''}
+        ${iAmAdmin&&idx!==currentUser.memberIdx?`<button class="btn btn-g btn-sm" style="color:var(--r);border-color:var(--r2)" onclick="removeMember(${idx})" title="${t('Remove')}">${t('Remove')}</button>`:''}
       </div>
     </div>`;
   }).join('');
@@ -4386,6 +4388,16 @@ async function openChangeRoleModal(idx){
     document.getElementById('gcModalTitle').textContent='Convert to Guest';
     showMod('guestConvertMod');
   }
+}
+
+async function makeAdmin(idx){
+  const m=members[idx];if(!m||m.role==='admin')return;
+  const b=getActiveBand();if(!b||b.role!=='Admin')return;
+  if(!confirm(`Make ${m.name} an admin of ${b.name}? Admins can manage members, songs, and all band settings.`))return;
+  await MembersDB.upsertBandMember(activeBandId, m.id, {role:'admin'});
+  await loadMembers();
+  renderMembers();
+  toast2(`⭐ ${m.name.split(' ')[0]} is now an Admin!`);
 }
 let editingGuestConvertIdx=null;
 async function confirmGuestConvert(){
