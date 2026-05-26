@@ -2316,8 +2316,8 @@ function syncCurrentUserToUI(){
   const footRole = document.querySelector('.sbar-foot-text div:last-child');
   if(footRole){
     const inst = u.instrument;
-    const role = u.role === 'admin' ? 'Admin' : 'Member';
-    footRole.textContent = inst ? `${inst} · ${role}` : role;
+    const role = t(u.role === 'admin' ? 'Admin' : 'Member');
+    footRole.textContent = inst ? `${t(inst)} · ${role}` : role;
   }
 
   // Sidebar band button
@@ -2329,11 +2329,11 @@ function syncCurrentUserToUI(){
   const bandNameEl = document.querySelector('.bb .sb-band-name');
   if(bandNameEl) bandNameEl.textContent = band?.name || 'No band';
   const bandRoleEl = document.querySelector('.bb .sb-label div:last-child');
-  if(bandRoleEl) bandRoleEl.textContent = band ? (u.role === 'admin' ? 'Admin' : 'Member') : 'Join or create';
+  if(bandRoleEl) bandRoleEl.textContent = band ? t(u.role === 'admin' ? 'Admin' : 'Member') : t('Join or create');
 
   // Page subtitle
   const pgS = document.getElementById('pgS');
-  if(pgS) pgS.textContent = band ? `${band.name} · ${members.length} member${members.length !== 1 ? 's' : ''}` : '';
+  if(pgS) pgS.textContent = band ? `${band.name} · ${members.length} ${t(members.length !== 1 ? 'members' : 'member')}` : '';
 
   // Dashboard greeting
   const greet = document.getElementById('dshG');
@@ -2412,6 +2412,9 @@ function changeLang(lang){
   renderMembers();
   renderBP();
   renderCal();
+  renderLib();
+  renderSL();renderSlMeta();
+  populateMpPage().catch(console.error);
   const active=document.querySelector('.pg-area.on');
   if(active){
     const pageId=active.id.replace('pg-','');
@@ -2870,13 +2873,13 @@ function renderLib(filter='All',search=''){
   const f=songs.filter(s=>(filter==='All'||s.genre===filter)&&(s.title+s.artist).toLowerCase().includes(search.toLowerCase()));
   if(!f.length){
     const msg=songs.length
-      ?`<div class="es" style="grid-column:1/-1"><div class="es-ico">🔍</div><h3>No songs found</h3><p>Try another filter or search term.</p></div>`
-      :`<div class="es" style="grid-column:1/-1"><div class="es-ico">🎵</div><h3>Your library is empty</h3><p>Start by adding songs to your library.</p></div>`;
+      ?`<div class="es" style="grid-column:1/-1"><div class="es-ico">🔍</div><h3>${t('No songs found')}</h3><p>${t('Try another filter or search term.')}</p></div>`
+      :`<div class="es" style="grid-column:1/-1"><div class="es-ico">🎵</div><h3>${t('No songs in library yet')}</h3><p>${t('Start by adding songs to your library.')}</p></div>`;
     grid.innerHTML=msg;return;
   }
   grid.innerHTML=f.map(s=>`
     <div class="songcard${s.hidden?' hidden-song':''}" onclick="openSongEdit('${s.id}')">
-      ${s.hidden?`<div style="position:absolute;top:10px;right:10px;font-size:.62rem;font-weight:700;color:var(--ink3);background:var(--bg2);border:1px solid var(--bd);border-radius:99px;padding:2px 7px;letter-spacing:.04em">HIDDEN</div>`:''}
+      ${s.hidden?`<div style="position:absolute;top:10px;right:10px;font-size:.62rem;font-weight:700;color:var(--ink3);background:var(--bg2);border:1px solid var(--bd);border-radius:99px;padding:2px 7px;letter-spacing:.04em">${t('HIDDEN')}</div>`:''}
       <div class="sctt" style="padding-right:${s.hidden?'52px':'0'}">${s.title}</div>
       <div class="scar">${s.artist}${s.dur?`<span style="float:right;font-family:var(--mono);font-size:.72rem;color:var(--ink3)">${fmtDur(s.dur)}</span>`:''}</div>
       <div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:2px">
@@ -5294,7 +5297,7 @@ async function populateMpPage(){
   const nd=document.getElementById('mpNameDisplay');
   const rd=document.getElementById('mpRoleDisplay');
   if(nd)nd.textContent=[fn,ln].filter(Boolean).join(' ')||'Your Profile';
-  if(rd)rd.textContent=m?(m.instrument?m.instrument+' · ':'')+( m.role==='admin'?'Admin':m.role==='guest'?'Guest':'Member'):'New member';
+  if(rd)rd.textContent=m?(m.instrument?t(m.instrument)+' · ':'')+t(m.role==='admin'?'Admin':m.role==='guest'?'Guest':'Member'):t('Member');
 
   // Personal info
   populateCountrySelects();
@@ -5464,7 +5467,7 @@ function renderMpReadViews(){
       return`<a class="platl" data-url="${url}" onclick="openMediaUrl(this)">${p.icon} ${p.label}</a>`;
     }).join('')+`</div>`;
   } else {
-    linksEl.innerHTML=`<span style="color:var(--ink3);font-size:.84rem">No links added yet</span>`;
+    linksEl.innerHTML=`<span style="color:var(--ink3);font-size:.84rem">${t('No links added yet')}</span>`;
   }
 }
 

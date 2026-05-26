@@ -23,16 +23,34 @@ function applyI18n() {
       // Leaf element — safe to replace text directly
       el.textContent = t(key);
     } else {
-      // Container — translate the most appropriate child text node
-      // (.sb-label for sidebar nav items, <label> for form groups)
+      // Container — try known child selectors in priority order, then fall back
       const sbLabel = el.querySelector(':scope > .sb-label');
-      const label = el.querySelector(':scope > label');
+      const label   = el.querySelector(':scope > label');
+      const ct      = el.querySelector(':scope > .ct');
+      const mpLbl   = el.querySelector(':scope > .mp-lbl');
+      // First direct child element that has no sub-children and some text
+      const firstLeaf = [...el.children].find(c => c.children.length === 0 && c.textContent.trim());
       if (sbLabel && sbLabel.children.length === 0) {
         sbLabel.textContent = t(key);
       } else if (label && label.children.length === 0) {
         label.textContent = t(key);
+      } else if (ct && ct.children.length === 0) {
+        ct.textContent = t(key);
+      } else if (mpLbl && mpLbl.children.length === 0) {
+        mpLbl.textContent = t(key);
+      } else if (firstLeaf) {
+        firstLeaf.textContent = t(key);
+      } else {
+        // Final fallback: replace last direct text node
+        // (handles <div data-i18n="X"><span class="icon"></span>X</div>)
+        for (let i = el.childNodes.length - 1; i >= 0; i--) {
+          const node = el.childNodes[i];
+          if (node.nodeType === 3 && node.textContent.trim()) {
+            node.textContent = t(key);
+            break;
+          }
+        }
       }
-      // else skip — don't clobber complex containers
     }
   });
   document.querySelectorAll('[data-i18n-html]').forEach(el => {
