@@ -4398,8 +4398,9 @@ function renderBP(){
   const cover=document.getElementById('bpCover');
   if(cover){
     cover.style.cursor=isAdmin?'pointer':'default';
-    if(b.cover_url){
-      cover.style.backgroundImage=`url(${b.cover_url})`;
+    const coverUrl=b.cover_url||localStorage.getItem(`bpCover_${b.id}`);
+    if(coverUrl){
+      cover.style.backgroundImage=`url(${coverUrl})`;
       cover.style.backgroundSize='cover';
       cover.style.backgroundPosition='center';
       const ov=cover.querySelector('[data-overlay]');if(ov)ov.style.display='none';
@@ -4413,8 +4414,9 @@ function renderBP(){
   const logo=document.getElementById('bpLogo');
   if(logo){
     logo.style.cursor=isAdmin?'pointer':'default';
-    if(b.logo_url){
-      logo.style.backgroundImage=`url(${b.logo_url})`;
+    const logoUrl=b.logo_url||localStorage.getItem(`bpLogo_${b.id}`);
+    if(logoUrl){
+      logo.style.backgroundImage=`url(${logoUrl})`;
       logo.style.backgroundSize='cover';
       logo.style.backgroundPosition='center';
       logo.textContent='';
@@ -5070,17 +5072,34 @@ function bpLogoClick(){
   if(currentUser.role!=='admin')return;
   document.getElementById('bpLogoInput').click();
 }
+function compressImage(dataUrl, maxWidth, quality){
+  return new Promise(resolve=>{
+    const img=new Image();
+    img.onload=()=>{
+      const scale=img.width>maxWidth?maxWidth/img.width:1;
+      const c=document.createElement('canvas');
+      c.width=Math.round(img.width*scale);
+      c.height=Math.round(img.height*scale);
+      c.getContext('2d').drawImage(img,0,0,c.width,c.height);
+      resolve(c.toDataURL('image/jpeg',quality));
+    };
+    img.onerror=()=>resolve(dataUrl);
+    img.src=dataUrl;
+  });
+}
+
 function handleBpCover(event) {
   const file = event.target.files[0]; if (!file) return;
   const reader = new FileReader();
   reader.onload = async e => {
-    const dataUrl = e.target.result;
+    const dataUrl = await compressImage(e.target.result, 1400, 0.82);
     const cover = document.getElementById('bpCover');
     cover.style.backgroundImage = `url(${dataUrl})`;
     cover.style.backgroundSize = 'cover';
     cover.style.backgroundPosition = 'center';
     const overlay = cover.querySelector('[data-overlay]');
     if (overlay) overlay.style.display = 'none';
+    try { localStorage.setItem(`bpCover_${activeBandId}`, dataUrl); } catch(e2) {}
     const _bc = getActiveBand(); if(_bc) _bc.cover_url = dataUrl;
     await BandsDB.upsert({id: activeBandId, cover_url: dataUrl});
     toast2('Cover photo updated!');
@@ -5093,7 +5112,7 @@ function handleBpLogo(event) {
   const file = event.target.files[0]; if (!file) return;
   const reader = new FileReader();
   reader.onload = async e => {
-    const dataUrl = e.target.result;
+    const dataUrl = await compressImage(e.target.result, 400, 0.85);
     const logo = document.getElementById('bpLogo');
     logo.style.backgroundImage = `url(${dataUrl})`;
     logo.style.backgroundSize = 'cover';
@@ -5106,6 +5125,7 @@ function handleBpLogo(event) {
       sav.style.backgroundPosition = 'center';
       sav.textContent = '';
     }
+    try { localStorage.setItem(`bpLogo_${activeBandId}`, dataUrl); } catch(e2) {}
     const _bl = getActiveBand(); if(_bl) _bl.logo_url = dataUrl;
     await BandsDB.upsert({id: activeBandId, logo_url: dataUrl});
     toast2('Band logo updated!');
