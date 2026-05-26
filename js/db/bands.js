@@ -30,24 +30,28 @@ const BandsDB = {
   async upsert(band) {
     const { role, memberCount, songCount, setlistCount, upcomingCount, pastCount,
             nextGig, platforms, photos, band_members, ...fields } = band;
-    let query;
     if (fields.id) {
-      // Existing band — UPDATE only (INSERT…ON CONFLICT also triggers UPDATE RLS)
+      // Existing band — UPDATE only
       const { id, ...updateFields } = fields;
-      query = supabase.from('bands').update(updateFields).eq('id', id).select().single();
-    } else {
-      // New band — plain INSERT so only the INSERT policy is evaluated
-      query = supabase.from('bands').insert(fields).select().single();
+      const { data, error } = await supabase.from('bands').update(updateFields).eq('id', id).select().single();
+      if (error) { handleDbError(error); return null; }
+      return data;
     }
-    const { data, error } = await query;
+    // New band — generate UUID client-side so we never need to SELECT the row back
+    // before adding the band_member (which would fail: SELECT policy requires is_band_member).
+    const id = crypto.randomUUID();
+    const { error } = await supabase.from('bands').insert({ id, ...fields });
     if (error) { handleDbError(error); return null; }
-    return data;
+    return { id, ...fields };
   },
 
   async addMember(bandId, userId, role = 'admin') {
+    // Use plain INSERT — upsert evaluates both INSERT and UPDATE policies even without a
+    // conflict; the UPDATE policy (is_band_admin) would block a user adding themselves to
+    // a brand-new band where they are not yet admin.
     const { error } = await supabase
       .from('band_members')
-      .upsert({ band_id: bandId, user_id: userId, role });
+      .insert({ band_id: bandId, user_id: userId, role });
     if (error) { handleDbError(error); }
   },
 
