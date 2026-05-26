@@ -2030,6 +2030,8 @@ function setNotifPref(pref){
   }
   const w=document.getElementById('settNotifWarn');if(w)w.style.display='none';
   bandNotifPref[activeBandId]=pref;
+  localStorage.setItem(`bandNotifPref_${activeBandId}`,pref);
+  BandsDB.upsert({id:activeBandId,notif_pref:pref});
   Object.entries(idMap).forEach(([p,id])=>{const el=document.getElementById(id);if(el)el.classList.toggle('on',p===pref);});
   const notes={
     email:'Default: Email notification only.',
@@ -2093,6 +2095,8 @@ async function saveWaLink(){
   }
   bandWaLinks[activeBandId]=val||null;
   const _wb=getActiveBand();if(_wb)_wb.wa_link=val||null;
+  if(val) localStorage.setItem(`bandWaLink_${activeBandId}`,val);
+  else localStorage.removeItem(`bandWaLink_${activeBandId}`);
   await BandsDB.upsert({id:activeBandId,wa_link:val||null});
   refreshWaUI();refreshNotifSettUI();
   toast2(val?'WhatsApp group link saved!':'Link removed');
@@ -2101,6 +2105,7 @@ async function saveWaLink(){
 async function removeWaLink(){
   bandWaLinks[activeBandId]=null;
   const _wb=getActiveBand();if(_wb)_wb.wa_link=null;
+  localStorage.removeItem(`bandWaLink_${activeBandId}`);
   await BandsDB.upsert({id:activeBandId,wa_link:null});
   document.getElementById('waLinkInput').value='';
   refreshWaUI();refreshNotifSettUI();
@@ -2138,7 +2143,10 @@ let activeBandId=null;
 
 async function loadBands(){
   BANDS=await BandsDB.fetch();
-  BANDS.forEach(b=>{ if(b.wa_link) bandWaLinks[b.id]=b.wa_link; });
+  BANDS.forEach(b=>{
+    bandWaLinks[b.id]   = b.wa_link    || localStorage.getItem(`bandWaLink_${b.id}`)    || null;
+    bandNotifPref[b.id] = b.notif_pref || localStorage.getItem(`bandNotifPref_${b.id}`) || null;
+  });
 }
 
 function getActiveBand(){return BANDS.find(b=>b.id===activeBandId);}
