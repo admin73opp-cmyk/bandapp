@@ -30,11 +30,16 @@ const BandsDB = {
   async upsert(band) {
     const { role, memberCount, songCount, setlistCount, upcomingCount, pastCount,
             nextGig, platforms, photos, band_members, ...fields } = band;
-    const { data, error } = await supabase
-      .from('bands')
-      .upsert(fields)
-      .select()
-      .single();
+    let query;
+    if (fields.id) {
+      // Existing band — UPDATE only (INSERT…ON CONFLICT also triggers UPDATE RLS)
+      const { id, ...updateFields } = fields;
+      query = supabase.from('bands').update(updateFields).eq('id', id).select().single();
+    } else {
+      // New band — plain INSERT so only the INSERT policy is evaluated
+      query = supabase.from('bands').insert(fields).select().single();
+    }
+    const { data, error } = await query;
     if (error) { handleDbError(error); return null; }
     return data;
   },
