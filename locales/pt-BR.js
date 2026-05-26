@@ -412,6 +412,7 @@ window.PT_BR = {
   'Cross-band conflict ⊘': 'Conflito entre bandas ⊘',
   'Full band ⚡': 'Banda completa ⚡',
   '⚡ Full band:': '⚡ Banda completa:',
+  'No blackouts': 'Nenhum bloqueio',
   'blackout period': 'período de bloqueio',
   'blackout periods': 'períodos de bloqueio',
   'No blackout periods': 'Nenhum período de bloqueio',
@@ -677,6 +678,16 @@ window.PT_BR = {
   'Festival': 'Festival',
   'Private event': 'Evento privado',
   'Other': 'Outro',
+
+  /* ── MUSIC GENRES ─────────────────────────────────────── */
+  'Samba': 'Samba',
+  'Bossa Nova': 'Bossa Nova',
+  'MPB': 'MPB',
+  'Pagode': 'Pagode',
+  'Forró': 'Forró',
+  'Choro': 'Choro',
+  'Sertanejo': 'Sertanejo',
+  'Brazilian Funk': 'Funk Carioca',
 
   /* ── INSTRUMENTS ──────────────────────────────────────── */
   'Guitar': 'Guitarra',
