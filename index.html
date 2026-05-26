@@ -3623,10 +3623,12 @@ function openRehMod(d,key,isFull){
   document.getElementById('rmSub').textContent=isFull?`All ${members.length} members are available 🎉`:`${cntAv(yr,mo,d)} of ${members.length} members available.`;
   const avs=getMAvail(yr,mo,d);
   document.getElementById('rmMem').innerHTML=members.map((m,i)=>`<div style="display:flex;align-items:center;gap:5px;padding:5px 10px;border-radius:8px;background:${avs[i]?'var(--g2)':'var(--r2)'};border:1px solid ${avs[i]?'#86EFAC':'#FECACA'}"><div class="mav2" style="width:19px;height:19px;font-size:.52rem;background:${m.color}">${m.init}</div><span style="font-size:.74rem;font-weight:500;color:${avs[i]?'var(--g)':'var(--r)'}">${m.name.split(' ')[0]}</span></div>`).join('');
-  // apply band default notification preference
+  // apply band default notification preference; fall back to email if WA not configured
   const pref=getBandNotifPref();
-  rehNotifSel=pref;
-  selNotif(pref);
+  const waLinked=!!bandWaLinks[activeBandId];
+  const effectivePref=(pref==='whatsapp'||pref==='both')&&!waLinked?'email':pref;
+  rehNotifSel=effectivePref;
+  selNotif(effectivePref);
   showMod('rehMod');
 }
 
@@ -3644,15 +3646,17 @@ async function confReh(){
   const end=document.getElementById('rmEn').value||null;
   const location=(document.getElementById('rmLoc').value||'').trim()||null;
   const notes=(document.getElementById('rmNt').value||'').trim()||null;
+  // Open WhatsApp NOW while the user-gesture token is still valid (before any awaits).
+  // Browsers revoke the gesture across async boundaries, blocking window.open() silently.
+  if((ch==='whatsapp'||ch==='both')&&waLinked){
+    const msg=`🎸 ${title} confirmed!\n📅 ${pendKey}${start?' ⏰ '+start:''}${location?'\n📍 '+location:''}`;
+    window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`,'_blank');
+  }
   closeMod('rehMod');
   await RehearsalsDB.upsert({title,date:pendKey,start,end,location,notes,band_id:activeBandId});
   await loadRehearsals();
   buildCalEv();
   renderCal();
-  if(ch==='whatsapp'||ch==='both'){
-    const msg=`🎸 ${title} confirmed!\n📅 ${pendKey}${start?' ⏰ '+start:''}${location?'\n📍 '+location:''}`;
-    window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`,'_blank');
-  }
   const msgs={
     email:'Rehearsal confirmed! Band notified by email ✓',
     whatsapp:'Rehearsal confirmed! WhatsApp group notified 💬',
