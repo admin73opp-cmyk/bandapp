@@ -3636,19 +3636,29 @@ function openRehMod(d,key,isFull){
   showMod('rehMod');
 }
 
-function confReh(){
+async function confReh(){
   const ch=rehNotifSel||getBandNotifPref();
   const waLinked=!!bandWaLinks[activeBandId];
-  // block if WhatsApp selected but not configured
   if((ch==='whatsapp'||ch==='both')&&!waLinked){
     document.getElementById('rmWaErr').style.display='';
     document.getElementById('rmNotifNote').style.display='none';
     toast2('Add a WhatsApp group link in Band Profile first','w');
     return;
   }
-  if(pendKey)calEv[pendKey]=['rehearsal'];
+  const title=(document.getElementById('rmNm').value||'').trim()||'Rehearsal';
+  const start=document.getElementById('rmSt').value||null;
+  const end=document.getElementById('rmEn').value||null;
+  const location=(document.getElementById('rmLoc').value||'').trim()||null;
+  const notes=(document.getElementById('rmNt').value||'').trim()||null;
   closeMod('rehMod');
+  await RehearsalsDB.upsert({title,date:pendKey,start,end,location,notes,band_id:activeBandId});
+  await loadRehearsals();
+  buildCalEv();
   renderCal();
+  if(ch==='whatsapp'||ch==='both'){
+    const msg=`🎸 ${title} confirmed!\n📅 ${pendKey}${start?' ⏰ '+start:''}${location?'\n📍 '+location:''}`;
+    window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`,'_blank');
+  }
   const msgs={
     email:'Rehearsal confirmed! Band notified by email ✓',
     whatsapp:'Rehearsal confirmed! WhatsApp group notified 💬',
