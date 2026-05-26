@@ -3784,7 +3784,7 @@ function openConcertView(id){
   document.getElementById('cvDate').textContent=`${t(MO_FULL[c.month])} ${c.day}, ${c.year}`;
   document.getElementById('cvTime').textContent=`${c.time} · ${c.duration} min`;
   document.getElementById('cvVenue').textContent=c.venue||'—';
-  document.getElementById('cvAudience').textContent=c.audience?`~${c.audience} people`:'';
+  document.getElementById('cvAudience').textContent=c.audience?`~${c.audience} ${t('people')}`:'';
   const paidEl=document.getElementById('cvPaidRow');
   if(c.paid&&c.total){paidEl.style.display='';document.getElementById('cvPaid').textContent=`${c.total}${c.price?' · '+c.price:''}`;}
   else paidEl.style.display='none';
@@ -3799,17 +3799,17 @@ function openConcertView(id){
   const photos=c.photos||[];
   document.getElementById('cvPhotos').innerHTML=photos.length
     ?photos.map((p,i)=>`<img src="${p}" style="width:72px;height:72px;border-radius:8px;object-fit:cover;border:1.5px solid var(--bd);cursor:pointer" onclick="openPhotoLightbox('${c.id}',${i})">`).join('')
-    :`<span style="font-size:.76rem;color:var(--ink3)">No photos yet</span>`;
+    :`<span style="font-size:.76rem;color:var(--ink3)">${t('No photos yet')}</span>`;
   const actions=document.getElementById('cvActions');
   if(c.cancelled||past){
-    actions.innerHTML=`<button class="btn btn-g" onclick="closeMod('cvMod')">Close</button>`;
+    actions.innerHTML=`<button class="btn btn-g" onclick="closeMod('cvMod')">${t('Close')}</button>`;
   } else {
     const slBtns=(c.setlistIds||[]).map(sid=>{const sl=setlists.find(x=>x.id===sid);return sl?`<button class="btn btn-p btn-sm" onclick="openSetlistFromConcert('${sid}')">♩ ${sl.name}</button>`:''}).join('');
     actions.innerHTML=`
-      <button class="btn btn-g" onclick="closeMod('cvMod')">Close</button>
-      <button class="btn btn-g btn-sm" style="color:var(--amb);border-color:var(--amb2)" onclick="closeMod('cvMod');promptCancel('concert','${c.id}')">🚫 Cancel</button>
-      <button class="btn btn-g btn-sm" onclick="closeMod('cvMod');openConcertEdit('${c.id}')">Edit</button>
-      <button class="btn btn-g btn-sm" onclick="closeMod('cvMod');openConcertLinkFromConcert('${c.id}')">♩ Link Set List</button>
+      <button class="btn btn-g" onclick="closeMod('cvMod')">${t('Close')}</button>
+      <button class="btn btn-g btn-sm" style="color:var(--amb);border-color:var(--amb2)" onclick="closeMod('cvMod');promptCancel('concert','${c.id}')">${t('🚫 Cancel')}</button>
+      <button class="btn btn-g btn-sm" onclick="closeMod('cvMod');openConcertEdit('${c.id}')">${t('Edit')}</button>
+      <button class="btn btn-g btn-sm" onclick="closeMod('cvMod');openConcertLinkFromConcert('${c.id}')">♩ ${t('Link Set List')}</button>
       ${slBtns}`;
   }
   showMod('cvMod');
@@ -5812,11 +5812,11 @@ async function saveSettings(){
 <div class="mod" style="max-width:500px">
   <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:16px">
     <div>
-      <div style="font-size:.69rem;font-weight:700;color:var(--a);text-transform:uppercase;letter-spacing:.07em;margin-bottom:4px" data-i18n="🚫 Cancelled">Concert</div>
+      <div style="font-size:.69rem;font-weight:700;color:var(--a);text-transform:uppercase;letter-spacing:.07em;margin-bottom:4px" data-i18n="Concert View">Concert View</div>
       <div class="mott" id="cvTitle" style="margin-bottom:6px"></div>
       <div style="display:flex;gap:5px;flex-wrap:wrap">
-        <span id="cvCancelledBadge" class="pill pr" style="display:none">🚫 Cancelled</span>
-        <span id="cvPastBadge" class="pill pgray" style="display:none">Past</span>
+        <span id="cvCancelledBadge" class="pill pr" style="display:none" data-i18n="🚫 Cancelled">🚫 Cancelled</span>
+        <span id="cvPastBadge" class="pill pgray" style="display:none" data-i18n="Past">Past</span>
       </div>
     </div>
   </div>
@@ -5830,7 +5830,7 @@ async function saveSettings(){
     <div id="cvSlRow" style="display:flex;align-items:flex-start;gap:10px"><svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" style="color:var(--ink3);flex-shrink:0;margin-top:3px"><path d="M2 4h12M2 8h8M2 12h10"/></svg><div id="cvSlBadge" style="display:flex;gap:5px;flex-wrap:wrap"></div></div>
   </div>
   <div style="height:1px;background:var(--bd);margin-bottom:14px"></div>
-  <div style="font-size:.69rem;font-weight:700;color:var(--ink2);margin-bottom:9px;letter-spacing:.04em;text-transform:uppercase">Photos</div>
+  <div style="font-size:.69rem;font-weight:700;color:var(--ink2);margin-bottom:9px;letter-spacing:.04em;text-transform:uppercase" data-i18n="Photos">Photos</div>
   <div id="cvPhotos" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px"></div>
   <div style="height:1px;background:var(--bd);margin-bottom:13px"></div>
   <div id="cvActions" style="display:flex;gap:7px;justify-content:flex-end;flex-wrap:wrap"></div>
@@ -5862,9 +5862,9 @@ async function saveSettings(){
   <!-- Header -->
   <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:16px">
     <div>
-      <div style="font-size:.69rem;font-weight:700;color:var(--g);text-transform:uppercase;letter-spacing:.07em;margin-bottom:4px">Rehearsal</div>
+      <div style="font-size:.69rem;font-weight:700;color:var(--g);text-transform:uppercase;letter-spacing:.07em;margin-bottom:4px" data-i18n="Rehearsal">Rehearsal</div>
       <div class="mott" id="rvTitle" style="margin-bottom:6px"></div>
-      <span id="rvPastBadge" class="pill pgray" style="display:none">Past</span>
+      <span id="rvPastBadge" class="pill pgray" style="display:none" data-i18n="Past">Past</span>
     </div>
   </div>
 

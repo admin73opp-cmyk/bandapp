@@ -317,6 +317,8 @@ window.PT_BR = {
   'Cancel Event': 'Cancelar Evento',
   'Cancel Concert': 'Cancelar Show',
   'No photos yet': 'Nenhuma foto ainda',
+  'Photos': 'Fotos',
+  'Link Set List': 'Vincular Setlist',
   'No concert linked': 'Nenhum show vinculado',
   'No set list linked to this concert yet': 'Nenhuma setlist vinculada a este show ainda',
   'No links added yet': 'Nenhum link adicionado ainda',
