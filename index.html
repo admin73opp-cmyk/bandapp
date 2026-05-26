@@ -1361,7 +1361,7 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
     </div>
   </div>
   <div class="fg">
-    <label><span data-i18n="Duration (optional)">Duration <span style="font-weight:400;color:var(--ink3)">(optional)</span></span></label>
+    <label><span data-i18n-html="Duration (optional)">Duration <span style="font-weight:400;color:var(--ink3)">(optional)</span></span></label>
     <div style="display:flex;gap:8px;align-items:center">
       <input id="nsDurMin" type="number" min="0" max="59" placeholder="min" style="flex:1;padding:9px 13px;background:var(--bg);border:1.5px solid var(--bd);border-radius:var(--rad);color:var(--ink);font-family:var(--font);font-size:.83rem;outline:none;transition:border-color .13s" onfocus="this.style.borderColor='var(--a)'" onblur="this.style.borderColor='var(--bd)'">
       <span style="color:var(--ink3);font-weight:600">:</span>
@@ -2976,14 +2976,20 @@ async function addSong(){
       apple:document.getElementById('nsApple').value.trim(),
       hidden:false,
     });
-  }catch(e){toast2(e.message||'Failed to add song','w');console.error('[bandapp] addSong error:',e);return;}
-  if(!s)return;
+  }catch(e){
+    const msg=e?.code==='42501'?t('Permission denied — only band admins can add songs'):e.message||t('Failed to add song');
+    toast2(msg,'w');
+    console.error('[bandapp] addSong error:',e);
+    return;
+  }
+  if(!s){toast2(t('Failed to add song — please try again'),'w');return;}
   ['nst','nsa','nsnote','nsSpotify','nsYoutube','nsApple','nsDurMin','nsDurSec'].forEach(id=>{
     const el=document.getElementById(id);if(el)el.value='';
   });
   closeMod('alsMod');
-  try{ await loadSongs();renderLib(aG);updateLibCount();if(libView==='sheet')renderSheet(); }catch(e){ console.error('[bandapp] post-add refresh failed:',e); }
-  toast2(`✦ "${title}" added to library!`);
+  aG='All';
+  try{ await loadSongs();renderLib('All');updateLibCount();if(libView==='sheet')renderSheet(); }catch(e){ console.error('[bandapp] post-add refresh failed:',e); }
+  toast2(`✦ "${title}" ${t('added to library!')}`);
 }
 
 // ── LIBRARY VIEW TOGGLE ───────────────────────────────────
@@ -5651,7 +5657,7 @@ async function saveSettings(){
   </div>
   <div class="fg" data-i18n="Band Notes"><label>Band Notes</label><textarea id="seNote" style="min-height:60px" placeholder="e.g. Antoine's feature, watch tempo…"></textarea></div>
   <div class="fg">
-    <label><span data-i18n="Duration (optional)">Duration <span style="font-weight:400;color:var(--ink3)">(optional)</span></span></label>
+    <label><span data-i18n-html="Duration (optional)">Duration <span style="font-weight:400;color:var(--ink3)">(optional)</span></span></label>
     <div style="display:flex;gap:8px;align-items:center">
       <input id="seDurMin" type="number" min="0" max="59" placeholder="min" style="flex:1;padding:9px 13px;background:var(--bg);border:1.5px solid var(--bd);border-radius:var(--rad);color:var(--ink);font-family:var(--font);font-size:.83rem;outline:none;transition:border-color .13s" onfocus="this.style.borderColor='var(--a)'" onblur="this.style.borderColor='var(--bd)'">
       <span style="color:var(--ink3);font-weight:600">:</span>

@@ -92,7 +92,7 @@ create policy "songs_select" on songs
   for select using (is_band_member(band_id));
 
 create policy "songs_insert" on songs
-  for insert with check (is_band_admin(band_id));
+  for insert with check (is_band_member(band_id));
 
 create policy "songs_update" on songs
   for update using (is_band_admin(band_id));

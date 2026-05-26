@@ -181,7 +181,7 @@ window.PT_BR = {
   'Artist': 'Artista',
   'Genre': 'Gênero',
   'Key': 'Tom',
-  'Duration (optional)': 'Duração (opcional)',
+  'Duration (optional)': 'Duração <span style="font-weight:400;color:var(--ink3)">(opcional)</span>',
   'Band Notes (optional)': 'Notas da Banda (opcional)',
   'Band Notes': 'Notas da Banda',
   'Streaming Links (optional)': 'Links de Streaming (opcional)',
@@ -744,4 +744,8 @@ window.PT_BR = {
   'min': 'min',
   'No': 'Não',
   'Yes': 'Sim',
+  'Permission denied — only band admins can add songs': 'Permissão negada — apenas admins da banda podem adicionar músicas',
+  'Failed to add song': 'Falha ao adicionar música',
+  'Failed to add song — please try again': 'Falha ao adicionar música — tente novamente',
+  'added to library!': 'adicionada à biblioteca!',
 };

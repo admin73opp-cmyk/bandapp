@@ -51,7 +51,7 @@ const SongsDB = {
       .upsert(payload)
       .select()
       .single();
-    if (error) { handleDbError(error); return null; }
+    if (error) { console.error('[bandapp] songs.upsert error:', error); throw error; }
     return {
       ...data,
       dur:     data.duration,
