@@ -1887,7 +1887,9 @@ function addRehPhoto(event,id){
   const file=event.target.files[0];if(!file)return;
   const r=rehearsals.find(x=>x.id===id);if(!r)return;
   event.target.value='';
-  compressImage(file).then(async url=>{
+  const reader=new FileReader();
+  reader.onload=async e=>{
+    const url=await compressImage(e.target.result,1024,0.75);
     try{
       const photo=await RehearsalsDB.addPhoto(id,url);
       if(!r.photos)r.photos=[];
@@ -1895,8 +1897,9 @@ function addRehPhoto(event,id){
       renderRehearsals();
       if(editingRehId===id)renderRehPhotoArea(id);
       toast2('Photo added!');
-    }catch(e){toast2('Failed to save photo','w');}
-  });
+    }catch(err){toast2('Failed to save photo','w');console.error('[bandapp] addRehPhoto:',err);}
+  };
+  reader.readAsDataURL(file);
 }
 function renderRehPhotoArea(id){
   const r=rehearsals.find(x=>x.id===id);
@@ -3979,27 +3982,13 @@ async function saveConcertEdit(){
 }
 
 // ── CONCERT PHOTOS ────────────────────────────────────────
-function compressImage(file){
-  return new Promise(resolve=>{
-    const img=new Image();
-    const url=URL.createObjectURL(file);
-    img.onload=()=>{
-      URL.revokeObjectURL(url);
-      const maxW=1024,maxH=768;
-      let w=img.width,h=img.height;
-      if(w>maxW||h>maxH){const r=Math.min(maxW/w,maxH/h);w=Math.round(w*r);h=Math.round(h*r);}
-      const c=document.createElement('canvas');c.width=w;c.height=h;
-      c.getContext('2d').drawImage(img,0,0,w,h);
-      resolve(c.toDataURL('image/jpeg',0.75));
-    };
-    img.src=url;
-  });
-}
 function addConcertPhoto(event,id){
   const file=event.target.files[0];if(!file)return;
   const c=concerts.find(x=>x.id===id);if(!c)return;
   event.target.value='';
-  compressImage(file).then(async url=>{
+  const reader=new FileReader();
+  reader.onload=async e=>{
+    const url=await compressImage(e.target.result,1024,0.75);
     try{
       const photo=await ConcertsDB.addPhoto(id,url);
       if(!c.photos)c.photos=[];
@@ -4007,8 +3996,9 @@ function addConcertPhoto(event,id){
       renderConcerts();
       if(editingConcertId===id)renderConcertPhotoArea(id);
       toast2('Photo added!');
-    }catch(e){toast2('Failed to save photo','w');}
-  });
+    }catch(err){toast2('Failed to save photo','w');console.error('[bandapp] addConcertPhoto:',err);}
+  };
+  reader.readAsDataURL(file);
 }
 
 function renderConcertPhotoArea(id){
