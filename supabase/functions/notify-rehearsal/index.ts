@@ -61,37 +61,21 @@ serve(async (req) => {
     const { data: band } = await admin.from('bands').select('name').eq('id', band_id).single()
     const bandName = band?.name || 'Your Band'
 
-    // Get all band member user IDs
-    const { data: members } = await admin
+    // Fetch member emails + names in one query via profiles (which stores email synced from auth.users)
+    const { data: memberRows } = await admin
       .from('band_members')
-      .select('user_id')
+      .select('profiles(id, email, first_name, last_name)')
       .eq('band_id', band_id)
 
-    if (!members?.length) return json({ success: true, sent: 0 })
+    if (!memberRows?.length) return json({ success: true, sent: 0 })
 
-    const memberIds = members.map((m: { user_id: string }) => m.user_id)
-
-    // Fetch member emails and names from auth.users + profiles
-    const { data: users } = await admin.auth.admin.listUsers({ perPage: 1000 })
-    const profiles: Record<string, { first_name?: string; last_name?: string }> = {}
-
-    const { data: profileRows } = await admin
-      .from('profiles')
-      .select('id, first_name, last_name')
-      .in('id', memberIds)
-
-    ;(profileRows || []).forEach((p: { id: string; first_name?: string; last_name?: string }) => {
-      profiles[p.id] = p
-    })
-
-    const recipients = (users?.users || [])
-      .filter((u) => memberIds.includes(u.id) && u.email)
-      .map((u) => ({
-        email: u.email!,
-        name: (() => {
-          const p = profiles[u.id]
-          return p ? `${p.first_name || ''} ${p.last_name || ''}`.trim() || u.email! : u.email!
-        })(),
+    type ProfileRow = { id: string; email?: string; first_name?: string; last_name?: string }
+    const recipients = (memberRows as { profiles: ProfileRow }[])
+      .map(r => r.profiles)
+      .filter((p): p is ProfileRow => !!p?.email)
+      .map(p => ({
+        email: p.email!,
+        name: `${p.first_name || ''} ${p.last_name || ''}`.trim() || p.email!,
       }))
 
     if (!recipients.length) return json({ success: true, sent: 0 })
@@ -115,17 +99,11 @@ serve(async (req) => {
 
     const textBody = `Rehearsal Confirmed — ${bandName}\n\nDate: ${date}${timeStr}${location ? `\nLocation: ${location}` : ''}${notes ? `\nNotes: ${notes}` : ''}\n\nYou're receiving this because you're a member of ${bandName} on Bandapp.`
 
-    // Send via Resend — one email per recipient
-    let sent = 0
-    const errors: string[] = []
-
-    for (const recipient of recipients) {
+    // Send all emails in parallel via Resend
+    const results = await Promise.all(recipients.map(async (recipient) => {
       const res = await fetch('https://api.resend.com/emails', {
         method: 'POST',
-        headers: {
-          Authorization: `Bearer ${resendKey}`,
-          'Content-Type': 'application/json',
-        },
+        headers: { Authorization: `Bearer ${resendKey}`, 'Content-Type': 'application/json' },
         body: JSON.stringify({
           from: `Bandapp <${fromEmail}>`,
           to: [recipient.email],
@@ -134,16 +112,13 @@ serve(async (req) => {
           text: textBody,
         }),
       })
+      if (res.ok) return null
+      const err = await res.json().catch(() => ({ message: res.statusText }))
+      return `${recipient.email}: ${err?.message || res.statusText}`
+    }))
 
-      if (res.ok) {
-        sent++
-      } else {
-        const err = await res.json().catch(() => ({ message: res.statusText }))
-        errors.push(`${recipient.email}: ${err?.message || res.statusText}`)
-      }
-    }
-
-    return json({ success: true, sent, errors: errors.length ? errors : undefined })
+    const errors = results.filter((e): e is string => e !== null)
+    return json({ success: true, sent: recipients.length - errors.length, errors: errors.length ? errors : undefined })
 
   } catch (e) {
     return json({ error: (e as Error).message }, 500)

@@ -1592,9 +1592,11 @@ let slSongs={};
 function getSlS(){return slSongs[activeSetlistId]||(slSongs[activeSetlistId]=[]);}
 let slS=getSlS();
 
+let _setlistMap = {}; // id → setlist, rebuilt after every fetch
 async function loadSetlists(){
-  if(!activeBandId){ setlists=[]; slSongs={}; slS=[]; return; }
+  if(!activeBandId){ setlists=[]; slSongs={}; slS={}; _setlistMap={}; return; }
   setlists = await SetlistsDB.fetch(activeBandId);
+  _setlistMap = Object.fromEntries(setlists.map(s=>[s.id,s]));
   if(!activeSetlistId && setlists.length) activeSetlistId=setlists[0].id;
   if(activeSetlistId) await loadSetlistSongs(activeSetlistId);
   slS=getSlS();
@@ -1687,7 +1689,7 @@ let rehearsals=[];
 async function loadRehearsals(){
   rehearsals = await RehearsalsDB.fetch(activeBandId);
   const photoMap = await RehearsalsDB.fetchPhotos(rehearsals.map(r=>r.id));
-  rehearsals.forEach(r=>{ r.photos=photoMap[r.id]||[]; });
+  rehearsals.forEach(r=>{ r.photos=photoMap[r.id]||[]; r._ts=rehearsalDate(r).getTime(); });
   buildCalEv();
 }
 
@@ -1695,7 +1697,7 @@ function rehearsalDate(r){
   if(r.date) return new Date(r.date+'T12:00:00');
   return new Date(parseInt(r.year),MONTH_MAP[r.month],parseInt(r.day));
 }
-function isRehPast(r){return rehearsalDate(r)<TODAY;}
+function isRehPast(r){return (r._ts||rehearsalDate(r).getTime())<TODAY.getTime();}
 
 function renderRehearsals(){
   const noBand=document.getElementById('rehearsalsNoBand');
@@ -1709,8 +1711,8 @@ function renderRehearsals(){
   if(content)content.style.display='';
   const cancelled=rehearsals.filter(r=>r.cancelled);
   const active   =rehearsals.filter(r=>!r.cancelled);
-  const upcoming =active.filter(r=>!isRehPast(r)).sort((a,b)=>rehearsalDate(a)-rehearsalDate(b));
-  const past     =active.filter(r=> isRehPast(r)).sort((a,b)=>rehearsalDate(b)-rehearsalDate(a));
+  const upcoming =active.filter(r=>!isRehPast(r)).sort((a,b)=>a._ts-b._ts);
+  const past     =active.filter(r=> isRehPast(r)).sort((a,b)=>b._ts-a._ts);
   const countEl  =document.getElementById('rehearsalCount');
   if(countEl)countEl.textContent=`${upcoming.length} ${t('upcoming')} · ${past.length} ${t('past')}${cancelled.length?` · ${cancelled.length} ${t('cancelled')}`:''}`;
   document.getElementById('rehearsalListUpcoming').innerHTML=upcoming.length
@@ -1728,7 +1730,7 @@ function rehearsalCard(r,style){
   const photoHtml=photos.length
     ?`<div class="concert-photos">${photos.map((p,i)=>`<img class="concert-thumb" src="${p.url}" alt="Photo ${i+1}" onclick="event.stopPropagation();openRehPhotoLightbox('${r.id}',${i})">`).join('')}${!cancelStyle?`<label class="concert-thumb-add" onclick="event.stopPropagation()"><input type="file" accept="image/*" style="display:none" onchange="addRehPhoto(event,'${r.id}')">+</label>`:''}</div>`
     :cancelStyle?'':`<div class="concert-photos"><label class="concert-thumb-add" onclick="event.stopPropagation()"><input type="file" accept="image/*" style="display:none" onchange="addRehPhoto(event,'${r.id}')">📷</label></div>`;
-  const slLinked=r.setlistId?setlists.find(x=>x.id===r.setlistId):null;
+  const slLinked=r.setlistId?(_setlistMap[r.setlistId]||null):null;
   const badge=cancelStyle
     ?`<span style="margin-left:8px;font-size:.66rem;padding:2px 7px;border-radius:99px;background:var(--r2);color:var(--r);font-weight:600;vertical-align:middle">${t('Cancelled')}</span>`
     :pastStyle?`<span style="margin-left:8px;font-size:.66rem;padding:2px 7px;border-radius:99px;background:var(--bg2);color:var(--ink3);font-weight:600;vertical-align:middle">${t('Past')}</span>`:'';
@@ -1788,7 +1790,7 @@ function shareRehearsal(id){
 function openRehView(id){
   const r=rehearsals.find(x=>x.id===id);if(!r)return;
   const past=isRehPast(r);
-  const slLinked=r.setlistId?setlists.find(x=>x.id===r.setlistId):null;
+  const slLinked=r.setlistId?(_setlistMap[r.setlistId]||null):null;
   const MO_FULL={JAN:'January',FEB:'February',MAR:'March',APR:'April',MAY:'May',JUN:'June',JUL:'July',AUG:'August',SEP:'September',OCT:'October',NOV:'November',DEC:'December'};
 
   // Title & badge
@@ -2186,12 +2188,7 @@ async function switchBand(id){
   const b=getActiveBand();
   closeMod('bswMod');
   toast2(`Switching to ${b?.name||'band'}…`);
-  await loadSongs();
-  await loadSetlists();
-  await loadConcerts();
-  await loadRehearsals();
-  await loadMembers();
-  await loadBlackouts();
+  await Promise.all([loadSongs(),loadSetlists(),loadConcerts(),loadRehearsals(),loadMembers(),loadBlackouts()]);
   renderSLDropdown();renderSL();renderSlMeta();renderLib();updateLibCount();updateSidebarCounts();
   setCalView(calView);renderRehearsals();renderConcerts();renderMembers();
   renderGuestDir();renderBP();renderAsList();renderBandList();
@@ -2307,8 +2304,10 @@ function hasCrossBandConflict(memberIdx, key){
 let curMonth=new Date(2026,4,1);
 let blackouts=[];
 
+let _boMapCache=null,_boMapVer=0,_boMapCacheVer=-1;
 async function loadBlackouts(){
   blackouts=await BlackoutsDB.fetch(activeBandId);
+  _boMapVer++; // invalidate getBOMap cache
 }
 
 // ── CURRENT USER ─────────────────────────────────────────
@@ -3433,7 +3432,18 @@ async function addSelectedSongs(){
 function isBO(key){return blackouts.some(b=>b.scope==='band'&&key>=b.from&&key<=b.to);}
 function getBOLbl(key){const b=blackouts.find(b=>b.scope==='band'&&key>=b.from&&key<=b.to);return b?b.label:null;}
 function isMBO(mi,key){const uid=members[mi]?.id;return !!uid&&blackouts.some(b=>b.scope==='members'&&b.mids.includes(uid)&&key>=b.from&&key<=b.to);}
-function getBOMap(){const m={};blackouts.filter(b=>b.scope==='band').forEach(b=>{for(let d=new Date(b.from+'T00:00:00');d<=new Date(b.to+'T00:00:00');d.setDate(d.getDate()+1)){const k=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;m[k]=b.label;}});return m;}
+function getBOMap(){
+  if(_boMapCache&&_boMapCacheVer===_boMapVer)return _boMapCache;
+  const m={};
+  blackouts.filter(b=>b.scope==='band').forEach(b=>{
+    for(let d=new Date(b.from+'T00:00:00');d<=new Date(b.to+'T00:00:00');d.setDate(d.getDate()+1)){
+      const k=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+      m[k]=b.label;
+    }
+  });
+  _boMapCache=m;_boMapCacheVer=_boMapVer;
+  return m;
+}
 function fmtD(iso){return new Date(iso+'T00:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});}
 function openAddBO(){clrBOF();showMod('boMod');}
 function clrBOF(){['boId','boLab','boFr','boTo'].forEach(id=>document.getElementById(id).value='');document.getElementById('boSc').value='band';togBOM();document.querySelectorAll('.bomc').forEach(c=>c.classList.remove('on'));}
@@ -3522,15 +3532,16 @@ function renderCal(){
   if(calView==='full'){
     const boMap=getBOMap();
     const fd=new Date(yr,mo,1).getDay(),dim=new Date(yr,mo+1,0).getDate();
+    // Pre-compute cross-band blocked-day Sets once per member (not per day cell)
+    const memberBlocks=members.map(m=>getCrossBandBlocks(m.name));
     let h=DN.map(d=>`<div class="cdl">${d}</div>`).join('');
     for(let i=0;i<fd;i++)h+=`<div class="cd ce"></div>`;
     for(let d=1;d<=dim;d++){
       const key=`${yr}-${String(mo+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
       const ev=calEv[key]||[];const isT=yr===2026&&mo===4&&d===19;const bol=boMap[key];
       const full=!bol&&isFB(yr,mo,d)&&!ev.includes('concert')&&!ev.includes('rehearsal');
-      // Detect if any member has a cross-band conflict on this day
-      const xbConflicts=members.map((m,i)=>hasCrossBandConflict(i,key));
-      const hasXB=!bol&&!ev.includes('concert')&&!ev.includes('rehearsal')&&xbConflicts.some(Boolean);
+      // Use pre-computed Sets for O(1) lookup per member per day
+      const hasXB=!bol&&!ev.includes('concert')&&!ev.includes('rehearsal')&&memberBlocks.some(s=>s.has(key));
       const isPastDay=key<TODAY_STR;
       let cls='cd';
       if(isT)cls+=' cto';
@@ -3544,8 +3555,7 @@ function renderCal(){
       if(full)inn+=`<div class="cltn">⚡</div>`;
       if(bol)inn+=`<div class="cbol">${bol}</div>`;
       if(hasXB&&!full){
-        // show which band is causing the conflict
-        const xbLabel=members.reduce((acc,m,i)=>{const lbl=getCrossBandLabel(m.name,key);return lbl||acc;},'');
+        const xbLabel=members.reduce((acc,m)=>{const lbl=getCrossBandLabel(m.name,key);return lbl||acc;},'');
         if(xbLabel)inn+=`<div class="cd-xblabel">${xbLabel}</div>`;
       }
       ev.forEach(e=>{if(e==='concert')inn+=`<div class="cdot cdot-c"></div>`;if(e==='rehearsal')inn+=`<div class="cdot cdot-r"></div>`;if(e==='birthday')inn+=`<div class="cdot cdot-b"></div>`;});
@@ -3815,7 +3825,7 @@ function concertCard(c,style){
       <div class="cbadges">
         <span class="pill ${cancelStyle?'pr':'pp'}">${cancelStyle?t('🚫 Cancelled'):t('Concert')}</span>
         ${!cancelStyle&&c.paid?`<span class="pill pg">€ ${c.total}</span><span class="pill pgray">${c.price}</span>`:!cancelStyle?`<span class="pill pgray">${t('Free')}</span>`:''}
-        ${(c.setlistIds||[]).map(sid=>{const sl=setlists.find(x=>x.id===sid);return sl?`<span class="pill pp" style="cursor:pointer" data-action="setlist" data-slid="${sid}">♩ ${sl.name}</span>`:''}).join('')}
+        ${(c.setlistIds||[]).map(sid=>{const sl=_setlistMap[sid];return sl?`<span class="pill pp" style="cursor:pointer" data-action="setlist" data-slid="${sid}">♩ ${sl.name}</span>`:''}).join('')}
 
       </div>
       ${photoHtml}
