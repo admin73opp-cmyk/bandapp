@@ -3304,7 +3304,7 @@ async function saveSongEdit(){
       hidden:s.hidden,
     });
   }catch(e){
-    const msg=e?.code==='42501'?t('Permission denied — only band admins can edit songs'):e.message||t('Failed to save song');
+    const msg=e?.code==='42501'?t('Permission denied — you are not a member of this band'):e.message||t('Failed to save song');
     toast2(msg,'w');
     console.error('[bandapp] saveSongEdit error:',e);
     return;

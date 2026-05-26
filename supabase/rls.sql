@@ -95,10 +95,10 @@ create policy "songs_insert" on songs
   for insert with check (is_band_member(band_id));
 
 create policy "songs_update" on songs
-  for update using (is_band_admin(band_id));
+  for update using (is_band_member(band_id));
 
 create policy "songs_delete" on songs
-  for delete using (is_band_admin(band_id));
+  for delete using (is_band_member(band_id));
 
 -- ── SONG_NOTES ───────────────────────────────────────────────
 

@@ -746,7 +746,7 @@ window.PT_BR = {
   'Yes': 'Sim',
   'Make Admin': 'Tornar Admin',
   'Permission denied — only band admins can add songs': 'Permissão negada — apenas admins da banda podem adicionar músicas',
-  'Permission denied — only band admins can edit songs': 'Permissão negada — apenas admins da banda podem editar músicas',
+  'Permission denied — you are not a member of this band': 'Permissão negada — você não é membro desta banda',
   'Failed to add song': 'Falha ao adicionar música',
   'Failed to add song — please try again': 'Falha ao adicionar música — tente novamente',
   'Failed to save song': 'Falha ao salvar música',
