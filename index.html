@@ -3433,7 +3433,7 @@ async function addSelectedSongs(){
 function isBO(key){return blackouts.some(b=>b.scope==='band'&&key>=b.from&&key<=b.to);}
 function getBOLbl(key){const b=blackouts.find(b=>b.scope==='band'&&key>=b.from&&key<=b.to);return b?b.label:null;}
 function isMBO(mi,key){const uid=members[mi]?.id;return !!uid&&blackouts.some(b=>b.scope==='members'&&b.mids.includes(uid)&&key>=b.from&&key<=b.to);}
-function getBOMap(){const m={};blackouts.filter(b=>b.scope==='band').forEach(b=>{for(let d=new Date(b.from+'T00:00:00');d<=new Date(b.to+'T00:00:00');d.setDate(d.getDate()+1))m[d.toISOString().slice(0,10)]=b.label;});return m;}
+function getBOMap(){const m={};blackouts.filter(b=>b.scope==='band').forEach(b=>{for(let d=new Date(b.from+'T00:00:00');d<=new Date(b.to+'T00:00:00');d.setDate(d.getDate()+1)){const k=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;m[k]=b.label;}});return m;}
 function fmtD(iso){return new Date(iso+'T00:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});}
 function openAddBO(){clrBOF();showMod('boMod');}
 function clrBOF(){['boId','boLab','boFr','boTo'].forEach(id=>document.getElementById(id).value='');document.getElementById('boSc').value='band';togBOM();document.querySelectorAll('.bomc').forEach(c=>c.classList.remove('on'));}
@@ -3446,6 +3446,7 @@ async function savBO(){
   const scope=document.getElementById('boSc').value;
   if(!label||!from){toast2('Fill in label and start date','w');return;}
   const mids=scope==='members'?[...document.querySelectorAll('.bomc.on')].map(c=>c.dataset.mid):[];
+  if(scope==='members'&&mids.length===0){toast2('Select at least one member','w');return;}
   const payload={label,from,to,scope,mids};
   if(id) payload.id=id;
   const saved=await BlackoutsDB.upsert(payload);
@@ -3577,10 +3578,11 @@ function renderAvail(){
       const av=getMAvail(yr,mo,d)[mi];
       const isFull=fullC.has(d);const isB=boC.has(d);
       const xbLabel=getCrossBandLabel(m.name,key);
+      const isMemberBO=isMBO(mi,key);
       let inn='',cls='ac ac-no';
       if(ev.includes('concert')){cls='ac ac-co';inn='★';}
       else if(ev.includes('rehearsal')){cls='ac ac-re';inn='♩';}
-      else if(isB)cls='ac ac-bo';
+      else if(isB||isMemberBO)cls='ac ac-bo';
       else if(xbLabel){cls='ac ac-xband';inn='⊘';} // cross-band conflict
       else if(av&&isFull)cls='ac ac-fl';
       else if(av)cls='ac ac-av';
