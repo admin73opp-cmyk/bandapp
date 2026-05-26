@@ -4108,7 +4108,7 @@ function instIcon(name){
 
 function populateInstrumentSelects(){
   const opts=INSTRUMENTS.map(x=>`<option value="${x.v}">${x.i} ${x.label}</option>`).join('');
-  [{id:'pfInst1',blank:'— Select —'},{id:'pfInst2',blank:'None'},{id:'mpInst1',blank:'— Select —'},{id:'mpInst2',blank:'None'}].forEach(({id,blank})=>{
+  [{id:'pfInst1',blank:'— Select —'},{id:'pfInst2',blank:'None'},{id:'mpInst1',blank:'— Select —'},{id:'mpInst2',blank:'None'},{id:'invInstrument',blank:'— Instrument —'}].forEach(({id,blank})=>{
     const el=document.getElementById(id);
     if(el)el.innerHTML=`<option value="">${blank}</option>${opts}`;
   });
