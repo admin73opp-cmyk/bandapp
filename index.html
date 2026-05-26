@@ -250,6 +250,7 @@ select option{background:var(--w)}
 .at td{padding:2px}.nc2{white-space:nowrap;padding:5px 9px!important;text-align:left;position:sticky;left:0;background:var(--w);z-index:1}
 .cd.cd-xband{background:rgba(217,119,6,.1);border-color:rgba(217,119,6,.35);cursor:not-allowed}
 .cd.cd-xband .cdn{color:var(--amb)}
+.cd.cd-past{opacity:.38;cursor:default}.cd.cd-past:hover{border-color:transparent!important;background:var(--bg)!important}
 .cd-xblabel{font-size:.42rem;color:var(--amb);text-align:center;line-height:1.1;margin-top:1px;max-height:15px;overflow:hidden}
 .ac{width:16px;height:16px;border-radius:3px;margin:auto}
 .ac-av{background:var(--g2);border:1px solid var(--g)}.ac-fl{background:var(--g2);border:1.5px solid var(--g)}
@@ -3537,8 +3538,10 @@ function renderCal(){
       // Detect if any member has a cross-band conflict on this day
       const xbConflicts=members.map((m,i)=>hasCrossBandConflict(i,key));
       const hasXB=!bol&&!ev.includes('concert')&&!ev.includes('rehearsal')&&xbConflicts.some(Boolean);
+      const isPastDay=key<TODAY_STR;
       let cls='cd';
       if(isT)cls+=' cto';
+      if(isPastDay)cls+=' cd-past';
       if(bol)cls+=' cbo';
       else if(ev.includes('concert'))cls+=' ccon';
       else if(ev.includes('rehearsal'))cls+=' creh';
@@ -3553,7 +3556,7 @@ function renderCal(){
         if(xbLabel)inn+=`<div class="cd-xblabel">${xbLabel}</div>`;
       }
       ev.forEach(e=>{if(e==='concert')inn+=`<div class="cdot cdot-c"></div>`;if(e==='rehearsal')inn+=`<div class="cdot cdot-r"></div>`;if(e==='birthday')inn+=`<div class="cdot cdot-b"></div>`;});
-      const clk=bol||hasXB?'':`onclick="calClk(${d},'${key}',${full})"`;
+      const clk=bol||hasXB||isPastDay?'':`onclick="calClk(${d},'${key}',${full})"`;
       h+=`<div class="${cls}" ${clk}>${inn}</div>`;
     }
     document.getElementById('calGrid').innerHTML=h;
@@ -3563,7 +3566,7 @@ function renderCal(){
   }
 }
 
-function calClk(d,key,isFull){const ev=calEv[key]||[];if(ev.includes('rehearsal')){toast2(`${t('Rehearsal')} - ${d}`);return;}if(ev.includes('concert')){toast2(`${t('Concert')} - ${d}`);return;}openRehMod(d,key,isFull);}
+function calClk(d,key,isFull){if(key<TODAY_STR)return;const ev=calEv[key]||[];if(ev.includes('rehearsal')){toast2(`${t('Rehearsal')} - ${d}`);return;}if(ev.includes('concert')){toast2(`${t('Concert')} - ${d}`);return;}openRehMod(d,key,isFull);}
 function chMonth(dir){curMonth.setMonth(curMonth.getMonth()+dir);renderCal();}
 
 
@@ -3598,7 +3601,7 @@ function renderAvail(){
     return`<tr><td class="nc2" style="position:sticky;left:0;background:var(--w);z-index:1"><div style="display:flex;align-items:center;gap:7px"><div class="mav2" style="width:21px;height:21px;font-size:.55rem;background:${m.color}">${m.init}</div><span style="font-size:.77rem;font-weight:500">${m.name.split(' ')[0]}</span>${multiBadge}</div></td>${cells}</tr>`;
   }).join('');
   const chips=document.getElementById('fbChips');
-  const fd=[...fullC].sort((a,b)=>a-b).filter(d=>{const key=`${yr}-${String(mo+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;const ev=calEv[key]||[];return!ev.includes('rehearsal')&&!ev.includes('concert');});
+  const fd=[...fullC].sort((a,b)=>a-b).filter(d=>{const key=`${yr}-${String(mo+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;const ev=calEv[key]||[];return key>=TODAY_STR&&!ev.includes('rehearsal')&&!ev.includes('concert');});
   chips.innerHTML=fd.length?fd.map(d=>{const dow=t(DN[new Date(yr,mo,d).getDay()]);return`<div class="fbc" onclick="openRehMod(${d},'${yr}-${String(mo+1).padStart(2,'0')}-${String(d).padStart(2,'0')}',true)">⚡ ${dow} ${d} ${t(MAb[mo])}</div>`;}).join(''):`<span style="font-size:.74rem;color:var(--ink3)">${t('No full-band days this month')}</span>`;
 }
 
