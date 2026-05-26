@@ -3653,10 +3653,16 @@ async function confReh(){
     window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`,'_blank');
   }
   closeMod('rehMod');
-  await RehearsalsDB.upsert({title,date:pendKey,start,end,location,notes,band_id:activeBandId});
+  const saved=await RehearsalsDB.upsert({title,date:pendKey,start,end,location,notes,band_id:activeBandId});
   await loadRehearsals();
   buildCalEv();
   renderCal();
+  // Send email notifications via Edge Function when channel includes email
+  if((ch==='email'||ch==='both')&&saved?.id){
+    supabase.functions.invoke('notify-rehearsal',{
+      body:{band_id:activeBandId,title,date:pendKey,start,end,location,notes},
+    }).catch(err=>console.error('[bandapp] notify-rehearsal error:',err));
+  }
   const msgs={
     email:'Rehearsal confirmed! Band notified by email ✓',
     whatsapp:'Rehearsal confirmed! WhatsApp group notified 💬',

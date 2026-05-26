@@ -30,27 +30,30 @@ begin
 end;
 $$;
 
--- find_user_by_email: looks up a profile by email address (for the "already on Bandapp?" lookup)
+-- find_user_by_email: looks up a user by email address (for the "already on Bandapp?" lookup)
+-- Queries auth.users first so users without a profiles row are still found.
 create or replace function find_user_by_email(p_email text)
 returns jsonb language plpgsql security definer as $$
 declare
+  v_uid     uuid;
   v_profile profiles%rowtype;
 begin
-  select p.* into v_profile
-  from profiles p
-  join auth.users u on u.id = p.id
-  where lower(u.email) = lower(p_email)
+  select id into v_uid
+  from auth.users
+  where lower(email) = lower(p_email)
   limit 1;
 
   if not found then return '[]'::jsonb; end if;
 
+  select * into v_profile from profiles where id = v_uid;
+
   return jsonb_build_array(jsonb_build_object(
-    'id',          v_profile.id,
-    'first_name',  v_profile.first_name,
-    'last_name',   v_profile.last_name,
-    'instrument',  v_profile.instrument,
-    'initials',    v_profile.initials,
-    'color',       v_profile.color
+    'id',          v_uid,
+    'first_name',  coalesce(v_profile.first_name, ''),
+    'last_name',   coalesce(v_profile.last_name, ''),
+    'instrument',  coalesce(v_profile.instrument, ''),
+    'initials',    coalesce(v_profile.initials, ''),
+    'color',       coalesce(v_profile.color, '#6C63FF')
   ));
 end;
 $$;
