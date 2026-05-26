@@ -199,7 +199,7 @@ select option{background:var(--w)}
 .sctt{font-weight:700;font-size:.87rem;margin-bottom:2px}.scar{color:var(--ink2);font-size:.75rem;margin-bottom:9px}
 .sclinks{display:flex;gap:5px;margin-top:9px}
 .svb{padding:4px 9px;border-radius:6px;font-size:.69rem;font-weight:600;border:1.5px solid var(--bd);background:transparent;color:var(--ink2);cursor:pointer;transition:all .11s;font-family:var(--font)}
-.svb:hover{border-color:var(--a);color:var(--a)}.svb-sp{border-color:rgba(29,185,84,.4);color:#1DB954}.svb-yt{border-color:rgba(220,38,38,.3);color:var(--r)}
+.svb:hover{border-color:var(--a);color:var(--a)}.svb-sp{border-color:rgba(29,185,84,.4);color:#1DB954}.svb-yt{border-color:rgba(220,38,38,.3);color:var(--r)}.svb-am{border-color:rgba(255,153,0,.4);color:#FF9900}
 /* calendar */
 .calhdr{display:flex;align-items:center;gap:10px;margin-bottom:17px;flex-wrap:wrap}
 .calnav{display:flex;gap:3px}
@@ -1378,6 +1378,7 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
   <div class="fg" data-i18n="Spotify URL"><label>Spotify URL</label><input id="nsSpotify" placeholder="https://open.spotify.com/track/…"></div>
   <div class="fg" data-i18n="YouTube URL"><label>YouTube URL</label><input id="nsYoutube" placeholder="https://youtube.com/watch?v=…"></div>
   <div class="fg" data-i18n="Apple Music URL"><label>Apple Music URL</label><input id="nsApple" placeholder="https://music.apple.com/…"></div>
+  <div class="fg" data-i18n="Amazon Music URL"><label>Amazon Music URL</label><input id="nsAmazon" placeholder="https://music.amazon.com/…"></div>
 
   <div class="moft">
     <button class="btn btn-g" onclick="closeMod('alsMod')" data-i18n="Cancel">Cancel</button>
@@ -2169,6 +2170,10 @@ async function loadBands(){
     bandWaLinks[b.id]   = b.wa_link    || localStorage.getItem(`bandWaLink_${b.id}`)    || null;
     bandNotifPref[b.id] = b.notif_pref || localStorage.getItem(`bandNotifPref_${b.id}`) || null;
   });
+  // Hydrate band gallery photos from DB
+  await Promise.all(BANDS.map(async b=>{
+    b.photos = await BandsDB.fetchPhotos(b.id);
+  }));
 }
 
 function getActiveBand(){return BANDS.find(b=>b.id===activeBandId);}
@@ -2591,6 +2596,7 @@ function openSongMedia(s,rowIdx){
   if(s.spotify)links.push({label:'🎵 Spotify',url:s.spotify});
   if(s.youtube)links.push({label:'▶ YouTube',url:s.youtube});
   if(s.apple)links.push({label:'🍎 Apple Music',url:s.apple});
+  if(s.amazon)links.push({label:'🎵 Amazon Music',url:s.amazon});
   if(!links.length)return'';
   if(links.length===1)return`<button class="lb2" title="${links[0].label}" data-url="${links[0].url}" onclick="openMediaUrl(this)">▶</button>`;
   return`<button class="lb2" title="Open media" onclick="openMediaPicker(${rowIdx})">▶</button>`;
@@ -2601,6 +2607,7 @@ function openMediaPicker(rowIdx){
   if(s.spotify)links.push({label:'🎵 Spotify',url:s.spotify});
   if(s.youtube)links.push({label:'▶ YouTube',url:s.youtube});
   if(s.apple)links.push({label:'🍎 Apple Music',url:s.apple});
+  if(s.amazon)links.push({label:'🎵 Amazon Music',url:s.amazon});
   const titleEl=document.getElementById('mediaPickerTitle');
   const listEl=document.getElementById('mediaPickerList');
   if(titleEl)titleEl.textContent=s.title;
@@ -2955,6 +2962,9 @@ function renderLib(filter='All',search=''){
         ${s.apple
           ?`<button class="svb" data-url="${s.apple}" onclick="event.stopPropagation();openMediaUrl(this)">Apple</button>`
           :`<button class="svb" disabled style="opacity:.3;cursor:not-allowed">Apple</button>`}
+        ${s.amazon
+          ?`<button class="svb svb-am" data-url="${s.amazon}" onclick="event.stopPropagation();openMediaUrl(this)">Amazon</button>`
+          :`<button class="svb svb-am" disabled style="opacity:.3;cursor:not-allowed">Amazon</button>`}
       </div>
       <!-- corner action buttons — visible on hover -->
       <div class="sc-actions" onclick="event.stopPropagation()">
@@ -3010,6 +3020,7 @@ async function addSong(){
       spotify:document.getElementById('nsSpotify').value.trim(),
       youtube:document.getElementById('nsYoutube').value.trim(),
       apple:document.getElementById('nsApple').value.trim(),
+      amazon:document.getElementById('nsAmazon').value.trim(),
       hidden:false,
     });
   }catch(e){
@@ -3019,7 +3030,7 @@ async function addSong(){
     return;
   }
   if(!s){toast2(t('Failed to add song — please try again'),'w');return;}
-  ['nst','nsa','nsnote','nsSpotify','nsYoutube','nsApple','nsDurMin','nsDurSec'].forEach(id=>{
+  ['nst','nsa','nsnote','nsSpotify','nsYoutube','nsApple','nsAmazon','nsDurMin','nsDurSec'].forEach(id=>{
     const el=document.getElementById(id);if(el)el.value='';
   });
   closeMod('alsMod');
@@ -3095,6 +3106,8 @@ const SHEET_COLS=[
   {label:'Notes',   field:'note',    width:null},
   {label:'Spotify', field:'spotify', width:'180px'},
   {label:'YouTube', field:'youtube', width:'180px'},
+  {label:'Apple',   field:'apple',   width:'180px'},
+  {label:'Amazon',  field:'amazon',  width:'180px'},
   {label:'Hidden',  field:'hidden',  width:'60px'},
 ];
 
@@ -3153,6 +3166,8 @@ function renderSheet(){
       <td><input class="sh-cell" style="min-width:140px" value="${esc(s.note||'')}" data-field="note" data-id="${s.id}" onchange="sheetEdit(this)"></td>
       <td><input class="sh-cell" style="min-width:150px;font-size:.72rem" value="${esc(s.spotify||'')}" placeholder="Spotify URL" data-field="spotify" data-id="${s.id}" onchange="sheetEdit(this)"></td>
       <td><input class="sh-cell" style="min-width:150px;font-size:.72rem" value="${esc(s.youtube||'')}" placeholder="YouTube URL" data-field="youtube" data-id="${s.id}" onchange="sheetEdit(this)"></td>
+      <td><input class="sh-cell" style="min-width:150px;font-size:.72rem" value="${esc(s.apple||'')}" placeholder="Apple Music URL" data-field="apple" data-id="${s.id}" onchange="sheetEdit(this)"></td>
+      <td><input class="sh-cell" style="min-width:150px;font-size:.72rem" value="${esc(s.amazon||'')}" placeholder="Amazon Music URL" data-field="amazon" data-id="${s.id}" onchange="sheetEdit(this)"></td>
       <td><div class="sh-chk"><input type="checkbox"${s.hidden?' checked':''} style="accent-color:var(--a);width:15px;height:15px;cursor:pointer" data-field="hidden" data-id="${s.id}" onchange="sheetEdit(this)"></div></td>
       <td style="text-align:center;padding:4px"><button class="btn-ic btn" onclick="deleteSheetRow('${s.id}')" style="width:24px;height:24px;color:var(--r);border-color:var(--r2)" title="Delete"><svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 4h12M5 4V2h6v2M6 7v5M10 7v5M3 4l1 10h8l1-10"/></svg></button></td>
     </tr>`).join('');
@@ -3296,6 +3311,7 @@ function openSongEdit(id){
   document.getElementById('seSpotify').value=s.spotify||'';
   document.getElementById('seYoutube').value=s.youtube||'';
   document.getElementById('seApple').value=s.apple||'';
+  document.getElementById('seAmazon').value=s.amazon||'';
   // update hidden toggle
   const hBtn=document.getElementById('seHideBtn');
   hBtn.textContent=s.hidden?'👁 Unhide Song':'🙈 Hide Song';
@@ -3322,6 +3338,7 @@ async function saveSongEdit(){
       spotify:document.getElementById('seSpotify').value,
       youtube:document.getElementById('seYoutube').value,
       apple:document.getElementById('seApple').value,
+      amazon:document.getElementById('seAmazon').value,
       hidden:s.hidden,
     });
   }catch(e){
@@ -4637,19 +4654,31 @@ function renderBandPhotos(){
   if(empty)empty.style.display='none';
   grid.innerHTML=photos.map((p,i)=>`
     <div style="position:relative;aspect-ratio:1">
-      <img src="${p}" style="width:100%;height:100%;object-fit:cover;border-radius:8px;cursor:pointer;border:1.5px solid var(--bd)" onclick="openBandPhotoLightbox(${i})">
+      <img src="${p.url}" style="width:100%;height:100%;object-fit:cover;border-radius:8px;cursor:pointer;border:1.5px solid var(--bd)" onclick="openBandPhotoLightbox(${i})">
       ${isAdmin?`<button onclick="removeBandPhoto(${i})" style="position:absolute;top:-5px;right:-5px;width:18px;height:18px;border-radius:50%;background:var(--r);border:2px solid var(--w);color:#fff;font-size:.5rem;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1">✕</button>`:''}
     </div>`).join('');
 }
 function addBandPhoto(event){
   const file=event.target.files[0];if(!file)return;
   const b=getActiveBand();if(!b)return;
+  event.target.value='';
   const reader=new FileReader();
-  reader.onload=e=>{if(!b.photos)b.photos=[];b.photos.push(e.target.result);renderBandPhotos();toast2('Photo added!');};
-  reader.readAsDataURL(file);event.target.value='';
+  reader.onload=async e=>{
+    const url=await compressImage(e.target.result,1024,0.75);
+    try{
+      const photo=await BandsDB.addPhoto(b.id,url);
+      if(!b.photos)b.photos=[];
+      b.photos.push(photo);
+      renderBandPhotos();
+      toast2('Photo added!');
+    }catch(err){toast2('Failed to save photo','w');console.error('[bandapp] addBandPhoto:',err);}
+  };
+  reader.readAsDataURL(file);
 }
-function removeBandPhoto(idx){
+async function removeBandPhoto(idx){
   const b=getActiveBand();if(!b||!b.photos)return;
+  const photo=b.photos[idx];
+  if(photo?.id)await BandsDB.removePhoto(photo.id);
   b.photos.splice(idx,1);renderBandPhotos();toast2('Photo removed','w');
 }
 function openBandPhotoLightbox(idx){
@@ -4657,7 +4686,7 @@ function openBandPhotoLightbox(idx){
   const o=document.createElement('div');
   o.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:9000;display:flex;align-items:center;justify-content:center;cursor:pointer';
   o.onclick=()=>document.body.removeChild(o);
-  o.innerHTML=`<img src="${b.photos[idx]}" style="max-width:90vw;max-height:90vh;border-radius:12px;object-fit:contain">`;
+  o.innerHTML=`<img src="${b.photos[idx].url}" style="max-width:90vw;max-height:90vh;border-radius:12px;object-fit:contain">`;
   document.body.appendChild(o);
 }
 
@@ -5733,6 +5762,7 @@ async function saveSettings(){
   <div class="fg" data-i18n="Spotify URL"><label>Spotify URL</label><input id="seSpotify" placeholder="https://open.spotify.com/track/…"></div>
   <div class="fg" data-i18n="YouTube URL"><label>YouTube URL</label><input id="seYoutube" placeholder="https://youtube.com/watch?v=…"></div>
   <div class="fg" data-i18n="Apple Music URL"><label>Apple Music URL</label><input id="seApple" placeholder="https://music.apple.com/…"></div>
+  <div class="fg" data-i18n="Amazon Music URL"><label>Amazon Music URL</label><input id="seAmazon" placeholder="https://music.amazon.com/…"></div>
 
   <!-- Actions row -->
   <div style="height:1px;background:var(--bd);margin:4px 0 14px"></div>

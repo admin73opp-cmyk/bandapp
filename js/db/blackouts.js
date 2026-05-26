@@ -28,11 +28,14 @@ const BlackoutsDB = {
     fields.to_date    = to     || null;
     fields.member_ids = mids   || [];
     if (!fields.band_id) fields.band_id = activeBandId;
-    const { data, error } = await supabase
-      .from('blackouts')
-      .upsert(fields)
-      .select()
-      .single();
+    let query;
+    if (fields.id) {
+      const { id, ...updateFields } = fields;
+      query = supabase.from('blackouts').update(updateFields).eq('id', id).select().single();
+    } else {
+      query = supabase.from('blackouts').insert(fields).select().single();
+    }
+    const { data, error } = await query;
     if (error) { handleDbError(error); return null; }
     return blackoutFromRow(data);
   },

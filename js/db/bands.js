@@ -56,4 +56,29 @@ const BandsDB = {
     if (error) { handleDbError(error); }
   },
 
+  async fetchPhotos(bandId) {
+    const { data, error } = await supabase
+      .from('event_photos')
+      .select('id, url')
+      .eq('event_type', 'band')
+      .eq('event_id', bandId);
+    if (error) { console.error('[bandapp] BandsDB.fetchPhotos error:', error); return []; }
+    return (data || []).map(p => ({ id: p.id, url: p.url }));
+  },
+
+  async addPhoto(bandId, url) {
+    const { data, error } = await supabase
+      .from('event_photos')
+      .insert({ event_type: 'band', event_id: bandId, url, uploaded_by: currentUser.id })
+      .select('id, url')
+      .single();
+    if (error) { console.error('[bandapp] BandsDB.addPhoto error:', error); throw error; }
+    return { id: data.id, url: data.url };
+  },
+
+  async removePhoto(photoId) {
+    const { error } = await supabase.from('event_photos').delete().eq('id', photoId);
+    if (error) { console.error('[bandapp] BandsDB.removePhoto error:', error); }
+  },
+
 };

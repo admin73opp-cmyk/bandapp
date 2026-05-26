@@ -218,6 +218,8 @@ create policy "event_photos_select" on event_photos
     (event_type = 'concert'   and exists(select 1 from concerts   c where c.id = event_photos.event_id and is_band_member(c.band_id)))
     or
     (event_type = 'rehearsal' and exists(select 1 from rehearsals r where r.id = event_photos.event_id and is_band_member(r.band_id)))
+    or
+    (event_type = 'band'      and is_band_member(event_photos.event_id))
   );
 
 create policy "event_photos_insert" on event_photos
