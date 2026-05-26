@@ -807,7 +807,7 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
       <!-- Content (hidden when no band) -->
       <div id="concertsContent">
         <div style="display:flex;gap:9px;align-items:center;margin-bottom:15px;flex-wrap:wrap">
-          <div style="flex:1"><div style="font-size:1.12rem;font-weight:700;letter-spacing:-.03em">Concerts</div><div style="font-size:.74rem;color:var(--ink2);margin-top:2px" id="concertCount"></div></div>
+          <div style="flex:1"><div style="font-size:1.12rem;font-weight:700;letter-spacing:-.03em" data-i18n="Concerts">Concerts</div><div style="font-size:.74rem;color:var(--ink2);margin-top:2px" id="concertCount"></div></div>
         </div>
         <div class="clist" id="concertListUpcoming"></div>
         <div id="pastConcertSection" style="margin-top:24px">
@@ -1725,7 +1725,7 @@ function rehearsalCard(r,style){
       <button class="btn btn-g btn-sm" data-action="view">${t('View')}</button>`;
   return`<div class="ccrd${pastStyle?' past':''}${cancelStyle?' cancelled':''}" data-rid="${r.id}" onclick="handleRehCardClick(event,'${r.id}')">
     <div class="cdb">
-      <div class="cdmo">${r.month}</div>
+      <div class="cdmo">${t(r.month)}</div>
       <div class="cddy" style="${pastStyle||cancelStyle?'color:var(--ink3)':''}">${r.day}</div>
       <div class="cdyr">${r.year}</div>
     </div>
@@ -1783,7 +1783,7 @@ function openRehView(id){
   document.getElementById('rvPastBadge').style.display=past?'':'none';
 
   // Details
-  document.getElementById('rvDate').textContent=`${MO_FULL[r.month]} ${r.day}, ${r.year}`;
+  document.getElementById('rvDate').textContent=`${t(MO_FULL[r.month])} ${r.day}, ${r.year}`;
   document.getElementById('rvTime').textContent=`${r.start} – ${r.end}`;
   document.getElementById('rvLocation').textContent=r.location||'—';
   document.getElementById('rvNotes').textContent=r.notes||'';
@@ -2786,7 +2786,7 @@ function renderSlLinkList(){
   const past=concerts.filter(c=>isPast(c));
   const makeItem=c=>`
     <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--bg);border:1.5px solid var(--bd);border-radius:var(--rad);cursor:pointer;transition:border-color .13s" onclick="linkSlToConcert('${c.id}')" onmouseover="this.style.borderColor='var(--a)'" onmouseout="this.style.borderColor='var(--bd)'">
-      <div style="flex:1"><div style="font-weight:600;font-size:.85rem">${c.title}</div><div style="font-size:.72rem;color:var(--ink2)">${c.month} ${c.day}, ${c.year} · ${c.venue}</div></div>
+      <div style="flex:1"><div style="font-weight:600;font-size:.85rem">${c.title}</div><div style="font-size:.72rem;color:var(--ink2)">${t(c.month)} ${c.day}, ${c.year} · ${c.venue}</div></div>
       ${(c.setlistIds||[]).length&&!(c.setlistIds||[]).includes(activeSetlistId)?`<span class="pill pgray" style="font-size:.66rem">Has setlist</span>`:''}
       ${(c.setlistIds||[]).includes(activeSetlistId)?`<span class="pill pg" style="font-size:.66rem">✓ Linked</span>`:''}
     </div>`;
@@ -3691,7 +3691,7 @@ function concertCard(c,style){
       <button class="btn btn-g btn-sm" data-action="view">${t('View')}</button>`;
   return`<div class="ccrd${pastStyle?' past':''}${cancelStyle?' cancelled':''}" data-cid="${c.id}" onclick="handleConcertCardClick(event,'${c.id}')">
     <div class="cdb">
-      <div class="cdmo">${c.month}</div>
+      <div class="cdmo">${t(c.month)}</div>
       <div class="cddy" style="${pastStyle||cancelStyle?'color:var(--ink3)':''}">${c.day}</div>
       <div class="cdyr">${c.year}</div>
     </div>
@@ -3773,7 +3773,7 @@ function openConcertView(id){
   document.getElementById('cvTitle').textContent=c.title;
   document.getElementById('cvCancelledBadge').style.display=c.cancelled?'':'none';
   document.getElementById('cvPastBadge').style.display=(past&&!c.cancelled)?'':'none';
-  document.getElementById('cvDate').textContent=`${MO_FULL[c.month]} ${c.day}, ${c.year}`;
+  document.getElementById('cvDate').textContent=`${t(MO_FULL[c.month])} ${c.day}, ${c.year}`;
   document.getElementById('cvTime').textContent=`${c.time} · ${c.duration} min`;
   document.getElementById('cvVenue').textContent=c.venue||'—';
   document.getElementById('cvAudience').textContent=c.audience?`~${c.audience} people`:'';
