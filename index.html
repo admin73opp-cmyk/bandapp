@@ -2954,18 +2954,10 @@ function renderLib(filter='All',search=''){
         <span class="kp">${s.key}</span>
       </div>
       <div class="sclinks">
-        ${s.spotify
-          ?`<button class="svb svb-sp" data-url="${s.spotify}" onclick="event.stopPropagation();openMediaUrl(this)">Spotify</button>`
-          :`<button class="svb svb-sp" disabled style="opacity:.3;cursor:not-allowed">Spotify</button>`}
-        ${s.youtube
-          ?`<button class="svb svb-yt" data-url="${s.youtube}" onclick="event.stopPropagation();openMediaUrl(this)">YouTube</button>`
-          :`<button class="svb svb-yt" disabled style="opacity:.3;cursor:not-allowed">YouTube</button>`}
-        ${s.apple
-          ?`<button class="svb" data-url="${s.apple}" onclick="event.stopPropagation();openMediaUrl(this)">Apple</button>`
-          :`<button class="svb" disabled style="opacity:.3;cursor:not-allowed">Apple</button>`}
-        ${s.amazon
-          ?`<button class="svb svb-am" data-url="${s.amazon}" onclick="event.stopPropagation();openMediaUrl(this)">Amazon</button>`
-          :`<button class="svb svb-am" disabled style="opacity:.3;cursor:not-allowed">Amazon</button>`}
+        ${s.spotify?`<button class="svb svb-sp" data-url="${s.spotify}" onclick="event.stopPropagation();openMediaUrl(this)">Spotify</button>`:''}
+        ${s.youtube?`<button class="svb svb-yt" data-url="${s.youtube}" onclick="event.stopPropagation();openMediaUrl(this)">YouTube</button>`:''}
+        ${s.apple?`<button class="svb" data-url="${s.apple}" onclick="event.stopPropagation();openMediaUrl(this)">Apple</button>`:''}
+        ${s.amazon?`<button class="svb svb-am" data-url="${s.amazon}" onclick="event.stopPropagation();openMediaUrl(this)">Amazon</button>`:''}
       </div>
       <!-- corner action buttons — visible on hover -->
       <div class="sc-actions" onclick="event.stopPropagation()">
