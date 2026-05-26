@@ -839,7 +839,7 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
       <!-- Content (hidden when no band) -->
       <div id="membersContent">
         <div style="display:flex;gap:9px;align-items:center;margin-bottom:15px;flex-wrap:wrap">
-          <div style="flex:1" data-i18n="Members"><div style="font-size:1.12rem;font-weight:700;letter-spacing:-.03em">Members</div><div style="font-size:.74rem;color:var(--ink2);margin-top:2px" id="memberCount"></div></div>
+          <div style="flex:1"><div style="font-size:1.12rem;font-weight:700;letter-spacing:-.03em" data-i18n="Members">Members</div><div style="font-size:.74rem;color:var(--ink2);margin-top:2px" id="memberCount"></div></div>
           <button class="btn btn-g btn-sm" onclick="openInvMod()" data-i18n="Invite Member">Invite Member</button>
         </div>
         <div class="memgrid" id="memGrid"></div>
@@ -2405,6 +2405,13 @@ function nav(p){
 function changeLang(lang){
   currentUser.lang=lang;
   applyI18n();
+  // Re-render all JS-generated page content so translated strings update immediately
+  renderDashboard();
+  renderRehearsals();
+  renderConcerts();
+  renderMembers();
+  renderBP();
+  renderCal();
   const active=document.querySelector('.pg-area.on');
   if(active){
     const pageId=active.id.replace('pg-','');
