@@ -525,11 +525,11 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
       <div class="sg" id="dshStats"></div>
       <div class="dg">
         <div class="card">
-          <div class="ch" data-i18n="Upcoming" data-i18n="See calendar →"><div class="ct">Upcoming</div><div class="cl" onclick="nav('calendar')">See calendar →</div></div>
+          <div class="ch" data-i18n="Upcoming"><div class="ct">Upcoming</div><div class="cl" onclick="nav('calendar')" data-i18n="See calendar →">See calendar →</div></div>
           <div id="dshUpcoming"></div>
         </div>
         <div class="card">
-          <div class="ch" data-i18n="Band Members" data-i18n="Manage →"><div class="ct">Band Members</div><div class="cl" onclick="nav('members')">Manage →</div></div>
+          <div class="ch" data-i18n="Band Members"><div class="ct">Band Members</div><div class="cl" onclick="nav('members')" data-i18n="Manage →">Manage →</div></div>
           <div id="dshMembers"></div>
         </div>
       </div>
@@ -4840,9 +4840,11 @@ function renderDashboard(){
   if(dshMembers){
     const active = activeMembers();
     dshMembers.innerHTML = active.length ? active.slice(0,6).map(m=>{
+      const idx=members.indexOf(m);
+      const photo=memberPhotos[idx]||null;
       const avToday=(m.avail||[])[new Date().getDay()]?'on':'off';
       const instLine=[m.instrument,m.vocals&&m.vocals!=='None'?m.vocals:''].filter(Boolean).join(' · ');
-      return`<div class="mr2"><div class="mav2" style="background:${m.color}">${m.init}</div><div style="flex:1"><div class="mn">${m.name}</div><div class="mi">${instLine}</div></div><div class="ad ${avToday}"></div></div>`;
+      return`<div class="mr2"><div class="mav2" style="background:${m.color};${photo?`background-image:url(${photo});background-size:cover;background-position:center`:''}">${photo?'':m.init}</div><div style="flex:1"><div class="mn">${m.name}</div><div class="mi">${instLine}</div></div><div class="ad ${avToday}"></div></div>`;
     }).join('') : empty(t('No members yet. Invite someone to join!'));
   }
 }
