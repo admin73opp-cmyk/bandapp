@@ -52,7 +52,7 @@ const ConcertsDB = {
     const { error } = await supabase
       .from('concert_setlists')
       .upsert({ concert_id: concertId, setlist_id: setlistId });
-    if (error) { handleDbError(error); }
+    if (error) { console.error('[bandapp] linkSetlist error:', error); throw error; }
   },
 
   async unlinkSetlist(concertId, setlistId) {

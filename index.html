@@ -2694,6 +2694,10 @@ function renderSLDropdown(){
   if(slContent) slContent.style.display=showEmpty?'none':'';
   const dd=document.getElementById('slDropdown');if(!dd)return;
   dd.innerHTML=setlists.map(sl=>`<option value="${sl.id}"${sl.id===activeSetlistId?' selected':''}>${sl.name}</option>`).join('');
+  // Keep the visible name heading in sync with whichever setlist is active
+  const activeSl=setlists.find(x=>x.id===activeSetlistId);
+  const slNameEl=document.getElementById('slName');
+  if(slNameEl) slNameEl.textContent=activeSl?activeSl.name:(setlists.length?'Set List':'');
 }
 async function selSLDropdown(sel){
   const id=sel.value; // UUID string — no parseInt
@@ -2805,7 +2809,12 @@ async function linkSlToConcert(concertId, unlinkId){
     renderSlMeta();renderConcerts();toast2('Concert unlinked');return;
   }
   if(!concertId)return;
-  await ConcertsDB.linkSetlist(concertId, activeSetlistId);
+  try{
+    await ConcertsDB.linkSetlist(concertId, activeSetlistId);
+  }catch(e){
+    toast2(e?.code==='42501'?t('Permission denied — only band admins can link concerts'):e.message||t('Failed to link concert'),'w');
+    return;
+  }
   await loadConcerts();
   renderSlMeta();renderConcerts();
   toast2('Set list linked to concert!');
@@ -2889,7 +2898,10 @@ async function createNewSetList(){
   }catch(e){toast2(e.message||'Failed to create set list','w');console.error('[bandapp] createNewSetList error:',e);return;}
   if(!newSL)return;
   slSongs[newSL.id]=[];
+  // Create the concert↔setlist link in the junction table when a concert was chosen
+  if(cid) await ConcertsDB.linkSetlist(cid, newSL.id);
   await loadSetlists();
+  if(cid) await loadConcerts(); // refresh so renderSlMeta picks up the new link
   closeMod('slMod');
   activeSetlistId=newSL.id;
   slS=getSlS();
