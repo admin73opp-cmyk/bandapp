@@ -196,7 +196,18 @@ async function doDemo() {
 }
 
 async function doLogout() {
-  await supabase.auth.signOut();
+  try {
+    await supabase.auth.signOut();
+  } catch (e) {
+    // Global sign-out failed (expired token, network error, etc.).
+    // Clear the local session so the user is not stuck in a broken state.
+    console.warn('[bandapp] signOut error — clearing locally:', e?.message);
+    try { await supabase.auth.signOut({ scope: 'local' }); } catch (_) {}
+    // Force UI to signed-out state in case onAuthStateChange doesn't fire.
+    document.getElementById('app').classList.remove('vis');
+    document.getElementById('authScreen').style.display = 'flex';
+    if (typeof switchTab === 'function') switchTab('login');
+  }
 }
 
 // ── Auth state listener — wires everything together ───────────
