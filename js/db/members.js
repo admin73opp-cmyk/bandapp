@@ -56,7 +56,8 @@ const MembersDB = {
   async upsertProfile(userId, fields) {
     const { error } = await supabase
       .from('profiles')
-      .upsert({ id: userId, ...fields });
+      .update(fields)
+      .eq('id', userId);
     if (error) { handleDbError(error); }
   },
 

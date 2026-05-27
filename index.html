@@ -5631,12 +5631,23 @@ function renderMpReadViews(){
     }).join('') +
     `</div>`;
 
-  // Links
+  // Links — read from DB-sourced data (extraData / _profile), not form inputs,
+  // so the read view reflects what's actually saved rather than what's in the form.
   const linksEl=document.getElementById('mpv-links');
-  const active=MP_PLATFORMS.filter(p=>document.getElementById(p.id)?.value.trim());
-  if(active.length){
-    linksEl.innerHTML=`<div class="bpplat">`+active.map(p=>{
-      const url=document.getElementById(p.id).value.trim();
+  const ex2=extraData[currentUser.memberIdx]||{};
+  const cp2=currentUser._profile||{};
+  const linkVals={
+    mpSpotify:  ex2.spotify   ||cp2.spotify_url   ||'',
+    mpApple:    ex2.apple     ||cp2.apple_url      ||'',
+    mpYoutube:  ex2.youtube   ||cp2.youtube_url    ||'',
+    mpInstagram:ex2.instagram ||cp2.instagram_url  ||'',
+    mpFacebook: ex2.facebook  ||cp2.facebook_url   ||'',
+    mpWebsite:  ex2.website   ||cp2.website_url    ||'',
+  };
+  const activeLinks=MP_PLATFORMS.filter(p=>linkVals[p.id]?.trim());
+  if(activeLinks.length){
+    linksEl.innerHTML=`<div class="bpplat">`+activeLinks.map(p=>{
+      const url=linkVals[p.id].trim();
       return`<a class="platl" data-url="${url}" onclick="openMediaUrl(this)">${p.icon} ${p.label}</a>`;
     }).join('')+`</div>`;
   } else {
