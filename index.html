@@ -2332,11 +2332,15 @@ function hasCrossBandConflict(memberIdx, key){
 }
 let curMonth=new Date(2026,4,1);
 let blackouts=[];
+let _boGen=0;
 
 let _boMapCache=null,_boMapVer=0,_boMapCacheVer=-1;
 async function loadBlackouts(){
-  blackouts=await BlackoutsDB.fetch(activeBandId);
-  _boMapVer++; // invalidate getBOMap cache
+  const gen=++_boGen;
+  const data=await BlackoutsDB.fetch(activeBandId);
+  if(gen!==_boGen)return;
+  blackouts=data;
+  _boMapVer++;
 }
 
 // ── CURRENT USER ─────────────────────────────────────────
@@ -3493,6 +3497,10 @@ async function savBO(){
   const saved=await BlackoutsDB.upsert(payload);
   if(!saved)return;
   await loadBlackouts();
+  if(!blackouts.find(b=>b.id===saved.id)){
+    blackouts=[...blackouts,saved];
+    _boMapVer++;
+  }
   closeMod('boMod');renderBOList();renderCal();syncBOPill();toast2(id?'Blackout updated':'Blackout added');
 }
 async function delBO(id){
