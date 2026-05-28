@@ -5360,7 +5360,7 @@ function openProfile(idx){
   const allInputs=document.querySelectorAll('#profMod input, #profMod select, #profMod textarea');
   allInputs.forEach(el=>{
     el.disabled=!isOwn;
-    el.style.opacity=isOwn?'':'1';
+    if(!el.closest('.phone-cc-wrap')) el.style.opacity=isOwn?'':'1';
     el.style.cursor=isOwn?'':'default';
     el.style.background=isOwn?'':'transparent';
     el.style.borderColor=isOwn?'':'transparent';

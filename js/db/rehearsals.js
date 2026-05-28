@@ -30,7 +30,7 @@ const RehearsalsDB = {
   },
 
   async upsert(rehearsal) {
-    const { month, day, year, photos, start, end, setlistId, ...fields } = rehearsal;
+    const { month, day, year, photos, start, end, setlistId, _ts, ...fields } = rehearsal;
     fields.start_time = start;
     fields.end_time   = end;
     fields.setlist_id = setlistId || null;
