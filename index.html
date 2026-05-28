@@ -2217,27 +2217,33 @@ async function createNewBand(){
   if(!name){toast2('Please enter a band name','w');return;}
   const btn=document.querySelector('#newBandMod .btn-p');
   if(btn){btn.disabled=true;btn.textContent='Creating…';}
-  const countryCode=document.getElementById('nbCountry').value;
-  const countryName=countryCode?(ISO_COUNTRIES.find(x=>x.c===countryCode)?.n||countryCode):'';
-  const initials=name.split(' ').filter(Boolean).map(w=>w[0]).join('').toUpperCase().slice(0,2)||name.slice(0,2).toUpperCase();
-  const colors=['#16A34A','#DC2626','#9333EA','#D97706','#0891B2'];
-  const color=colors[BANDS.length%colors.length];
-  const saved=await BandsDB.upsert({
-    name,initials,color,
-    city:document.getElementById('nbCity').value.trim(),
-    country:countryName,
-    genre:document.getElementById('nbGenre').value,
-    bio:document.getElementById('nbBio').value.trim(),
-  });
-  if(btn){btn.disabled=false;btn.textContent='Create Band';}
-  if(!saved){return;}
-  await BandsDB.addMember(saved.id,currentUser.id,'admin');
-  await loadBands();
-  closeMod('newBandMod');
-  ['nbName','nbCity','nbBio'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
-  const nbC=document.getElementById('nbCountry');if(nbC)nbC.value='';
-  toast2(`"${name}" created!`);
-  await switchBand(saved.id);
+  try{
+    const countryCode=document.getElementById('nbCountry').value;
+    const countryName=countryCode?(ISO_COUNTRIES.find(x=>x.c===countryCode)?.n||countryCode):'';
+    const initials=name.split(' ').filter(Boolean).map(w=>w[0]).join('').toUpperCase().slice(0,2)||name.slice(0,2).toUpperCase();
+    const colors=['#16A34A','#DC2626','#9333EA','#D97706','#0891B2'];
+    const color=colors[BANDS.length%colors.length];
+    const saved=await BandsDB.upsert({
+      name,initials,color,
+      city:document.getElementById('nbCity').value.trim(),
+      country:countryName,
+      genre:document.getElementById('nbGenre').value,
+      bio:document.getElementById('nbBio').value.trim(),
+    });
+    if(!saved){if(btn){btn.disabled=false;btn.textContent='Create Band';}return;}
+    await BandsDB.addMember(saved.id,currentUser.id,'admin');
+    await loadBands();
+    closeMod('newBandMod');
+    ['nbName','nbCity','nbBio'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+    const nbC=document.getElementById('nbCountry');if(nbC)nbC.value='';
+    toast2(`"${name}" created!`);
+    await switchBand(saved.id);
+  }catch(e){
+    console.error('[bandapp] createNewBand error:',e);
+    toast2('Something went wrong creating the band','w');
+  }finally{
+    if(btn){btn.disabled=false;btn.textContent='Create Band';}
+  }
 }
 let calEv={"2026-05-15":["birthday"]}; // rebuilt by buildCalEv() after data loads
 
@@ -5048,8 +5054,12 @@ async function initApp(){
   renderBandList();
   const isNewUser = !currentUser._memberships?.length;
   nav(isNewUser ? 'myprofile' : (localStorage.getItem('defaultView')||'dashboard'));
-  // All remaining fetches are independent — run concurrently
+  // All remaining fetches are independent — run concurrently.
+  // Snapshot activeBandId so we can detect a mid-flight band switch (e.g. createNewBand)
+  // and skip the stale re-render; switchBand() will have already rendered the correct state.
+  const _initBandId = activeBandId;
   await Promise.all([loadSongs(),loadSetlists(),loadConcerts(),loadRehearsals(),loadMembers(),loadBlackouts()]);
+  if(activeBandId !== _initBandId) return; // band changed while loading — don't overwrite
   // Full re-render now that all data is available
   renderSLDropdown();renderSL();renderSlMeta();renderLib();updateLibCount();updateSidebarCounts();
   setCalView(calView);renderRehearsals();renderConcerts();renderMembers();
