@@ -68,6 +68,15 @@ async function loadCurrentUser(uid, email) {
 
 // ── Login / logout ───────────────────────────────────────────
 
+// Safety timer: if onAuthStateChange never completes (e.g. DB query hangs on mobile),
+// reset the button so the user can try again.
+let _loginSafetyTimer = null;
+function _clearLoginTimer() { clearTimeout(_loginSafetyTimer); _loginSafetyTimer = null; }
+function _resetLoginBtn() {
+  const b = document.getElementById('loginBtn');
+  if (b) { b.disabled = false; b.textContent = 'Sign in'; }
+}
+
 async function doLogin() {
   const email = document.getElementById('loginEmail').value.trim();
   const pw    = document.getElementById('loginPassword').value;
@@ -76,12 +85,19 @@ async function doLogin() {
   const btn = document.getElementById('loginBtn');
   if (btn) { btn.disabled = true; btn.textContent = 'Signing in…'; }
 
+  _clearLoginTimer();
+  _loginSafetyTimer = setTimeout(() => {
+    _resetLoginBtn();
+    if (typeof toast2 === 'function') toast2('Sign-in timed out — please try again', 'w');
+  }, 20000);
+
   const { error } = await supabase.auth.signInWithPassword({ email, password: pw });
   if (error) {
-    if (btn) { btn.disabled = false; btn.textContent = 'Sign in'; }
+    _clearLoginTimer();
+    _resetLoginBtn();
     toast2(error.message, 'w');
   }
-  // onAuthStateChange handles the rest on success
+  // onAuthStateChange handles the rest on success; it clears _loginSafetyTimer
 }
 
 async function doSignUp() {
@@ -273,6 +289,7 @@ supabase.auth.onAuthStateChange(async (event, session) => {
     }
 
     // Hide auth screen and show the app shell immediately — data loads in the background
+    _clearLoginTimer();
     ['lf','sf','sf-confirm','ff','ff-sent','auth-tabs'].forEach(id => {
       const el = document.getElementById(id);
       if (el) el.style.display = 'none';
@@ -293,8 +310,8 @@ supabase.auth.onAuthStateChange(async (event, session) => {
     }
   } catch (e) {
     console.error('[bandapp] sign-in error:', e);
-    const loginBtn = document.getElementById('loginBtn');
-    if (loginBtn) { loginBtn.disabled = false; loginBtn.textContent = 'Sign in'; }
+    _clearLoginTimer();
+    _resetLoginBtn();
     document.getElementById('app').classList.remove('vis');
     document.getElementById('authScreen').style.display = 'flex';
     if (typeof switchTab === 'function') switchTab('login');
