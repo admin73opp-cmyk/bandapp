@@ -314,6 +314,7 @@ supabase.auth.onAuthStateChange(async (event, session) => {
     _resetLoginBtn();
     document.getElementById('app').classList.remove('vis');
     document.getElementById('authScreen').style.display = 'flex';
+    // switchTab resets authLoading and shows the login form (handles invite-loading state too)
     if (typeof switchTab === 'function') switchTab('login');
     if (typeof toast2 === 'function') toast2('Sign-in error — please try again', 'w');
   }
@@ -323,9 +324,21 @@ supabase.auth.onAuthStateChange(async (event, session) => {
 (async () => {
   const { data: { session } } = await supabase.auth.getSession();
   if (!session) {
-    document.getElementById('authScreen').style.display = 'flex';
-    // Pre-fill signup form from invite URL params
     const p = new URLSearchParams(window.location.search);
+
+    // If the URL contains a Supabase auth token (PKCE ?code= or implicit #access_token),
+    // the client is in the middle of exchanging an invite/magic-link.
+    // Show the loading spinner and bail — onAuthStateChange will handle sign-in and
+    // the onboarding modal once the exchange completes.
+    const _hash = window.location.hash;
+    if (p.get('code') || _hash.includes('access_token')) {
+      document.getElementById('authScreen').style.display = 'flex';
+      document.getElementById('authLoading').style.display = 'flex';
+      document.getElementById('auth-tabs').style.display = 'none';
+      return;
+    }
+
+    document.getElementById('authScreen').style.display = 'flex';
     // Store all invite params in sessionStorage so they survive the email confirmation redirect
     if (p.get('bandname'))   sessionStorage.setItem('inviteBandName',   p.get('bandname'));
     if (p.get('fname'))      sessionStorage.setItem('inviteFirst',      p.get('fname'));
