@@ -3657,14 +3657,15 @@ async function confReh(){
   const end=document.getElementById('rmEn').value||null;
   const location=(document.getElementById('rmLoc').value||'').trim()||null;
   const notes=(document.getElementById('rmNt').value||'').trim()||null;
-  // Copy message to clipboard and open the group link directly.
-  // Using the group link (chat.whatsapp.com/...) avoids the contact-picker dialog
-  // and is never blocked by the popup blocker (unlike the second wa.me/?text= call).
-  if((ch==='whatsapp'||ch==='both')&&waLinked){
-    const msg=`🎸 ${title} confirmed!\n📅 ${pendKey}${start?' ⏰ '+start:''}${location?'\n📍 '+location:''}`;
-    navigator.clipboard.writeText(msg).catch(()=>{});
-    window.open(bandWaLinks[activeBandId],'_blank');
-  }
+
+  // Build the WA message before clearing pendKey, but send AFTER the async saves.
+  // Opening WhatsApp (even as a deep link) backgrounds this tab on mobile and pauses
+  // any in-flight awaits — causing the rehearsal to never persist (#33) and the
+  // email notification to never fire (#25).  Save everything first, then open WA.
+  const waMsg=(ch==='whatsapp'||ch==='both')&&waLinked
+    ?`🎸 ${title} confirmed!\n📅 ${pendKey}${start?' ⏰ '+start:''}${location?'\n📍 '+location:''}`
+    :null;
+
   closeMod('rehMod');
   const confirmedKey=pendKey;
   pendKey=null;
@@ -3672,18 +3673,29 @@ async function confReh(){
   await loadRehearsals();
   buildCalEv();
   renderCal();
-  // Send email notifications via Edge Function when channel includes email
+
   if((ch==='email'||ch==='both')&&saved?.id){
     supabase.functions.invoke('notify-rehearsal',{
       body:{band_id:activeBandId,title,date:confirmedKey,start,end,location,notes},
-    }).catch(err=>console.error('[bandapp] notify-rehearsal error:',err));
+    }).then(r=>{if(r.error)console.error('[bandapp] notify-rehearsal:',r.error);})
+      .catch(e=>console.error('[bandapp] notify-rehearsal:',e));
   }
+
   const msgs={
     email:'Rehearsal confirmed! Band notified by email ✓',
-    whatsapp:'Rehearsal confirmed! Message copied — paste it in the group 💬',
-    both:'Rehearsal confirmed! Email sent + message copied for WhatsApp 📣',
+    whatsapp:'Rehearsal confirmed! WhatsApp opening — select your band group to send 💬',
+    both:'Rehearsal confirmed! Email sent + WhatsApp opening 📣',
   };
   toast2(msgs[ch]||'Rehearsal scheduled!');
+
+  // Open WhatsApp with the pre-filled message AFTER all data is saved.
+  // wa.me/?text= pre-fills the message in the share sheet so the user just taps
+  // the band group to send it.  On mobile this is an app deep-link (not a browser
+  // popup), so it works reliably even after the awaits above.
+  if(waMsg){
+    navigator.clipboard.writeText(waMsg).catch(()=>{});
+    window.open(`https://wa.me/?text=${encodeURIComponent(waMsg)}`,'_blank');
+  }
 }
 
 // CONCERTS

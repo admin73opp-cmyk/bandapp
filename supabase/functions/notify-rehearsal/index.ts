@@ -61,22 +61,32 @@ serve(async (req) => {
     const { data: band } = await admin.from('bands').select('name').eq('id', band_id).single()
     const bandName = band?.name || 'Your Band'
 
-    // Fetch member emails + names in one query via profiles (which stores email synced from auth.users)
+    // Fetch member user IDs + profile names in one query
     const { data: memberRows } = await admin
       .from('band_members')
-      .select('profiles(id, email, first_name, last_name)')
+      .select('user_id, profiles(first_name, last_name)')
       .eq('band_id', band_id)
 
     if (!memberRows?.length) return json({ success: true, sent: 0 })
 
-    type ProfileRow = { id: string; email?: string; first_name?: string; last_name?: string }
-    const recipients = (memberRows as { profiles: ProfileRow }[])
-      .map(r => r.profiles)
-      .filter((p): p is ProfileRow => !!p?.email)
-      .map(p => ({
-        email: p.email!,
-        name: `${p.first_name || ''} ${p.last_name || ''}`.trim() || p.email!,
-      }))
+    // Resolve emails via auth.admin.getUserById — works regardless of whether the
+    // profiles.email column exists (that migration may not have been run yet).
+    // Bands are small (<20 members) so N parallel lookups is fast.
+    const recipientsRaw = await Promise.all(
+      (memberRows as { user_id: string; profiles: { first_name?: string; last_name?: string } | null }[])
+        .map(async row => {
+          const { data } = await admin.auth.admin.getUserById(row.user_id)
+          const email = data?.user?.email
+          if (!email) return null
+          const p = row.profiles || {}
+          const name = [p.first_name, p.last_name].filter(Boolean).join(' ').trim() || email
+          return { email, name }
+        })
+    )
+
+    const recipients = recipientsRaw.filter(
+      (r): r is { email: string; name: string } => r !== null
+    )
 
     if (!recipients.length) return json({ success: true, sent: 0 })
 
