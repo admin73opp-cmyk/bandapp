@@ -147,11 +147,13 @@ select option{background:var(--w)}
 .sc{background:var(--w);border:1px solid var(--bd);border-radius:var(--radl);padding:16px;box-shadow:var(--sh);transition:border-color .13s,transform .13s}
 .sc[onclick]{cursor:pointer}.sc[onclick]:hover{border-color:var(--a);transform:translateY(-2px)}
 /* spreadsheet */
-.sh-hd{padding:8px 8px;border-bottom:2px solid var(--bd);text-align:left;font-size:.68rem;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.05em;white-space:nowrap;cursor:pointer;user-select:none;transition:color .12s,background .12s}
+.sh-hd{position:relative;padding:8px 8px;border-bottom:2px solid var(--bd);text-align:left;font-size:.68rem;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.05em;white-space:nowrap;cursor:pointer;user-select:none;transition:color .12s,background .12s}
 .sh-hd:hover{color:var(--a);background:var(--a2)}
 .sh-hd.sort-asc,.sh-hd.sort-desc{color:var(--a);background:var(--a2)}
 .sh-sort-icon{display:inline-block;margin-left:4px;font-size:.65rem;opacity:.4;vertical-align:middle}
 .sh-hd.sort-asc .sh-sort-icon,.sh-hd.sort-desc .sh-sort-icon{opacity:1}
+.sh-resize{position:absolute;top:0;right:0;width:5px;height:100%;cursor:col-resize;z-index:3}
+.sh-resize:hover,.sh-resize.active{background:var(--a);opacity:.45}
 .sh-row td{padding:0;border-bottom:1px solid var(--bd);vertical-align:middle}
 .sh-row:hover td{background:var(--bg)}
 .sh-row.hidden-row td{opacity:.5;background:var(--bg2)}
@@ -667,7 +669,8 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
             </div>
           </div>
           <div style="overflow-x:auto">
-            <table id="sheetTbl" style="width:100%;border-collapse:collapse;font-size:.8rem">
+            <table id="sheetTbl" style="width:100%;border-collapse:collapse;font-size:.8rem;table-layout:fixed">
+              <colgroup id="sheetCols"></colgroup>
               <thead id="sheetHead"></thead>
               <tbody id="sheetBody"></tbody>
             </table>
@@ -3099,7 +3102,7 @@ function updateSidebarCounts(){
 
 // ── SPREADSHEET ───────────────────────────────────────────
 const GENRES_LIST=['Jazz','Funk','Soul','Blues','Pop','Rock','Hard-Rock','Country','Folk','Latin','R&B','Samba','Bossa Nova','MPB','Pagode','Forró','Choro','Sertanejo','Brazilian Funk','Other'];
-const KEYS_LIST=['Am','C','G','D','Dm','F','Bb','Eb','Gm','Em','A','E','Fm','Cm','Bm','Ab','Db'];
+const KEYS_LIST=['','Am','C','G','D','Dm','F','Bb','Eb','Gm','Em','A','E','Fm','Cm','Bm','Ab','Db'];
 
 // Duration formatting: seconds → X:YY:ZZ
 function fmtDur(sec){
@@ -3124,6 +3127,33 @@ function slTotalDur(){
   return getSlS().reduce((acc,id)=>{const s=songByAnyId(id);return acc+(s&&s.dur?s.dur:0);},0);
 }
 let sheetSortCol=null, sheetSortDir='asc';
+const SHEET_COL_DEFAULT_W={title:200,artist:150,genre:100,key:75,dur:95,note:170,spotify:160,youtube:160,apple:160,amazon:160,hidden:60};
+let _sheetColWidths={};
+function sheetColW(field){return _sheetColWidths[field]||SHEET_COL_DEFAULT_W[field]||120;}
+let _colResize=null;
+function startColResize(e,field,thEl){
+  e.preventDefault();e.stopPropagation();
+  _colResize={field,startX:e.clientX,startW:sheetColW(field),thEl};
+  thEl.querySelector('.sh-resize').classList.add('active');
+  document.addEventListener('mousemove',onColResizeMove);
+  document.addEventListener('mouseup',onColResizeUp);
+}
+function onColResizeMove(e){
+  if(!_colResize)return;
+  const w=Math.max(50,_colResize.startW+(e.clientX-_colResize.startX));
+  _colResize.thEl.style.width=w+'px';
+  const cg=document.getElementById('sheetCols');
+  if(cg){const idx=SHEET_COLS.findIndex(c=>c.field===_colResize.field);const cols=[...cg.querySelectorAll('col')];if(idx>=0&&cols[idx+1])cols[idx+1].style.width=w+'px';}
+}
+function onColResizeUp(e){
+  if(!_colResize)return;
+  const w=Math.max(50,_colResize.startW+(e.clientX-_colResize.startX));
+  _sheetColWidths[_colResize.field]=w;
+  _colResize.thEl.querySelector('.sh-resize')?.classList.remove('active');
+  _colResize=null;
+  document.removeEventListener('mousemove',onColResizeMove);
+  document.removeEventListener('mouseup',onColResizeUp);
+}
 
 const SHEET_COLS=[
   {label:'Title',   field:'title',   width:null},
@@ -3159,12 +3189,14 @@ function getSortedSongs(){
 
 function renderSheetHead(){
   const head=document.getElementById('sheetHead');if(!head)return;
+  // Sync colgroup widths
+  const cg=document.getElementById('sheetCols');
+  if(cg)cg.innerHTML=`<col style="width:32px">`+SHEET_COLS.map(col=>`<col style="width:${sheetColW(col.field)}px">`).join('')+`<col style="width:36px">`;
   const cols=SHEET_COLS.map(col=>{
     const isActive=sheetSortCol===col.field;
     const icon=isActive?(sheetSortDir==='asc'?'▲':'▼'):'⇅';
     const cls=`sh-hd${isActive?' sort-'+sheetSortDir:''}`;
-    const w=col.width?`style="width:${col.width}"`:'';
-    return`<th class="${cls}" ${w} onclick="sortSheet('${col.field}')">${col.label}<span class="sh-sort-icon">${icon}</span></th>`;
+    return`<th class="${cls}" style="width:${sheetColW(col.field)}px" onclick="sortSheet('${col.field}')">${col.label}<span class="sh-sort-icon">${icon}</span><div class="sh-resize" onmousedown="startColResize(event,'${col.field}',this.parentElement)" onclick="event.stopPropagation()"></div></th>`;
   }).join('');
   head.innerHTML=`<tr style="background:var(--bg);position:sticky;top:0;z-index:2">
     <th style="width:32px;padding:8px 6px;border-bottom:2px solid var(--bd);text-align:center;font-size:.68rem;font-weight:700;color:var(--ink3)">#</th>
@@ -3183,7 +3215,7 @@ function renderSheet(){
       <td><input class="sh-cell" value="${esc(s.title)}" data-field="title" data-id="${s.id}" onchange="sheetEdit(this)"></td>
       <td><input class="sh-cell" value="${esc(s.artist)}" data-field="artist" data-id="${s.id}" onchange="sheetEdit(this)"></td>
       <td><select class="sh-sel" data-field="genre" data-id="${s.id}" onchange="sheetEdit(this)">${GENRES_LIST.map(g=>`<option value="${g}"${s.genre===g?' selected':''}>${g}</option>`).join('')}</select></td>
-      <td><select class="sh-sel" data-field="key" data-id="${s.id}" onchange="sheetEdit(this)">${KEYS_LIST.map(k=>`<option value="${k}"${s.key===k?' selected':''}>${k}</option>`).join('')}</select></td>
+      <td><select class="sh-sel" data-field="key" data-id="${s.id}" onchange="sheetEdit(this)">${KEYS_LIST.map(k=>`<option value="${k}"${s.key===k?' selected':''}>${k||'—'}</option>`).join('')}</select></td>
       <td style="white-space:nowrap">
         <div style="display:flex;align-items:center;gap:3px">
           <input class="sh-cell" style="width:38px;text-align:center;padding:4px 5px;font-family:var(--mono);font-size:.78rem" type="number" min="0" max="99" placeholder="0" value="${s.dur?Math.floor(s.dur/60):''}" data-field="durMin" data-id="${s.id}" onchange="sheetEditDur(this)" title="Minutes">
@@ -3241,8 +3273,16 @@ async function addSheetRow(){
   if(rows.length){const inp=rows[rows.length-1].querySelector('input');if(inp){inp.focus();inp.select();}}
 }
 
+async function songUsedInSetlists(songId){
+  const {data,error}=await supabase.from('setlist_songs').select('setlist_id').eq('song_id',songId);
+  if(error||!data?.length)return[];
+  return data.map(r=>{const sl=setlists.find(x=>x.id===r.setlist_id);return sl?sl.name:'Unknown Set List';});
+}
+
 async function deleteSheetRow(id){
   const s=songByAnyId(id);if(!s)return;
+  const usedIn=await songUsedInSetlists(s.id);
+  if(usedIn.length){toast2(`Song can't be deleted as it is being used by Set List "${usedIn.join('", "')}". Please first remove it from the setlist(s).`,'w');return;}
   if(!confirm(`Delete "${s.title}"?`))return;
   await SongsDB.delete(s.id);
   await loadSongs();renderSheet();renderLib(aG);updateLibCount();toast2('Song deleted','w');
@@ -3280,14 +3320,15 @@ function importExcel(event){
       const rows=XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]],{defval:''});
       const imported=rows.map((r,i)=>{
         const k=Object.fromEntries(Object.entries(r).map(([key,val])=>[key.toLowerCase().trim(),val]));
-        return{id:i+1,title:String(k.title||k['song title']||k.song||'Untitled').trim(),artist:String(k.artist||'').trim(),genre:String(k.genre||'Jazz').trim(),key:String(k.key||'C').trim(),note:String(k.notes||k['band notes']||k.note||'').trim(),spotify:String(k.spotify||k['spotify url']||'').trim(),youtube:String(k.youtube||k['youtube url']||'').trim(),apple:String(k['apple music']||k.apple||'').trim(),hidden:(String(k.hidden||'').toLowerCase()==='yes')};
+        return{id:i+1,title:String(k.title||k['song title']||k.song||'Untitled').trim(),artist:String(k.artist||'').trim(),genre:String(k.genre||'Jazz').trim(),key:String(k.key).trim(),note:String(k.notes||k['band notes']||k.note||'').trim(),spotify:String(k.spotify||k['spotify url']||'').trim(),youtube:String(k.youtube||k['youtube url']||'').trim(),apple:String(k['apple music']||k.apple||'').trim(),hidden:(String(k.hidden||'').toLowerCase()==='yes')};
       });
       if(!imported.length){toast2('No songs found in file','w');return;}
-      if(confirm(`Import ${imported.length} songs? This will replace your current library.`)){
-        await supabase.from('songs').delete().eq('band_id',activeBandId);
+      const existing=songs.length;
+      const msg=existing?`Add ${imported.length} song${imported.length!==1?'s':''} to your existing library (${existing} song${existing!==1?'s':''})?`:`Import ${imported.length} song${imported.length!==1?'s':''} into your library?`;
+      if(confirm(msg)){
         await Promise.all(imported.map(s=>SongsDB.upsert({band_id:activeBandId,...s,id:undefined})));
         await loadSongs();renderLib(aG);renderSheet();updateLibCount();
-        toast2(`✓ ${imported.length} songs imported!`);
+        toast2(`✓ ${imported.length} song${imported.length!==1?'s':''} added to library!`);
       }
     }catch(err){toast2('Could not read file — please use an Excel (.xlsx) file','w');console.error('[bandapp] importExcel:',err);}
   };
@@ -3373,6 +3414,8 @@ async function toggleHideSong(id){
 
 async function deleteSong(id){
   const s=songByAnyId(id);if(!s)return;
+  const usedIn=await songUsedInSetlists(s.id);
+  if(usedIn.length){toast2(`Song can't be deleted as it is being used by Set List "${usedIn.join('", "')}". Please first remove it from the setlist(s).`,'w');return;}
   if(!confirm(`Delete "${s.title}"? This cannot be undone.`))return;
   await SongsDB.delete(s.id);
   if(editingSongId===s.id)closeMod('seMod');
