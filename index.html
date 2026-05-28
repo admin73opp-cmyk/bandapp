@@ -5359,17 +5359,34 @@ function handleBpCover(event) {
   const file = event.target.files[0]; if (!file) return;
   const reader = new FileReader();
   reader.onload = async e => {
-    const dataUrl = await compressImage(e.target.result, 1400, 0.82);
-    const cover = document.getElementById('bpCover');
-    cover.style.backgroundImage = `url(${dataUrl})`;
-    cover.style.backgroundSize = 'cover';
-    cover.style.backgroundPosition = 'center';
-    const overlay = cover.querySelector('[data-overlay]');
-    if (overlay) overlay.style.display = 'none';
-    try { localStorage.setItem(`bpCover_${activeBandId}`, dataUrl); } catch(e2) {}
-    const _bc = getActiveBand(); if(_bc) _bc.cover_url = dataUrl;
-    await BandsDB.upsert({id: activeBandId, cover_url: dataUrl});
-    toast2('Cover photo updated!');
+    try {
+      const dataUrl = await compressImage(e.target.result, 1400, 0.82);
+      const cover = document.getElementById('bpCover');
+      cover.style.backgroundImage = `url(${dataUrl})`;
+      cover.style.backgroundSize = 'cover';
+      cover.style.backgroundPosition = 'center';
+      const overlay = cover.querySelector('[data-overlay]');
+      if (overlay) overlay.style.display = 'none';
+      // Persist in-memory and localStorage optimistically
+      const _bc = getActiveBand(); if(_bc) _bc.cover_url = dataUrl;
+      try { localStorage.setItem(`bpCover_${activeBandId}`, dataUrl); } catch(_) {}
+      // Update DB — use a targeted update without .select() so Supabase doesn't echo
+      // the large base64 payload back in the response (which can exceed response limits).
+      const { error } = await supabase.from('bands').update({ cover_url: dataUrl }).eq('id', activeBandId);
+      if (error) {
+        handleDbError(error);
+        // Roll back optimistic state so the stale localStorage doesn't mask the failure
+        if(_bc) _bc.cover_url = null;
+        try { localStorage.removeItem(`bpCover_${activeBandId}`); } catch(_) {}
+        cover.style.backgroundImage = '';
+        if (overlay) overlay.style.display = '';
+        return;
+      }
+      toast2('Cover photo updated!');
+    } catch(err) {
+      toast2('Failed to update cover photo','w');
+      console.error('[bandapp] handleBpCover:', err);
+    }
   };
   reader.readAsDataURL(file);
   event.target.value = '';
@@ -5379,23 +5396,37 @@ function handleBpLogo(event) {
   const file = event.target.files[0]; if (!file) return;
   const reader = new FileReader();
   reader.onload = async e => {
-    const dataUrl = await compressImage(e.target.result, 400, 0.85);
-    const logo = document.getElementById('bpLogo');
-    logo.style.backgroundImage = `url(${dataUrl})`;
-    logo.style.backgroundSize = 'cover';
-    logo.style.backgroundPosition = 'center';
-    logo.textContent = '';
-    const sav = document.querySelector('.bav');
-    if (sav) {
-      sav.style.backgroundImage = `url(${dataUrl})`;
-      sav.style.backgroundSize = 'cover';
-      sav.style.backgroundPosition = 'center';
-      sav.textContent = '';
+    try {
+      const dataUrl = await compressImage(e.target.result, 400, 0.85);
+      const logo = document.getElementById('bpLogo');
+      logo.style.backgroundImage = `url(${dataUrl})`;
+      logo.style.backgroundSize = 'cover';
+      logo.style.backgroundPosition = 'center';
+      logo.textContent = '';
+      const sav = document.querySelector('.bav');
+      if (sav) {
+        sav.style.backgroundImage = `url(${dataUrl})`;
+        sav.style.backgroundSize = 'cover';
+        sav.style.backgroundPosition = 'center';
+        sav.textContent = '';
+      }
+      const _bl = getActiveBand(); if(_bl) _bl.logo_url = dataUrl;
+      try { localStorage.setItem(`bpLogo_${activeBandId}`, dataUrl); } catch(_) {}
+      const { error } = await supabase.from('bands').update({ logo_url: dataUrl }).eq('id', activeBandId);
+      if (error) {
+        handleDbError(error);
+        if(_bl) _bl.logo_url = null;
+        try { localStorage.removeItem(`bpLogo_${activeBandId}`); } catch(_) {}
+        logo.style.backgroundImage = '';
+        logo.textContent = getActiveBand()?.initials || '';
+        if (sav) { sav.style.backgroundImage = ''; sav.textContent = getActiveBand()?.initials || ''; }
+        return;
+      }
+      toast2('Band logo updated!');
+    } catch(err) {
+      toast2('Failed to update band logo','w');
+      console.error('[bandapp] handleBpLogo:', err);
     }
-    try { localStorage.setItem(`bpLogo_${activeBandId}`, dataUrl); } catch(e2) {}
-    const _bl = getActiveBand(); if(_bl) _bl.logo_url = dataUrl;
-    await BandsDB.upsert({id: activeBandId, logo_url: dataUrl});
-    toast2('Band logo updated!');
   };
   reader.readAsDataURL(file);
   event.target.value = '';
