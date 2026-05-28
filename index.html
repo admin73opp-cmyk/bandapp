@@ -4070,6 +4070,7 @@ async function confirmCancel(notify){
         msg=`🚫 Concert on ${c.date} cancelled. Please check Bandapp for updates: ${appUrl}`;
         const saved=await ConcertsDB.upsert({...c, cancelled:true});
         if(!saved){closeMod('cancelMod');cancelTarget=null;return;}
+        syncCrossBandBlackouts(saved);
         await loadConcerts();
         renderConcerts();renderCal();updateSidebarCounts();
       }
@@ -4147,8 +4148,35 @@ async function deleteConcert(id){
   const c=concerts.find(x=>x.id===id);if(!c)return;
   if(!confirm(`Delete "${c.title}"? This cannot be undone.`))return;
   await ConcertsDB.delete(id);
+  // Cross-band blackouts are removed automatically by ON DELETE CASCADE on source_concert_id
   await loadConcerts();
   closeMod('cvMod');renderConcerts();toast2('Concert deleted','w');
+}
+
+// Creates / refreshes / removes blackout blocks in every other band the current user
+// belongs to whenever a concert in the active band is saved or cancelled.
+async function syncCrossBandBlackouts(concert){
+  const otherBandIds=(currentUser._memberships||[])
+    .map(m=>m.band_id)
+    .filter(id=>id!==activeBandId);
+  if(!otherBandIds.length)return;
+  // Always wipe stale blocks first (handles date/title changes and cancellation)
+  if(concert.id)await BlackoutsDB.deleteByConcertId(concert.id);
+  // Don't recreate for cancelled concerts or dateless concerts
+  if(concert.cancelled||!concert.date)return;
+  const bandName=getActiveBand()?.name||'Other band';
+  const label=`${bandName}: ${concert.title}`;
+  await Promise.all(otherBandIds.map(bandId=>
+    BlackoutsDB.upsert({
+      band_id:           bandId,
+      label,
+      from:              concert.date,
+      to:                concert.date,
+      scope:             'members',
+      mids:              [currentUser.id],
+      source_concert_id: concert.id,
+    })
+  ));
 }
 
 
@@ -4261,6 +4289,7 @@ async function saveConcertEdit(){
   await loadConcerts();
   closeMod('ceMod');renderConcerts();renderCal();renderSlMeta();updateSidebarCounts();
   toast2(editingConcertId?'Concert updated!':'Concert added!');
+  syncCrossBandBlackouts(saved);
 }
 
 // ── CONCERT PHOTOS ────────────────────────────────────────

@@ -203,13 +203,19 @@ create policy "blackouts_select" on blackouts
   for select using (is_band_member(band_id));
 
 create policy "blackouts_insert" on blackouts
-  for insert with check (is_band_admin(band_id));
+  for insert with check (
+    is_band_admin(band_id)
+    or (is_band_member(band_id) and source_concert_id is not null)
+  );
 
 create policy "blackouts_update" on blackouts
   for update using (is_band_admin(band_id));
 
 create policy "blackouts_delete" on blackouts
-  for delete using (is_band_admin(band_id));
+  for delete using (
+    is_band_admin(band_id)
+    or (is_band_member(band_id) and source_concert_id is not null)
+  );
 
 -- ── EVENT_PHOTOS ─────────────────────────────────────────────
 

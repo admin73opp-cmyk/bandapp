@@ -45,4 +45,12 @@ const BlackoutsDB = {
     if (error) { handleDbError(error); }
   },
 
+  async deleteByConcertId(concertId) {
+    const { error } = await supabase
+      .from('blackouts')
+      .delete()
+      .eq('source_concert_id', concertId);
+    if (error) { console.error('[bandapp] BlackoutsDB.deleteByConcertId error:', error); }
+  },
+
 };
