@@ -942,7 +942,7 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
                   <div class="fg" style="flex:1;min-width:110px"><label style="font-size:.69rem">Genre</label>
                     <select id="beGenreInline" style="font-size:.83rem">
                       <option>Jazz</option><option>Funk</option><option>Soul</option><option>Blues</option>
-                      <option>Rock</option><option>Hard-Rock</option><option>Country</option><option>Folk</option><option>Pop</option><option>Latin</option><option>R&amp;B</option>
+                      <option>Rock</option><option>Hard-Rock</option><option>Country</option><option>Folk</option><option>Pop</option><option>Latin</option><option>R&amp;B</option><option>Reggae</option>
                       <option>Samba</option><option>Bossa Nova</option><option>MPB</option><option>Pagode</option>
                       <option>Forró</option><option>Choro</option><option>Sertanejo</option><option>Brazilian Funk</option>
                       <option>Classical</option><option>Electronic</option><option>Mixed / Other</option>
@@ -1363,7 +1363,7 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
     <div class="fg" data-i18n="Genre"><label>Genre</label>
       <select id="nsg">
         <option>Jazz</option><option>Funk</option><option>Soul</option><option>Blues</option>
-        <option>Pop</option><option>Rock</option><option>Hard-Rock</option><option>Country</option><option>Folk</option><option>Latin</option><option>R&amp;B</option>
+        <option>Pop</option><option>Rock</option><option>Hard-Rock</option><option>Country</option><option>Folk</option><option>Latin</option><option>R&amp;B</option><option>Reggae</option><option>Classical</option>
         <option>Samba</option><option>Bossa Nova</option><option>MPB</option><option>Pagode</option>
         <option>Forró</option><option>Choro</option><option>Sertanejo</option><option>Brazilian Funk</option>
         <option>Other</option>
@@ -1518,7 +1518,7 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
   <div class="fg" data-i18n="Genre / Style"><label>Genre / Style</label>
     <select id="nbGenre">
       <option>Jazz</option><option>Funk</option><option>Soul</option><option>Blues</option>
-      <option>Rock</option><option>Hard-Rock</option><option>Country</option><option>Folk</option><option>Pop</option><option>Latin</option><option>R&amp;B</option>
+      <option>Rock</option><option>Hard-Rock</option><option>Country</option><option>Folk</option><option>Pop</option><option>Latin</option><option>R&amp;B</option><option>Reggae</option>
       <option>Samba</option><option>Bossa Nova</option><option>MPB</option><option>Pagode</option>
       <option>Forró</option><option>Choro</option><option>Sertanejo</option><option>Brazilian Funk</option>
       <option>Classical</option><option>Mixed / Other</option>
@@ -3147,7 +3147,7 @@ function updateSidebarCounts(){
 }
 
 // ── SPREADSHEET ───────────────────────────────────────────
-const GENRES_LIST=['Jazz','Funk','Soul','Blues','Pop','Rock','Hard-Rock','Country','Folk','Latin','R&B','Samba','Bossa Nova','MPB','Pagode','Forró','Choro','Sertanejo','Brazilian Funk','Other'];
+const GENRES_LIST=['Jazz','Funk','Soul','Blues','Pop','Rock','Hard-Rock','Country','Folk','Latin','R&B','Reggae','Classical','Samba','Bossa Nova','MPB','Pagode','Forró','Choro','Sertanejo','Brazilian Funk','Other'];
 const KEYS_LIST=['','C','C♯','D♭','D','E♭','E','F','F♯','G♭','G','A♭','A','B♭','B','C♭','Am','A♯m','B♭m','Bm','Cm','C♯m','Dm','D♯m','E♭m','Em','Fm','F♯m','Gm','G♯m','A♭m'];
 const KEY_NORMALIZE={'Bb':'B♭','Eb':'E♭','Ab':'A♭','Db':'D♭','Gb':'G♭','Cb':'C♭','C#':'C♯','F#':'F♯','G#':'G♯','A#':'A♯','D#':'D♯','B#':'B♯','Bbm':'B♭m','Ebm':'E♭m','Abm':'A♭m','Dbm':'D♭m','Gbm':'G♭m','C#m':'C♯m','F#m':'F♯m','G#m':'G♯m','A#m':'A♯m','D#m':'D♯m'};
 function normalizeKey(k){return KEY_NORMALIZE[String(k||'').trim()]||String(k||'').trim();}
@@ -6079,7 +6079,7 @@ async function saveSettings(){
     <div class="fg" data-i18n="Genre"><label>Genre</label>
       <select id="seGenre">
         <option>Jazz</option><option>Funk</option><option>Soul</option><option>Blues</option>
-        <option>Pop</option><option>Rock</option><option>Hard-Rock</option><option>Country</option><option>Folk</option><option>Latin</option><option>R&amp;B</option>
+        <option>Pop</option><option>Rock</option><option>Hard-Rock</option><option>Country</option><option>Folk</option><option>Latin</option><option>R&amp;B</option><option>Reggae</option><option>Classical</option>
         <option>Samba</option><option>Bossa Nova</option><option>MPB</option><option>Pagode</option>
         <option>Forró</option><option>Choro</option><option>Sertanejo</option><option>Brazilian Funk</option>
         <option>Other</option>
