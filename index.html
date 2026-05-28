@@ -1655,10 +1655,15 @@ function isGuestExpired(m){
 function activeMembers(){return members.filter(m=>m.role!=='guest'||isGuestActive(m));}
 function expiredGuests(){return members.filter(m=>isGuestExpired(m));}
 let concerts=[];
+let _concGen=0;
 
 async function loadConcerts(){
-  concerts = await ConcertsDB.fetch(activeBandId);
-  const photoMap = await ConcertsDB.fetchPhotos(concerts.map(c=>c.id));
+  const gen=++_concGen;
+  const data=await ConcertsDB.fetch(activeBandId);
+  if(gen!==_concGen)return;
+  concerts=data;
+  const photoMap=await ConcertsDB.fetchPhotos(concerts.map(c=>c.id));
+  if(gen!==_concGen)return;
   concerts.forEach(c=>{ c.photos=photoMap[c.id]||[]; });
   buildCalEv();
 }
@@ -1688,10 +1693,15 @@ const TODAY = (() => { const d = new Date(); d.setHours(0,0,0,0); return d; })()
 
 // ── REHEARSALS ────────────────────────────────────────────
 let rehearsals=[];
+let _rehGen=0;
 
 async function loadRehearsals(){
-  rehearsals = await RehearsalsDB.fetch(activeBandId);
-  const photoMap = await RehearsalsDB.fetchPhotos(rehearsals.map(r=>r.id));
+  const gen=++_rehGen;
+  const data=await RehearsalsDB.fetch(activeBandId);
+  if(gen!==_rehGen)return;
+  rehearsals=data;
+  const photoMap=await RehearsalsDB.fetchPhotos(rehearsals.map(r=>r.id));
+  if(gen!==_rehGen)return;
   rehearsals.forEach(r=>{ r.photos=photoMap[r.id]||[]; r._ts=rehearsalDate(r).getTime(); });
   buildCalEv();
 }
@@ -3692,6 +3702,7 @@ async function confReh(){
 
   try {
     const saved=await RehearsalsDB.upsert({title,date:confirmedKey,start,end,location,notes,band_id:activeBandId});
+    if(!saved){return;}
     await loadRehearsals();
     renderCal();
     renderRehearsals();
