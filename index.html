@@ -6,6 +6,7 @@
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='16' fill='%236C63FF'/><text x='16' y='22' text-anchor='middle' font-size='18' fill='white'>♪</text></svg>">
 <title>Bandapp v26</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
 <script src="js/supabase-client.js"></script>
 <script src="locales/pt-BR.js"></script>
 <script src="js/i18n.js"></script>
@@ -656,11 +657,11 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
           <div style="padding:10px 14px;border-bottom:1px solid var(--bd);display:flex;gap:8px;align-items:center;flex-wrap:wrap;background:var(--bg)">
             <span style="font-size:.72rem;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.06em" data-i18n="Click any cell to edit">Click any cell to edit</span>
             <div style="margin-left:auto;display:flex;gap:6px;flex-wrap:wrap">
-              <label class="btn btn-g btn-sm" style="cursor:pointer;font-size:.72rem" title="Upload Excel or CSV to replace library" data-i18n-title="Upload Excel or CSV to replace library">
+              <label class="btn btn-g btn-sm" style="cursor:pointer;font-size:.72rem" title="Upload Excel (.xlsx) to replace library" data-i18n-title="Upload Excel (.xlsx) to replace library">
                 <span data-i18n="↑ Upload">↑ Upload</span>
-                <input type="file" accept=".xlsx,.xls,.csv" style="display:none" onchange="importExcel(event)">
+                <input type="file" accept=".xlsx,.xls" style="display:none" onchange="importExcel(event)">
               </label>
-              <button class="btn btn-g btn-sm" onclick="exportExcel()" style="font-size:.72rem" title="Download library as Excel" data-i18n="↓ Download" data-i18n-title="Download library as Excel">↓ Download</button>
+              <button class="btn btn-g btn-sm" onclick="exportExcel()" style="font-size:.72rem" title="Download library as Excel (.xlsx)" data-i18n="↓ Download" data-i18n-title="Download library as Excel (.xlsx)">↓ Download</button>
               <button class="btn btn-g btn-sm" onclick="addSheetRow()" style="font-size:.72rem" data-i18n="+ Row">+ Row</button>
               <button class="btn btn-p btn-sm" onclick="saveSheetEdits()" style="font-size:.72rem" data-i18n="✓ Save All">✓ Save All</button>
             </div>
@@ -3251,33 +3252,22 @@ async function deleteSheetRow(id){
 function exportExcel(){
   const headers=['Title','Artist','Genre','Key','Duration (sec)','Notes','Spotify','YouTube','Apple Music','Hidden'];
   const rows=songs.map(s=>[s.title,s.artist,s.genre,s.key,s.dur||'',s.note||'',s.spotify||'',s.youtube||'',s.apple||'',s.hidden?'Yes':'No']);
-
   try{
-    if(typeof XLSX!=='undefined'){
-      const wb=XLSX.utils.book_new();
-      const ws=XLSX.utils.aoa_to_sheet([headers,...rows]);
-      ws['!cols']=[{wch:28},{wch:22},{wch:10},{wch:6},{wch:14},{wch:32},{wch:38},{wch:38},{wch:38},{wch:7}];
-      XLSX.utils.book_append_sheet(wb,ws,'Song Library');
-      // Use base64 blob approach — works on iOS Safari
-      const wbout=XLSX.write(wb,{bookType:'xlsx',type:'base64'});
-      const dataUri='data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,'+wbout;
-      const a=document.createElement('a');
-      a.href=dataUri;
-      a.download='Bandapp_Song_Library.xlsx';
-      document.body.appendChild(a);a.click();document.body.removeChild(a);
-      toast2('Library downloaded!');
-      return;
-    }
-  }catch(err){console.warn('XLSX export failed, falling back to CSV',err);}
-
-  // CSV fallback
-  const csv=[headers,...rows].map(r=>r.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(',')).join('\r\n');
-  const dataUri='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);
-  const a=document.createElement('a');
-  a.href=dataUri;
-  a.download='Bandapp_Song_Library.csv';
-  document.body.appendChild(a);a.click();document.body.removeChild(a);
-  toast2('Downloaded as CSV');
+    const wb=XLSX.utils.book_new();
+    const ws=XLSX.utils.aoa_to_sheet([headers,...rows]);
+    ws['!cols']=[{wch:28},{wch:22},{wch:10},{wch:6},{wch:14},{wch:32},{wch:38},{wch:38},{wch:38},{wch:7}];
+    XLSX.utils.book_append_sheet(wb,ws,'Song Library');
+    const wbout=XLSX.write(wb,{bookType:'xlsx',type:'base64'});
+    const dataUri='data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,'+wbout;
+    const a=document.createElement('a');
+    a.href=dataUri;
+    a.download='Bandapp_Song_Library.xlsx';
+    document.body.appendChild(a);a.click();document.body.removeChild(a);
+    toast2('Library downloaded!');
+  }catch(err){
+    toast2('Export failed — please try again','w');
+    console.error('[bandapp] exportExcel:',err);
+  }
 }
 
 // ── EXCEL IMPORT ──────────────────────────────────────────
@@ -3286,35 +3276,22 @@ function importExcel(event){
   const reader=new FileReader();
   reader.onload=async e=>{
     try{
-      let imported=[];
-      if(typeof XLSX!=='undefined'&&!file.name.endsWith('.csv')){
-        const wb=XLSX.read(e.target.result,{type:'binary'});
-        const rows=XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]],{defval:''});
-        imported=rows.map((r,i)=>{
-          const k=Object.fromEntries(Object.entries(r).map(([key,val])=>[key.toLowerCase().trim(),val]));
-          return{id:i+1,title:String(k.title||k['song title']||k.song||'Untitled').trim(),artist:String(k.artist||'').trim(),genre:String(k.genre||'Jazz').trim(),key:String(k.key||'C').trim(),note:String(k.notes||k['band notes']||k.note||'').trim(),spotify:String(k.spotify||k['spotify url']||'').trim(),youtube:String(k.youtube||k['youtube url']||'').trim(),apple:String(k['apple music']||k.apple||'').trim(),hidden:(String(k.hidden||'').toLowerCase()==='yes')};
-        });
-      } else {
-        const lines=e.target.result.split(/\r?\n/).filter(l=>l.trim());
-        if(lines.length<2){toast2('Empty file','w');return;}
-        const hdrs=lines[0].split(',').map(h=>h.replace(/^"|"$/g,'').toLowerCase().trim());
-        imported=lines.slice(1).map((line,i)=>{
-          const vals=line.match(/("(?:[^"]|"")*"|[^,]*)/g)||[];
-          const r=Object.fromEntries(hdrs.map((h,j)=>[h,(vals[j]||'').replace(/^"|"$/g,'').replace(/""/g,'"')]));
-          return{id:i+1,title:r.title||'Untitled',artist:r.artist||'',genre:r.genre||'Jazz',key:r.key||'C',note:r.notes||r.note||'',spotify:r.spotify||'',youtube:r.youtube||'',apple:r.apple||'',hidden:r.hidden==='Yes'};
-        });
-      }
+      const wb=XLSX.read(e.target.result,{type:'binary'});
+      const rows=XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]],{defval:''});
+      const imported=rows.map((r,i)=>{
+        const k=Object.fromEntries(Object.entries(r).map(([key,val])=>[key.toLowerCase().trim(),val]));
+        return{id:i+1,title:String(k.title||k['song title']||k.song||'Untitled').trim(),artist:String(k.artist||'').trim(),genre:String(k.genre||'Jazz').trim(),key:String(k.key||'C').trim(),note:String(k.notes||k['band notes']||k.note||'').trim(),spotify:String(k.spotify||k['spotify url']||'').trim(),youtube:String(k.youtube||k['youtube url']||'').trim(),apple:String(k['apple music']||k.apple||'').trim(),hidden:(String(k.hidden||'').toLowerCase()==='yes')};
+      });
       if(!imported.length){toast2('No songs found in file','w');return;}
       if(confirm(`Import ${imported.length} songs? This will replace your current library.`)){
-        // Delete all existing songs for this band then insert the imported set
         await supabase.from('songs').delete().eq('band_id',activeBandId);
         await Promise.all(imported.map(s=>SongsDB.upsert({band_id:activeBandId,...s,id:undefined})));
         await loadSongs();renderLib(aG);renderSheet();updateLibCount();
         toast2(`✓ ${imported.length} songs imported!`);
       }
-    }catch(err){toast2('Could not read file','w');console.error(err);}
+    }catch(err){toast2('Could not read file — please use an Excel (.xlsx) file','w');console.error('[bandapp] importExcel:',err);}
   };
-  file.name.endsWith('.csv')?reader.readAsText(file):reader.readAsBinaryString(file);
+  reader.readAsBinaryString(file);
   event.target.value='';
 }
 
