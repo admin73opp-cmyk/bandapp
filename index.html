@@ -669,7 +669,7 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
             </div>
           </div>
           <div style="overflow-x:auto">
-            <table id="sheetTbl" style="width:100%;border-collapse:collapse;font-size:.8rem;table-layout:fixed">
+            <table id="sheetTbl" style="border-collapse:collapse;font-size:.8rem;table-layout:fixed">
               <colgroup id="sheetCols"></colgroup>
               <thead id="sheetHead"></thead>
               <tbody id="sheetBody"></tbody>
@@ -2216,7 +2216,7 @@ async function switchBand(id){
   closeMod('bswMod');
   toast2(`Switching to ${b?.name||'band'}…`);
   await Promise.all([loadSongs(),loadSetlists(),loadConcerts(),loadRehearsals(),loadMembers(),loadBlackouts()]);
-  renderSLDropdown();renderSL();renderSlMeta();renderLib();updateLibCount();updateSidebarCounts();
+  renderSLDropdown();renderSL();renderSlMeta();renderLib();if(libView==='sheet')renderSheet();updateLibCount();updateSidebarCounts();
   setCalView(calView);renderRehearsals();renderConcerts();renderMembers();
   renderGuestDir();renderBP();renderAsList();renderBandList();
   syncCurrentUserToUI();renderDashboard();updateSidebarCounts();refreshWaUI();
@@ -3071,7 +3071,7 @@ async function addSong(){
 }
 
 // ── LIBRARY VIEW TOGGLE ───────────────────────────────────
-let libView='cards';
+let libView=window.matchMedia('(max-width:640px)').matches?'cards':'sheet';
 function setLibView(v){
   libView=v;
   const bc=document.getElementById('libViewCards');
@@ -3083,6 +3083,7 @@ function setLibView(v){
   document.getElementById('libFilters').style.display=v==='cards'?'':'none';
   if(v==='sheet')renderSheet();
 }
+setLibView(libView);
 
 function updateLibCount(){
   const el=document.getElementById('libCount');
@@ -3130,10 +3131,17 @@ let sheetSortCol=null, sheetSortDir='asc';
 const SHEET_COL_DEFAULT_W={title:200,artist:150,genre:100,key:75,dur:95,note:170,spotify:160,youtube:160,apple:160,amazon:160,hidden:60};
 let _sheetColWidths={};
 function sheetColW(field){return _sheetColWidths[field]||SHEET_COL_DEFAULT_W[field]||120;}
+function sheetTblW(){return 32+SHEET_COLS.reduce((s,c)=>s+sheetColW(c.field),0)+36;}
+function setSheetTblWidth(){
+  const tbl=document.getElementById('sheetTbl');if(!tbl)return;
+  const cw=tbl.parentElement?.clientWidth||0;
+  tbl.style.width=Math.max(sheetTblW(),cw)+'px';
+}
 let _colResize=null;
 function startColResize(e,field,thEl){
   e.preventDefault();e.stopPropagation();
-  _colResize={field,startX:e.clientX,startW:sheetColW(field),thEl};
+  const tbl=document.getElementById('sheetTbl');
+  _colResize={field,startX:e.clientX,startW:sheetColW(field),startTblW:parseInt(tbl?.style.width)||tbl?.offsetWidth||0,thEl};
   thEl.querySelector('.sh-resize').classList.add('active');
   document.addEventListener('mousemove',onColResizeMove);
   document.addEventListener('mouseup',onColResizeUp);
@@ -3144,6 +3152,8 @@ function onColResizeMove(e){
   _colResize.thEl.style.width=w+'px';
   const cg=document.getElementById('sheetCols');
   if(cg){const idx=SHEET_COLS.findIndex(c=>c.field===_colResize.field);const cols=[...cg.querySelectorAll('col')];if(idx>=0&&cols[idx+1])cols[idx+1].style.width=w+'px';}
+  const tbl=document.getElementById('sheetTbl');
+  if(tbl){const delta=w-_colResize.startW;tbl.style.width=Math.max(_colResize.startTblW+delta,tbl.parentElement?.clientWidth||0)+'px';}
 }
 function onColResizeUp(e){
   if(!_colResize)return;
@@ -3153,6 +3163,7 @@ function onColResizeUp(e){
   _colResize=null;
   document.removeEventListener('mousemove',onColResizeMove);
   document.removeEventListener('mouseup',onColResizeUp);
+  setSheetTblWidth();
 }
 
 const SHEET_COLS=[
@@ -3189,6 +3200,7 @@ function getSortedSongs(){
 
 function renderSheetHead(){
   const head=document.getElementById('sheetHead');if(!head)return;
+  setSheetTblWidth();
   // Sync colgroup widths
   const cg=document.getElementById('sheetCols');
   if(cg)cg.innerHTML=`<col style="width:32px">`+SHEET_COLS.map(col=>`<col style="width:${sheetColW(col.field)}px">`).join('')+`<col style="width:36px">`;
@@ -5168,7 +5180,7 @@ async function initApp(){
   await Promise.all([loadSongs(),loadSetlists(),loadConcerts(),loadRehearsals(),loadMembers(),loadBlackouts()]);
   if(activeBandId !== _initBandId){const l=document.getElementById('appLoader');if(l)l.style.display='none';return;} // band changed while loading — don't overwrite
   // Full re-render now that all data is available
-  renderSLDropdown();renderSL();renderSlMeta();renderLib();updateLibCount();updateSidebarCounts();
+  renderSLDropdown();renderSL();renderSlMeta();renderLib();if(libView==='sheet')renderSheet();updateLibCount();updateSidebarCounts();
   setCalView(calView);renderRehearsals();renderConcerts();renderMembers();
   renderGuestDir();renderBP();renderAsList();renderBandList();
   syncCurrentUserToUI();renderDashboard();updateSidebarCounts();
