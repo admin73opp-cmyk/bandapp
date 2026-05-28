@@ -137,6 +137,10 @@ select option{background:var(--w)}
 /* pages */
 .pg-area{display:none;padding:22px;flex:1}.pg-area.on{display:block;animation:fu .17s ease}
 @keyframes fu{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+@keyframes spin{to{transform:rotate(360deg)}}
+#appLoader{position:fixed;inset:0;background:var(--bg);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px}
+#appLoader .al-spinner{width:30px;height:30px;border:3px solid var(--bd);border-top-color:var(--a);border-radius:50%;animation:spin .75s linear infinite}
+#appLoader .al-text{font-size:.82rem;color:var(--ink2)}
 /* stats */
 .sg{display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:10px;margin-bottom:17px}
 .sc{background:var(--w);border:1px solid var(--bd);border-radius:var(--radl);padding:16px;box-shadow:var(--sh);transition:border-color .13s,transform .13s}
@@ -448,6 +452,7 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
 
 <!-- APP -->
 <div id="app">
+  <div id="appLoader"><div class="al-spinner"></div><div class="al-text">Loading your band data…</div></div>
   <button id="feedbackFab" onclick="openFeedbackModal()">🐛 Bug / Feedback</button>
   <div class="sb-ov" id="sbOv" onclick="toggleSb()"></div>
   <nav class="sb" id="sb">
@@ -1661,10 +1666,10 @@ async function loadConcerts(){
   const gen=++_concGen;
   const data=await ConcertsDB.fetch(activeBandId);
   if(gen!==_concGen)return;
-  concerts=data;
-  const photoMap=await ConcertsDB.fetchPhotos(concerts.map(c=>c.id));
+  const photoMap=await ConcertsDB.fetchPhotos(data.map(c=>c.id));
   if(gen!==_concGen)return;
-  concerts.forEach(c=>{ c.photos=photoMap[c.id]||[]; });
+  data.forEach(c=>{ c.photos=photoMap[c.id]||[]; });
+  concerts=data;
   buildCalEv();
 }
 // Derives a concert/rehearsal dot map from the live arrays.
@@ -1699,10 +1704,10 @@ async function loadRehearsals(){
   const gen=++_rehGen;
   const data=await RehearsalsDB.fetch(activeBandId);
   if(gen!==_rehGen)return;
-  rehearsals=data;
-  const photoMap=await RehearsalsDB.fetchPhotos(rehearsals.map(r=>r.id));
+  const photoMap=await RehearsalsDB.fetchPhotos(data.map(r=>r.id));
   if(gen!==_rehGen)return;
-  rehearsals.forEach(r=>{ r.photos=photoMap[r.id]||[]; r._ts=rehearsalDate(r).getTime(); });
+  data.forEach(r=>{ r.photos=photoMap[r.id]||[]; r._ts=rehearsalDate(r).getTime(); });
+  rehearsals=data;
   buildCalEv();
 }
 
@@ -3704,6 +3709,14 @@ async function confReh(){
     const saved=await RehearsalsDB.upsert({title,date:confirmedKey,start,end,location,notes,band_id:activeBandId});
     if(!saved){return;}
     await loadRehearsals();
+    // If loadRehearsals was preempted by a concurrent load (gen mismatch), the new rehearsal
+    // may not yet be in the array. Add it optimistically so the calendar dot appears immediately.
+    if(!rehearsals.find(r=>r.id===saved.id)){
+      if(!saved._ts) saved._ts=rehearsalDate(saved).getTime();
+      if(!saved.photos) saved.photos=[];
+      rehearsals=[...rehearsals,saved];
+      buildCalEv();
+    }
     renderCal();
     renderRehearsals();
 
@@ -5070,12 +5083,14 @@ async function initApp(){
   // and skip the stale re-render; switchBand() will have already rendered the correct state.
   const _initBandId = activeBandId;
   await Promise.all([loadSongs(),loadSetlists(),loadConcerts(),loadRehearsals(),loadMembers(),loadBlackouts()]);
-  if(activeBandId !== _initBandId) return; // band changed while loading — don't overwrite
+  if(activeBandId !== _initBandId){const l=document.getElementById('appLoader');if(l)l.style.display='none';return;} // band changed while loading — don't overwrite
   // Full re-render now that all data is available
   renderSLDropdown();renderSL();renderSlMeta();renderLib();updateLibCount();updateSidebarCounts();
   setCalView(calView);renderRehearsals();renderConcerts();renderMembers();
   renderGuestDir();renderBP();renderAsList();renderBandList();
   syncCurrentUserToUI();renderDashboard();updateSidebarCounts();
+  const loader=document.getElementById('appLoader');
+  if(loader)loader.style.display='none';
 }
 
 // ── Bug / Feedback reporting ──────────────────────────────────
