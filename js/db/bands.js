@@ -21,7 +21,7 @@ const BandsDB = {
         upcomingCount: 0,
         pastCount:     0,
         nextGig:       { label: '—', sub: 'No gigs yet' },
-        platforms:     [],
+        platforms:     b.platforms     || [],
         photos:        [],
       };
     });
@@ -29,7 +29,7 @@ const BandsDB = {
 
   async upsert(band) {
     const { role, memberCount, songCount, setlistCount, upcomingCount, pastCount,
-            nextGig, platforms, photos, band_members, ...fields } = band;
+            nextGig, photos, band_members, ...fields } = band;
     if (fields.id) {
       // Existing band — UPDATE only
       const { id, ...updateFields } = fields;

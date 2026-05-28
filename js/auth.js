@@ -196,17 +196,17 @@ async function doDemo() {
 }
 
 async function doLogout() {
+  // Show the auth screen immediately so the button always feels responsive,
+  // regardless of network latency or whether signOut() eventually times out.
+  document.getElementById('app').classList.remove('vis');
+  document.getElementById('authScreen').style.display = 'flex';
+  if (typeof switchTab === 'function') switchTab('login');
+  // Invalidate the server-side session in the background.
   try {
     await supabase.auth.signOut();
   } catch (e) {
-    // Global sign-out failed (expired token, network error, etc.).
-    // Clear the local session so the user is not stuck in a broken state.
-    console.warn('[bandapp] signOut error — clearing locally:', e?.message);
+    console.warn('[bandapp] signOut error:', e?.message);
     try { await supabase.auth.signOut({ scope: 'local' }); } catch (_) {}
-    // Force UI to signed-out state in case onAuthStateChange doesn't fire.
-    document.getElementById('app').classList.remove('vis');
-    document.getElementById('authScreen').style.display = 'flex';
-    if (typeof switchTab === 'function') switchTab('login');
   }
 }
 

@@ -4578,13 +4578,20 @@ function renderBP(){
 
   // Settings cards
   const days=['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
-  const active=[0,1,0,1,1,0,0];
-  document.getElementById('dtogs').innerHTML=days.map((d,i)=>`<div class="dtog ${active[i]?'on':''}" onclick="${isAdmin?"this.classList.toggle('on')":''}" style="${isAdmin?'':'pointer-events:none;opacity:.7'}">${t(d).slice(0,3)}</div>`).join('');
+  const active=b.rehearsal_days||[0,1,0,1,0,0,0];
+  document.getElementById('dtogs').innerHTML=days.map((d,i)=>`<div class="dtog ${active[i]?'on':''}" onclick="${isAdmin?"toggleAndSaveRehDay(this)":''}" style="${isAdmin?'':'pointer-events:none;opacity:.7'}">${t(d).slice(0,3)}</div>`).join('');
   const mc=document.getElementById('boMC');
   if(mc)mc.innerHTML=members.map(m=>`<div class="bomc chip" data-mid="${m.id}" onclick="togBOMc(this)" style="display:flex;align-items:center;gap:6px"><div class="mav2" style="width:18px;height:18px;font-size:.5rem;background:${m.color}">${m.init}</div>${m.name.split(' ')[0]}</div>`).join('');
   renderBOList();syncBOPill();
   refreshWaUI();
   refreshNotifSettUI();
+}
+
+function toggleAndSaveRehDay(el){
+  el.classList.toggle('on');
+  const rehDays=[...document.querySelectorAll('#dtogs .dtog')].map(d=>d.classList.contains('on')?1:0);
+  const b=getActiveBand();if(b)b.rehearsal_days=rehDays;
+  BandsDB.upsert({id:activeBandId,rehearsal_days:rehDays});
 }
 
 // ── BAND PROFILE INLINE EDIT ─────────────────────────────
@@ -4624,6 +4631,9 @@ async function saveBandEditInline(){
   const b=getActiveBand();if(!b)return;
   const name=document.getElementById('beNameInline').value.trim();
   if(!name){toast2('Band name is required','w');return;}
+  const platforms=PLATFORM_DEFS
+    .map(d=>({label:d.label,icon:d.icon,url:(document.getElementById('bePlat_'+d.key)?.value||'').trim()}))
+    .filter(p=>p.url);
   const saved=await BandsDB.upsert({
     id: b.id,
     name,
@@ -4634,6 +4644,7 @@ async function saveBandEditInline(){
     city: document.getElementById('beCityInline').value.trim(),
     country: document.getElementById('beCountryInline').value.trim(),
     bio: document.getElementById('beBioInline').value.trim(),
+    platforms,
   });
   if(!saved)return;
   await loadBands();
@@ -4817,22 +4828,24 @@ async function addFoundMember(userId){
   const guestBand=document.getElementById('invFoundGuestBand')?.value.trim()||null;
   const btn=document.querySelector(`#invMod button[onclick*="addFoundMember"]`);
   if(btn){btn.disabled=true;btn.textContent='Adding…';}
-  const {data,error}=await supabase.rpc('add_band_member_direct',{
-    p_band_id:activeBandId,
-    p_user_id:userId,
-    p_role:role,
-    p_guest_start:guestStart||null,
-    p_guest_end:guestEnd||null,
-    p_guest_band:guestBand||null,
-  });
+  // Check locally first to give a fast friendly error
+  if(members.some(m=>m.id===userId)){
+    if(btn){btn.disabled=false;btn.textContent='+ Add to Band';}
+    toast2('This person is already in the band','w');return;
+  }
+  const fields={band_id:activeBandId,user_id:userId,role};
+  if(guestStart)fields.guest_start=guestStart;
+  if(guestEnd)fields.guest_end=guestEnd;
+  if(guestBand)fields.guest_band=guestBand;
+  const {error}=await supabase.from('band_members').insert(fields);
   if(btn){btn.disabled=false;btn.textContent='+ Add to Band';}
   if(error){handleDbError(error);return;}
-  if(data?.error){toast2(data.message||data.error,'w');return;}
   await loadMembers();
   closeMod('invMod');
   renderMembers();
   updateSidebarCounts();
-  toast2(`${data?.name||'Member'} added to the band! 🎉`);
+  const added=members.find(m=>m.id===userId);
+  toast2(`${added?.name||'Member'} added to the band! 🎉`);
 }
 
 async function sendInviteViaEdgeFunction(){
