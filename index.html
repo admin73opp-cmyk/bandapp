@@ -3126,7 +3126,7 @@ function setLibView(v){
   bs.style.background=v==='sheet'?'var(--a)':'transparent';bs.style.color=v==='sheet'?'#fff':'var(--ink2)';
   document.getElementById('libViewCardsArea').style.display=v==='cards'?'':'none';
   document.getElementById('libViewSheetArea').style.display=v==='sheet'?'':'none';
-  if(v==='sheet')renderSheet();
+  if(v==='sheet'&&songs.length)renderSheet();
 }
 setLibView(libView);
 
