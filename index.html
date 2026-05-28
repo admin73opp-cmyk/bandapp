@@ -3638,6 +3638,9 @@ function openRehMod(d,key,isFull){
   document.getElementById('rmSub').textContent=isFull?`All ${members.length} members are available 🎉`:`${cntAv(yr,mo,d)} of ${members.length} members available.`;
   const avs=getMAvail(yr,mo,d);
   document.getElementById('rmMem').innerHTML=members.map((m,i)=>`<div style="display:flex;align-items:center;gap:5px;padding:5px 10px;border-radius:8px;background:${avs[i]?'var(--g2)':'var(--r2)'};border:1px solid ${avs[i]?'#86EFAC':'#FECACA'}"><div class="mav2" style="width:19px;height:19px;font-size:.52rem;background:${m.color}">${m.init}</div><span style="font-size:.74rem;font-weight:500;color:${avs[i]?'var(--g)':'var(--r)'}">${m.name.split(' ')[0]}</span></div>`).join('');
+  // Always reset the WA error state so it never bleeds in from a prior open
+  const errEl=document.getElementById('rmWaErr');
+  if(errEl)errEl.style.display='none';
   // apply band default notification preference; fall back to email if WA not configured
   const pref=getBandNotifPref();
   const waLinked=!!bandWaLinks[activeBandId];
@@ -3648,6 +3651,8 @@ function openRehMod(d,key,isFull){
 }
 
 async function confReh(){
+  if(!pendKey){toast2('No date selected — please pick a day first','w');return;}
+
   const ch=rehNotifSel||getBandNotifPref();
   const waLinked=!!bandWaLinks[activeBandId];
   if((ch==='whatsapp'||ch==='both')&&!waLinked){
@@ -3673,32 +3678,38 @@ async function confReh(){
   closeMod('rehMod');
   const confirmedKey=pendKey;
   pendKey=null;
-  const saved=await RehearsalsDB.upsert({title,date:confirmedKey,start,end,location,notes,band_id:activeBandId});
-  await loadRehearsals();
-  buildCalEv();
-  renderCal();
 
-  if((ch==='email'||ch==='both')&&saved?.id){
-    supabase.functions.invoke('notify-rehearsal',{
-      body:{band_id:activeBandId,title,date:confirmedKey,start,end,location,notes},
-    }).then(r=>{if(r.error)console.error('[bandapp] notify-rehearsal:',r.error);})
-      .catch(e=>console.error('[bandapp] notify-rehearsal:',e));
-  }
+  try {
+    const saved=await RehearsalsDB.upsert({title,date:confirmedKey,start,end,location,notes,band_id:activeBandId});
+    await loadRehearsals();
+    renderCal();
+    renderRehearsals();
 
-  const msgs={
-    email:'Rehearsal confirmed! Band notified by email ✓',
-    whatsapp:'Rehearsal confirmed! WhatsApp opening — select your band group to send 💬',
-    both:'Rehearsal confirmed! Email sent + WhatsApp opening 📣',
-  };
-  toast2(msgs[ch]||'Rehearsal scheduled!');
+    if((ch==='email'||ch==='both')&&saved?.id){
+      supabase.functions.invoke('notify-rehearsal',{
+        body:{band_id:activeBandId,title,date:confirmedKey,start,end,location,notes},
+      }).then(r=>{if(r.error)console.error('[bandapp] notify-rehearsal:',r.error);})
+        .catch(e=>console.error('[bandapp] notify-rehearsal:',e));
+    }
 
-  // Open WhatsApp with the pre-filled message AFTER all data is saved.
-  // wa.me/?text= pre-fills the message in the share sheet so the user just taps
-  // the band group to send it.  On mobile this is an app deep-link (not a browser
-  // popup), so it works reliably even after the awaits above.
-  if(waMsg){
-    navigator.clipboard.writeText(waMsg).catch(()=>{});
-    window.open(`https://wa.me/?text=${encodeURIComponent(waMsg)}`,'_blank');
+    const msgs={
+      email:'Rehearsal confirmed! Band notified by email ✓',
+      whatsapp:'Rehearsal confirmed! WhatsApp opening — select your band group to send 💬',
+      both:'Rehearsal confirmed! Email sent + WhatsApp opening 📣',
+    };
+    toast2(msgs[ch]||'Rehearsal scheduled!');
+
+    // Open WhatsApp with the pre-filled message AFTER all data is saved.
+    // wa.me/?text= pre-fills the message in the share sheet so the user just taps
+    // the band group to send it.  On mobile this is an app deep-link (not a browser
+    // popup), so it works reliably even after the awaits above.
+    if(waMsg){
+      navigator.clipboard.writeText(waMsg).catch(()=>{});
+      window.open(`https://wa.me/?text=${encodeURIComponent(waMsg)}`,'_blank');
+    }
+  } catch(e) {
+    console.error('[bandapp] confReh error:', e);
+    toast2('Something went wrong saving the rehearsal','w');
   }
 }
 
