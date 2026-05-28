@@ -73,9 +73,15 @@ async function doLogin() {
   const pw    = document.getElementById('loginPassword').value;
   if (!email || !pw) { toast2('Enter email and password', 'w'); return; }
 
+  const btn = document.getElementById('loginBtn');
+  if (btn) { btn.disabled = true; btn.textContent = 'Signing in…'; }
+
   const { error } = await supabase.auth.signInWithPassword({ email, password: pw });
-  if (error) { toast2(error.message, 'w'); }
-  // onAuthStateChange handles the rest
+  if (error) {
+    if (btn) { btn.disabled = false; btn.textContent = 'Sign in'; }
+    toast2(error.message, 'w');
+  }
+  // onAuthStateChange handles the rest on success
 }
 
 async function doSignUp() {
@@ -184,17 +190,6 @@ async function doResetPassword() {
   // onAuthStateChange will fire with SIGNED_IN after updateUser when in PASSWORD_RECOVERY state
 }
 
-async function doDemo() {
-  const { error } = await supabase.auth.signInWithPassword({
-    email:    'demo@bandapp.com',
-    password: 'demo1234',
-  });
-  if (error) {
-    console.error('[bandapp] demo login error:', error?.status, error?.message, error);
-    toast2(error.message, 'w');
-  }
-}
-
 async function doLogout() {
   // Show the auth screen immediately so the button always feels responsive,
   // regardless of network latency or whether signOut() eventually times out.
@@ -275,10 +270,24 @@ supabase.auth.onAuthStateChange(async (event, session) => {
     }
   }
 
-  document.getElementById('authScreen').style.display = 'none';
-  document.getElementById('app').classList.add('vis');
+  // Hide all auth forms and show loading indicator while data loads — prevents stale data flash
+  ['lf','sf','sf-confirm','ff','ff-sent','auth-tabs'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.style.display = 'none';
+  });
+  const _authLoading = document.getElementById('authLoading');
+  if (_authLoading) _authLoading.style.display = '';
+
   initSbState();
-  await initApp();
+  try {
+    await initApp();
+  } catch (e) {
+    console.error('[bandapp] initApp error:', e);
+  }
+
+  document.getElementById('authScreen').style.display = 'none';
+  if (_authLoading) _authLoading.style.display = 'none';
+  document.getElementById('app').classList.add('vis');
 
   // Invited users land with needs_onboarding=true — show password-setup overlay
   if (_meta.needs_onboarding) {

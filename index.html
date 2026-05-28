@@ -383,6 +383,10 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
   <div style="width:min(380px,95vw)">
     <div style="font-size:1.45rem;font-weight:700;letter-spacing:-.04em;display:flex;align-items:center;gap:8px;margin-bottom:4px"><div class="ld"></div>Bandapp</div>
     <p style="font-size:.84rem;color:var(--ink2);margin-bottom:27px" data-i18n="Manage your band, rehearsals & setlists">Manage your band, rehearsals &amp; setlists</p>
+    <div id="authLoading" style="display:none;text-align:center;padding:32px 0">
+      <div class="ld" style="width:36px;height:36px;margin:0 auto 14px"></div>
+      <div style="font-size:.84rem;color:var(--ink2)" data-i18n="Loading your band…">Loading your band…</div>
+    </div>
     <div id="auth-tabs" style="display:flex;background:var(--bg);border-radius:var(--rad);padding:4px;gap:3px;margin-bottom:21px">
       <button class="stb on" style="flex:1;border-radius:7px" onclick="switchTab('login')" data-i18n="Sign in">Sign in</button>
       <button class="stb" style="flex:1;border-radius:7px" onclick="switchTab('signup')" data-i18n="Sign up">Sign up</button>
@@ -390,12 +394,10 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
     <div id="lf">
       <div class="fg" data-i18n="Email"><label>Email</label><input id="loginEmail" type="email" placeholder="you@email.com" autocomplete="email"></div>
       <div class="fg" data-i18n="Password"><label>Password</label><input id="loginPassword" type="password" placeholder="••••••••" autocomplete="current-password"></div>
-      <button class="btn btn-p btn-fw" onclick="doLogin()" data-i18n="Sign in">Sign in</button>
+      <button id="loginBtn" class="btn btn-p btn-fw" onclick="doLogin()" data-i18n="Sign in">Sign in</button>
       <div style="text-align:center;margin:7px 0 4px">
         <a href="#" style="font-size:.75rem;color:var(--a);text-decoration:none" onclick="showForgotPassword();return false" data-i18n="Forgot password?">Forgot password?</a>
       </div>
-      <div style="text-align:center;font-size:.77rem;color:var(--ink3);margin:9px 0;position:relative" data-i18n="or"><span style="background:var(--w);padding:0 9px;position:relative;z-index:1">or</span><div style="position:absolute;top:50%;left:0;right:0;height:1px;background:var(--bd)"></div></div>
-      <button class="btn btn-g btn-fw" onclick="doDemo()" data-i18n="Continue as demo">Continue as demo</button>
     </div>
     <div id="sf" style="display:none">
       <div id="sf-invite-banner" style="display:none;padding:10px 14px;background:var(--a2);border:1px solid rgba(108,99,255,.3);border-radius:var(--rad);margin-bottom:14px;font-size:.85rem;text-align:center">
@@ -2407,12 +2409,14 @@ function populateLangSelect(selectId, selectedCode) {
 // AUTH
 function switchTab(t){
   // Reset all alternate auth states
-  ['sf-confirm','ff','ff-sent','reset-pw-form'].forEach(id=>{const el=document.getElementById(id);if(el)el.style.display='none';});
+  ['sf-confirm','ff','ff-sent','reset-pw-form','authLoading'].forEach(id=>{const el=document.getElementById(id);if(el)el.style.display='none';});
   const tabs=document.getElementById('auth-tabs');
   if(tabs)tabs.style.display='flex';
   document.querySelectorAll('#authScreen .stb').forEach((b,i)=>b.classList.toggle('on',(i===0&&t==='login')||(i===1&&t==='signup')));
   document.getElementById('lf').style.display=t==='login'?'':'none';
   document.getElementById('sf').style.display=t==='signup'?'':'none';
+  const loginBtn=document.getElementById('loginBtn');
+  if(loginBtn){loginBtn.disabled=false;loginBtn.textContent='Sign in';}
 }
 function showForgotPassword(){
   document.getElementById('lf').style.display='none';
