@@ -239,55 +239,66 @@ supabase.auth.onAuthStateChange(async (event, session) => {
     document.getElementById('authScreen').style.display = 'flex';
     return;
   }
-  await loadCurrentUser(session.user.id, session.user.email);
-
-  // Restore invite params from confirmation-email URL into sessionStorage (new-tab safe)
-  const _urlParams = new URLSearchParams(window.location.search);
-  if (_urlParams.get('phone'))      sessionStorage.setItem('invitePhone',      _urlParams.get('phone'));
-  if (_urlParams.get('instrument')) sessionStorage.setItem('inviteInstrument', _urlParams.get('instrument'));
-  // Also fall back to user metadata (set during signup) if sessionStorage is empty
-  const _meta = session.user.user_metadata || {};
-  if (!sessionStorage.getItem('invitePhone')      && _meta.pending_phone)      sessionStorage.setItem('invitePhone',      _meta.pending_phone);
-  if (!sessionStorage.getItem('inviteInstrument') && _meta.pending_instrument) sessionStorage.setItem('inviteInstrument', _meta.pending_instrument);
-
-  // Auto-join band from invite link (?band=UUID) or sessionStorage or user metadata
-  const _pendingBandId = _urlParams.get('band') || sessionStorage.getItem('pendingBandId') || _meta.pending_band_id || '';
-  if (_pendingBandId) {
-    const { data: joinData, error: joinErr } = await supabase.rpc('join_band_by_code', { p_code: _pendingBandId });
-    if (joinData?.success) {
-      currentUser._memberships = [...(currentUser._memberships || []), { band_id: joinData.band_id, role: 'member' }];
-      activeBandId = joinData.band_id;
-      localStorage.setItem('activeBandId', joinData.band_id);
-      sessionStorage.removeItem('pendingBandId');
-      window.history.replaceState({}, '', window.location.pathname);
-    } else if (joinData?.error === 'already_member') {
-      sessionStorage.removeItem('pendingBandId');
-      window.history.replaceState({}, '', window.location.pathname);
-    } else {
-      // RPC not deployed or network error — clean URL but keep pendingBandId for retry on next login
-      window.history.replaceState({}, '', window.location.pathname);
-      if (joinErr) console.warn('[bandapp] join_band_by_code failed:', joinErr?.message);
-    }
-  }
-
-  // Hide auth screen and show the app shell immediately — data loads in the background
-  ['lf','sf','sf-confirm','ff','ff-sent','auth-tabs'].forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.style.display = 'none';
-  });
-  document.getElementById('authScreen').style.display = 'none';
-  initSbState();
-  document.getElementById('app').classList.add('vis');
 
   try {
-    await initApp();
-  } catch (e) {
-    console.error('[bandapp] initApp error:', e);
-  }
+    await loadCurrentUser(session.user.id, session.user.email);
 
-  // Invited users land with needs_onboarding=true — show password-setup overlay
-  if (_meta.needs_onboarding) {
-    if (typeof showOnboarding === 'function') showOnboarding();
+    // Restore invite params from confirmation-email URL into sessionStorage (new-tab safe)
+    const _urlParams = new URLSearchParams(window.location.search);
+    if (_urlParams.get('phone'))      sessionStorage.setItem('invitePhone',      _urlParams.get('phone'));
+    if (_urlParams.get('instrument')) sessionStorage.setItem('inviteInstrument', _urlParams.get('instrument'));
+    // Also fall back to user metadata (set during signup) if sessionStorage is empty
+    const _meta = session.user.user_metadata || {};
+    if (!sessionStorage.getItem('invitePhone')      && _meta.pending_phone)      sessionStorage.setItem('invitePhone',      _meta.pending_phone);
+    if (!sessionStorage.getItem('inviteInstrument') && _meta.pending_instrument) sessionStorage.setItem('inviteInstrument', _meta.pending_instrument);
+
+    // Auto-join band from invite link (?band=UUID) or sessionStorage or user metadata
+    const _pendingBandId = _urlParams.get('band') || sessionStorage.getItem('pendingBandId') || _meta.pending_band_id || '';
+    if (_pendingBandId) {
+      const { data: joinData, error: joinErr } = await supabase.rpc('join_band_by_code', { p_code: _pendingBandId });
+      if (joinData?.success) {
+        currentUser._memberships = [...(currentUser._memberships || []), { band_id: joinData.band_id, role: 'member' }];
+        activeBandId = joinData.band_id;
+        localStorage.setItem('activeBandId', joinData.band_id);
+        sessionStorage.removeItem('pendingBandId');
+        window.history.replaceState({}, '', window.location.pathname);
+      } else if (joinData?.error === 'already_member') {
+        sessionStorage.removeItem('pendingBandId');
+        window.history.replaceState({}, '', window.location.pathname);
+      } else {
+        // RPC not deployed or network error — clean URL but keep pendingBandId for retry on next login
+        window.history.replaceState({}, '', window.location.pathname);
+        if (joinErr) console.warn('[bandapp] join_band_by_code failed:', joinErr?.message);
+      }
+    }
+
+    // Hide auth screen and show the app shell immediately — data loads in the background
+    ['lf','sf','sf-confirm','ff','ff-sent','auth-tabs'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.style.display = 'none';
+    });
+    document.getElementById('authScreen').style.display = 'none';
+    initSbState();
+    document.getElementById('app').classList.add('vis');
+
+    try {
+      await initApp();
+    } catch (e) {
+      console.error('[bandapp] initApp error:', e);
+    }
+
+    // Invited users land with needs_onboarding=true — show password-setup overlay
+    if (_meta.needs_onboarding) {
+      if (typeof showOnboarding === 'function') showOnboarding();
+    }
+  } catch (e) {
+    console.error('[bandapp] sign-in error:', e);
+    const loginBtn = document.getElementById('loginBtn');
+    if (loginBtn) { loginBtn.disabled = false; loginBtn.textContent = 'Sign in'; }
+    document.getElementById('app').classList.remove('vis');
+    document.getElementById('authScreen').style.display = 'flex';
+    if (typeof switchTab === 'function') switchTab('login');
+    if (typeof toast2 === 'function') toast2('Sign-in error — please try again', 'w');
   }
 });
 

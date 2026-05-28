@@ -399,8 +399,8 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
       <button class="stb" style="flex:1;border-radius:7px" onclick="switchTab('signup')" data-i18n="Sign up">Sign up</button>
     </div>
     <div id="lf">
-      <div class="fg" data-i18n="Email"><label>Email</label><input id="loginEmail" type="email" placeholder="you@email.com" autocomplete="email"></div>
-      <div class="fg" data-i18n="Password"><label>Password</label><input id="loginPassword" type="password" placeholder="••••••••" autocomplete="current-password"></div>
+      <div class="fg" data-i18n="Email"><label>Email</label><input id="loginEmail" type="email" placeholder="you@email.com" autocomplete="email" onkeydown="if(event.key==='Enter')doLogin()"></div>
+      <div class="fg" data-i18n="Password"><label>Password</label><input id="loginPassword" type="password" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()"></div>
       <button id="loginBtn" class="btn btn-p btn-fw" onclick="doLogin()" data-i18n="Sign in">Sign in</button>
       <div style="text-align:center;margin:7px 0 4px">
         <a href="#" style="font-size:.75rem;color:var(--a);text-decoration:none" onclick="showForgotPassword();return false" data-i18n="Forgot password?">Forgot password?</a>
