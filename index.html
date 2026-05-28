@@ -4935,13 +4935,17 @@ async function sendInviteViaEdgeFunction(){
   if(!email){toast2('Email address is required','w');return;}
   const btn=document.getElementById('invSendBtn');
   if(btn){btn.disabled=true;btn.textContent='Sending…';}
+  const ctrl=new AbortController();
+  const timer=setTimeout(()=>ctrl.abort(),20000);
   try{
     const {data:{session}}=await supabase.auth.getSession();
     const res=await fetch(`${SUPABASE_URL}/functions/v1/invite-member`,{
       method:'POST',
-      headers:{'Content-Type':'application/json','Authorization':`Bearer ${session.access_token}`},
+      headers:{'Content-Type':'application/json','Authorization':`Bearer ${session?.access_token||''}`},
       body:JSON.stringify({band_id:activeBandId,email,first_name:firstName,last_name:lastName,instrument,role}),
+      signal:ctrl.signal,
     });
+    clearTimeout(timer);
     const result=await res.json();
     if(!res.ok){
       toast2(result.message||result.error||'Failed to send invite','w');
@@ -4952,7 +4956,16 @@ async function sendInviteViaEdgeFunction(){
     updateSidebarCounts();
     closeMod('invMod');
     toast2(`Invite sent to ${email}! They'll receive an email to join the band. 🎉`);
+  }catch(e){
+    clearTimeout(timer);
+    if(e?.name==='AbortError'){
+      toast2('Request timed out — please try again','w');
+    } else {
+      toast2(e?.message||'Something went wrong sending the invite','w');
+      console.error('[bandapp] sendInvite error:',e);
+    }
   }finally{
+    clearTimeout(timer);
     if(btn){btn.disabled=false;btn.textContent='Send Invite Email 📧';}
   }
 }
