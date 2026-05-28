@@ -3,3 +3,4 @@
 .DS_Store
 Node_modules/
 .claude/
+dist/
