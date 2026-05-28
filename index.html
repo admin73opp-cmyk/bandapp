@@ -1798,7 +1798,8 @@ function openRehView(id){
 
   // Title & badge
   document.getElementById('rvTitle').textContent=r.title;
-  document.getElementById('rvPastBadge').style.display=past?'':'none';
+  document.getElementById('rvPastBadge').style.display=(past&&!r.cancelled)?'':'none';
+  document.getElementById('rvCancelledBadge').style.display=r.cancelled?'':'none';
 
   // Details
   document.getElementById('rvDate').textContent=`${t(MO_FULL[r.month])} ${r.day}, ${r.year}`;
@@ -1823,9 +1824,13 @@ function openRehView(id){
     ?photos.map((p,i)=>`<img src="${p.url}" style="width:72px;height:72px;border-radius:8px;object-fit:cover;border:1.5px solid var(--bd);cursor:pointer" onclick="openRehPhotoLightbox('${r.id}',${i})">`).join('')
     :`<span style="font-size:.76rem;color:var(--ink3)">No photos yet</span>`;
 
-  // Action buttons — past: delete only; upcoming: share + edit + delete
+  // Action buttons — cancelled: close + delete (admin); past: close only; upcoming: share + edit + cancel
   const actions=document.getElementById('rvActions');
-  if(past||r.cancelled){
+  const isAdmin=currentUser.role==='admin';
+  if(r.cancelled){
+    actions.innerHTML=`<button class="btn btn-g" onclick="closeMod('reViewMod')">Close</button>`
+      +(isAdmin?`<button class="btn btn-g btn-sm" style="color:var(--red,#e53935);border-color:var(--red,#e53935)" onclick="deleteRehearsal('${r.id}')">🗑 Delete</button>`:'');
+  } else if(past){
     actions.innerHTML=`<button class="btn btn-g" onclick="closeMod('reViewMod')">Close</button>`;
   } else {
     actions.innerHTML=`
@@ -6072,6 +6077,7 @@ async function saveSettings(){
       <div style="font-size:.69rem;font-weight:700;color:var(--g);text-transform:uppercase;letter-spacing:.07em;margin-bottom:4px" data-i18n="Rehearsal">Rehearsal</div>
       <div class="mott" id="rvTitle" style="margin-bottom:6px"></div>
       <span id="rvPastBadge" class="pill pgray" style="display:none" data-i18n="Past">Past</span>
+      <span id="rvCancelledBadge" class="pill pamb" style="display:none" data-i18n="Cancelled">Cancelled</span>
     </div>
   </div>
 
