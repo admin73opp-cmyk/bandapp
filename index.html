@@ -5040,20 +5040,21 @@ function renderDashboard(){
 async function initApp(){
   populateCountrySelects();
   populateInstrumentSelects();
+  // Bands first — sets band metadata (name, color, WA links) needed for shell renders
   await loadBands();
-  await loadSongs();
-  await loadSetlists();
-  await loadConcerts();
-  await loadRehearsals();
-  await loadMembers();
-  await loadBlackouts();
+  // Paint the shell immediately with user identity and navigate to the right page.
+  // Remaining data hasn't loaded yet so counts/lists show empty state briefly.
+  syncCurrentUserToUI();
+  renderBandList();
+  const isNewUser = !currentUser._memberships?.length;
+  nav(isNewUser ? 'myprofile' : (localStorage.getItem('defaultView')||'dashboard'));
+  // All remaining fetches are independent — run concurrently
+  await Promise.all([loadSongs(),loadSetlists(),loadConcerts(),loadRehearsals(),loadMembers(),loadBlackouts()]);
+  // Full re-render now that all data is available
   renderSLDropdown();renderSL();renderSlMeta();renderLib();updateLibCount();updateSidebarCounts();
   setCalView(calView);renderRehearsals();renderConcerts();renderMembers();
   renderGuestDir();renderBP();renderAsList();renderBandList();
   syncCurrentUserToUI();renderDashboard();updateSidebarCounts();
-  // New users with no band go to My Profile to complete their info first
-  const isNewUser = !currentUser._memberships?.length;
-  nav(isNewUser ? 'myprofile' : (localStorage.getItem('defaultView')||'dashboard'));
 }
 
 // ── Bug / Feedback reporting ──────────────────────────────────

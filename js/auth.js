@@ -270,24 +270,20 @@ supabase.auth.onAuthStateChange(async (event, session) => {
     }
   }
 
-  // Hide all auth forms and show loading indicator while data loads — prevents stale data flash
+  // Hide auth screen and show the app shell immediately — data loads in the background
   ['lf','sf','sf-confirm','ff','ff-sent','auth-tabs'].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.style.display = 'none';
   });
-  const _authLoading = document.getElementById('authLoading');
-  if (_authLoading) _authLoading.style.display = '';
-
+  document.getElementById('authScreen').style.display = 'none';
   initSbState();
+  document.getElementById('app').classList.add('vis');
+
   try {
     await initApp();
   } catch (e) {
     console.error('[bandapp] initApp error:', e);
   }
-
-  document.getElementById('authScreen').style.display = 'none';
-  if (_authLoading) _authLoading.style.display = 'none';
-  document.getElementById('app').classList.add('vis');
 
   // Invited users land with needs_onboarding=true — show password-setup overlay
   if (_meta.needs_onboarding) {
