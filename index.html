@@ -1615,7 +1615,7 @@ async function loadSongs(){
 // Finds a song by UUID or legacy integer id — bridges the transition
 // period where setlists still carry integer song ids.
 function songByAnyId(id){return songs.find(x=>x.id===id||x.legacy_id===id);}
-const TODAY_STR='2026-05-20'; // demo today
+const TODAY_STR=new Date().toLocaleDateString('en-CA'); // YYYY-MM-DD
 
 let members=[];
 let guestDirectory=[];
@@ -1682,7 +1682,7 @@ function concertsForSetlist(setlistId){
 
 // ── DATE HELPERS ──────────────────────────────────────────
 const MONTH_MAP = {JAN:0,FEB:1,MAR:2,APR:3,MAY:4,JUN:5,JUL:6,AUG:7,SEP:8,OCT:9,NOV:10,DEC:11};
-const TODAY = new Date(2026, 4, 20); // demo "today" = May 20 2026
+const TODAY = (() => { const d = new Date(); d.setHours(0,0,0,0); return d; })();
 
 // ── REHEARSALS ────────────────────────────────────────────
 let rehearsals=[];
@@ -3539,7 +3539,7 @@ function renderCal(){
     for(let i=0;i<fd;i++)h+=`<div class="cd ce"></div>`;
     for(let d=1;d<=dim;d++){
       const key=`${yr}-${String(mo+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-      const ev=calEv[key]||[];const isT=yr===2026&&mo===4&&d===19;const bol=boMap[key];
+      const ev=calEv[key]||[];const isT=key===TODAY_STR;const bol=boMap[key];
       const full=!bol&&isFB(yr,mo,d)&&!ev.includes('concert')&&!ev.includes('rehearsal');
       // Use pre-computed Sets for O(1) lookup per member per day
       const hasXB=!bol&&!ev.includes('concert')&&!ev.includes('rehearsal')&&memberBlocks.some(s=>s.has(key));
@@ -3581,7 +3581,7 @@ function renderAvail(){
   const fullC=new Set(),boC=new Set();
   days.forEach(d=>{const key=`${yr}-${String(mo+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;if(boMap[key])boC.add(d);else if(isFB(yr,mo,d))fullC.add(d);});
   document.getElementById('avHdr').innerHTML=`<th class="nc2" style="font-size:.68rem;font-weight:700;color:var(--ink3)">${t('Member')}</th>`+
-    days.map(d=>{let cls='';if(fullC.has(d))cls='cfl';if(boC.has(d))cls='cbl';const key=`${yr}-${String(mo+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;return`<th class="${cls}" title="${boMap[key]||''}">${d}${boC.has(d)?'*':''}</th>`;}).join('');
+    days.map(d=>{const key=`${yr}-${String(mo+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;const isPast=key<TODAY_STR;let cls='';if(!isPast&&fullC.has(d))cls='cfl';if(boC.has(d))cls='cbl';return`<th class="${cls}" title="${boMap[key]||''}">${d}${boC.has(d)?'*':''}</th>`;}).join('');
   document.getElementById('avBody').innerHTML=members.map((m,mi)=>{
     const cells=days.map(d=>{
       const key=`${yr}-${String(mo+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
@@ -3657,27 +3657,31 @@ async function confReh(){
   const end=document.getElementById('rmEn').value||null;
   const location=(document.getElementById('rmLoc').value||'').trim()||null;
   const notes=(document.getElementById('rmNt').value||'').trim()||null;
-  // Open WhatsApp NOW while the user-gesture token is still valid (before any awaits).
-  // Browsers revoke the gesture across async boundaries, blocking window.open() silently.
+  // Copy message to clipboard and open the group link directly.
+  // Using the group link (chat.whatsapp.com/...) avoids the contact-picker dialog
+  // and is never blocked by the popup blocker (unlike the second wa.me/?text= call).
   if((ch==='whatsapp'||ch==='both')&&waLinked){
     const msg=`🎸 ${title} confirmed!\n📅 ${pendKey}${start?' ⏰ '+start:''}${location?'\n📍 '+location:''}`;
-    window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`,'_blank');
+    navigator.clipboard.writeText(msg).catch(()=>{});
+    window.open(bandWaLinks[activeBandId],'_blank');
   }
   closeMod('rehMod');
-  const saved=await RehearsalsDB.upsert({title,date:pendKey,start,end,location,notes,band_id:activeBandId});
+  const confirmedKey=pendKey;
+  pendKey=null;
+  const saved=await RehearsalsDB.upsert({title,date:confirmedKey,start,end,location,notes,band_id:activeBandId});
   await loadRehearsals();
   buildCalEv();
   renderCal();
   // Send email notifications via Edge Function when channel includes email
   if((ch==='email'||ch==='both')&&saved?.id){
     supabase.functions.invoke('notify-rehearsal',{
-      body:{band_id:activeBandId,title,date:pendKey,start,end,location,notes},
+      body:{band_id:activeBandId,title,date:confirmedKey,start,end,location,notes},
     }).catch(err=>console.error('[bandapp] notify-rehearsal error:',err));
   }
   const msgs={
     email:'Rehearsal confirmed! Band notified by email ✓',
-    whatsapp:'Rehearsal confirmed! WhatsApp group notified 💬',
-    both:'Rehearsal confirmed! Email + WhatsApp group notified 📣',
+    whatsapp:'Rehearsal confirmed! Message copied — paste it in the group 💬',
+    both:'Rehearsal confirmed! Email sent + message copied for WhatsApp 📣',
   };
   toast2(msgs[ch]||'Rehearsal scheduled!');
 }
