@@ -1620,8 +1620,9 @@ let myC={};
 // Loads songs + personal notes from Supabase into module-level globals
 async function loadSongs(){
   if(!activeBandId){ songs=[]; myC={}; return; }
-  songs = await SongsDB.fetch(activeBandId);
-  myC   = await SongsDB.fetchNotes(activeBandId);
+  const raw=await SongsDB.fetch(activeBandId);
+  songs=raw.map(s=>({...s,key:normalizeKey(s.key)}));
+  myC=await SongsDB.fetchNotes(activeBandId);
 }
 // Finds a song by UUID or legacy integer id — bridges the transition
 // period where setlists still carry integer song ids.
@@ -3103,7 +3104,11 @@ function updateSidebarCounts(){
 
 // ── SPREADSHEET ───────────────────────────────────────────
 const GENRES_LIST=['Jazz','Funk','Soul','Blues','Pop','Rock','Hard-Rock','Country','Folk','Latin','R&B','Samba','Bossa Nova','MPB','Pagode','Forró','Choro','Sertanejo','Brazilian Funk','Other'];
-const KEYS_LIST=['','Am','C','G','D','Dm','F','Bb','Eb','Gm','Em','A','E','Fm','Cm','Bm','Ab','Db'];
+const KEYS_LIST=['','C','C♯','D♭','D','E♭','E','F','F♯','G♭','G','A♭','A','B♭','B','C♭','Am','A♯m','B♭m','Bm','Cm','C♯m','Dm','D♯m','E♭m','Em','Fm','F♯m','Gm','G♯m','A♭m'];
+const KEY_NORMALIZE={'Bb':'B♭','Eb':'E♭','Ab':'A♭','Db':'D♭','Gb':'G♭','Cb':'C♭','C#':'C♯','F#':'F♯','G#':'G♯','A#':'A♯','D#':'D♯','B#':'B♯','Bbm':'B♭m','Ebm':'E♭m','Abm':'A♭m','Dbm':'D♭m','Gbm':'G♭m','C#m':'C♯m','F#m':'F♯m','G#m':'G♯m','A#m':'A♯m','D#m':'D♯m'};
+function normalizeKey(k){return KEY_NORMALIZE[String(k||'').trim()]||String(k||'').trim();}
+// Populate seKey select options from KEYS_LIST (single source of truth)
+(function(){const el=document.getElementById('seKey');if(el)el.innerHTML=KEYS_LIST.map(k=>`<option value="${k}">${k||'—'}</option>`).join('');})();
 
 // Duration formatting: seconds → X:YY:ZZ
 function fmtDur(sec){
@@ -3320,7 +3325,7 @@ async function saveSheetEdits(){
 }
 
 async function addSheetRow(){
-  const ns=await SongsDB.upsert({band_id:activeBandId,title:'',artist:'',genre:'Jazz',key:'Am',note:'',hidden:false,spotify:'',youtube:'',apple:''});
+  const ns=await SongsDB.upsert({band_id:activeBandId,title:'',artist:'',genre:'Jazz',key:'',note:'',hidden:false,spotify:'',youtube:'',apple:''});
   if(!ns)return;
   await loadSongs();renderSheet();updateLibCount();
   const rows=document.querySelectorAll('#sheetBody tr');
@@ -3374,7 +3379,7 @@ function importExcel(event){
       const rows=XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]],{defval:''});
       const imported=rows.map((r,i)=>{
         const k=Object.fromEntries(Object.entries(r).map(([key,val])=>[key.toLowerCase().trim(),val]));
-        return{id:i+1,title:String(k.title||k['song title']||k.song||'Untitled').trim(),artist:String(k.artist||'').trim(),genre:String(k.genre||'Jazz').trim(),key:String(k.key).trim(),note:String(k.notes||k['band notes']||k.note||'').trim(),spotify:String(k.spotify||k['spotify url']||'').trim(),youtube:String(k.youtube||k['youtube url']||'').trim(),apple:String(k['apple music']||k.apple||'').trim(),hidden:(String(k.hidden||'').toLowerCase()==='yes')};
+        return{id:i+1,title:String(k.title||k['song title']||k.song||'Untitled').trim(),artist:String(k.artist||'').trim(),genre:String(k.genre||'Jazz').trim(),key:normalizeKey(String(k.key).trim()),note:String(k.notes||k['band notes']||k.note||'').trim(),spotify:String(k.spotify||k['spotify url']||'').trim(),youtube:String(k.youtube||k['youtube url']||'').trim(),apple:String(k['apple music']||k.apple||'').trim(),hidden:(String(k.hidden||'').toLowerCase()==='yes')};
       });
       if(!imported.length){toast2('No songs found in file','w');return;}
       const existing=songs.length;
@@ -3400,7 +3405,9 @@ function openSongEdit(id){
   document.getElementById('seName').value=s.title;
   document.getElementById('seArtist').value=s.artist;
   document.getElementById('seGenre').value=s.genre;
-  document.getElementById('seKey').value=s.key;
+  const seKeyEl=document.getElementById('seKey');
+  if(seKeyEl.options.length!==KEYS_LIST.length)seKeyEl.innerHTML=KEYS_LIST.map(k=>`<option value="${k}">${k||'—'}</option>`).join('');
+  seKeyEl.value=normalizeKey(s.key);
   document.getElementById('seNote').value=s.note||'';
   // Duration
   const dur=s.dur||0;
@@ -6004,11 +6011,7 @@ async function saveSettings(){
       </select>
     </div>
     <div class="fg" data-i18n="Key"><label>Key</label>
-      <select id="seKey">
-        <option>Am</option><option>C</option><option>G</option><option>D</option><option>Dm</option>
-        <option>F</option><option>Bb</option><option>Eb</option><option>Gm</option><option>Em</option>
-        <option>A</option><option>E</option><option>Fm</option><option>Cm</option>
-      </select>
+      <select id="seKey"></select>
     </div>
   </div>
   <div class="fg" data-i18n="Band Notes"><label>Band Notes</label><textarea id="seNote" style="min-height:60px" placeholder="e.g. Antoine's feature, watch tempo…"></textarea></div>
