@@ -640,11 +640,16 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
         <button class="btn btn-p btn-sm" onclick="openAddSong()" data-i18n="+ Add Song">+ Add Song</button>
       </div>
 
-      <!-- Filters (cards view only) -->
-      <div class="lf" id="libFilters">
-        <input class="sb2" id="libSearch" placeholder="Search songs…" oninput="filterLib(this.value)" data-i18n-placeholder="Search songs…">
-        <button class="chip on" id="genreChipAll" onclick="filtG('All')" data-i18n="All">All</button>
-        <span id="genreChips"></span>
+      <!-- Filters (both views) -->
+      <div class="lf" id="libFilters" style="row-gap:8px">
+        <input class="sb2" id="libFTitle" placeholder="Title…" oninput="applyLibFilters()" style="flex:1;min-width:110px;max-width:200px" data-i18n-placeholder="Title…">
+        <input class="sb2" id="libFArtist" placeholder="Artist…" oninput="applyLibFilters()" style="flex:1;min-width:110px;max-width:200px" data-i18n-placeholder="Artist…">
+        <select id="libFKey" class="sb2" onchange="applyLibFilters()" style="flex:0 0 auto"></select>
+        <button id="libFClear" class="btn btn-g btn-sm" onclick="clearLibFilters()" style="display:none" data-i18n="✕ Clear">✕ Clear</button>
+        <span style="width:100%;display:flex;gap:7px;flex-wrap:wrap;align-items:center">
+          <button class="chip on" id="genreChipAll" onclick="filtG('All')" data-i18n="All">All</button>
+          <span id="genreChips"></span>
+        </span>
       </div>
 
       <!-- Cards view -->
@@ -2966,17 +2971,57 @@ async function createNewSetList(){
 
 // LIBRARY
 let aG='All';
-function renderLib(filter='All',search=''){
-  // Rebuild genre chips to only show genres present in the library
+
+function getLibFiltered(){
+  const title=(document.getElementById('libFTitle')?.value||'').toLowerCase().trim();
+  const artist=(document.getElementById('libFArtist')?.value||'').toLowerCase().trim();
+  const key=document.getElementById('libFKey')?.value||'';
+  return songs.filter(s=>{
+    if(aG!=='All'&&s.genre!==aG)return false;
+    if(key&&s.key!==key)return false;
+    if(title&&!s.title.toLowerCase().includes(title))return false;
+    if(artist&&!s.artist.toLowerCase().includes(artist))return false;
+    return true;
+  });
+}
+
+function renderLibFilters(){
   const chipsEl=document.getElementById('genreChips');
   if(chipsEl){
     const usedGenres=[...new Set(songs.map(s=>s.genre).filter(Boolean))].sort((a,b)=>a.localeCompare(b));
-    chipsEl.innerHTML=usedGenres.map(g=>`<button class="chip${filter===g?' on':''}" onclick="filtG('${g.replace(/'/g,"\\'")}',this)">${g}</button>`).join('');
+    chipsEl.innerHTML=usedGenres.map(g=>`<button class="chip${aG===g?' on':''}" onclick="filtG('${g.replace(/'/g,"\\'")}',this)">${g}</button>`).join('');
     const allChip=document.getElementById('genreChipAll');
-    if(allChip)allChip.classList.toggle('on',filter==='All');
+    if(allChip)allChip.classList.toggle('on',aG==='All');
   }
+  const keySelect=document.getElementById('libFKey');
+  if(keySelect){
+    const cur=keySelect.value;
+    const usedKeys=[...new Set(songs.map(s=>s.key).filter(Boolean))].sort((a,b)=>{const ai=KEYS_LIST.indexOf(a),bi=KEYS_LIST.indexOf(b);return(ai<0?999:ai)-(bi<0?999:bi);});
+    keySelect.innerHTML='<option value="">Key: All</option>'+usedKeys.map(k=>`<option value="${k}"${cur===k?' selected':''}>${k}</option>`).join('');
+  }
+  const title=document.getElementById('libFTitle')?.value||'';
+  const artist=document.getElementById('libFArtist')?.value||'';
+  const key=document.getElementById('libFKey')?.value||'';
+  const clearBtn=document.getElementById('libFClear');
+  if(clearBtn)clearBtn.style.display=(title||artist||key||aG!=='All')?'':'none';
+}
+
+function applyLibFilters(){
+  renderLibFilters();
+  if(libView==='sheet'){renderSheet();}else{renderLib();}
+}
+
+function clearLibFilters(){
+  ['libFTitle','libFArtist'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  const k=document.getElementById('libFKey');if(k)k.value='';
+  aG='All';
+  applyLibFilters();
+}
+
+function renderLib(){
+  renderLibFilters();
   const grid=document.getElementById('libGrid');
-  const f=songs.filter(s=>(filter==='All'||s.genre===filter)&&(s.title+s.artist).toLowerCase().includes(search.toLowerCase()));
+  const f=getLibFiltered();
   if(!f.length){
     const msg=songs.length
       ?`<div class="es" style="grid-column:1/-1"><div class="es-ico">🔍</div><h3>${t('No songs found')}</h3><p>${t('Try another filter or search term.')}</p></div>`
@@ -3015,8 +3060,8 @@ function renderLib(filter='All',search=''){
       </div>
     </div>`).join('');
 }
-function filtG(g){aG=g;renderLib(g);}
-function filterLib(v){renderLib(aG,v);}
+function filtG(g){aG=g;applyLibFilters();}
+function filterLib(v){applyLibFilters();}
 function openAddSong(){
   if(!activeBandId){toast2('Create a band first before adding songs','w');return;}
   _addSongDupConfirmed=false;
@@ -3067,7 +3112,7 @@ async function addSong(){
   });
   closeMod('alsMod');
   aG='All';
-  try{ await loadSongs();renderLib('All');updateLibCount();if(libView==='sheet')renderSheet(); }catch(e){ console.error('[bandapp] post-add refresh failed:',e); }
+  try{ await loadSongs();renderLib();updateLibCount();if(libView==='sheet')renderSheet(); }catch(e){ console.error('[bandapp] post-add refresh failed:',e); }
   toast2(`✦ "${title}" ${t('added to library!')}`);
 }
 
@@ -3081,7 +3126,6 @@ function setLibView(v){
   bs.style.background=v==='sheet'?'var(--a)':'transparent';bs.style.color=v==='sheet'?'#fff':'var(--ink2)';
   document.getElementById('libViewCardsArea').style.display=v==='cards'?'':'none';
   document.getElementById('libViewSheetArea').style.display=v==='sheet'?'':'none';
-  document.getElementById('libFilters').style.display=v==='cards'?'':'none';
   if(v==='sheet')renderSheet();
 }
 setLibView(libView);
@@ -3192,8 +3236,9 @@ function sortSheet(field){
 }
 
 function getSortedSongs(){
-  if(!sheetSortCol)return [...songs];
-  return [...songs].sort((a,b)=>{
+  const base=getLibFiltered();
+  if(!sheetSortCol)return base;
+  return [...base].sort((a,b)=>{
     let va=a[sheetSortCol]??'', vb=b[sheetSortCol]??'';
     if(typeof va==='boolean'){va=va?1:0;vb=vb?1:0;}
     else{va=String(va).toLowerCase();vb=String(vb).toLowerCase();}
@@ -3223,6 +3268,7 @@ function renderSheetHead(){
 }
 
 function renderSheet(){
+  renderLibFilters();
   renderSheetHead();
   const body=document.getElementById('sheetBody');if(!body)return;
   const sorted=getSortedSongs();
@@ -3344,7 +3390,7 @@ async function deleteSheetRow(id){
   if(usedIn.length){toast2(`Song can't be deleted as it is being used by Set List "${usedIn.join('", "')}". Please first remove it from the setlist(s).`,'w');return;}
   if(!confirm(`Delete "${s.title}"?`))return;
   await SongsDB.delete(s.id);
-  await loadSongs();renderSheet();renderLib(aG);updateLibCount();toast2('Song deleted','w');
+  await loadSongs();renderSheet();renderLib();updateLibCount();toast2('Song deleted','w');
 }
 
 // ── EXCEL EXPORT ──────────────────────────────────────────
@@ -3386,7 +3432,7 @@ function importExcel(event){
       const msg=existing?`Add ${imported.length} song${imported.length!==1?'s':''} to your existing library (${existing} song${existing!==1?'s':''})?`:`Import ${imported.length} song${imported.length!==1?'s':''} into your library?`;
       if(confirm(msg)){
         await Promise.all(imported.map(s=>SongsDB.upsert({band_id:activeBandId,...s,id:undefined})));
-        await loadSongs();renderLib(aG);renderSheet();updateLibCount();
+        await loadSongs();renderLib();renderSheet();updateLibCount();
         toast2(`✓ ${imported.length} song${imported.length!==1?'s':''} added to library!`);
       }
     }catch(err){toast2('Could not read file — please use an Excel (.xlsx) file','w');console.error('[bandapp] importExcel:',err);}
@@ -3453,7 +3499,7 @@ async function saveSongEdit(){
     console.error('[bandapp] saveSongEdit error:',e);
     return;
   }
-  closeMod('seMod');await loadSongs();renderLib(aG);toast2('Song updated!');
+  closeMod('seMod');await loadSongs();renderLib();toast2('Song updated!');
 }
 
 async function toggleHideSong(id){
@@ -3469,7 +3515,7 @@ async function toggleHideSong(id){
     hBtn.style.borderColor=updated.hidden?'#86EFAC':'var(--bd)';
     hBtn.style.color=updated.hidden?'var(--g)':'var(--ink2)';
   }
-  renderLib(aG);
+  renderLib();
   toast2(updated.hidden?'Song hidden from setlists':'Song visible again');
 }
 
@@ -3480,7 +3526,7 @@ async function deleteSong(id){
   if(!confirm(`Delete "${s.title}"? This cannot be undone.`))return;
   await SongsDB.delete(s.id);
   if(editingSongId===s.id)closeMod('seMod');
-  await loadSongs();renderLib(aG);toast2('Song deleted','w');
+  await loadSongs();renderLib();toast2('Song deleted','w');
 }
 function openAsMod(){
   const sl=setlists.find(x=>x.id===activeSetlistId);
