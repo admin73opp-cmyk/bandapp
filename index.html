@@ -3898,22 +3898,30 @@ async function confirmCancel(notify){
   const {type,id}=cancelTarget;
   const appUrl=(localStorage.getItem('appUrl')||window.location.origin+'/').replace(/[?#].*/,'').replace(/\/+$/,'');
   let msg=`🚫 Event cancelled. Please check Bandapp for updates: ${appUrl}`;
-  if(type==='concert'){
-    const c=concerts.find(x=>x.id===id);
-    if(c){
-      msg=`🚫 Concert on ${c.date} cancelled. Please check Bandapp for updates: ${appUrl}`;
-      await ConcertsDB.upsert({...c, cancelled:true});
-      await loadConcerts();
-      renderConcerts();renderCal();updateSidebarCounts();
+  try{
+    if(type==='concert'){
+      const c=concerts.find(x=>x.id===id);
+      if(c){
+        msg=`🚫 Concert on ${c.date} cancelled. Please check Bandapp for updates: ${appUrl}`;
+        const saved=await ConcertsDB.upsert({...c, cancelled:true});
+        if(!saved){closeMod('cancelMod');cancelTarget=null;return;}
+        await loadConcerts();
+        renderConcerts();renderCal();updateSidebarCounts();
+      }
+    } else {
+      const r=rehearsals.find(x=>x.id===id);
+      if(r){
+        msg=`🚫 Rehearsal on ${r.date} cancelled. Please check Bandapp for updates: ${appUrl}`;
+        const saved=await RehearsalsDB.upsert({...r, cancelled:true});
+        if(!saved){closeMod('cancelMod');cancelTarget=null;return;}
+        await loadRehearsals();
+        renderRehearsals();renderCal();updateSidebarCounts();
+      }
     }
-  } else {
-    const r=rehearsals.find(x=>x.id===id);
-    if(r){
-      msg=`🚫 Rehearsal on ${r.date} cancelled. Please check Bandapp for updates: ${appUrl}`;
-      await RehearsalsDB.upsert({...r, cancelled:true});
-      await loadRehearsals();
-      renderRehearsals();renderCal();updateSidebarCounts();
-    }
+  } catch(e){
+    console.error('[bandapp] confirmCancel error:',e);
+    toast2('Something went wrong cancelling the event','w');
+    closeMod('cancelMod');cancelTarget=null;return;
   }
   closeMod('cancelMod');closeMod('cvMod');closeMod('reViewMod');cancelTarget=null;
   const ch=getBandNotifPref();const waLinked=!!bandWaLinks[activeBandId];
@@ -3953,7 +3961,11 @@ function openConcertView(id){
     ?photos.map((p,i)=>`<img src="${p.url}" style="width:72px;height:72px;border-radius:8px;object-fit:cover;border:1.5px solid var(--bd);cursor:pointer" onclick="openPhotoLightbox('${c.id}',${i})">`).join('')
     :`<span style="font-size:.76rem;color:var(--ink3)">${t('No photos yet')}</span>`;
   const actions=document.getElementById('cvActions');
-  if(c.cancelled||past){
+  const isAdminCv=currentUser.role==='admin';
+  if(c.cancelled){
+    actions.innerHTML=`<button class="btn btn-g" onclick="closeMod('cvMod')">${t('Close')}</button>`
+      +(isAdminCv?`<button class="btn btn-g btn-sm" style="color:var(--red,#e53935);border-color:var(--red,#e53935)" onclick="deleteConcert('${c.id}')">🗑 Delete</button>`:'');
+  } else if(past){
     actions.innerHTML=`<button class="btn btn-g" onclick="closeMod('cvMod')">${t('Close')}</button>`;
   } else {
     const slBtns=(c.setlistIds||[]).map(sid=>{const sl=setlists.find(x=>x.id===sid);return sl?`<button class="btn btn-p btn-sm" onclick="openSetlistFromConcert('${sid}')">♩ ${sl.name}</button>`:''}).join('');
