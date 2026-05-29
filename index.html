@@ -215,7 +215,7 @@ select option{background:var(--w)}
 .sctt{font-weight:700;font-size:.87rem;margin-bottom:2px}.scar{color:var(--ink2);font-size:.75rem;margin-bottom:9px}
 .sclinks{display:flex;gap:5px;margin-top:9px}
 .svb{padding:4px 9px;border-radius:6px;font-size:.69rem;font-weight:600;border:1.5px solid var(--bd);background:transparent;color:var(--ink2);cursor:pointer;transition:all .11s;font-family:var(--font)}
-.svb:hover{border-color:var(--a);color:var(--a)}.svb-sp{border-color:rgba(29,185,84,.4);color:#1DB954}.svb-yt{border-color:rgba(220,38,38,.3);color:var(--r)}.svb-am{border-color:rgba(255,153,0,.4);color:#FF9900}
+.svb:hover{border-color:var(--a);color:var(--a)}.svb-sp{border-color:rgba(29,185,84,.4);color:#1DB954}.svb-yt{border-color:rgba(220,38,38,.3);color:var(--r)}.svb-am{border-color:rgba(255,153,0,.4);color:#FF9900}.svb-ly{border-color:rgba(108,99,255,.35);color:var(--a)}
 /* calendar */
 .calhdr{display:flex;align-items:center;gap:10px;margin-bottom:17px;flex-wrap:wrap}
 .calnav{display:flex;gap:3px}
@@ -1088,6 +1088,27 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
             <button class="btn btn-g btn-sm" onclick="saveWaLink()" data-i18n="Save">Save</button>
             <button id="waRemoveBtn" class="btn btn-g btn-sm" style="display:none;color:var(--r);border-color:var(--r2)" onclick="removeWaLink()" data-i18n="Remove">Remove</button>
           </div>
+        </div>
+
+        <!-- Lyrics / Sheet Music Repository card — admin only -->
+        <div class="card" id="bpLyricsCard" style="grid-column:1/-1;display:none">
+          <div class="ch">
+            <div class="ct" style="display:flex;align-items:center;gap:7px"><span style="font-size:1.05rem">📄</span> Lyrics / Sheet Music Repository</div>
+          </div>
+          <div style="font-size:.75rem;color:var(--ink2);margin-bottom:13px">Set the preferred storage location for song lyrics and sheet music. Members will see this as a hint when adding files to a song.</div>
+          <select id="bpLyricsRepo" class="sb2" style="max-width:320px;margin-bottom:12px">
+            <option value="any">Any — members choose per song</option>
+            <option value="bandapp">Bandapp (in-app upload)</option>
+            <option value="gdrive">Google Drive</option>
+            <option value="dropbox">Dropbox</option>
+            <option value="onedrive">OneDrive (Microsoft)</option>
+            <option value="icloud">iCloud Drive</option>
+            <option value="box">Box</option>
+            <option value="musescore">MuseScore</option>
+            <option value="flat">Flat.io</option>
+            <option value="other">Other URL</option>
+          </select><br>
+          <button class="btn btn-p btn-sm" onclick="saveLyricsRepo()">Save</button>
         </div>
 
         <!-- Notification Preference card -->
@@ -3122,6 +3143,7 @@ function renderLib(){
         <span class="kp">${s.key}</span>
       </div>
       <div class="sclinks">
+        ${s.lyrics?`<button class="svb svb-ly" data-url="${s.lyrics}" onclick="event.stopPropagation();openMediaUrl(this)">📄 Lyrics</button>`:''}
         ${s.spotify?`<button class="svb svb-sp" data-url="${s.spotify}" onclick="event.stopPropagation();openMediaUrl(this)">Spotify</button>`:''}
         ${s.youtube?`<button class="svb svb-yt" data-url="${s.youtube}" onclick="event.stopPropagation();openMediaUrl(this)">YouTube</button>`:''}
         ${s.apple?`<button class="svb" data-url="${s.apple}" onclick="event.stopPropagation();openMediaUrl(this)">Apple</button>`:''}
@@ -3261,7 +3283,7 @@ function slTotalDur(){
   return getSlS().reduce((acc,id)=>{const s=songByAnyId(id);return acc+(s&&s.dur?s.dur:0);},0);
 }
 let sheetSortCol=null, sheetSortDir='asc';
-const SHEET_COL_DEFAULT_W={title:200,artist:150,genre:100,key:75,dur:135,note:170,spotify:160,youtube:160,apple:160,amazon:160,hidden:60};
+const SHEET_COL_DEFAULT_W={title:200,artist:150,genre:100,key:75,dur:135,note:170,lyrics:75,spotify:160,youtube:160,apple:160,amazon:160,hidden:60};
 let _sheetColWidths={};
 function sheetColW(field){return _sheetColWidths[field]||SHEET_COL_DEFAULT_W[field]||120;}
 function sheetTblW(){return 32+SHEET_COLS.reduce((s,c)=>s+sheetColW(c.field),0)+36;}
@@ -3306,6 +3328,7 @@ const SHEET_COLS=[
   {label:'Key',     field:'key',     width:'80px'},
   {label:'Duration',field:'dur',     width:'100px'},
   {label:'Notes',   field:'note',    width:null},
+  {label:'Lyrics',  field:'lyrics',  width:'75px'},
   {label:'Spotify', field:'spotify', width:'180px'},
   {label:'YouTube', field:'youtube', width:'180px'},
   {label:'Apple',   field:'apple',   width:'180px'},
@@ -3371,6 +3394,7 @@ function renderSheet(){
         </div>
       </td>
       <td><input class="sh-cell" style="min-width:140px" value="${esc(s.note||'')}" data-field="note" data-id="${s.id}" onchange="sheetEdit(this)" onkeydown="sheetKeyDown(event,this)"></td>
+      <td style="text-align:center;padding:6px 4px">${s.lyrics?`<a href="${esc(s.lyrics)}" target="_blank" rel="noopener noreferrer" style="font-size:.85rem;text-decoration:none" title="View Lyrics / Sheet Music">📄</a>`:`<span style="color:var(--ink3);font-size:.72rem">—</span>`}</td>
       <td><input class="sh-cell" style="min-width:150px;font-size:.72rem" value="${esc(s.spotify||'')}" placeholder="Spotify URL" data-field="spotify" data-id="${s.id}" onchange="sheetEdit(this)" onkeydown="sheetKeyDown(event,this)"></td>
       <td><input class="sh-cell" style="min-width:150px;font-size:.72rem" value="${esc(s.youtube||'')}" placeholder="YouTube URL" data-field="youtube" data-id="${s.id}" onchange="sheetEdit(this)" onkeydown="sheetKeyDown(event,this)"></td>
       <td><input class="sh-cell" style="min-width:150px;font-size:.72rem" value="${esc(s.apple||'')}" placeholder="Apple Music URL" data-field="apple" data-id="${s.id}" onchange="sheetEdit(this)" onkeydown="sheetKeyDown(event,this)"></td>
@@ -3549,6 +3573,19 @@ function openSongEdit(id){
   document.getElementById('seYoutube').value=s.youtube||'';
   document.getElementById('seApple').value=s.apple||'';
   document.getElementById('seAmazon').value=s.amazon||'';
+  // Lyrics / Sheet Music
+  const lyricsVal=s.lyrics||'';
+  document.getElementById('seLyrics').value=lyricsVal;
+  document.getElementById('seLyricsUploadStatus').textContent='';
+  const lyricsViewBtn=document.getElementById('seLyricsViewBtn');
+  if(lyricsViewBtn)lyricsViewBtn.style.display=lyricsVal?'':'none';
+  const repoHint=document.getElementById('seLyricsRepoHint');
+  if(repoHint){
+    const _repoHints={bandapp:'This band uses in-app file upload.',gdrive:'Paste a Google Drive sharing link.',dropbox:'Paste a Dropbox sharing link.',onedrive:'Paste a OneDrive sharing link.',icloud:'Paste an iCloud Drive sharing link.',box:'Paste a Box sharing link.',musescore:'Paste a MuseScore score link.',flat:'Paste a Flat.io score link.',other:'Paste any direct URL.'};
+    const _repo=getActiveBand()?.lyrics_repo||'any';
+    repoHint.textContent=_repoHints[_repo]||'';
+    repoHint.style.display=_repoHints[_repo]?'':'none';
+  }
   // update hidden toggle
   const hBtn=document.getElementById('seHideBtn');
   hBtn.textContent=s.hidden?'👁 Unhide Song':'🙈 Hide Song';
@@ -3578,6 +3615,7 @@ async function saveSongEdit(){
       youtube:document.getElementById('seYoutube').value,
       apple:document.getElementById('seApple').value,
       amazon:document.getElementById('seAmazon').value,
+      lyrics:document.getElementById('seLyrics').value,
       hidden:s.hidden,
     });
   }catch(e){
@@ -3587,6 +3625,38 @@ async function saveSongEdit(){
     return;
   }
   closeMod('seMod');await loadSongs();renderLib();toast2('Song updated!');
+}
+
+// ── Lyrics / Sheet Music ──────────────────────────────────────
+
+async function handleSongFileUpload(event){
+  const file=event.target.files[0];if(!file)return;
+  const statusEl=document.getElementById('seLyricsUploadStatus');
+  const lyricsInput=document.getElementById('seLyrics');
+  const viewBtn=document.getElementById('seLyricsViewBtn');
+  if(file.size>10*1024*1024){toast2('File too large — max 10 MB','w');event.target.value='';return;}
+  const allowedTypes=['application/pdf','image/png','image/jpeg','image/gif','application/octet-stream','text/xml','application/xml','application/vnd.recordare.musicxml+xml'];
+  if(!allowedTypes.includes(file.type)&&!file.name.match(/\.(pdf|png|jpe?g|gif|mxl|xml)$/i)){toast2('Unsupported file type','w');event.target.value='';return;}
+  if(statusEl)statusEl.textContent='Uploading…';
+  const ext=file.name.split('.').pop().toLowerCase();
+  const safeName=file.name.replace(/[^a-zA-Z0-9._-]/g,'_').slice(0,80);
+  const path=`${activeBandId||'band'}/${Date.now()}_${safeName}`;
+  const{data,error}=await supabase.storage.from('song-attachments').upload(path,file,{upsert:false,contentType:file.type});
+  if(error){toast2('Upload failed: '+error.message,'w');if(statusEl)statusEl.textContent='';event.target.value='';return;}
+  const{data:{publicUrl}}=supabase.storage.from('song-attachments').getPublicUrl(path);
+  if(lyricsInput)lyricsInput.value=publicUrl;
+  if(viewBtn)viewBtn.style.display='';
+  if(statusEl)statusEl.textContent=`✓ ${file.name} uploaded`;
+  event.target.value='';
+}
+
+// Band setting — save lyrics repository preference
+async function saveLyricsRepo(){
+  const val=document.getElementById('bpLyricsRepo')?.value||'any';
+  const b=getActiveBand();if(!b)return;
+  b.lyrics_repo=val;
+  await BandsDB.upsert({id:activeBandId,lyrics_repo:val});
+  toast2('Repository preference saved!');
 }
 
 async function toggleHideSong(id){
@@ -5011,6 +5081,14 @@ function renderBP(){
   const adminActions=document.getElementById('bpAdminActions');
   if(adminActions)adminActions.style.display=isAdmin?'flex':'none';
 
+  // Lyrics repo card — admin only; populate select with saved preference
+  const lyricsCard=document.getElementById('bpLyricsCard');
+  if(lyricsCard){
+    lyricsCard.style.display=isAdmin&&b?'':'none';
+    const lyricsRepo=document.getElementById('bpLyricsRepo');
+    if(lyricsRepo&&b) lyricsRepo.value=b.lyrics_repo||'any';
+  }
+
   // Band invite link (admin only) — full URL so recipients can just click/paste
   const codeEl=document.getElementById('bpJoinCode');
   if(codeEl){
@@ -6346,6 +6424,23 @@ async function saveSettings(){
       <span id="seDurPreview" style="font-family:var(--mono);font-size:.78rem;color:var(--ink3);min-width:36px"></span>
     </div>
   </div>
+
+  <!-- Lyrics / Sheet Music -->
+  <div style="height:1px;background:var(--bd);margin:4px 0 14px"></div>
+  <div style="font-size:.69rem;font-weight:700;color:var(--ink2);margin-bottom:6px;letter-spacing:.04em;text-transform:uppercase">📄 Lyrics / Sheet Music <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--ink3)">(optional)</span></div>
+  <div id="seLyricsRepoHint" style="font-size:.72rem;color:var(--a);margin-bottom:8px;display:none"></div>
+  <div style="display:flex;gap:7px;align-items:center;margin-bottom:8px">
+    <input id="seLyrics" style="flex:1;padding:9px 13px;background:var(--bg);border:1.5px solid var(--bd);border-radius:var(--rad);color:var(--ink);font-family:var(--font);font-size:.83rem;outline:none;transition:border-color .13s" placeholder="Paste Google Drive, Dropbox, OneDrive… link, or upload below" onfocus="this.style.borderColor='var(--a)'" onblur="this.style.borderColor='var(--bd)'" oninput="document.getElementById('seLyricsViewBtn').style.display=this.value?'':'none'">
+    <button id="seLyricsViewBtn" onclick="openMediaUrl(document.getElementById('seLyrics'))" style="display:none;padding:8px 12px;border-radius:var(--rad);border:1.5px solid var(--a);background:var(--a2);color:var(--a);font-family:var(--font);font-size:.8rem;font-weight:600;cursor:pointer;white-space:nowrap">📄 View</button>
+  </div>
+  <div style="display:flex;align-items:center;gap:9px;margin-bottom:4px">
+    <label class="btn btn-g btn-sm" style="cursor:pointer;font-size:.75rem;padding:6px 12px">
+      ⬆ Upload file
+      <input type="file" id="seLyricsUpload" accept=".pdf,.png,.jpg,.jpeg,.gif,.mxl,.xml" style="display:none" onchange="handleSongFileUpload(event)">
+    </label>
+    <span id="seLyricsUploadStatus" style="font-size:.72rem;color:var(--ink3)"></span>
+  </div>
+  <div style="font-size:.69rem;color:var(--ink3);margin-bottom:4px">Accepted: PDF, PNG, JPG, GIF, MXL, XML &nbsp;·&nbsp; Max 10 MB &nbsp;·&nbsp; Stored in Bandapp</div>
 
   <!-- Streaming links -->
   <div style="height:1px;background:var(--bd);margin:4px 0 14px"></div>
