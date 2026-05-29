@@ -6,26 +6,32 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
-const CORS = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+const APP_URL = Deno.env.get('APP_URL') || ''
+
+function corsHeaders(req: Request) {
+  const origin = req.headers.get('origin') || ''
+  const allowed = APP_URL && origin === APP_URL ? origin : ''
+  return {
+    'Access-Control-Allow-Origin': allowed,
+    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  }
 }
 
-function json(body: unknown, status = 200) {
+function json(req: Request, body: unknown, status = 200) {
   return new Response(JSON.stringify(body), {
     status,
-    headers: { ...CORS, 'Content-Type': 'application/json' },
+    headers: { ...corsHeaders(req), 'Content-Type': 'application/json' },
   })
 }
 
 serve(async (req) => {
-  if (req.method === 'OPTIONS') return new Response('ok', { headers: CORS })
+  if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders(req) })
 
   try {
     const resendKey = Deno.env.get('RESEND_API_KEY')
     const fromEmail = Deno.env.get('FROM_EMAIL') || 'noreply@bandapp.app'
 
-    if (!resendKey) return json({ error: 'Email service not configured' }, 503)
+    if (!resendKey) return json(req, { error: 'Email service not configured' }, 503)
 
     const authHeader = req.headers.get('Authorization') ?? ''
 
@@ -42,10 +48,10 @@ serve(async (req) => {
     )
 
     const { data: { user: caller } } = await userClient.auth.getUser()
-    if (!caller) return json({ error: 'Unauthorized' }, 401)
+    if (!caller) return json(req, { error: 'Unauthorized' }, 401)
 
     const { band_id, title, date, start, end, location, notes } = await req.json()
-    if (!band_id || !title || !date) return json({ error: 'band_id, title, and date are required' }, 400)
+    if (!band_id || !title || !date) return json(req, { error: 'band_id, title, and date are required' }, 400)
 
     // Verify caller is admin of this band
     const { data: mem } = await admin
@@ -55,7 +61,7 @@ serve(async (req) => {
       .eq('user_id', caller.id)
       .single()
 
-    if (mem?.role !== 'admin') return json({ error: 'Only band admins can send rehearsal notifications' }, 403)
+    if (mem?.role !== 'admin') return json(req, { error: 'Only band admins can send rehearsal notifications' }, 403)
 
     // Get band name
     const { data: band } = await admin.from('bands').select('name').eq('id', band_id).single()
@@ -67,7 +73,7 @@ serve(async (req) => {
       .select('user_id, profiles(first_name, last_name)')
       .eq('band_id', band_id)
 
-    if (!memberRows?.length) return json({ success: true, sent: 0 })
+    if (!memberRows?.length) return json(req, { success: true, sent: 0 })
 
     // Resolve emails via auth.admin.getUserById — works regardless of whether the
     // profiles.email column exists (that migration may not have been run yet).
@@ -88,7 +94,7 @@ serve(async (req) => {
       (r): r is { email: string; name: string } => r !== null
     )
 
-    if (!recipients.length) return json({ success: true, sent: 0 })
+    if (!recipients.length) return json(req, { success: true, sent: 0 })
 
     // Build email content
     const timeStr = start ? ` at ${start}${end ? `–${end}` : ''}` : ''
@@ -128,9 +134,9 @@ serve(async (req) => {
     }))
 
     const errors = results.filter((e): e is string => e !== null)
-    return json({ success: true, sent: recipients.length - errors.length, errors: errors.length ? errors : undefined })
+    return json(req, { success: true, sent: recipients.length - errors.length, errors: errors.length ? errors : undefined })
 
   } catch (e) {
-    return json({ error: (e as Error).message }, 500)
+    return json(req, { error: (e as Error).message }, 500)
   }
 })
