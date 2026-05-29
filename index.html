@@ -1564,6 +1564,7 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
   <div class="fg" data-i18n="To (leave blank for single day)"><label>To <span style="font-weight:400;color:var(--ink3)" data-i18n="(leave blank for single day)">(leave blank for single day)</span></label><input type="date" id="blkTo"></div>
   <div class="fg" id="blkMemberWrap" data-i18n="Member"><label data-i18n="Member">Member</label><select id="blkMember"></select></div>
   <div class="fg" data-i18n="Reason (optional)"><label data-i18n="Reason (optional)">Reason <span style="font-weight:400;color:var(--ink3)">(optional)</span></label><textarea id="blkReason" placeholder="Holiday, work trip, event…" data-i18n-placeholder="Holiday, work trip, event…" style="min-height:55px"></textarea></div>
+  <div id="blkErr" style="display:none;margin-bottom:10px;padding:10px 13px;background:var(--r2);border:1px solid var(--r);border-radius:var(--rad);font-size:.78rem;color:var(--r)"></div>
   <div class="moft">
     <button class="btn btn-g" onclick="closeMod('blkMod')" data-i18n="Cancel">Cancel</button>
     <button class="btn btn-p" onclick="saveBlockDays()" data-i18n="Block Days">Block Days</button>
@@ -3855,21 +3856,29 @@ async function saveBlockDays(){
   const to=document.getElementById('blkTo').value||from;
   const memberId=document.getElementById('blkMember').value;
   const reason=document.getElementById('blkReason').value.trim();
+  const errEl=document.getElementById('blkErr');
+  if(errEl)errEl.style.display='none';
   if(!from){toast2(t('Please select a start date')||'Please select a start date','w');return;}
   if(!memberId){toast2('Please select a member','w');return;}
-  // Non-admins can only block themselves
   if(currentUser.role!=='admin'&&memberId!==currentUser.id){toast2('You can only block your own days','w');return;}
   const m=members.find(x=>x.id===memberId);
   const memberName=m?[m.firstName,m.lastName].filter(Boolean).join(' '):currentUser.firstName||'Member';
   const label=reason||`${memberName} unavailable`;
   const payload={label,from,to,scope:'members',mids:[memberId]};
+  // Disable button while saving
+  const saveBtn=document.querySelector('#blkMod .btn-p');
+  if(saveBtn){saveBtn.disabled=true;saveBtn.textContent='Saving…';}
   const saved=await BlackoutsDB.upsert(payload);
-  if(!saved)return;
+  if(saveBtn){saveBtn.disabled=false;saveBtn.textContent=t('Block Days')||'Block Days';}
+  if(!saved){
+    if(errEl){errEl.textContent='Could not save — check you have the right permissions (admin may need to apply the latest RLS migration in Supabase).';errEl.style.display='';}
+    return;
+  }
   await loadBlackouts();
   if(!blackouts.find(b=>b.id===saved.id)){blackouts=[...blackouts,saved];_boMapVer++;}
   const range=from+(to&&to!==from?' – '+to:'');
   logCalChange('created','blackout',saved.id,`${memberName} blocked: ${range}${reason?' — '+reason:''}`,_rangeImpactsEvent(from,to));
-  closeMod('blkMod');renderBOList();renderCal();syncBOPill();
+  closeMod('blkMod');renderBOList();renderCal();renderCalChangelog().catch(()=>{});syncBOPill();
   toast2('Days blocked!');
 }
 function togBOMc(el){el.classList.toggle('on');}
@@ -4199,6 +4208,7 @@ async function confReh(){
     const saved=await RehearsalsDB.upsert({title,date:confirmedKey,start,end,location,notes,band_id:activeBandId});
     if(!saved){return;}
     logCalChange('created','rehearsal',saved.id,`Rehearsal "${title}" on ${confirmedKey}${location?' @ '+location:''} confirmed`,true);
+    renderCalChangelog().catch(()=>{});  // refresh log immediately after save
     await loadRehearsals();
     // If loadRehearsals was preempted by a concurrent load (gen mismatch), the new rehearsal
     // may not yet be in the array. Add it optimistically so the calendar dot appears immediately.
@@ -5700,16 +5710,24 @@ async function submitFeedback(){
   btn.disabled=true;btn.textContent='Submitting…';
   try{
     const {data:{session:_fbSession}}=await supabase.auth.getSession();
+    const controller=new AbortController();
+    const _fbTimer=setTimeout(()=>controller.abort(),15000); // 15 s hard timeout
     const res=await fetch('/api/feedback',{
       method:'POST',
       headers:{'Content-Type':'application/json','Authorization':`Bearer ${_fbSession?.access_token||''}`},
       body:JSON.stringify({title,body,labels:cat==='bug'?['bug']:['enhancement']}),
+      signal:controller.signal,
     });
+    clearTimeout(_fbTimer);
     const data=await res.json().catch(()=>({}));
     if(res.ok){closeMod('feedbackMod');toast2('Thanks! Your feedback has been submitted.');}
     else{toast2(data.message||`Error ${res.status}. Please try again.`,'w');}
-  }catch(e){toast2('Network error. Please try again.','w');}
-  btn.disabled=false;btn.textContent='Submit';
+  }catch(e){
+    if(e.name==='AbortError')toast2('Request timed out — please try again','w');
+    else toast2('Network error. Please try again.','w');
+  }finally{
+    btn.disabled=false;btn.textContent='Submit';
+  }
 }
 </script>
 <!-- MUSICIAN PROFILE MODAL -->
