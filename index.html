@@ -232,6 +232,12 @@ select option{background:var(--w)}
 .cd.creh .cdn{color:#fff;font-weight:700}
 .cd.creh .cdot-r{background:#fff}
 .cd.creh .cltn{color:#fff}
+.cl-entry{display:flex;align-items:flex-start;gap:9px;padding:7px 10px;background:var(--w);border:1px solid var(--bd);border-radius:var(--rad);font-size:.78rem}
+.cl-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:3px;background:var(--ink3)}
+.cl-dot.cl-evt{background:var(--amb)}
+.cl-body{flex:1;min-width:0}
+.cl-desc{color:var(--ink);line-height:1.35}
+.cl-meta{font-size:.69rem;color:var(--ink3);margin-top:2px}
 .cd.creh-warn{background:var(--amb);border:2.5px solid #92400E;box-shadow:0 0 0 1px rgba(217,119,6,.3)}
 .cd.creh-warn .cdn{color:#fff;font-weight:700}
 .cd.creh-warn .cdot-r{background:#fff}
@@ -782,6 +788,24 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
             <div class="li" data-i18n="Full band ⚡"><div class="ld2" style="background:var(--g);box-shadow:0 0 0 2px #86EFAC"></div>Full band ⚡</div>
           </div>
         </div>
+      <!-- ══ CALENDAR CHANGE LOG ══ -->
+      <div id="calChangelogSection" style="margin-top:18px">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;flex-wrap:wrap">
+          <div style="font-size:.82rem;font-weight:700;letter-spacing:-.01em">📋 Change Log</div>
+          <select id="clDaysFilter" class="sb2" style="font-size:.74rem;padding:4px 8px" onchange="renderCalChangelog()">
+            <option value="10">Last 10 days</option>
+            <option value="30">Last 30 days</option>
+            <option value="60">Last 60 days</option>
+          </select>
+          <select id="clOwnerFilter" class="sb2" style="font-size:.74rem;padding:4px 8px;min-width:120px" onchange="renderCalChangelog()">
+            <option value="">All members</option>
+          </select>
+          <button id="clCleanupBtn" class="btn btn-g btn-sm" style="display:none;font-size:.72rem" onclick="cleanupChangelog()" title="Remove all entries older than 60 days">🗑 Clean up &gt;60 days</button>
+          <div style="margin-left:auto;font-size:.69rem;color:var(--ink3)">ℹ Entries kept for 60 days</div>
+        </div>
+        <div id="clList" style="display:flex;flex-direction:column;gap:4px"></div>
+      </div>
+
       </div>
 
       <!-- ══ COMPACT VIEW = Availability Grid ══ -->
@@ -1909,6 +1933,7 @@ async function deleteRehearsal(id){
   const r=rehearsals.find(x=>x.id===id);if(!r)return;
   if(!confirm(`Delete "${r.title}"? This cannot be undone.`))return;
   await RehearsalsDB.delete(id);
+  logCalChange('deleted','rehearsal',id,`Rehearsal "${r.title}"${r.date?' on '+r.date:''} deleted`,true);
   await loadRehearsals();
   closeMod('reViewMod');
   renderRehearsals();
@@ -1952,6 +1977,9 @@ async function saveRehEdit(){
   if(editingRehId) payload.id=editingRehId;
   const saved=await RehearsalsDB.upsert(payload);
   if(!saved)return;
+  const _rehAction=editingRehId?'updated':'created';
+  const _rehDesc=`Rehearsal "${title}"${dateVal?' on '+dateVal:''} ${_rehAction}`;
+  logCalChange(_rehAction,'rehearsal',saved.id,_rehDesc,true);
   await loadRehearsals();
   closeMod('reMod');renderRehearsals();updateSidebarCounts();toast2(editingRehId?'Rehearsal updated!':'Rehearsal added!');
 }
@@ -2534,6 +2562,7 @@ function nav(p){
   document.getElementById('pgT').textContent=t(T[p]||p);
   if(p==='myprofile') populateMpPage().catch(console.error);
   if(p==='settings') populateSettingsPage();
+  if(p==='calendar') renderCalChangelog().catch(console.error);
   applyI18n();
   closeSb();
 }
@@ -3687,10 +3716,17 @@ async function savBO(){
     blackouts=[...blackouts,saved];
     _boMapVer++;
   }
+  const _boAction=id?'updated':'created';
+  const _boRange=from+(to&&to!==from?' – '+to:'');
+  const _boImpacts=_rangeImpactsEvent(from,to);
+  logCalChange(_boAction,'blackout',saved.id,`Blackout "${label}" (${_boRange}) ${_boAction}`,_boImpacts);
   closeMod('boMod');renderBOList();renderCal();syncBOPill();toast2(id?'Blackout updated':'Blackout added');
 }
 async function delBO(id){
+  const bo=blackouts.find(x=>x.id===id);
+  const _boImpacts=bo?_rangeImpactsEvent(bo.from,bo.to):false;
   await BlackoutsDB.delete(id);
+  if(bo) logCalChange('deleted','blackout',id,`Blackout "${bo.label}" (${bo.from+(bo.to&&bo.to!==bo.from?' – '+bo.to:'')}) removed`,_boImpacts);
   await loadBlackouts();
   renderBOList();renderCal();syncBOPill();toast2('Blackout removed','w');
 }
@@ -3726,6 +3762,7 @@ function setCalView(v){
   bf.style.background=v==='full'?'var(--a)':'transparent';bf.style.color=v==='full'?'#fff':'var(--ink2)';
   bc.style.background=v==='compact'?'var(--a)':'transparent';bc.style.color=v==='compact'?'#fff':'var(--ink2)';
   checkLandscapeHint();renderCal();
+  if(v==='full') renderCalChangelog().catch(()=>{});
 }
 function checkLandscapeHint(){
   const h=document.getElementById('landscapeHint');if(!h)return;
@@ -3824,6 +3861,88 @@ function calClk(d,key,isFull){
   openRehMod(d,key,isFull);
 }
 function chMonth(dir){curMonth.setMonth(curMonth.getMonth()+dir);renderCal();}
+
+// ── Calendar Change Log ───────────────────────────────────────
+
+// Non-blocking helper — call after any calendar mutation
+function logCalChange(action, entityType, entityId, description, impactsEvent=false){
+  if(!activeBandId||!currentUser.id||typeof ChangelogDB==='undefined')return;
+  ChangelogDB.log(activeBandId,currentUser.id,action,entityType,entityId,description,impactsEvent)
+    .catch(()=>{});
+}
+
+// Does the given date range overlap any existing rehearsal or concert?
+function _rangeImpactsEvent(from,to){
+  const t=to||from;
+  return rehearsals.some(r=>r.date&&r.date>=from&&r.date<=t&&!r.cancelled)||
+         concerts.some(c=>c.date&&c.date>=from&&c.date<=t&&!c.cancelled);
+}
+
+// Does changing this availability vector make any upcoming rehearsal conflicted?
+function _availImpactsRehearsal(avail){
+  return rehearsals.some(r=>{
+    if(!r.date||r.date<TODAY_STR||r.cancelled)return false;
+    const p=r.date.split('-');
+    const dow=new Date(parseInt(p[0]),parseInt(p[1])-1,parseInt(p[2])).getDay();
+    return !avail[dow];
+  });
+}
+
+function _timeAgo(iso){
+  const s=Math.floor((Date.now()-new Date(iso))/1000);
+  if(s<60)return'just now';if(s<3600)return`${Math.floor(s/60)}m ago`;
+  if(s<86400)return`${Math.floor(s/3600)}h ago`;if(s<604800)return`${Math.floor(s/86400)}d ago`;
+  return new Date(iso).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});
+}
+
+const _clCache={data:[],bandId:null,days:null,userId:null};
+async function renderCalChangelog(){
+  const section=document.getElementById('calChangelogSection');
+  if(!section||!activeBandId)return;
+  const days=parseInt(document.getElementById('clDaysFilter')?.value||'10');
+  const userId=document.getElementById('clOwnerFilter')?.value||'';
+
+  // Populate owner filter if not yet done for this band
+  const ownerSel=document.getElementById('clOwnerFilter');
+  if(ownerSel&&(ownerSel.dataset.band!==activeBandId)){
+    ownerSel.dataset.band=activeBandId;
+    const memberOpts=members.map(m=>`<option value="${m.id}">${m.firstName} ${m.lastName||''}`.trim()+`</option>`).join('');
+    ownerSel.innerHTML=`<option value="">All members</option>${memberOpts}`;
+  }
+
+  // Show clean-up button for admins only
+  const cleanBtn=document.getElementById('clCleanupBtn');
+  if(cleanBtn)cleanBtn.style.display=currentUser.role==='admin'?'':'none';
+
+  const list=document.getElementById('clList');
+  if(!list)return;
+  list.innerHTML=`<div style="text-align:center;padding:14px;font-size:.78rem;color:var(--ink3)">Loading…</div>`;
+
+  const entries=await ChangelogDB.fetch(activeBandId,days,userId||null);
+
+  if(!entries.length){
+    list.innerHTML=`<div style="text-align:center;padding:14px;font-size:.78rem;color:var(--ink3)">No changes recorded in the last ${days} day${days===1?'':'s'}.</div>`;
+    return;
+  }
+
+  const typeLabel={rehearsal:'Rehearsal',concert:'Concert',blackout:'Blackout',availability:'Availability'};
+  const actionLabel={created:'added',updated:'updated',deleted:'deleted',cancelled:'cancelled'};
+
+  list.innerHTML=entries.map(e=>{
+    const dot=`<div class="cl-dot${e.impacts_event?' cl-evt':''}"></div>`;
+    const type=typeLabel[e.entity_type]||e.entity_type;
+    const act=actionLabel[e.action]||e.action;
+    const meta=`${e.user_name} · ${_timeAgo(e.created_at)}`;
+    return`<div class="cl-entry">${dot}<div class="cl-body"><div class="cl-desc">${e.description}</div><div class="cl-meta">${meta}</div></div></div>`;
+  }).join('');
+}
+
+async function cleanupChangelog(){
+  if(!activeBandId||currentUser.role!=='admin')return;
+  if(!confirm('Delete all calendar log entries older than 60 days? This cannot be undone.'))return;
+  const ok=await ChangelogDB.deleteOlderThan60Days(activeBandId);
+  if(ok){toast2('Old log entries deleted','w');renderCalChangelog();}
+}
 
 
 function renderAvail(){
@@ -4235,6 +4354,7 @@ async function deleteConcert(id){
   const c=concerts.find(x=>x.id===id);if(!c)return;
   if(!confirm(`Delete "${c.title}"? This cannot be undone.`))return;
   await ConcertsDB.delete(id);
+  logCalChange('deleted','concert',id,`Concert "${c.title}"${c.date?' on '+c.date:''} deleted`,true);
   // Cross-band blackouts are removed automatically by ON DELETE CASCADE on source_concert_id
   await loadConcerts();
   closeMod('cvMod');renderConcerts();toast2('Concert deleted','w');
@@ -4373,6 +4493,9 @@ async function saveConcertEdit(){
     await ConcertsDB.linkSetlist(saved.id, chosenSlId);
   }
 
+  const _conAction=editingConcertId?'updated':'created';
+  const _conDesc=`Concert "${title}"${dateVal?' on '+dateVal:''} ${_conAction}${payload.venue?' @ '+payload.venue:''}`;
+  logCalChange(_conAction,'concert',saved.id,_conDesc,true);
   await loadConcerts();
   closeMod('ceMod');renderConcerts();renderCal();renderSlMeta();updateSidebarCounts();
   toast2(editingConcertId?'Concert updated!':'Concert added!');
@@ -5989,6 +6112,12 @@ async function mpSave(sec){
     const avail=[...chips].map(c=>c.classList.contains('on')?1:0);
     await MembersDB.upsertProfile(profileId,{availability:avail});
     currentUser.avail=avail;
+    const _dn=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+    const _unavail=_dn.filter((_,i)=>!avail[(i+1)%7]); // getDay()-aligned
+    const _availDesc=_unavail.length
+      ?`${currentUser.firstName||'Member'} marked ${_unavail.join(', ')} as unavailable`
+      :`${currentUser.firstName||'Member'} updated availability (all days available)`;
+    logCalChange('updated','availability',null,_availDesc,_availImpactsRehearsal(avail));
   } else if(sec==='links'){
     await MembersDB.upsertProfile(profileId,{
       spotify_url:document.getElementById('mpSpotify').value,
@@ -6673,6 +6802,7 @@ async function saveSettings(){
 <script src="js/db/rehearsals.js"></script>
 <script src="js/db/members.js"></script>
 <script src="js/db/blackouts.js"></script>
+<script src="js/db/changelog.js"></script>
 <!-- Auth — last so it can reference initApp, toast2, and all app globals -->
 <script src="js/auth.js"></script>
 </body>
