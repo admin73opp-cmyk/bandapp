@@ -339,6 +339,18 @@ select option{background:var(--w)}
 .invopts{display:flex;gap:7px;margin-bottom:13px}
 .invopt{flex:1;padding:10px 6px;border:1.5px solid var(--bd);border-radius:var(--rad);background:var(--bg);cursor:pointer;text-align:center;transition:all .13s}.invopt:hover{border-color:var(--a)}.invopt.on{border-color:var(--a);background:var(--a2)}
 .invic{font-size:1.15rem;margin-bottom:3px}.invl{font-size:.7rem;font-weight:600}
+/* language picker */
+.lang-picker{position:relative}
+.lang-picker-btn{display:flex;align-items:center;gap:8px;width:100%;padding:10px 13px;background:var(--bg);border:1.5px solid var(--bd);border-radius:var(--rad);cursor:pointer;font-size:.875rem;color:var(--ink);font-family:var(--font);text-align:left;transition:border-color .14s,box-shadow .14s}
+.lang-picker-btn:focus,.lang-picker-btn:hover{border-color:var(--a)}
+.lang-picker-btn.open{border-color:var(--a);box-shadow:0 0 0 3px var(--a2)}
+.lang-picker-list{position:absolute;top:calc(100% + 4px);left:0;right:0;background:var(--w);border:1.5px solid var(--bd);border-radius:var(--rad);box-shadow:var(--shl);z-index:200;overflow:hidden;display:none}
+.lang-picker-list.open{display:block}
+.lang-picker-opt{display:flex;align-items:center;gap:9px;padding:9px 13px;cursor:pointer;font-size:.855rem;color:var(--ink);transition:background .1s}
+.lang-picker-opt:hover{background:var(--bg)}
+.lang-picker-opt.selected{color:var(--a);font-weight:600}
+.lang-picker-opt.soon{opacity:.45;cursor:default;pointer-events:none}
+.lang-picker-flag{width:20px;height:15px;border-radius:2px;object-fit:cover;flex-shrink:0}
 /* toast */
 .toast{position:fixed;bottom:17px;right:17px;background:#111118;color:#fff;border-radius:var(--rad);padding:10px 15px;font-size:.79rem;font-weight:500;display:flex;align-items:center;gap:7px;box-shadow:var(--shl);z-index:9999;transform:translateY(48px);opacity:0;transition:all .27s cubic-bezier(.2,.8,.4,1)}
 @media(prefers-color-scheme:dark){.toast{background:#2A2A38;color:#F0F0F8}}
@@ -1265,7 +1277,7 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
         <div class="card">
           <div class="ct" style="margin-bottom:4px" data-i18n="App Language">App Language</div>
           <div style="font-size:.75rem;color:var(--ink3);margin-bottom:14px" data-i18n="Controls date formats, day names, and interface labels.">Controls date formats, day names, and interface labels.</div>
-          <div class="fg" style="max-width:280px" data-i18n="Language"><label>Language</label><select id="settLang"></select></div>
+          <div class="fg" style="max-width:280px" data-i18n="Language"><label>Language</label><div id="settLangPicker" class="lang-picker"></div><input type="hidden" id="settLang"></div>
           <div style="margin-top:14px">
             <button class="btn btn-p btn-sm" onclick="saveSettings()" data-i18n="Save">Save</button>
           </div>
@@ -2442,11 +2454,28 @@ const SUPPORTED_LANGUAGES = [
 ];
 
 function populateLangSelect(selectId, selectedCode) {
-  const el = document.getElementById(selectId);
-  if (!el) return;
-  el.innerHTML = SUPPORTED_LANGUAGES.map(l =>
-    `<option value="${l.code}" ${l.code === (selectedCode || 'en') ? 'selected' : ''} ${!l.ready ? 'disabled' : ''}>${l.flag} ${l.native}${!l.ready ? ' (coming soon)' : ''}</option>`
-  ).join('');
+  const picker = document.getElementById('settLangPicker');
+  const hidden = document.getElementById('settLang');
+  if (!picker || !hidden) return;
+  const sel = selectedCode || 'en';
+  hidden.value = sel;
+  const selLang = SUPPORTED_LANGUAGES.find(l => l.code === sel) || SUPPORTED_LANGUAGES[0];
+  const cc = langToCC(selLang.code);
+  picker.innerHTML = `
+    <button type="button" class="lang-picker-btn" id="settLangBtn" onclick="toggleLangPicker()">
+      <img src="https://flagcdn.com/20x15/${cc}.png" srcset="https://flagcdn.com/40x30/${cc}.png 2x" width="20" height="15" alt="" class="lang-picker-flag">
+      <span>${selLang.native}</span>
+      <span style="margin-left:auto;color:var(--ink3);font-size:.7rem">▾</span>
+    </button>
+    <div class="lang-picker-list" id="settLangList">
+      ${SUPPORTED_LANGUAGES.map(l => {
+        const lcc = langToCC(l.code);
+        return `<div class="lang-picker-opt${l.code===sel?' selected':''}${!l.ready?' soon':''}" ${l.ready?`onclick="selectLang('${l.code}')"`:''}>
+          <img src="https://flagcdn.com/20x15/${lcc}.png" srcset="https://flagcdn.com/40x30/${lcc}.png 2x" width="20" height="15" alt="" class="lang-picker-flag">
+          <span>${l.native}${!l.ready?' <span style="font-size:.7rem;color:var(--ink3)">(coming soon)</span>':''}</span>
+        </div>`;
+      }).join('')}
+    </div>`;
 }
 
 // AUTH
@@ -4428,9 +4457,41 @@ const ISO_COUNTRIES=[
 // Helper: get flag emoji from ISO code
 function isoFlag(code){
   if(!code)return'';
-  const c=ISO_COUNTRIES.find(x=>x.c===code);
-  return c?c.f:'';
+  const lc=code.toLowerCase();
+  return`<img src="https://flagcdn.com/20x15/${lc}.png" srcset="https://flagcdn.com/40x30/${lc}.png 2x" width="20" height="15" alt="${code}" style="border-radius:2px;vertical-align:middle;flex-shrink:0">`;
 }
+
+// Map BCP-47 language codes to ISO 3166-1 country codes for flag images
+function langToCC(lang){
+  return{en:'gb',nl:'nl',fr:'fr',pt:'br',es:'es',de:'de',it:'it'}[lang]||lang;
+}
+
+function toggleLangPicker(){
+  const btn=document.getElementById('settLangBtn');
+  const list=document.getElementById('settLangList');
+  if(!list)return;
+  const open=list.classList.toggle('open');
+  if(btn)btn.classList.toggle('open',open);
+}
+
+function selectLang(code){
+  const hidden=document.getElementById('settLang');
+  if(hidden)hidden.value=code;
+  const list=document.getElementById('settLangList');
+  const btn=document.getElementById('settLangBtn');
+  if(list)list.classList.remove('open');
+  if(btn)btn.classList.remove('open');
+  populateLangSelect('settLang',code);
+}
+
+document.addEventListener('click',function(e){
+  if(!e.target.closest('#settLangPicker')){
+    const list=document.getElementById('settLangList');
+    const btn=document.getElementById('settLangBtn');
+    if(list)list.classList.remove('open');
+    if(btn)btn.classList.remove('open');
+  }
+});
 function isoName(code){
   if(!code)return'';
   const c=ISO_COUNTRIES.find(x=>x.c===code);
@@ -4439,7 +4500,7 @@ function isoName(code){
 
 // Populate both country selects in the profile modal
 function populateCountrySelects(){
-  const opts=ISO_COUNTRIES.map(c=>`<option value="${c.c}">${c.f} ${c.n}</option>`).join('');
+  const opts=ISO_COUNTRIES.map(c=>`<option value="${c.c}">${c.n}</option>`).join('');
   ['pfNat','pfCountry','mpNat','mpCountry','nbCountry'].forEach(id=>{
     const el=document.getElementById(id);
     if(!el)return;
@@ -4458,7 +4519,7 @@ function renderPfNatFlag(){
   const code=document.getElementById('pfNat')?.value||'';
   const flag=isoFlag(code);
   const el=document.getElementById('pfNatFlagPreview');
-  if(el)el.textContent=flag;
+  if(el)el.innerHTML=flag;
 }
 
 // ── INSTRUMENTS ───────────────────────────────────────────
@@ -4640,7 +4701,7 @@ function openGuestDetail(idx){
   document.getElementById('gdAv').style.background=g.color||'#9A9AB0';
   document.getElementById('gdAv').textContent=g.init||g.name.slice(0,2).toUpperCase();
   document.getElementById('gdName').textContent=g.name;
-  document.getElementById('gdFlag').textContent=flag;
+  document.getElementById('gdFlag').innerHTML=flag;
   document.getElementById('gdInstrument').textContent=`${instIcon(g.instrument)} ${g.instrument}${g.inst2?' · '+instIcon(g.inst2)+' '+g.inst2:''}`;
   document.getElementById('gdBand').textContent=g.band||'The Jazz Cats';
   document.getElementById('gdDates').textContent=`${g.guestStart} → ${g.guestEnd} (${daysActive} days)`;
@@ -6003,7 +6064,7 @@ function handleMpPhoto(event){
 function renderMpNatFlag(){
   const code=document.getElementById('mpNat')?.value||'';
   const el=document.getElementById('mpNatFlagPreview');
-  if(el)el.textContent=isoFlag(code);
+  if(el)el.innerHTML=isoFlag(code);
 }
 
 function renderMpInstPreview(){
