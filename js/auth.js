@@ -263,7 +263,7 @@ supabase.auth.onAuthStateChange(async (event, session) => {
     // User clicked the reset-password link in their email — show the reset form
     document.getElementById('app').classList.remove('vis');
     document.getElementById('authScreen').style.display = 'flex';
-    ['lf','sf','sf-confirm','ff','ff-sent'].forEach(id => {
+    ['lf','sf','sf-confirm','ff','ff-sent','authLoading'].forEach(id => {
       const el = document.getElementById(id);
       if (el) el.style.display = 'none';
     });
@@ -275,7 +275,11 @@ supabase.auth.onAuthStateChange(async (event, session) => {
   }
 
   if (event === 'SIGNED_OUT') {
-    if (_inPasswordRecovery) return; // don't disrupt the reset-password form
+    // Don't disrupt the reset-password form, and don't call switchTab('login')
+    // while a token exchange is still in progress (?code= or #access_token in URL).
+    if (_inPasswordRecovery) return;
+    const _soParams = new URLSearchParams(window.location.search);
+    if (_soParams.get('code') || window.location.hash.includes('access_token')) return;
     document.getElementById('app').classList.remove('vis');
     document.getElementById('authScreen').style.display = 'flex';
     const fbBtn = document.getElementById('fbBtn');
@@ -377,9 +381,14 @@ supabase.auth.onAuthStateChange(async (event, session) => {
     // the onboarding modal once the exchange completes.
     const _hash = window.location.hash;
     if (p.get('code') || _hash.includes('access_token')) {
+      // A token exchange is in progress — show only the loading spinner.
+      // Hide everything else so no Sign In form bleeds through while we wait.
       document.getElementById('authScreen').style.display = 'flex';
+      ['lf','sf','sf-confirm','ff','ff-sent','auth-tabs'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.style.display = 'none';
+      });
       document.getElementById('authLoading').style.display = 'flex';
-      document.getElementById('auth-tabs').style.display = 'none';
       return;
     }
 
