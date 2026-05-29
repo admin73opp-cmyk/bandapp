@@ -154,7 +154,7 @@ select option{background:var(--w)}
 .sc{background:var(--w);border:1px solid var(--bd);border-radius:var(--radl);padding:16px;box-shadow:var(--sh);transition:border-color .13s,transform .13s}
 .sc[onclick]{cursor:pointer}.sc[onclick]:hover{border-color:var(--a);transform:translateY(-2px)}
 /* spreadsheet */
-.sh-hd{position:relative;padding:8px 8px;border-bottom:2px solid var(--bd);text-align:left;font-size:.68rem;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.05em;white-space:nowrap;cursor:pointer;user-select:none;transition:color .12s,background .12s}
+.sh-hd{position:relative;padding:8px 8px;border-bottom:2px solid var(--bd);text-align:left;font-size:.68rem;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.05em;white-space:nowrap;overflow:hidden;cursor:pointer;user-select:none;transition:color .12s,background .12s}
 .sh-hd:hover{color:var(--a);background:var(--a2)}
 .sh-hd.sort-asc,.sh-hd.sort-desc{color:var(--a);background:var(--a2)}
 .sh-sort-icon{display:inline-block;margin-left:4px;font-size:.65rem;opacity:.4;vertical-align:middle}
@@ -3222,7 +3222,7 @@ function slTotalDur(){
   return getSlS().reduce((acc,id)=>{const s=songByAnyId(id);return acc+(s&&s.dur?s.dur:0);},0);
 }
 let sheetSortCol=null, sheetSortDir='asc';
-const SHEET_COL_DEFAULT_W={title:200,artist:150,genre:100,key:75,dur:95,note:170,spotify:160,youtube:160,apple:160,amazon:160,hidden:60};
+const SHEET_COL_DEFAULT_W={title:200,artist:150,genre:100,key:75,dur:120,note:170,spotify:160,youtube:160,apple:160,amazon:160,hidden:60};
 let _sheetColWidths={};
 function sheetColW(field){return _sheetColWidths[field]||SHEET_COL_DEFAULT_W[field]||120;}
 function sheetTblW(){return 32+SHEET_COLS.reduce((s,c)=>s+sheetColW(c.field),0)+36;}
