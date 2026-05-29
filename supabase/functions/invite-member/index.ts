@@ -6,13 +6,11 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
-const APP_URL = Deno.env.get('APP_URL') || ''
-
+// Security for this endpoint comes from the JWT check below, not CORS.
+// Reflect the requesting origin so the function works from any Bandapp deployment.
 function corsHeaders(req: Request) {
-  const origin = req.headers.get('origin') || ''
-  const allowed = APP_URL && origin === APP_URL ? origin : ''
   return {
-    'Access-Control-Allow-Origin': allowed,
+    'Access-Control-Allow-Origin': req.headers.get('origin') || '*',
     'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
   }
 }
