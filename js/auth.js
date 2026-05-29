@@ -246,11 +246,16 @@ async function doLogout() {
 
 // ── Auth state listener — wires everything together ───────────
 
-// Set to true while the user is on the reset-password form so that the
-// INITIAL_SESSION event that Supabase fires immediately after exchanging the
-// recovery token does not skip ahead into the app.  Cleared by doResetPassword
-// just before calling updateUser so the subsequent SIGNED_IN can proceed.
-let _inPasswordRecovery = false;
+// Initialised synchronously from the URL — BEFORE onAuthStateChange is
+// registered — so that if Supabase replays INITIAL_SESSION immediately on
+// listener registration (race condition with fast PKCE code exchange), the
+// guard is already in place.  Cleared by doResetPassword just before calling
+// updateUser so the subsequent SIGNED_IN can proceed normally.
+let _inPasswordRecovery = (function () {
+  const p = new URLSearchParams(window.location.search);
+  const h = window.location.hash;
+  return p.get('type') === 'recovery' || h.includes('type=recovery');
+}());
 
 supabase.auth.onAuthStateChange(async (event, session) => {
   if (event === 'PASSWORD_RECOVERY') {
@@ -270,6 +275,7 @@ supabase.auth.onAuthStateChange(async (event, session) => {
   }
 
   if (event === 'SIGNED_OUT') {
+    if (_inPasswordRecovery) return; // don't disrupt the reset-password form
     document.getElementById('app').classList.remove('vis');
     document.getElementById('authScreen').style.display = 'flex';
     const fbBtn = document.getElementById('fbBtn');
