@@ -14,6 +14,10 @@ function t(key) {
     const val = window.FR[key];
     if (val !== undefined) return val;
   }
+  if (lang === 'es' && window.ES) {
+    const val = window.ES[key];
+    if (val !== undefined) return val;
+  }
   if (lang === 'pt' && window.PT_BR) {
     const val = window.PT_BR[key];
     if (val !== undefined) return val;
