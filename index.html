@@ -3286,7 +3286,7 @@ function slTotalDur(){
   return getSlS().reduce((acc,id)=>{const s=songByAnyId(id);return acc+(s&&s.dur?s.dur:0);},0);
 }
 let sheetSortCol=null, sheetSortDir='asc';
-const SHEET_COL_DEFAULT_W={title:200,artist:150,genre:100,key:75,dur:135,note:170,lyrics:75,spotify:160,youtube:160,apple:160,amazon:160,hidden:60};
+const SHEET_COL_DEFAULT_W={title:200,artist:150,genre:100,key:75,dur:135,note:170,lyrics:200,spotify:160,youtube:160,apple:160,amazon:160,hidden:60};
 let _sheetColWidths={};
 function sheetColW(field){return _sheetColWidths[field]||SHEET_COL_DEFAULT_W[field]||120;}
 function sheetTblW(){return 32+SHEET_COLS.reduce((s,c)=>s+sheetColW(c.field),0)+36;}
@@ -3331,7 +3331,7 @@ const SHEET_COLS=[
   {label:'Key',     field:'key',     width:'80px'},
   {label:'Duration',field:'dur',     width:'100px'},
   {label:'Notes',   field:'note',    width:null},
-  {label:'Lyrics',  field:'lyrics',  width:'75px'},
+  {label:'Lyrics',  field:'lyrics',  width:'200px'},
   {label:'Spotify', field:'spotify', width:'180px'},
   {label:'YouTube', field:'youtube', width:'180px'},
   {label:'Apple',   field:'apple',   width:'180px'},
@@ -3397,7 +3397,16 @@ function renderSheet(){
         </div>
       </td>
       <td><input class="sh-cell" style="min-width:140px" value="${esc(s.note||'')}" data-field="note" data-id="${s.id}" onchange="sheetEdit(this)" onkeydown="sheetKeyDown(event,this)"></td>
-      <td style="text-align:center;padding:6px 4px">${s.lyrics?`<a href="${esc(s.lyrics)}" target="_blank" rel="noopener noreferrer" style="font-size:.85rem;text-decoration:none" title="View Lyrics / Sheet Music">📄</a>`:`<span style="color:var(--ink3);font-size:.72rem">—</span>`}</td>
+      <td style="white-space:nowrap;padding:4px 6px">
+        <div style="display:flex;align-items:center;gap:4px">
+          <input class="sh-cell" style="flex:1;min-width:100px;font-size:.72rem" value="${esc(s.lyrics||'')}" placeholder="Paste link or upload →" data-field="lyrics" data-id="${s.id}" onchange="sheetEdit(this)" onkeydown="sheetKeyDown(event,this)" title="Lyrics / Sheet Music URL">
+          <label style="cursor:pointer;padding:3px 6px;border-radius:5px;border:1.5px solid var(--bd);background:var(--bg);font-size:.68rem;color:var(--ink2);flex-shrink:0;line-height:1.5" title="Upload lyrics / sheet music file">
+            ⬆
+            <input type="file" accept=".pdf,.png,.jpg,.jpeg,.gif,.mxl,.xml" style="display:none" onchange="handleSheetLyricsUpload(event,'${s.id}')">
+          </label>
+          ${s.lyrics?`<a href="${esc(s.lyrics)}" target="_blank" rel="noopener noreferrer" style="font-size:.8rem;text-decoration:none;flex-shrink:0" title="View Lyrics / Sheet Music">📄</a>`:''}
+        </div>
+      </td>
       <td><input class="sh-cell" style="min-width:150px;font-size:.72rem" value="${esc(s.spotify||'')}" placeholder="Spotify URL" data-field="spotify" data-id="${s.id}" onchange="sheetEdit(this)" onkeydown="sheetKeyDown(event,this)"></td>
       <td><input class="sh-cell" style="min-width:150px;font-size:.72rem" value="${esc(s.youtube||'')}" placeholder="YouTube URL" data-field="youtube" data-id="${s.id}" onchange="sheetEdit(this)" onkeydown="sheetKeyDown(event,this)"></td>
       <td><input class="sh-cell" style="min-width:150px;font-size:.72rem" value="${esc(s.apple||'')}" placeholder="Apple Music URL" data-field="apple" data-id="${s.id}" onchange="sheetEdit(this)" onkeydown="sheetKeyDown(event,this)"></td>
@@ -3651,6 +3660,24 @@ async function handleSongFileUpload(event){
   if(viewBtn)viewBtn.style.display='';
   if(statusEl)statusEl.textContent=`✓ ${file.name} uploaded`;
   event.target.value='';
+}
+
+// Spreadsheet-row lyrics upload — uploads file, updates song, re-renders row
+async function handleSheetLyricsUpload(event, songId){
+  const file=event.target.files[0];if(!file)return;
+  if(file.size>10*1024*1024){toast2('File too large — max 10 MB','w');event.target.value='';return;}
+  toast2('Uploading…');
+  const safeName=file.name.replace(/[^a-zA-Z0-9._-]/g,'_').slice(0,80);
+  const path=`${activeBandId||'band'}/${Date.now()}_${safeName}`;
+  const{data,error}=await supabase.storage.from('song-attachments').upload(path,file,{upsert:false,contentType:file.type});
+  if(error){toast2('Upload failed: '+error.message,'w');event.target.value='';return;}
+  const{data:{publicUrl}}=supabase.storage.from('song-attachments').getPublicUrl(path);
+  const s=songByAnyId(songId);if(!s)return;
+  s.lyrics=publicUrl;
+  try{await SongsDB.upsert({...s,band_id:activeBandId});}catch(e){toast2('Failed to save','w');return;}
+  event.target.value='';
+  await loadSongs();renderSheet();renderLib();
+  toast2('Lyrics file uploaded and saved!');
 }
 
 // Band setting — save lyrics repository preference
