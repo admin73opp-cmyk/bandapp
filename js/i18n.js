@@ -6,6 +6,10 @@
 function t(key) {
   if (!key && key !== 0) return '';
   const lang = (typeof currentUser !== 'undefined' && currentUser.lang) || 'en';
+  if (lang === 'nl' && window.NL) {
+    const val = window.NL[key];
+    if (val !== undefined) return val;
+  }
   if (lang === 'pt' && window.PT_BR) {
     const val = window.PT_BR[key];
     if (val !== undefined) return val;
