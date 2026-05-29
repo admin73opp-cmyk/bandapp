@@ -165,6 +165,8 @@ select option{background:var(--w)}
 .sh-row:hover td{background:var(--bg)}
 .sh-row.hidden-row td{opacity:.5;background:var(--bg2)}
 .sh-cell{width:100%;padding:7px 8px;border:none;background:transparent;font-family:var(--font);font-size:.8rem;color:var(--ink);outline:none;min-width:80px;box-sizing:border-box}
+.sh-dur::-webkit-outer-spin-button,.sh-dur::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+.sh-dur{-moz-appearance:textfield}
 .sh-cell:focus{background:var(--a2);outline:2px solid var(--a);outline-offset:-2px;border-radius:4px}
 .sh-cell-num{text-align:center;font-family:var(--mono);font-size:.72rem;color:var(--ink3);padding:7px 4px;width:32px}
 .sh-sel{width:100%;padding:6px 8px;border:none;background:transparent;font-family:var(--font);font-size:.8rem;color:var(--ink);outline:none;cursor:pointer}
@@ -3222,7 +3224,7 @@ function slTotalDur(){
   return getSlS().reduce((acc,id)=>{const s=songByAnyId(id);return acc+(s&&s.dur?s.dur:0);},0);
 }
 let sheetSortCol=null, sheetSortDir='asc';
-const SHEET_COL_DEFAULT_W={title:200,artist:150,genre:100,key:75,dur:120,note:170,spotify:160,youtube:160,apple:160,amazon:160,hidden:60};
+const SHEET_COL_DEFAULT_W={title:200,artist:150,genre:100,key:75,dur:135,note:170,spotify:160,youtube:160,apple:160,amazon:160,hidden:60};
 let _sheetColWidths={};
 function sheetColW(field){return _sheetColWidths[field]||SHEET_COL_DEFAULT_W[field]||120;}
 function sheetTblW(){return 32+SHEET_COLS.reduce((s,c)=>s+sheetColW(c.field),0)+36;}
@@ -3326,9 +3328,9 @@ function renderSheet(){
       <td><select class="sh-sel" data-field="key" data-id="${s.id}" onchange="sheetEdit(this)">${KEYS_LIST.map(k=>`<option value="${k}"${s.key===k?' selected':''}>${k||'—'}</option>`).join('')}</select></td>
       <td style="white-space:nowrap">
         <div style="display:flex;align-items:center;gap:2px">
-          <input class="sh-cell" style="width:38px;min-width:0;text-align:center;padding:4px 5px;font-family:var(--mono);font-size:.78rem" type="number" min="0" max="99" placeholder="0" value="${s.dur?Math.floor(s.dur/60):''}" data-field="durMin" data-id="${s.id}" onchange="sheetEditDur(this)" onkeydown="sheetKeyDownDur(event,this,'durSec')" title="Minutes">
+          <input class="sh-cell sh-dur" style="width:46px;min-width:0;text-align:center;padding:4px 5px;font-family:var(--mono);font-size:.78rem" type="number" min="0" max="99" placeholder="0" value="${s.dur?Math.floor(s.dur/60):''}" data-field="durMin" data-id="${s.id}" onchange="sheetEditDur(this)" onkeydown="sheetKeyDownDur(event,this,'durSec')" title="Minutes">
           <span style="color:var(--ink3);font-weight:700;font-size:.8rem;flex-shrink:0">:</span>
-          <input class="sh-cell" style="width:34px;min-width:0;text-align:center;padding:4px 5px;font-family:var(--mono);font-size:.78rem" type="number" min="0" max="59" placeholder="00" value="${s.dur?String(s.dur%60).padStart(2,'0'):''}" data-field="durSec" data-id="${s.id}" onchange="sheetEditDur(this)" onkeydown="sheetKeyDownDur(event,this,'durMin')" title="Seconds">
+          <input class="sh-cell sh-dur" style="width:46px;min-width:0;text-align:center;padding:4px 5px;font-family:var(--mono);font-size:.78rem" type="number" min="0" max="59" placeholder="00" value="${s.dur?String(s.dur%60).padStart(2,'0'):''}" data-field="durSec" data-id="${s.id}" onchange="sheetEditDur(this)" onkeydown="sheetKeyDownDur(event,this,'durMin')" title="Seconds">
         </div>
       </td>
       <td><input class="sh-cell" style="min-width:140px" value="${esc(s.note||'')}" data-field="note" data-id="${s.id}" onchange="sheetEdit(this)" onkeydown="sheetKeyDown(event,this)"></td>
