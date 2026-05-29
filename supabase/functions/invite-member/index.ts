@@ -79,19 +79,25 @@ serve(async (req) => {
 
     if (invRecordErr) return json(req, { error: invRecordErr.message }, 500)
 
-    const inviteToken    = invRecord.id
-    const inviteRedirect = appUrl ? `${appUrl}?invite=${inviteToken}` : appUrl
+    const inviteToken = invRecord.id
+
+    // Use plain appUrl for redirectTo — Supabase's allowed-redirect-URL check does not
+    // match URLs with query parameters unless wildcards are configured, so adding
+    // ?invite=<token> here would silently break the auth exchange for many deployments.
+    // The token is stored in band_invites and also echoed in user_metadata below so
+    // onAuthStateChange can look it up without needing it in the URL.
 
     // Send invite email — creates the user account and delivers a magic sign-in link.
     // user_metadata is accessible on the client as session.user.user_metadata after they sign in.
     const { data: invData, error: invErr } = await admin.auth.admin.inviteUserByEmail(email, {
-      redirectTo: inviteRedirect,
+      redirectTo: appUrl,
       data: {
         first_name:       first_name || null,
         last_name:        last_name  || null,
         instrument:       instrument || null,
         needs_onboarding: true,
         invited_band_id:  band_id,
+        invite_token:     inviteToken,
       },
     })
 

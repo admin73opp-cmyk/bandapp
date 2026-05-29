@@ -109,7 +109,9 @@ async function doSignUp() {
   if (!email || !pw) { toast2('Enter email and password', 'w'); return; }
   if (pw.length < 8) { toast2('Password must be at least 8 characters', 'w'); return; }
 
-  const pendingBandId = sessionStorage.getItem('pendingBandId') || new URLSearchParams(window.location.search).get('band') || '';
+  const pendingBandId     = sessionStorage.getItem('pendingBandId')   || new URLSearchParams(window.location.search).get('band') || '';
+  const pendingPhone      = sessionStorage.getItem('invitePhone')      || '';
+  const pendingInstrument = sessionStorage.getItem('inviteInstrument') || '';
   const baseUrl = localStorage.getItem('appUrl') || (window.location.origin + window.location.pathname);
   // Only embed the band UUID in the confirmation redirect — no PII in URLs.
   // Phone and instrument are stored in sessionStorage and survive across tabs without URL exposure.
@@ -258,21 +260,12 @@ supabase.auth.onAuthStateChange(async (event, session) => {
     const _urlParams = new URLSearchParams(window.location.search);
     const _meta = session.user.user_metadata || {};
 
-    // If an opaque invite token is in the URL, look up the metadata server-side
-    // so no PII ever travels in query parameters.
-    const _inviteToken = _urlParams.get('invite') || sessionStorage.getItem('inviteToken') || '';
+    // If an invite token is in user metadata (set by the invite-member edge function),
+    // mark it as used. Token can also come from the URL (?invite=) for manual share links.
+    const _inviteToken = _meta.invite_token || _urlParams.get('invite') || sessionStorage.getItem('inviteToken') || '';
     if (_inviteToken) {
-      try {
-        const { data: _invData } = await supabase.rpc('get_invite_by_token', { p_token: _inviteToken });
-        if (_invData && !_invData.error) {
-          if (_invData.band_id    && !sessionStorage.getItem('pendingBandId'))    sessionStorage.setItem('pendingBandId',    _invData.band_id);
-          if (_invData.band_name  && !sessionStorage.getItem('inviteBandName'))   sessionStorage.setItem('inviteBandName',   _invData.band_name);
-          if (_invData.first_name && !sessionStorage.getItem('inviteFirst'))      sessionStorage.setItem('inviteFirst',      _invData.first_name);
-          if (_invData.last_name  && !sessionStorage.getItem('inviteLast'))       sessionStorage.setItem('inviteLast',       _invData.last_name);
-          if (_invData.instrument && !sessionStorage.getItem('inviteInstrument')) sessionStorage.setItem('inviteInstrument', _invData.instrument);
-          sessionStorage.setItem('inviteToken', _inviteToken);
-        }
-      } catch (_) { /* non-fatal — band join still works via invited_band_id in metadata */ }
+      supabase.rpc('mark_invite_used', { p_token: _inviteToken }).catch(() => {});
+      sessionStorage.removeItem('inviteToken');
     }
 
     // Auto-join band from invite link (?band=UUID) or sessionStorage or user metadata
@@ -284,12 +277,6 @@ supabase.auth.onAuthStateChange(async (event, session) => {
         activeBandId = joinData.band_id;
         localStorage.setItem('activeBandId', joinData.band_id);
         sessionStorage.removeItem('pendingBandId');
-        // Mark the invite token as used so it can't be replayed
-        const _usedToken = sessionStorage.getItem('inviteToken');
-        if (_usedToken) {
-          supabase.rpc('mark_invite_used', { p_token: _usedToken }).catch(() => {});
-          sessionStorage.removeItem('inviteToken');
-        }
         window.history.replaceState({}, '', window.location.pathname);
       } else if (joinData?.error === 'already_member') {
         sessionStorage.removeItem('pendingBandId');
