@@ -99,6 +99,8 @@ create table if not exists song_notes (
   unique(song_id, user_id)
 );
 
+create index if not exists song_notes_user_id_idx on song_notes(user_id);
+
 -- ── SETLISTS ─────────────────────────────────────────────────
 create table if not exists setlists (
   id         uuid primary key default gen_random_uuid(),

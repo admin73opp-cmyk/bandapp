@@ -20,14 +20,17 @@ function handleDbError(err) {
 }
 
 async function loadCurrentUser(uid, email) {
-  const { data: profile, error } = await supabase
-    .from('profiles')
-    .select('*')
-    .eq('id', uid)
-    .single();
-
   currentUser.id    = uid;
   currentUser.email = email || '';
+
+  // Fire both queries concurrently — they have no dependency on each other
+  const [
+    { data: profile, error },
+    { data: memberships },
+  ] = await Promise.all([
+    supabase.from('profiles').select('*').eq('id', uid).single(),
+    supabase.from('band_members').select('band_id, role').eq('user_id', uid),
+  ]);
 
   if (error) {
     console.error('[bandapp] profiles query failed — code:', error?.code, 'message:', error?.message);
@@ -62,12 +65,6 @@ async function loadCurrentUser(uid, email) {
   currentUser.lang       = profile.lang        || 'en';
   currentUser.avail      = profile.availability || [1,1,1,1,1,1,1];
   currentUser._profile   = profile; // full row — used as fallback in populateMpPage
-
-  // Load band membership for this user to determine role in active band
-  const { data: memberships, error: memErr } = await supabase
-    .from('band_members')
-    .select('band_id, role')
-    .eq('user_id', uid);
 
   currentUser._memberships = memberships || [];
 
