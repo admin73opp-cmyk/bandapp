@@ -751,4 +751,26 @@ window.NL = {
   'Failed to add song — please try again': 'Nummer toevoegen mislukt — probeer het opnieuw',
   'Failed to save song': 'Nummer opslaan mislukt',
   'added to library!': 'toegevoegd aan bibliotheek!',
+
+  /* ── BLOCK DAYS (calendar) ─────────────────────────────── */
+  'Block Days': 'Dagen blokkeren',
+  'Mark a date range when a member is unavailable to rehearse.': 'Markeer een datumbereik wanneer een lid niet beschikbaar is om te repeteren.',
+  'Reason (optional)': 'Reden (optioneel)',
+  'Holiday, work trip, event…': 'Vakantie, zakenreis, evenement…',
+  'you': 'jij',
+  'Please select a start date': 'Selecteer een begindatum',
+
+  /* ── LYRICS / SHEET MUSIC ───────────────────────────────── */
+  'Lyrics / Sheet Music': 'Tekst / Bladmuziek',
+  'Lyrics / Sheet Music Repository': 'Opslag tekst / bladmuziek',
+  'Any — members choose per song': 'Vrij — leden kiezen per nummer',
+  'Bandapp (in-app upload)': 'Bandapp (uploaden in app)',
+
+  /* ── CALENDAR CHANGE LOG ────────────────────────────────── */
+  'Change Log': 'Wijzigingenlogboek',
+  'Last 10 days': 'Laatste 10 dagen',
+  'Last 30 days': 'Laatste 30 dagen',
+  'Last 60 days': 'Laatste 60 dagen',
+  'All members': 'Alle leden',
+  'Entries kept for 60 days': 'Vermeldingen bewaard voor 60 dagen',
 };

@@ -751,4 +751,26 @@ window.FR = {
   'Failed to add song — please try again': 'Échec de l\'ajout — veuillez réessayer',
   'Failed to save song': 'Échec de l\'enregistrement de la chanson',
   'added to library!': 'ajoutée à la bibliothèque !',
+
+  /* ── BLOCK DAYS ─────────────────────────────────────────── */
+  'Block Days': 'Bloquer des jours',
+  'Mark a date range when a member is unavailable to rehearse.': "Marquez une période où un membre n'est pas disponible pour les répétitions.",
+  'Reason (optional)': 'Raison (optionnel)',
+  'Holiday, work trip, event…': 'Vacances, déplacement pro, événement…',
+  'you': 'vous',
+  'Please select a start date': 'Veuillez sélectionner une date de début',
+
+  /* ── LYRICS / SHEET MUSIC ───────────────────────────────── */
+  'Lyrics / Sheet Music': 'Paroles / Partitions',
+  'Lyrics / Sheet Music Repository': 'Dépôt paroles / partitions',
+  'Any — members choose per song': 'Libre — les membres choisissent par chanson',
+  'Bandapp (in-app upload)': 'Bandapp (téléversement en app)',
+
+  /* ── CALENDAR CHANGE LOG ────────────────────────────────── */
+  'Change Log': 'Journal des modifications',
+  'Last 10 days': '10 derniers jours',
+  'Last 30 days': '30 derniers jours',
+  'Last 60 days': '60 derniers jours',
+  'All members': 'Tous les membres',
+  'Entries kept for 60 days': 'Entrées conservées 60 jours',
 };

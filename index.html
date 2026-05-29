@@ -764,7 +764,7 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
             <span id="boIco">🚫</span><span id="boLbl">4 blackout periods</span>
             <svg width="9" height="9" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6l4 4 4-4"/></svg>
           </div>
-          <button class="btn btn-g btn-sm" onclick="showMod('blkMod')" data-i18n="Block Days">Block Days</button>
+          <button class="btn btn-g btn-sm" onclick="openBlockDaysMod()" data-i18n="Block Days">Block Days</button>
           <button class="btn btn-p btn-sm" onclick="openNewConcert();nav('concerts')" data-i18n="+ Concert">+ Concert</button>
         </div>
       </div>
@@ -1558,13 +1558,16 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
 <!-- BLOCK DAYS -->
 <div class="mov" id="blkMod" style="display:none" onclick="closeMB(event,'blkMod')">
 <div class="mod">
-  <div class="mott">Block Days</div>
-  <div class="most">Mark days when you personally can't rehearse.</div>
-  <div class="fg"><label>From</label><input type="date"></div>
-  <div class="fg"><label>To</label><input type="date"></div>
-  <div class="fg"><label>Member</label><select><option>Marco Rossi (you)</option><option>Sophie Vandenberghe</option><option>Lucas Martens</option><option>Kim De Smedt</option><option>Antoine Blanchard</option></select></div>
-  <div class="fg"><label>Reason (optional)</label><textarea placeholder="Holiday, work trip…" style="min-height:55px"></textarea></div>
-  <div class="moft"><button class="btn btn-g" onclick="closeMod('blkMod')">Cancel</button><button class="btn btn-p" onclick="closeMod('blkMod');toast2('Days blocked!')">Block Days</button></div>
+  <div class="mott" data-i18n="Block Days">Block Days</div>
+  <div class="most" data-i18n="Mark a date range when a member is unavailable to rehearse.">Mark a date range when a member is unavailable to rehearse.</div>
+  <div class="fg" data-i18n="From"><label data-i18n="From">From</label><input type="date" id="blkFr"></div>
+  <div class="fg" data-i18n="To (leave blank for single day)"><label>To <span style="font-weight:400;color:var(--ink3)" data-i18n="(leave blank for single day)">(leave blank for single day)</span></label><input type="date" id="blkTo"></div>
+  <div class="fg" id="blkMemberWrap" data-i18n="Member"><label data-i18n="Member">Member</label><select id="blkMember"></select></div>
+  <div class="fg" data-i18n="Reason (optional)"><label data-i18n="Reason (optional)">Reason <span style="font-weight:400;color:var(--ink3)">(optional)</span></label><textarea id="blkReason" placeholder="Holiday, work trip, event…" data-i18n-placeholder="Holiday, work trip, event…" style="min-height:55px"></textarea></div>
+  <div class="moft">
+    <button class="btn btn-g" onclick="closeMod('blkMod')" data-i18n="Cancel">Cancel</button>
+    <button class="btn btn-p" onclick="saveBlockDays()" data-i18n="Block Days">Block Days</button>
+  </div>
 </div>
 </div>
 
@@ -3801,6 +3804,47 @@ async function delBO(id){
   renderBOList();renderCal();syncBOPill();toast2('Blackout removed','w');
 }
 function togBOM(){document.getElementById('boMR').style.display=document.getElementById('boSc').value==='members'?'':'none';}
+
+function openBlockDaysMod(){
+  // Reset fields
+  document.getElementById('blkFr').value=TODAY_STR;
+  document.getElementById('blkTo').value='';
+  document.getElementById('blkReason').value='';
+  // Populate member dropdown — admins see everyone, members see only themselves
+  const isAdmin=currentUser.role==='admin';
+  const sel=document.getElementById('blkMember');
+  const list=isAdmin?members:[members.find(m=>m.id===currentUser.id)||{id:currentUser.id,firstName:currentUser.firstName||'You',lastName:currentUser.lastName||''}];
+  sel.innerHTML=list.map(m=>{
+    const isSelf=m.id===currentUser.id;
+    const name=([m.firstName,m.lastName].filter(Boolean).join(' '))||'Me';
+    return`<option value="${m.id}"${isSelf?' selected':''}>${name}${isSelf?' ('+t('you')+')':''}</option>`;
+  }).join('');
+  sel.disabled=!isAdmin;
+  showMod('blkMod');
+}
+
+async function saveBlockDays(){
+  const from=document.getElementById('blkFr').value;
+  const to=document.getElementById('blkTo').value||from;
+  const memberId=document.getElementById('blkMember').value;
+  const reason=document.getElementById('blkReason').value.trim();
+  if(!from){toast2(t('Please select a start date')||'Please select a start date','w');return;}
+  if(!memberId){toast2('Please select a member','w');return;}
+  // Non-admins can only block themselves
+  if(currentUser.role!=='admin'&&memberId!==currentUser.id){toast2('You can only block your own days','w');return;}
+  const m=members.find(x=>x.id===memberId);
+  const memberName=m?[m.firstName,m.lastName].filter(Boolean).join(' '):currentUser.firstName||'Member';
+  const label=reason||`${memberName} unavailable`;
+  const payload={label,from,to,scope:'members',mids:[memberId]};
+  const saved=await BlackoutsDB.upsert(payload);
+  if(!saved)return;
+  await loadBlackouts();
+  if(!blackouts.find(b=>b.id===saved.id)){blackouts=[...blackouts,saved];_boMapVer++;}
+  const range=from+(to&&to!==from?' – '+to:'');
+  logCalChange('created','blackout',saved.id,`${memberName} blocked: ${range}${reason?' — '+reason:''}`,_rangeImpactsEvent(from,to));
+  closeMod('blkMod');renderBOList();renderCal();syncBOPill();
+  toast2('Days blocked!');
+}
 function togBOMc(el){el.classList.toggle('on');}
 function syncBOPill(){const n=blackouts.filter(b=>b.scope==='band').length;document.getElementById('boLbl').textContent=n===0?t('No blackouts'):`${n} ${t(n>1?'blackout periods':'blackout period')}`;document.getElementById('boIco').textContent=n>0?'🚫':'📅';}
 function renderBOList(){
@@ -4119,6 +4163,7 @@ async function confReh(){
   try {
     const saved=await RehearsalsDB.upsert({title,date:confirmedKey,start,end,location,notes,band_id:activeBandId});
     if(!saved){return;}
+    logCalChange('created','rehearsal',saved.id,`Rehearsal "${title}" on ${confirmedKey}${location?' @ '+location:''} confirmed`,true);
     await loadRehearsals();
     // If loadRehearsals was preempted by a concurrent load (gen mismatch), the new rehearsal
     // may not yet be in the array. Add it optimistically so the calendar dot appears immediately.
