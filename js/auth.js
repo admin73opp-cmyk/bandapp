@@ -1,5 +1,19 @@
 // ── Auth helpers ─────────────────────────────────────────────
 
+function showAuthErr(id, msg) {
+  const box = document.getElementById(id);
+  if (!box) { toast2(msg, 'w'); return; }
+  const msgEl = box.querySelector('.auth-err-msg');
+  if (msgEl) msgEl.textContent = msg;
+  box.style.display = 'flex';
+  box.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function clearAuthErr(id) {
+  const box = document.getElementById(id);
+  if (box) box.style.display = 'none';
+}
+
 function handleDbError(err) {
   console.error('[bandapp] DB error:', err?.code, err?.message, err?.details, err?.hint, err);
   toast2(err.message || 'Something went wrong', 'w');
@@ -80,22 +94,23 @@ function _resetLoginBtn() {
 async function doLogin() {
   const email = document.getElementById('loginEmail').value.trim();
   const pw    = document.getElementById('loginPassword').value;
-  if (!email || !pw) { toast2('Enter email and password', 'w'); return; }
+  if (!email || !pw) { showAuthErr('loginErr', 'Enter email and password'); return; }
 
   const btn = document.getElementById('loginBtn');
   if (btn) { btn.disabled = true; btn.textContent = 'Signing in…'; }
+  clearAuthErr('loginErr');
 
   _clearLoginTimer();
   _loginSafetyTimer = setTimeout(() => {
     _resetLoginBtn();
-    if (typeof toast2 === 'function') toast2('Sign-in timed out — please try again', 'w');
+    showAuthErr('loginErr', 'Sign-in timed out — please try again');
   }, 20000);
 
   const { error } = await supabase.auth.signInWithPassword({ email, password: pw });
   if (error) {
     _clearLoginTimer();
     _resetLoginBtn();
-    toast2(error.message, 'w');
+    showAuthErr('loginErr', error.message);
   }
   // onAuthStateChange handles the rest on success; it clears _loginSafetyTimer
 }
@@ -106,13 +121,15 @@ async function doSignUp() {
   const email     = document.getElementById('signupEmail').value.trim();
   const pw        = document.getElementById('signupPassword').value;
 
-  if (!email || !pw) { toast2('Enter email and password', 'w'); return; }
-  if (pw.length < 8) { toast2('Password must be at least 8 characters', 'w'); return; }
+  if (!email || !pw) { showAuthErr('signupErr', 'Enter email and password'); return; }
+  if (pw.length < 8) { showAuthErr('signupErr', 'Password must be at least 8 characters'); return; }
 
   const pendingBandId     = sessionStorage.getItem('pendingBandId')   || new URLSearchParams(window.location.search).get('band') || '';
   const pendingPhone      = sessionStorage.getItem('invitePhone')      || '';
   const pendingInstrument = sessionStorage.getItem('inviteInstrument') || '';
-  const baseUrl = localStorage.getItem('appUrl') || (window.location.origin + window.location.pathname);
+  const baseUrl = (window.Capacitor && window.Capacitor.isNativePlatform())
+    ? 'https://bandapp.app'
+    : (localStorage.getItem('appUrl') || (window.location.origin + window.location.pathname));
   // Only embed the band UUID in the confirmation redirect — no PII in URLs.
   // Phone and instrument are stored in sessionStorage and survive across tabs without URL exposure.
   const redirectTo = pendingBandId ? `${baseUrl}?band=${pendingBandId}` : baseUrl;
@@ -132,7 +149,7 @@ async function doSignUp() {
     },
   });
 
-  if (error) { toast2(error.message, 'w'); return; }
+  if (error) { showAuthErr('signupErr', error.message); return; }
 
   // Create profile row immediately (trigger may also do this — belt-and-suspenders)
   if (data.user) {
@@ -159,13 +176,16 @@ async function doSignUp() {
 
 async function doForgotPassword() {
   const email = document.getElementById('forgotEmail').value.trim();
-  if (!email) { toast2('Enter your email address', 'w'); return; }
+  if (!email) { showAuthErr('forgotErr', 'Enter your email address'); return; }
 
+  const resetRedirect = (window.Capacitor && window.Capacitor.isNativePlatform())
+    ? 'https://bandapp.app'
+    : (window.location.origin + window.location.pathname);
   const { error } = await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: window.location.origin + window.location.pathname,
+    redirectTo: resetRedirect,
   });
 
-  if (error) { toast2(error.message, 'w'); return; }
+  if (error) { showAuthErr('forgotErr', error.message); return; }
 
   document.getElementById('ff').style.display = 'none';
   const sentEl = document.getElementById('ff-sent');
@@ -179,7 +199,7 @@ async function doForgotPassword() {
 async function doChangePassword() {
   const newPw     = document.getElementById('settNewPw')?.value || '';
   const confirmPw = document.getElementById('settConfirmPw')?.value || '';
-  if (!newPw || newPw.length < 6) { toast2('Password must be at least 6 characters', 'w'); return; }
+  if (!newPw || newPw.length < 8) { toast2('Password must be at least 8 characters', 'w'); return; }
   if (newPw !== confirmPw) { toast2('Passwords do not match', 'w'); return; }
 
   const { error } = await supabase.auth.updateUser({ password: newPw });
@@ -193,14 +213,20 @@ async function doChangePassword() {
 async function doResetPassword() {
   const newPw     = document.getElementById('resetNewPw')?.value || '';
   const confirmPw = document.getElementById('resetConfirmPw')?.value || '';
-  if (!newPw || newPw.length < 6) { toast2('Password must be at least 6 characters', 'w'); return; }
-  if (newPw !== confirmPw) { toast2('Passwords do not match', 'w'); return; }
+  if (!newPw || newPw.length < 8) { showAuthErr('resetErr', 'Password must be at least 8 characters'); return; }
+  if (newPw !== confirmPw) { showAuthErr('resetErr', 'Passwords do not match'); return; }
 
+  // Clear the guard so the SIGNED_IN event that follows updateUser can load the app.
+  _inPasswordRecovery = false;
   const { error } = await supabase.auth.updateUser({ password: newPw });
-  if (error) { toast2(error.message, 'w'); return; }
+  if (error) {
+    _inPasswordRecovery = true; // restore guard — user must try again
+    showAuthErr('resetErr', error.message);
+    return;
+  }
 
   toast2('Password reset! Signing you in…');
-  // onAuthStateChange will fire with SIGNED_IN after updateUser when in PASSWORD_RECOVERY state
+  // onAuthStateChange will fire with SIGNED_IN after updateUser — now unblocked
 }
 
 async function doLogout() {
@@ -220,8 +246,15 @@ async function doLogout() {
 
 // ── Auth state listener — wires everything together ───────────
 
+// Set to true while the user is on the reset-password form so that the
+// INITIAL_SESSION event that Supabase fires immediately after exchanging the
+// recovery token does not skip ahead into the app.  Cleared by doResetPassword
+// just before calling updateUser so the subsequent SIGNED_IN can proceed.
+let _inPasswordRecovery = false;
+
 supabase.auth.onAuthStateChange(async (event, session) => {
   if (event === 'PASSWORD_RECOVERY') {
+    _inPasswordRecovery = true;
     // User clicked the reset-password link in their email — show the reset form
     document.getElementById('app').classList.remove('vis');
     document.getElementById('authScreen').style.display = 'flex';
@@ -244,6 +277,10 @@ supabase.auth.onAuthStateChange(async (event, session) => {
     if (typeof switchTab === 'function') switchTab('login');
     return;
   }
+
+  // While the recovery form is open, suppress any automatic sign-in events so the
+  // user isn't pushed into the app before they've set their new password.
+  if (_inPasswordRecovery) return;
 
   // Only run full init on login / session restore — not on token refreshes
   if (event !== 'SIGNED_IN' && event !== 'INITIAL_SESSION') return;
@@ -317,7 +354,8 @@ supabase.auth.onAuthStateChange(async (event, session) => {
     document.getElementById('authScreen').style.display = 'flex';
     // switchTab resets authLoading and shows the login form (handles invite-loading state too)
     if (typeof switchTab === 'function') switchTab('login');
-    if (typeof toast2 === 'function') toast2('Sign-in error — please try again', 'w');
+    if (typeof showAuthErr === 'function') showAuthErr('loginErr', 'Sign-in error — please try again');
+    else if (typeof toast2 === 'function') toast2('Sign-in error — please try again', 'w');
   }
 });
 

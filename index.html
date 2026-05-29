@@ -399,6 +399,10 @@ html[data-theme="dark"] .toast{background:#2A2A38;color:#F0F0F8}
 html[data-theme="light"] .toast{background:#111118;color:#fff}
 html[data-theme="dark"] .sb.minimized .ni:hover::after{background:var(--bd);color:var(--ink)}
 html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
+.auth-err{background:var(--r2);border:1.5px solid var(--r);border-radius:var(--rad);padding:12px 14px;margin-bottom:14px;font-size:.85rem;color:var(--r);line-height:1.45;display:flex;align-items:flex-start;gap:10px}
+.auth-err-msg{flex:1;font-weight:500;word-break:break-word}
+.auth-err-x{background:none;border:none;color:var(--r);cursor:pointer;font-size:1.1rem;line-height:1;padding:0;flex-shrink:0;opacity:.65}
+.auth-err-x:hover{opacity:1}
 </style>
 <script>(function(){const t=localStorage.getItem('appearance');if(t&&t!=='default')document.documentElement.setAttribute('data-theme',t);})();</script>
 
@@ -420,6 +424,7 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
     <div id="lf">
       <div class="fg" data-i18n="Email"><label>Email</label><input id="loginEmail" type="email" placeholder="you@email.com" autocomplete="email" onkeydown="if(event.key==='Enter')doLogin()"></div>
       <div class="fg" data-i18n="Password"><label>Password</label><input id="loginPassword" type="password" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()"></div>
+      <div id="loginErr" class="auth-err" style="display:none"><span class="auth-err-msg"></span><button class="auth-err-x" onclick="clearAuthErr('loginErr')" aria-label="Dismiss">✕</button></div>
       <button id="loginBtn" class="btn btn-p btn-fw" onclick="doLogin()" data-i18n="Sign in">Sign in</button>
       <div style="text-align:center;margin:7px 0 4px">
         <a href="#" style="font-size:.75rem;color:var(--a);text-decoration:none" onclick="showForgotPassword();return false" data-i18n="Forgot password?">Forgot password?</a>
@@ -433,8 +438,9 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
       </div>
       <div class="fr" data-i18n="First name" data-i18n="Last name"><div class="fg"><label>First name</label><input id="signupFirst" placeholder="Marco" autocomplete="given-name"></div><div class="fg"><label>Last name</label><input id="signupLast" placeholder="Rossi" autocomplete="family-name"></div></div>
       <div class="fg" data-i18n="Email"><label>Email</label><input id="signupEmail" type="email" placeholder="you@email.com" autocomplete="email"></div>
-      <div class="fg" data-i18n="Password" data-i18n="(min. 6 chars)"><label>Password <span style="font-weight:400;color:var(--ink3)">(min. 6 chars)</span></label><input id="signupPassword" type="password" placeholder="••••••••" autocomplete="new-password"></div>
+      <div class="fg" data-i18n="Password" data-i18n="(min. 8 chars)"><label>Password <span style="font-weight:400;color:var(--ink3)">(min. 8 chars)</span></label><input id="signupPassword" type="password" placeholder="••••••••" autocomplete="new-password"></div>
       <div class="fg" id="sfBandField" data-i18n="Band name (optional)"><label>Band name (optional)</label><input id="signupBand" placeholder="The Jazz Cats"></div>
+      <div id="signupErr" class="auth-err" style="display:none"><span class="auth-err-msg"></span><button class="auth-err-x" onclick="clearAuthErr('signupErr')" aria-label="Dismiss">✕</button></div>
       <button class="btn btn-p btn-fw" onclick="doSignUp()" data-i18n="Create account">Create account</button>
     </div>
     <!-- Post-signup: check email -->
@@ -449,6 +455,7 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
       <div style="font-weight:600;font-size:.9rem;margin-bottom:6px" data-i18n="Reset your password">Reset your password</div>
       <p style="font-size:.81rem;color:var(--ink2);margin-bottom:14px" data-i18n="Enter your email and we'll send you a link to set a new password.">Enter your email and we'll send you a link to set a new password.</p>
       <div class="fg" data-i18n="Email"><label>Email</label><input id="forgotEmail" type="email" placeholder="you@email.com" autocomplete="email"></div>
+      <div id="forgotErr" class="auth-err" style="display:none"><span class="auth-err-msg"></span><button class="auth-err-x" onclick="clearAuthErr('forgotErr')" aria-label="Dismiss">✕</button></div>
       <button class="btn btn-p btn-fw" onclick="doForgotPassword()" data-i18n="Send reset link">Send reset link</button>
       <div style="text-align:center;margin-top:10px">
         <a href="#" style="font-size:.75rem;color:var(--a);text-decoration:none" onclick="switchTab('login');return false" data-i18n="Back to sign in">Back to sign in</a>
@@ -465,8 +472,9 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
     <div id="reset-pw-form" style="display:none">
       <div style="font-weight:600;font-size:.9rem;margin-bottom:6px" data-i18n="Set a new password">Set a new password</div>
       <p style="font-size:.81rem;color:var(--ink2);margin-bottom:14px" data-i18n="Choose a new password for your account.">Choose a new password for your account.</p>
-      <div class="fg" data-i18n="New password" data-i18n="(min. 6 chars)"><label>New password <span style="font-weight:400;color:var(--ink3)">(min. 6 chars)</span></label><input id="resetNewPw" type="password" placeholder="••••••••" autocomplete="new-password"></div>
+      <div class="fg" data-i18n="New password" data-i18n="(min. 8 chars)"><label>New password <span style="font-weight:400;color:var(--ink3)">(min. 8 chars)</span></label><input id="resetNewPw" type="password" placeholder="••••••••" autocomplete="new-password"></div>
       <div class="fg" data-i18n="Confirm new password"><label>Confirm new password</label><input id="resetConfirmPw" type="password" placeholder="••••••••" autocomplete="new-password"></div>
+      <div id="resetErr" class="auth-err" style="display:none"><span class="auth-err-msg"></span><button class="auth-err-x" onclick="clearAuthErr('resetErr')" aria-label="Dismiss">✕</button></div>
       <button class="btn btn-p btn-fw" onclick="doResetPassword()" data-i18n="Set new password">Set new password</button>
     </div>
   </div>
@@ -1291,7 +1299,7 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
           <div class="ct" style="margin-bottom:4px" data-i18n="Change Password">Change Password</div>
           <div style="font-size:.75rem;color:var(--ink3);margin-bottom:14px" data-i18n="Set a new password for your account.">Set a new password for your account.</div>
           <div class="fg" style="max-width:280px">
-            <label data-i18n="New password" data-i18n="(min. 6 chars)">New password <span style="font-weight:400;color:var(--ink3)">(min. 6 chars)</span></label>
+            <label data-i18n="New password" data-i18n="(min. 8 chars)">New password <span style="font-weight:400;color:var(--ink3)">(min. 8 chars)</span></label>
             <input id="settNewPw" type="password" placeholder="••••••••" autocomplete="new-password">
           </div>
           <div class="fg" style="max-width:280px">
@@ -2486,6 +2494,7 @@ function populateLangSelect(selectId, selectedCode) {
 function switchTab(t){
   // Reset all alternate auth states
   ['sf-confirm','ff','ff-sent','reset-pw-form','authLoading'].forEach(id=>{const el=document.getElementById(id);if(el)el.style.display='none';});
+  ['loginErr','signupErr','forgotErr','resetErr'].forEach(id=>{if(typeof clearAuthErr==='function')clearAuthErr(id);});
   const tabs=document.getElementById('auth-tabs');
   if(tabs)tabs.style.display='flex';
   document.querySelectorAll('#authScreen .stb').forEach((b,i)=>b.classList.toggle('on',(i===0&&t==='login')||(i===1&&t==='signup')));
@@ -3088,11 +3097,11 @@ function renderLib(){
               : '<path d="M1 8s2.5-5 7-5 7 5 7 5-2.5 5-7 5-7-5-7-5z"/><circle cx="8" cy="8" r="2"/><path d="M2 2l12 12" stroke-linecap="round"/>'}
           </svg>
         </div>
-        <div class="sc-act-btn del" onclick="deleteSong('${s.id}')" title="Delete song">
+        ${currentUser.role==='admin'?`<div class="sc-act-btn del" onclick="deleteSong('${s.id}')" title="Delete song">
           <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
             <path d="M2 4h12M5 4V2h6v2M6 7v5M10 7v5M3 4l1 10h8l1-10"/>
           </svg>
-        </div>
+        </div>`:''}
       </div>
     </div>`).join('');
 }
@@ -3328,7 +3337,7 @@ function renderSheet(){
       <td><input class="sh-cell" style="min-width:150px;font-size:.72rem" value="${esc(s.apple||'')}" placeholder="Apple Music URL" data-field="apple" data-id="${s.id}" onchange="sheetEdit(this)" onkeydown="sheetKeyDown(event,this)"></td>
       <td><input class="sh-cell" style="min-width:150px;font-size:.72rem" value="${esc(s.amazon||'')}" placeholder="Amazon Music URL" data-field="amazon" data-id="${s.id}" onchange="sheetEdit(this)" onkeydown="sheetKeyDown(event,this)"></td>
       <td><div class="sh-chk"><input type="checkbox"${s.hidden?' checked':''} style="accent-color:var(--a);width:15px;height:15px;cursor:pointer" data-field="hidden" data-id="${s.id}" onchange="sheetEdit(this)"></div></td>
-      <td style="text-align:center;padding:4px"><button class="btn-ic btn" onclick="deleteSheetRow('${s.id}')" style="width:24px;height:24px;color:var(--r);border-color:var(--r2)" title="Delete"><svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 4h12M5 4V2h6v2M6 7v5M10 7v5M3 4l1 10h8l1-10"/></svg></button></td>
+      ${currentUser.role==='admin'?`<td style="text-align:center;padding:4px"><button class="btn-ic btn" onclick="deleteSheetRow('${s.id}')" style="width:24px;height:24px;color:var(--r);border-color:var(--r2)" title="Delete"><svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 4h12M5 4V2h6v2M6 7v5M10 7v5M3 4l1 10h8l1-10"/></svg></button></td>`:'<td></td>'}
     </tr>`).join('');
 }
 
@@ -3421,6 +3430,7 @@ async function songUsedInSetlists(songId){
 }
 
 async function deleteSheetRow(id){
+  if(currentUser.role!=='admin'){toast2('Only admins can delete songs','w');return;}
   const s=songByAnyId(id);if(!s)return;
   const usedIn=await songUsedInSetlists(s.id);
   if(usedIn.length){toast2(`Song can't be deleted as it is being used by Set List "${usedIn.join('", "')}". Please first remove it from the setlist(s).`,'w');return;}
@@ -3506,6 +3516,8 @@ function openSongEdit(id){
   hBtn.style.background=s.hidden?'var(--g2)':'var(--bg2)';
   hBtn.style.borderColor=s.hidden?'#86EFAC':'var(--bd)';
   hBtn.style.color=s.hidden?'var(--g)':'var(--ink2)';
+  const delBtn=document.getElementById('seDeleteBtn');
+  if(delBtn)delBtn.style.display=currentUser.role==='admin'?'':'none';
   showMod('seMod');
 }
 
@@ -3556,6 +3568,7 @@ async function toggleHideSong(id){
 }
 
 async function deleteSong(id){
+  if(currentUser.role!=='admin'){toast2('Only admins can delete songs','w');return;}
   const s=songByAnyId(id);if(!s)return;
   const usedIn=await songUsedInSetlists(s.id);
   if(usedIn.length){toast2(`Song can't be deleted as it is being used by Set List "${usedIn.join('", "')}". Please first remove it from the setlist(s).`,'w');return;}
@@ -4528,8 +4541,9 @@ function renderPfNatFlag(){
 
 // ── INSTRUMENTS ───────────────────────────────────────────
 const INSTRUMENTS=[
-  {v:'Guitar',       i:'🎸', label:'Guitar'},
-  {v:'Bass Guitar',  i:'🎸', label:'Bass Guitar'},
+  {v:'Guitar',          i:'🎸', label:'Guitar'},
+  {v:'Acoustic Guitar', i:'🪕', label:'Acoustic Guitar'},
+  {v:'Bass Guitar',     i:'🎸', label:'Bass Guitar'},
   {v:'Piano / Keys', i:'🎹', label:'Piano / Keys'},
   {v:'Drums',        i:'🥁', label:'Drums'},
   {v:'Percussion',   i:'🪘', label:'Percussion'},
@@ -6184,8 +6198,8 @@ async function saveSettings(){
       style="flex:1;padding:9px 14px;border-radius:var(--rad);border:1.5px solid var(--bd);background:var(--bg2);color:var(--ink2);font-family:var(--font);font-size:.8rem;font-weight:600;cursor:pointer;transition:all .15s;text-align:center">
       🙈 Hide Song
     </button>
-    <!-- Delete -->
-    <button onclick="deleteSong(editingSongId)"
+    <!-- Delete — admin only -->
+    <button id="seDeleteBtn" onclick="deleteSong(editingSongId)"
       style="padding:9px 14px;border-radius:var(--rad);border:1.5px solid var(--r2);background:var(--r2);color:var(--r);font-family:var(--font);font-size:.8rem;font-weight:600;cursor:pointer;transition:all .15s"
       onmouseover="this.style.background='var(--r)';this.style.color='#fff'" onmouseout="this.style.background='var(--r2)';this.style.color='var(--r)'">
       🗑 Delete Song

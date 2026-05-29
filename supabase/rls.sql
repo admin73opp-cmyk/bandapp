@@ -98,7 +98,7 @@ create policy "songs_update" on songs
   for update using (is_band_member(band_id));
 
 create policy "songs_delete" on songs
-  for delete using (is_band_member(band_id));
+  for delete using (is_band_admin(band_id));
 
 -- ── SONG_NOTES ───────────────────────────────────────────────
 
