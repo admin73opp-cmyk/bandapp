@@ -216,17 +216,20 @@ async function doResetPassword() {
   if (!newPw || newPw.length < 8) { showAuthErr('resetErr', 'Password must be at least 8 characters'); return; }
   if (newPw !== confirmPw) { showAuthErr('resetErr', 'Passwords do not match'); return; }
 
-  // Clear the guard so the SIGNED_IN event that follows updateUser can load the app.
-  _inPasswordRecovery = false;
+  // Keep _inPasswordRecovery = true so the SIGNED_IN that fires after updateUser
+  // does not auto-load the app — the user must sign in explicitly with the new password.
   const { error } = await supabase.auth.updateUser({ password: newPw });
   if (error) {
-    _inPasswordRecovery = true; // restore guard — user must try again
     showAuthErr('resetErr', error.message);
     return;
   }
 
-  toast2('Password reset! Signing you in…');
-  // onAuthStateChange will fire with SIGNED_IN after updateUser — now unblocked
+  // Sign out the recovery session, then land on the Sign In screen.
+  // SIGNED_OUT is blocked by the _inPasswordRecovery guard, so we transition manually.
+  try { await supabase.auth.signOut(); } catch (_) {}
+  _inPasswordRecovery = false;
+  if (typeof switchTab === 'function') switchTab('login');
+  toast2('Password updated! Please sign in with your new password.');
 }
 
 async function doLogout() {
