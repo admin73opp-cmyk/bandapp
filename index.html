@@ -33,7 +33,8 @@
     --bl:#60A5FA;
     --bl2:#0D1E3A;
     --sh:0 1px 3px rgba(0,0,0,.3),0 4px 14px rgba(0,0,0,.25);
-    --shl:0 8px 30px rgba(0,0,0,.5)
+    --shl:0 8px 30px rgba(0,0,0,.5);
+    color-scheme:dark
   }
   ::-webkit-scrollbar-thumb{background:var(--bd)}
   select option{background:var(--w);color:var(--ink)}
@@ -2430,20 +2431,20 @@ function syncCurrentUserToUI(){
 // and eventually the i18n translation loader in Phase 2).
 // Fields: code (BCP-47), flag emoji, native name, english name.
 const SUPPORTED_LANGUAGES = [
-  { code: 'en',    flag: '🇬🇧', native: 'English',    english: 'English'    },
-  { code: 'nl',    flag: '🇳🇱', native: 'Nederlands',  english: 'Dutch'      },
-  { code: 'fr',    flag: '🇫🇷', native: 'Français',    english: 'French'     },
-  { code: 'pt',    flag: '🇧🇷', native: 'Português',   english: 'Portuguese' },
-  { code: 'es',    flag: '🇪🇸', native: 'Español',     english: 'Spanish'    },
-  { code: 'de',    flag: '🇩🇪', native: 'Deutsch',     english: 'German'     },
-  { code: 'it',    flag: '🇮🇹', native: 'Italiano',    english: 'Italian'    },
+  { code: 'en',    flag: '🇬🇧', native: 'English',    english: 'English',    ready: true  },
+  { code: 'nl',    flag: '🇳🇱', native: 'Nederlands',  english: 'Dutch',      ready: true  },
+  { code: 'fr',    flag: '🇫🇷', native: 'Français',    english: 'French',     ready: false },
+  { code: 'pt',    flag: '🇧🇷', native: 'Português',   english: 'Portuguese', ready: true  },
+  { code: 'es',    flag: '🇪🇸', native: 'Español',     english: 'Spanish',    ready: false },
+  { code: 'de',    flag: '🇩🇪', native: 'Deutsch',     english: 'German',     ready: false },
+  { code: 'it',    flag: '🇮🇹', native: 'Italiano',    english: 'Italian',    ready: false },
 ];
 
 function populateLangSelect(selectId, selectedCode) {
   const el = document.getElementById(selectId);
   if (!el) return;
   el.innerHTML = SUPPORTED_LANGUAGES.map(l =>
-    `<option value="${l.code}" ${l.code === (selectedCode || 'en') ? 'selected' : ''}>${l.flag} ${l.native}</option>`
+    `<option value="${l.code}" ${l.code === (selectedCode || 'en') ? 'selected' : ''} ${!l.ready ? 'disabled' : ''}>${l.flag} ${l.native}${!l.ready ? ' (coming soon)' : ''}</option>`
   ).join('');
 }
 
