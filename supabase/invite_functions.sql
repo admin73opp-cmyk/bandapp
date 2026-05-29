@@ -30,14 +30,24 @@ begin
 end;
 $$;
 
--- find_user_by_email: looks up a user by email address (for the "already on Bandapp?" lookup)
--- Queries auth.users first so users without a profiles row are still found.
+-- find_user_by_email: looks up a user by email address (for the "already on Bandapp?" lookup).
+-- Restricted to authenticated band admins to prevent open email enumeration.
 create or replace function find_user_by_email(p_email text)
 returns jsonb language plpgsql security definer as $$
 declare
   v_uid     uuid;
   v_profile profiles%rowtype;
 begin
+  -- Must be authenticated
+  if auth.uid() is null then
+    return jsonb_build_object('error', 'unauthenticated');
+  end if;
+
+  -- Caller must be an admin of at least one band
+  if not exists(select 1 from band_members where user_id = auth.uid() and role = 'admin') then
+    return jsonb_build_object('error', 'forbidden', 'message', 'Only band admins can look up members by email');
+  end if;
+
   select id into v_uid
   from auth.users
   where lower(email) = lower(p_email)

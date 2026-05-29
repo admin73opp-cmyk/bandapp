@@ -108,7 +108,10 @@ create policy "song_notes_select" on song_notes
   );
 
 create policy "song_notes_insert" on song_notes
-  for insert with check (user_id = auth.uid());
+  for insert with check (
+    user_id = auth.uid()
+    and exists(select 1 from songs s where s.id = song_notes.song_id and is_band_member(s.band_id))
+  );
 
 create policy "song_notes_update" on song_notes
   for update using (user_id = auth.uid());
@@ -205,7 +208,11 @@ create policy "blackouts_select" on blackouts
 create policy "blackouts_insert" on blackouts
   for insert with check (
     is_band_admin(band_id)
-    or (is_band_member(band_id) and source_concert_id is not null)
+    or (
+      is_band_member(band_id)
+      and source_concert_id is not null
+      and exists(select 1 from concerts c where c.id = source_concert_id and c.band_id = band_id)
+    )
   );
 
 create policy "blackouts_update" on blackouts
@@ -229,7 +236,16 @@ create policy "event_photos_select" on event_photos
   );
 
 create policy "event_photos_insert" on event_photos
-  for insert with check (uploaded_by = auth.uid());
+  for insert with check (
+    uploaded_by = auth.uid()
+    and (
+      (event_type = 'concert'   and exists(select 1 from concerts   c where c.id = event_photos.event_id and is_band_member(c.band_id)))
+      or
+      (event_type = 'rehearsal' and exists(select 1 from rehearsals r where r.id = event_photos.event_id and is_band_member(r.band_id)))
+      or
+      (event_type = 'band'      and is_band_member(event_photos.event_id))
+    )
+  );
 
 create policy "event_photos_delete" on event_photos
   for delete using (uploaded_by = auth.uid());

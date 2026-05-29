@@ -107,7 +107,7 @@ async function doSignUp() {
   const pw        = document.getElementById('signupPassword').value;
 
   if (!email || !pw) { toast2('Enter email and password', 'w'); return; }
-  if (pw.length < 6) { toast2('Password must be at least 6 characters', 'w'); return; }
+  if (pw.length < 8) { toast2('Password must be at least 8 characters', 'w'); return; }
 
   const pendingBandId     = sessionStorage.getItem('pendingBandId')   || new URLSearchParams(window.location.search).get('band') || '';
   const pendingPhone      = sessionStorage.getItem('invitePhone')      || '';

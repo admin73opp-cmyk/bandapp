@@ -6,20 +6,26 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
-const CORS = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+const APP_URL = Deno.env.get('APP_URL') || ''
+
+function corsHeaders(req: Request) {
+  const origin = req.headers.get('origin') || ''
+  const allowed = APP_URL && origin === APP_URL ? origin : ''
+  return {
+    'Access-Control-Allow-Origin': allowed,
+    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  }
 }
 
-function json(body: unknown, status = 200) {
+function json(req: Request, body: unknown, status = 200) {
   return new Response(JSON.stringify(body), {
     status,
-    headers: { ...CORS, 'Content-Type': 'application/json' },
+    headers: { ...corsHeaders(req), 'Content-Type': 'application/json' },
   })
 }
 
 serve(async (req) => {
-  if (req.method === 'OPTIONS') return new Response('ok', { headers: CORS })
+  if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders(req) })
 
   try {
     const authHeader = req.headers.get('Authorization') ?? ''
@@ -39,10 +45,10 @@ serve(async (req) => {
     )
 
     const { data: { user: caller } } = await userClient.auth.getUser()
-    if (!caller) return json({ error: 'Unauthorized' }, 401)
+    if (!caller) return json(req, { error: 'Unauthorized' }, 401)
 
     const { band_id, email, first_name, last_name, instrument, role = 'member' } = await req.json()
-    if (!band_id || !email) return json({ error: 'band_id and email are required' }, 400)
+    if (!band_id || !email) return json(req, { error: 'band_id and email are required' }, 400)
 
     // Verify caller is admin of this band
     const { data: mem } = await admin
@@ -52,10 +58,10 @@ serve(async (req) => {
       .eq('user_id', caller.id)
       .single()
 
-    if (mem?.role !== 'admin') return json({ error: 'Only band admins can invite members' }, 403)
+    if (mem?.role !== 'admin') return json(req, { error: 'Only band admins can invite members' }, 403)
 
-    // Derive redirect URL: prefer APP_URL env var, fall back to request origin
-    const appUrl = Deno.env.get('APP_URL') || req.headers.get('origin') || ''
+    // Derive redirect URL: APP_URL env var only — do not fall back to request origin (open-redirect risk)
+    const appUrl = Deno.env.get('APP_URL') || ''
 
     // Send invite email — creates the user account and delivers a magic sign-in link.
     // user_metadata is accessible on the client as session.user.user_metadata after they sign in.
@@ -74,12 +80,12 @@ serve(async (req) => {
       // User already has a confirmed account — admin should use the lookup flow instead
       if (invErr.message?.toLowerCase().includes('already registered') ||
           invErr.message?.toLowerCase().includes('already been registered')) {
-        return json({
+        return json(req, {
           error: 'already_registered',
           message: 'This email already has a Bandapp account. Use "Already on Bandapp?" above to find and add them.',
         }, 409)
       }
-      return json({ error: invErr.message }, 400)
+      return json(req, { error: invErr.message }, 400)
     }
 
     const uid = invData.user.id
@@ -98,11 +104,11 @@ serve(async (req) => {
       .from('band_members')
       .upsert({ band_id, user_id: uid, role }, { onConflict: 'band_id,user_id' })
 
-    if (bmErr) return json({ error: bmErr.message }, 500)
+    if (bmErr) return json(req, { error: bmErr.message }, 500)
 
-    return json({ success: true, user_id: uid })
+    return json(req, { success: true, user_id: uid })
 
   } catch (e) {
-    return json({ error: (e as Error).message }, 500)
+    return json(req, { error: (e as Error).message }, 500)
   }
 })
