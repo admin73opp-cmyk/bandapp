@@ -18,6 +18,14 @@ function t(key) {
     const val = window.ES[key];
     if (val !== undefined) return val;
   }
+  if (lang === 'de' && window.DE) {
+    const val = window.DE[key];
+    if (val !== undefined) return val;
+  }
+  if (lang === 'it' && window.IT) {
+    const val = window.IT[key];
+    if (val !== undefined) return val;
+  }
   if (lang === 'pt' && window.PT_BR) {
     const val = window.PT_BR[key];
     if (val !== undefined) return val;
