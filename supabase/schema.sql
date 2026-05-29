@@ -195,7 +195,7 @@ create index if not exists blackouts_band_id_idx on blackouts(band_id);
 -- ── EVENT_PHOTOS ─────────────────────────────────────────────
 create table if not exists event_photos (
   id           uuid primary key default gen_random_uuid(),
-  event_type   text not null check (event_type in ('concert','rehearsal')),
+  event_type   text not null check (event_type in ('concert','rehearsal','band')),
   event_id     uuid not null,
   url          text not null,   -- Supabase Storage path
   uploaded_by  uuid references profiles(id) on delete set null,

@@ -1,0 +1,136 @@
+// Edge Function: notify-rehearsal
+// Sends email notifications to all band members when a rehearsal is confirmed.
+// Requires RESEND_API_KEY set as a Supabase secret (supabase secrets set RESEND_API_KEY=...).
+// Requires FROM_EMAIL set as a Supabase secret (e.g. noreply@yourdomain.com).
+
+import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+
+const CORS = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+}
+
+function json(body: unknown, status = 200) {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: { ...CORS, 'Content-Type': 'application/json' },
+  })
+}
+
+serve(async (req) => {
+  if (req.method === 'OPTIONS') return new Response('ok', { headers: CORS })
+
+  try {
+    const resendKey = Deno.env.get('RESEND_API_KEY')
+    const fromEmail = Deno.env.get('FROM_EMAIL') || 'noreply@bandapp.app'
+
+    if (!resendKey) return json({ error: 'Email service not configured' }, 503)
+
+    const authHeader = req.headers.get('Authorization') ?? ''
+
+    const admin = createClient(
+      Deno.env.get('SUPABASE_URL')!,
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!,
+      { auth: { autoRefreshToken: false, persistSession: false } }
+    )
+
+    const userClient = createClient(
+      Deno.env.get('SUPABASE_URL')!,
+      Deno.env.get('SUPABASE_ANON_KEY')!,
+      { global: { headers: { Authorization: authHeader } } }
+    )
+
+    const { data: { user: caller } } = await userClient.auth.getUser()
+    if (!caller) return json({ error: 'Unauthorized' }, 401)
+
+    const { band_id, title, date, start, end, location, notes } = await req.json()
+    if (!band_id || !title || !date) return json({ error: 'band_id, title, and date are required' }, 400)
+
+    // Verify caller is admin of this band
+    const { data: mem } = await admin
+      .from('band_members')
+      .select('role')
+      .eq('band_id', band_id)
+      .eq('user_id', caller.id)
+      .single()
+
+    if (mem?.role !== 'admin') return json({ error: 'Only band admins can send rehearsal notifications' }, 403)
+
+    // Get band name
+    const { data: band } = await admin.from('bands').select('name').eq('id', band_id).single()
+    const bandName = band?.name || 'Your Band'
+
+    // Fetch member user IDs + profile names in one query
+    const { data: memberRows } = await admin
+      .from('band_members')
+      .select('user_id, profiles(first_name, last_name)')
+      .eq('band_id', band_id)
+
+    if (!memberRows?.length) return json({ success: true, sent: 0 })
+
+    // Resolve emails via auth.admin.getUserById — works regardless of whether the
+    // profiles.email column exists (that migration may not have been run yet).
+    // Bands are small (<20 members) so N parallel lookups is fast.
+    const recipientsRaw = await Promise.all(
+      (memberRows as { user_id: string; profiles: { first_name?: string; last_name?: string } | null }[])
+        .map(async row => {
+          const { data } = await admin.auth.admin.getUserById(row.user_id)
+          const email = data?.user?.email
+          if (!email) return null
+          const p = row.profiles || {}
+          const name = [p.first_name, p.last_name].filter(Boolean).join(' ').trim() || email
+          return { email, name }
+        })
+    )
+
+    const recipients = recipientsRaw.filter(
+      (r): r is { email: string; name: string } => r !== null
+    )
+
+    if (!recipients.length) return json({ success: true, sent: 0 })
+
+    // Build email content
+    const timeStr = start ? ` at ${start}${end ? `–${end}` : ''}` : ''
+    const locationStr = location ? `<p><strong>Location:</strong> ${location}</p>` : ''
+    const notesStr = notes ? `<p><strong>Notes:</strong> ${notes}</p>` : ''
+
+    const htmlBody = `
+<div style="font-family:sans-serif;max-width:480px;margin:0 auto;padding:24px">
+  <h2 style="color:#6C63FF;margin-bottom:4px">🎸 Rehearsal Confirmed</h2>
+  <p style="color:#666;margin-top:0">${bandName}</p>
+  <hr style="border:none;border-top:1px solid #eee;margin:16px 0">
+  <p><strong>📅 Date:</strong> ${date}${timeStr}</p>
+  ${locationStr}
+  ${notesStr}
+  <hr style="border:none;border-top:1px solid #eee;margin:16px 0">
+  <p style="font-size:.8rem;color:#999">You're receiving this because you're a member of ${bandName} on Bandapp.</p>
+</div>`
+
+    const textBody = `Rehearsal Confirmed — ${bandName}\n\nDate: ${date}${timeStr}${location ? `\nLocation: ${location}` : ''}${notes ? `\nNotes: ${notes}` : ''}\n\nYou're receiving this because you're a member of ${bandName} on Bandapp.`
+
+    // Send all emails in parallel via Resend
+    const results = await Promise.all(recipients.map(async (recipient) => {
+      const res = await fetch('https://api.resend.com/emails', {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${resendKey}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          from: `Bandapp <${fromEmail}>`,
+          to: [recipient.email],
+          subject: `🎸 Rehearsal confirmed: ${title} — ${date}`,
+          html: htmlBody,
+          text: textBody,
+        }),
+      })
+      if (res.ok) return null
+      const err = await res.json().catch(() => ({ message: res.statusText }))
+      return `${recipient.email}: ${err?.message || res.statusText}`
+    }))
+
+    const errors = results.filter((e): e is string => e !== null)
+    return json({ success: true, sent: recipients.length - errors.length, errors: errors.length ? errors : undefined })
+
+  } catch (e) {
+    return json({ error: (e as Error).message }, 500)
+  }
+})

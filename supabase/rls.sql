@@ -92,13 +92,13 @@ create policy "songs_select" on songs
   for select using (is_band_member(band_id));
 
 create policy "songs_insert" on songs
-  for insert with check (is_band_admin(band_id));
+  for insert with check (is_band_member(band_id));
 
 create policy "songs_update" on songs
-  for update using (is_band_admin(band_id));
+  for update using (is_band_member(band_id));
 
 create policy "songs_delete" on songs
-  for delete using (is_band_admin(band_id));
+  for delete using (is_band_member(band_id));
 
 -- ── SONG_NOTES ───────────────────────────────────────────────
 
@@ -203,13 +203,19 @@ create policy "blackouts_select" on blackouts
   for select using (is_band_member(band_id));
 
 create policy "blackouts_insert" on blackouts
-  for insert with check (is_band_admin(band_id));
+  for insert with check (
+    is_band_admin(band_id)
+    or (is_band_member(band_id) and source_concert_id is not null)
+  );
 
 create policy "blackouts_update" on blackouts
   for update using (is_band_admin(band_id));
 
 create policy "blackouts_delete" on blackouts
-  for delete using (is_band_admin(band_id));
+  for delete using (
+    is_band_admin(band_id)
+    or (is_band_member(band_id) and source_concert_id is not null)
+  );
 
 -- ── EVENT_PHOTOS ─────────────────────────────────────────────
 
@@ -218,6 +224,8 @@ create policy "event_photos_select" on event_photos
     (event_type = 'concert'   and exists(select 1 from concerts   c where c.id = event_photos.event_id and is_band_member(c.band_id)))
     or
     (event_type = 'rehearsal' and exists(select 1 from rehearsals r where r.id = event_photos.event_id and is_band_member(r.band_id)))
+    or
+    (event_type = 'band'      and is_band_member(event_photos.event_id))
   );
 
 create policy "event_photos_insert" on event_photos

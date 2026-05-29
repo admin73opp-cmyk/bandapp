@@ -25,6 +25,11 @@ async function loadCurrentUser(uid, email) {
     const ln = meta.last_name || '';
     currentUser.firstName = fn;
     currentUser.lastName  = ln;
+    currentUser._memberships = [];
+    // Restore pending band from metadata if sessionStorage was cleared (e.g. after page refresh)
+    if (meta.pending_band_id && !sessionStorage.getItem('pendingBandId')) {
+      sessionStorage.setItem('pendingBandId', meta.pending_band_id);
+    }
     if (fn || ln) {
       await supabase.from('profiles').upsert({
         id:         uid,
@@ -63,14 +68,36 @@ async function loadCurrentUser(uid, email) {
 
 // ── Login / logout ───────────────────────────────────────────
 
+// Safety timer: if onAuthStateChange never completes (e.g. DB query hangs on mobile),
+// reset the button so the user can try again.
+let _loginSafetyTimer = null;
+function _clearLoginTimer() { clearTimeout(_loginSafetyTimer); _loginSafetyTimer = null; }
+function _resetLoginBtn() {
+  const b = document.getElementById('loginBtn');
+  if (b) { b.disabled = false; b.textContent = 'Sign in'; }
+}
+
 async function doLogin() {
   const email = document.getElementById('loginEmail').value.trim();
   const pw    = document.getElementById('loginPassword').value;
   if (!email || !pw) { toast2('Enter email and password', 'w'); return; }
 
+  const btn = document.getElementById('loginBtn');
+  if (btn) { btn.disabled = true; btn.textContent = 'Signing in…'; }
+
+  _clearLoginTimer();
+  _loginSafetyTimer = setTimeout(() => {
+    _resetLoginBtn();
+    if (typeof toast2 === 'function') toast2('Sign-in timed out — please try again', 'w');
+  }, 20000);
+
   const { error } = await supabase.auth.signInWithPassword({ email, password: pw });
-  if (error) { toast2(error.message, 'w'); }
-  // onAuthStateChange handles the rest
+  if (error) {
+    _clearLoginTimer();
+    _resetLoginBtn();
+    toast2(error.message, 'w');
+  }
+  // onAuthStateChange handles the rest on success; it clears _loginSafetyTimer
 }
 
 async function doSignUp() {
@@ -82,10 +109,30 @@ async function doSignUp() {
   if (!email || !pw) { toast2('Enter email and password', 'w'); return; }
   if (pw.length < 6) { toast2('Password must be at least 6 characters', 'w'); return; }
 
+  const pendingBandId     = sessionStorage.getItem('pendingBandId')   || new URLSearchParams(window.location.search).get('band') || '';
+  const pendingPhone      = sessionStorage.getItem('invitePhone')      || '';
+  const pendingInstrument = sessionStorage.getItem('inviteInstrument') || '';
+  const baseUrl = localStorage.getItem('appUrl') || (window.location.origin + window.location.pathname);
+  // Embed all invite params in the confirmation-email redirect URL so they survive new-tab opens
+  const _rp = new URLSearchParams();
+  if (pendingBandId)     _rp.set('band',       pendingBandId);
+  if (pendingPhone)      _rp.set('phone',       pendingPhone);
+  if (pendingInstrument) _rp.set('instrument',  pendingInstrument);
+  const redirectTo = _rp.toString() ? `${baseUrl}?${_rp.toString()}` : baseUrl;
+
   const { data, error } = await supabase.auth.signUp({
     email,
     password: pw,
-    options: { data: { first_name: firstName, last_name: lastName } },
+    options: {
+      data: {
+        first_name: firstName,
+        last_name:  lastName,
+        ...(pendingBandId     ? { pending_band_id:    pendingBandId }     : {}),
+        ...(pendingPhone      ? { pending_phone:       pendingPhone }      : {}),
+        ...(pendingInstrument ? { pending_instrument:  pendingInstrument } : {}),
+      },
+      emailRedirectTo: redirectTo,
+    },
   });
 
   if (error) { toast2(error.message, 'w'); return; }
@@ -159,19 +206,19 @@ async function doResetPassword() {
   // onAuthStateChange will fire with SIGNED_IN after updateUser when in PASSWORD_RECOVERY state
 }
 
-async function doDemo() {
-  const { error } = await supabase.auth.signInWithPassword({
-    email:    'demo@bandapp.com',
-    password: 'demo1234',
-  });
-  if (error) {
-    console.error('[bandapp] demo login error:', error?.status, error?.message, error);
-    toast2(error.message, 'w');
-  }
-}
-
 async function doLogout() {
-  await supabase.auth.signOut();
+  // Show the auth screen immediately so the button always feels responsive,
+  // regardless of network latency or whether signOut() eventually times out.
+  document.getElementById('app').classList.remove('vis');
+  document.getElementById('authScreen').style.display = 'flex';
+  if (typeof switchTab === 'function') switchTab('login');
+  // Invalidate the server-side session in the background.
+  try {
+    await supabase.auth.signOut();
+  } catch (e) {
+    console.warn('[bandapp] signOut error:', e?.message);
+    try { await supabase.auth.signOut({ scope: 'local' }); } catch (_) {}
+  }
 }
 
 // ── Auth state listener — wires everything together ───────────
@@ -195,6 +242,8 @@ supabase.auth.onAuthStateChange(async (event, session) => {
   if (event === 'SIGNED_OUT') {
     document.getElementById('app').classList.remove('vis');
     document.getElementById('authScreen').style.display = 'flex';
+    const fbBtn = document.getElementById('fbBtn');
+    if (fbBtn) fbBtn.style.display = 'none';
     if (typeof switchTab === 'function') switchTab('login');
     return;
   }
@@ -206,18 +255,115 @@ supabase.auth.onAuthStateChange(async (event, session) => {
     document.getElementById('authScreen').style.display = 'flex';
     return;
   }
-  await loadCurrentUser(session.user.id, session.user.email);
-  document.getElementById('authScreen').style.display = 'none';
-  document.getElementById('app').classList.add('vis');
-  initSbState();
-  await initApp();
+
+  try {
+    await loadCurrentUser(session.user.id, session.user.email);
+
+    // Restore invite params from confirmation-email URL into sessionStorage (new-tab safe)
+    const _urlParams = new URLSearchParams(window.location.search);
+    if (_urlParams.get('phone'))      sessionStorage.setItem('invitePhone',      _urlParams.get('phone'));
+    if (_urlParams.get('instrument')) sessionStorage.setItem('inviteInstrument', _urlParams.get('instrument'));
+    // Also fall back to user metadata (set during signup) if sessionStorage is empty
+    const _meta = session.user.user_metadata || {};
+    if (!sessionStorage.getItem('invitePhone')      && _meta.pending_phone)      sessionStorage.setItem('invitePhone',      _meta.pending_phone);
+    if (!sessionStorage.getItem('inviteInstrument') && _meta.pending_instrument) sessionStorage.setItem('inviteInstrument', _meta.pending_instrument);
+
+    // Auto-join band from invite link (?band=UUID) or sessionStorage or user metadata
+    const _pendingBandId = _urlParams.get('band') || sessionStorage.getItem('pendingBandId') || _meta.pending_band_id || '';
+    if (_pendingBandId) {
+      const { data: joinData, error: joinErr } = await supabase.rpc('join_band_by_code', { p_code: _pendingBandId });
+      if (joinData?.success) {
+        currentUser._memberships = [...(currentUser._memberships || []), { band_id: joinData.band_id, role: 'member' }];
+        activeBandId = joinData.band_id;
+        localStorage.setItem('activeBandId', joinData.band_id);
+        sessionStorage.removeItem('pendingBandId');
+        window.history.replaceState({}, '', window.location.pathname);
+      } else if (joinData?.error === 'already_member') {
+        sessionStorage.removeItem('pendingBandId');
+        window.history.replaceState({}, '', window.location.pathname);
+      } else {
+        // RPC not deployed or network error — clean URL but keep pendingBandId for retry on next login
+        window.history.replaceState({}, '', window.location.pathname);
+        if (joinErr) console.warn('[bandapp] join_band_by_code failed:', joinErr?.message);
+      }
+    }
+
+    // Hide auth screen and show the app shell immediately — data loads in the background
+    _clearLoginTimer();
+    ['lf','sf','sf-confirm','ff','ff-sent','auth-tabs'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.style.display = 'none';
+    });
+    document.getElementById('authScreen').style.display = 'none';
+    initSbState();
+    document.getElementById('app').classList.add('vis');
+
+    try {
+      await initApp();
+    } catch (e) {
+      console.error('[bandapp] initApp error:', e);
+    }
+
+    // Invited users land with needs_onboarding=true — show password-setup overlay
+    if (_meta.needs_onboarding) {
+      if (typeof showOnboarding === 'function') showOnboarding();
+    }
+  } catch (e) {
+    console.error('[bandapp] sign-in error:', e);
+    _clearLoginTimer();
+    _resetLoginBtn();
+    document.getElementById('app').classList.remove('vis');
+    document.getElementById('authScreen').style.display = 'flex';
+    // switchTab resets authLoading and shows the login form (handles invite-loading state too)
+    if (typeof switchTab === 'function') switchTab('login');
+    if (typeof toast2 === 'function') toast2('Sign-in error — please try again', 'w');
+  }
 });
 
 // On first load, restore an existing session without waiting for the event
 (async () => {
   const { data: { session } } = await supabase.auth.getSession();
   if (!session) {
+    const p = new URLSearchParams(window.location.search);
+
+    // If the URL contains a Supabase auth token (PKCE ?code= or implicit #access_token),
+    // the client is in the middle of exchanging an invite/magic-link.
+    // Show the loading spinner and bail — onAuthStateChange will handle sign-in and
+    // the onboarding modal once the exchange completes.
+    const _hash = window.location.hash;
+    if (p.get('code') || _hash.includes('access_token')) {
+      document.getElementById('authScreen').style.display = 'flex';
+      document.getElementById('authLoading').style.display = 'flex';
+      document.getElementById('auth-tabs').style.display = 'none';
+      return;
+    }
+
     document.getElementById('authScreen').style.display = 'flex';
+    // Store all invite params in sessionStorage so they survive the email confirmation redirect
+    if (p.get('bandname'))   sessionStorage.setItem('inviteBandName',   p.get('bandname'));
+    if (p.get('fname'))      sessionStorage.setItem('inviteFirst',      p.get('fname'));
+    if (p.get('lname'))      sessionStorage.setItem('inviteLast',       p.get('lname'));
+    if (p.get('email'))      sessionStorage.setItem('inviteEmail',      p.get('email'));
+    if (p.get('phone'))      sessionStorage.setItem('invitePhone',      p.get('phone'));
+    if (p.get('instrument')) sessionStorage.setItem('inviteInstrument', p.get('instrument'));
+    if (p.get('band'))       sessionStorage.setItem('pendingBandId',    p.get('band'));
+
+    // Switch to signup and show invite UI if ANY invite param is present
+    const _hasInvite = ['bandname','fname','lname','email','phone','instrument','band'].some(k => p.get(k));
+    if (_hasInvite) {
+      if (typeof switchTab === 'function') switchTab('signup');
+      if (p.get('fname')) { const el = document.getElementById('signupFirst'); if (el) el.value = p.get('fname'); }
+      if (p.get('lname')) { const el = document.getElementById('signupLast');  if (el) el.value = p.get('lname'); }
+      if (p.get('email')) { const el = document.getElementById('signupEmail'); if (el) el.value = p.get('email'); }
+      // Show invite banner with band name
+      const _banner    = document.getElementById('sf-invite-banner');
+      const _bandEl    = document.getElementById('sf-invite-band');
+      const _bandField = document.getElementById('sfBandField');
+      const _bandName  = p.get('bandname') || '';
+      if (_banner) _banner.style.display = '';
+      if (_bandEl && _bandName) _bandEl.textContent = _bandName;
+      if (_bandField) _bandField.style.display = 'none'; // hide "create band" field for invitees
+    }
   }
   // If session exists, onAuthStateChange fires automatically
 })();

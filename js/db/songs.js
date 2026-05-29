@@ -19,6 +19,7 @@ const SongsDB = {
       spotify: s.spotify_url || '',
       youtube: s.youtube_url || '',
       apple:   s.apple_url   || '',
+      amazon:  s.amazon_url  || '',
     }));
   },
 
@@ -35,7 +36,7 @@ const SongsDB = {
 
   async upsert(song) {
     // Strip UI aliases and derived fields; map back to DB column names
-    const { dur, note, spotify, youtube, apple, legacy_id, band_members, ...rest } = song;
+    const { dur, note, spotify, youtube, apple, amazon, legacy_id, band_members, ...rest } = song;
     const payload = {
       ...rest,
       duration:    dur,
@@ -43,6 +44,7 @@ const SongsDB = {
       spotify_url: spotify || null,
       youtube_url: youtube || null,
       apple_url:   apple   || null,
+      amazon_url:  amazon  || null,
     };
     if (!payload.band_id) payload.band_id = activeBandId;
 
@@ -51,7 +53,7 @@ const SongsDB = {
       .upsert(payload)
       .select()
       .single();
-    if (error) { handleDbError(error); return null; }
+    if (error) { console.error('[bandapp] songs.upsert error:', error); throw error; }
     return {
       ...data,
       dur:     data.duration,
@@ -59,6 +61,7 @@ const SongsDB = {
       spotify: data.spotify_url || '',
       youtube: data.youtube_url || '',
       apple:   data.apple_url   || '',
+      amazon:  data.amazon_url  || '',
     };
   },
 

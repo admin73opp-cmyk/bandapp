@@ -37,6 +37,7 @@ function memberFromRow(row) {
     facebook:    p.facebook_url   || '',
     website:     p.website_url    || '',
     photo:       p.photo_url      || null,
+    email:       p.email          || '',
   };
 }
 
@@ -55,7 +56,8 @@ const MembersDB = {
   async upsertProfile(userId, fields) {
     const { error } = await supabase
       .from('profiles')
-      .upsert({ id: userId, ...fields });
+      .update(fields)
+      .eq('id', userId);
     if (error) { handleDbError(error); }
   },
 

@@ -6,7 +6,11 @@
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='16' fill='%236C63FF'/><text x='16' y='22' text-anchor='middle' font-size='18' fill='white'>♪</text></svg>">
 <title>Bandapp v26</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
 <script src="js/supabase-client.js"></script>
+<script src="locales/nl.js"></script>
+<script src="locales/pt-BR.js"></script>
+<script src="js/i18n.js"></script>
 <style>
 :root{--font:-apple-system,BlinkMacSystemFont,'Segoe UI','Helvetica Neue',Arial,sans-serif;--mono:'SF Mono','Fira Code','Fira Mono','Roboto Mono',Menlo,monospace;--ink:#111118;--ink2:#5A5A72;--ink3:#9A9AB0;--bg:#F5F5F8;--bg2:#EEEEF3;--w:#FFFFFF;--bd:#E2E2EC;--a:#6C63FF;--a2:#EDEAFF;--g:#16A34A;--g2:#DCFCE7;--r:#DC2626;--r2:#FEE2E2;--amb:#D97706;--amb2:#FEF3C7;--bl:#2563EB;--bl2:#DBEAFE;--rad:10px;--radl:16px;--sh:0 1px 3px rgba(0,0,0,.07),0 4px 14px rgba(0,0,0,.05);--shl:0 8px 30px rgba(0,0,0,.12)}
 @media(prefers-color-scheme:dark){
@@ -41,6 +45,7 @@
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 body{font-family:var(--font);background:var(--bg);color:var(--ink);min-height:100vh;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+select option{background:var(--w);color:var(--ink)}
 ::-webkit-scrollbar{width:5px}::-webkit-scrollbar-thumb{background:var(--bd);border-radius:99px}
 /* forms */
 .fg{margin-bottom:13px}.fg label{display:block;font-size:.71rem;font-weight:700;color:var(--ink2);margin-bottom:5px;letter-spacing:.02em}
@@ -134,16 +139,22 @@ select option{background:var(--w)}
 /* pages */
 .pg-area{display:none;padding:22px;flex:1}.pg-area.on{display:block;animation:fu .17s ease}
 @keyframes fu{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+@keyframes spin{to{transform:rotate(360deg)}}
+#appLoader{position:fixed;inset:0;background:var(--bg);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px}
+#appLoader .al-spinner{width:30px;height:30px;border:3px solid var(--bd);border-top-color:var(--a);border-radius:50%;animation:spin .75s linear infinite}
+#appLoader .al-text{font-size:.82rem;color:var(--ink2)}
 /* stats */
 .sg{display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:10px;margin-bottom:17px}
 .sc{background:var(--w);border:1px solid var(--bd);border-radius:var(--radl);padding:16px;box-shadow:var(--sh);transition:border-color .13s,transform .13s}
 .sc[onclick]{cursor:pointer}.sc[onclick]:hover{border-color:var(--a);transform:translateY(-2px)}
 /* spreadsheet */
-.sh-hd{padding:8px 8px;border-bottom:2px solid var(--bd);text-align:left;font-size:.68rem;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.05em;white-space:nowrap;cursor:pointer;user-select:none;transition:color .12s,background .12s}
+.sh-hd{position:relative;padding:8px 8px;border-bottom:2px solid var(--bd);text-align:left;font-size:.68rem;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.05em;white-space:nowrap;cursor:pointer;user-select:none;transition:color .12s,background .12s}
 .sh-hd:hover{color:var(--a);background:var(--a2)}
 .sh-hd.sort-asc,.sh-hd.sort-desc{color:var(--a);background:var(--a2)}
 .sh-sort-icon{display:inline-block;margin-left:4px;font-size:.65rem;opacity:.4;vertical-align:middle}
 .sh-hd.sort-asc .sh-sort-icon,.sh-hd.sort-desc .sh-sort-icon{opacity:1}
+.sh-resize{position:absolute;top:0;right:0;width:5px;height:100%;cursor:col-resize;z-index:3}
+.sh-resize:hover,.sh-resize.active{background:var(--a);opacity:.45}
 .sh-row td{padding:0;border-bottom:1px solid var(--bd);vertical-align:middle}
 .sh-row:hover td{background:var(--bg)}
 .sh-row.hidden-row td{opacity:.5;background:var(--bg2)}
@@ -197,7 +208,7 @@ select option{background:var(--w)}
 .sctt{font-weight:700;font-size:.87rem;margin-bottom:2px}.scar{color:var(--ink2);font-size:.75rem;margin-bottom:9px}
 .sclinks{display:flex;gap:5px;margin-top:9px}
 .svb{padding:4px 9px;border-radius:6px;font-size:.69rem;font-weight:600;border:1.5px solid var(--bd);background:transparent;color:var(--ink2);cursor:pointer;transition:all .11s;font-family:var(--font)}
-.svb:hover{border-color:var(--a);color:var(--a)}.svb-sp{border-color:rgba(29,185,84,.4);color:#1DB954}.svb-yt{border-color:rgba(220,38,38,.3);color:var(--r)}
+.svb:hover{border-color:var(--a);color:var(--a)}.svb-sp{border-color:rgba(29,185,84,.4);color:#1DB954}.svb-yt{border-color:rgba(220,38,38,.3);color:var(--r)}.svb-am{border-color:rgba(255,153,0,.4);color:#FF9900}
 /* calendar */
 .calhdr{display:flex;align-items:center;gap:10px;margin-bottom:17px;flex-wrap:wrap}
 .calnav{display:flex;gap:3px}
@@ -248,6 +259,7 @@ select option{background:var(--w)}
 .at td{padding:2px}.nc2{white-space:nowrap;padding:5px 9px!important;text-align:left;position:sticky;left:0;background:var(--w);z-index:1}
 .cd.cd-xband{background:rgba(217,119,6,.1);border-color:rgba(217,119,6,.35);cursor:not-allowed}
 .cd.cd-xband .cdn{color:var(--amb)}
+.cd.cd-past{opacity:.38;cursor:default}.cd.cd-past:hover{border-color:transparent!important;background:var(--bg)!important}
 .cd-xblabel{font-size:.42rem;color:var(--amb);text-align:center;line-height:1.1;margin-top:1px;max-height:15px;overflow:hidden}
 .ac{width:16px;height:16px;border-radius:3px;margin:auto}
 .ac-av{background:var(--g2);border:1px solid var(--g)}.ac-fl{background:var(--g2);border:1.5px solid var(--g)}
@@ -353,7 +365,7 @@ select option{background:var(--w)}
 }
 .phone-row{display:flex;gap:6px}
 .phone-cc-wrap{position:relative;width:80px;flex-shrink:0}
-.phone-cc-wrap select{position:absolute;inset:0;width:100%;height:100%;opacity:0;color:transparent;background:transparent;border:none;-webkit-appearance:none;appearance:none;cursor:pointer;z-index:2}
+.phone-cc-wrap select{position:absolute;inset:0;width:100%;height:100%;opacity:0;border:none;-webkit-appearance:none;appearance:none;cursor:pointer;z-index:2}
 .phone-cc-display{width:80px;padding:9px 8px;background:var(--bg);border:1.5px solid var(--bd);border-radius:var(--rad);color:var(--ink);font-family:var(--font);font-size:.83rem;font-weight:600;display:flex;align-items:center;justify-content:space-between;gap:2px;pointer-events:none}
 .phone-cc-display svg{opacity:.5;flex-shrink:0}
 .phone-num{flex:1;min-width:0;padding:9px 13px;background:var(--bg);border:1.5px solid var(--bd);border-radius:var(--rad);color:var(--ink);font-family:var(--font);font-size:.83rem;outline:none;transition:border-color .13s}
@@ -379,25 +391,32 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
   <div style="width:min(380px,95vw)">
     <div style="font-size:1.45rem;font-weight:700;letter-spacing:-.04em;display:flex;align-items:center;gap:8px;margin-bottom:4px"><div class="ld"></div>Bandapp</div>
     <p style="font-size:.84rem;color:var(--ink2);margin-bottom:27px" data-i18n="Manage your band, rehearsals & setlists">Manage your band, rehearsals &amp; setlists</p>
+    <div id="authLoading" style="display:none;text-align:center;padding:32px 0">
+      <div class="ld" style="width:36px;height:36px;margin:0 auto 14px"></div>
+      <div style="font-size:.84rem;color:var(--ink2)" data-i18n="Loading your band…">Loading your band…</div>
+    </div>
     <div id="auth-tabs" style="display:flex;background:var(--bg);border-radius:var(--rad);padding:4px;gap:3px;margin-bottom:21px">
       <button class="stb on" style="flex:1;border-radius:7px" onclick="switchTab('login')" data-i18n="Sign in">Sign in</button>
       <button class="stb" style="flex:1;border-radius:7px" onclick="switchTab('signup')" data-i18n="Sign up">Sign up</button>
     </div>
     <div id="lf">
-      <div class="fg" data-i18n="Email"><label>Email</label><input id="loginEmail" type="email" placeholder="you@email.com" autocomplete="email"></div>
-      <div class="fg" data-i18n="Password"><label>Password</label><input id="loginPassword" type="password" placeholder="••••••••" autocomplete="current-password"></div>
-      <button class="btn btn-p btn-fw" onclick="doLogin()" data-i18n="Sign in">Sign in</button>
+      <div class="fg" data-i18n="Email"><label>Email</label><input id="loginEmail" type="email" placeholder="you@email.com" autocomplete="email" onkeydown="if(event.key==='Enter')doLogin()"></div>
+      <div class="fg" data-i18n="Password"><label>Password</label><input id="loginPassword" type="password" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()"></div>
+      <button id="loginBtn" class="btn btn-p btn-fw" onclick="doLogin()" data-i18n="Sign in">Sign in</button>
       <div style="text-align:center;margin:7px 0 4px">
         <a href="#" style="font-size:.75rem;color:var(--a);text-decoration:none" onclick="showForgotPassword();return false" data-i18n="Forgot password?">Forgot password?</a>
       </div>
-      <div style="text-align:center;font-size:.77rem;color:var(--ink3);margin:9px 0;position:relative" data-i18n="or"><span style="background:var(--w);padding:0 9px;position:relative;z-index:1">or</span><div style="position:absolute;top:50%;left:0;right:0;height:1px;background:var(--bd)"></div></div>
-      <button class="btn btn-g btn-fw" onclick="doDemo()" data-i18n="Continue as demo">Continue as demo</button>
     </div>
     <div id="sf" style="display:none">
+      <div id="sf-invite-banner" style="display:none;padding:10px 14px;background:var(--a2);border:1px solid rgba(108,99,255,.3);border-radius:var(--rad);margin-bottom:14px;font-size:.85rem;text-align:center">
+        <div style="font-size:1.4rem;margin-bottom:4px">🎸</div>
+        <div style="font-weight:700;color:var(--a);margin-bottom:2px" data-i18n="You've been invited!">You've been invited!</div>
+        <div style="color:var(--ink2)"><span data-i18n="Sign up to join">Sign up to join</span> <strong id="sf-invite-band">the band</strong></div>
+      </div>
       <div class="fr" data-i18n="First name" data-i18n="Last name"><div class="fg"><label>First name</label><input id="signupFirst" placeholder="Marco" autocomplete="given-name"></div><div class="fg"><label>Last name</label><input id="signupLast" placeholder="Rossi" autocomplete="family-name"></div></div>
       <div class="fg" data-i18n="Email"><label>Email</label><input id="signupEmail" type="email" placeholder="you@email.com" autocomplete="email"></div>
       <div class="fg" data-i18n="Password" data-i18n="(min. 6 chars)"><label>Password <span style="font-weight:400;color:var(--ink3)">(min. 6 chars)</span></label><input id="signupPassword" type="password" placeholder="••••••••" autocomplete="new-password"></div>
-      <div class="fg" data-i18n="Band name (optional)"><label>Band name (optional)</label><input id="signupBand" placeholder="The Jazz Cats"></div>
+      <div class="fg" id="sfBandField" data-i18n="Band name (optional)"><label>Band name (optional)</label><input id="signupBand" placeholder="The Jazz Cats"></div>
       <button class="btn btn-p btn-fw" onclick="doSignUp()" data-i18n="Create account">Create account</button>
     </div>
     <!-- Post-signup: check email -->
@@ -437,6 +456,7 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
 
 <!-- APP -->
 <div id="app">
+  <div id="appLoader"><div class="al-spinner"></div><div class="al-text">Loading your band data…</div></div>
   <button id="feedbackFab" onclick="openFeedbackModal()">🐛 Bug / Feedback</button>
   <div class="sb-ov" id="sbOv" onclick="toggleSb()"></div>
   <nav class="sb" id="sb">
@@ -518,11 +538,11 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
       <div class="sg" id="dshStats"></div>
       <div class="dg">
         <div class="card">
-          <div class="ch" data-i18n="Upcoming" data-i18n="See calendar →"><div class="ct">Upcoming</div><div class="cl" onclick="nav('calendar')">See calendar →</div></div>
+          <div class="ch" data-i18n="Upcoming"><div class="ct">Upcoming</div><div class="cl" onclick="nav('calendar')" data-i18n="See calendar →">See calendar →</div></div>
           <div id="dshUpcoming"></div>
         </div>
         <div class="card">
-          <div class="ch" data-i18n="Band Members" data-i18n="Manage →"><div class="ct">Band Members</div><div class="cl" onclick="nav('members')">Manage →</div></div>
+          <div class="ch" data-i18n="Band Members"><div class="ct">Band Members</div><div class="cl" onclick="nav('members')" data-i18n="Manage →">Manage →</div></div>
           <div id="dshMembers"></div>
         </div>
       </div>
@@ -581,12 +601,12 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
         </div>
         <div style="display:flex;gap:5px;margin-bottom:12px">
           <button class="stb on" onclick="switchV('main',this)" data-i18n="Main_tab">Main</button>
-          <button class="stb" onclick="switchV('my',this)">My View (Marco)</button>
+          <button class="stb" id="myViewBtn" onclick="switchV('my',this)">My View</button>
         </div>
         <div id="vMain" data-i18n="Title" data-i18n="Artist" data-i18n="Key" data-i18n="Time" data-i18n="Links" data-i18n="Notes"><div style="overflow-x:auto"><table class="slt" id="slTbl"><thead><tr><th style="width:28px"></th><th style="width:32px">#</th><th>Title</th><th>Artist</th><th style="width:60px">Key</th><th style="width:60px">Time</th><th class="lkcol">Links</th><th>Notes</th><th style="width:60px"></th></tr></thead><tbody id="slBody"></tbody></table></div></div>
         <div id="vMy" style="display:none">
           <div style="padding:10px 12px;background:var(--a2);border-radius:var(--rad);margin-bottom:12px;border:1px solid rgba(108,99,255,.2)">
-            <div style="font-size:.77rem;font-weight:600;color:var(--a);margin-bottom:2px">✦ Personal view — Marco Rossi (Guitar)</div>
+            <div id="pvHeader" style="font-size:.77rem;font-weight:600;color:var(--a);margin-bottom:2px">✦ Personal view</div>
             <div style="font-size:.71rem;color:var(--ink2)" data-i18n="Your notes are private. Stays in sync with the main list.">Your notes are private. Stays in sync with the main list.</div>
           </div>
           <div style="overflow-x:auto" data-i18n="Title" data-i18n="Artist" data-i18n="Key" data-i18n="Band Notes"><table class="slt"><thead><tr><th>#</th><th>Title</th><th>Artist</th><th>Key</th><th>Band Notes</th><th>My Notes</th></tr></thead><tbody id="myBody"></tbody></table></div>
@@ -621,15 +641,16 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
         <button class="btn btn-p btn-sm" onclick="openAddSong()" data-i18n="+ Add Song">+ Add Song</button>
       </div>
 
-      <!-- Filters (cards view only) -->
-      <div class="lf" id="libFilters">
-        <input class="sb2" id="libSearch" placeholder="Search songs…" oninput="filterLib(this.value)" data-i18n-placeholder="Search songs…">
-        <button class="chip on" onclick="filtG('All',this)">All</button>
-        <button class="chip" onclick="filtG('Jazz',this)">Jazz</button>
-        <button class="chip" onclick="filtG('Funk',this)">Funk</button>
-        <button class="chip" onclick="filtG('Soul',this)">Soul</button>
-        <button class="chip" onclick="filtG('Blues',this)">Blues</button>
-        <button class="chip" onclick="filtG('Pop',this)">Pop</button>
+      <!-- Filters (both views) -->
+      <div class="lf" id="libFilters" style="row-gap:8px">
+        <input class="sb2" id="libFTitle" placeholder="Title…" oninput="applyLibFilters()" style="flex:1;min-width:110px;max-width:200px" data-i18n-placeholder="Title…">
+        <input class="sb2" id="libFArtist" placeholder="Artist…" oninput="applyLibFilters()" style="flex:1;min-width:110px;max-width:200px" data-i18n-placeholder="Artist…">
+        <select id="libFKey" class="sb2" onchange="applyLibFilters()" style="flex:0 0 auto"></select>
+        <button id="libFClear" class="btn btn-g btn-sm" onclick="clearLibFilters()" style="display:none" data-i18n="✕ Clear">✕ Clear</button>
+        <span style="width:100%;display:flex;gap:7px;flex-wrap:wrap;align-items:center">
+          <button class="chip on" id="genreChipAll" onclick="filtG('All')" data-i18n="All">All</button>
+          <span id="genreChips"></span>
+        </span>
       </div>
 
       <!-- Cards view -->
@@ -644,17 +665,18 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
           <div style="padding:10px 14px;border-bottom:1px solid var(--bd);display:flex;gap:8px;align-items:center;flex-wrap:wrap;background:var(--bg)">
             <span style="font-size:.72rem;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.06em" data-i18n="Click any cell to edit">Click any cell to edit</span>
             <div style="margin-left:auto;display:flex;gap:6px;flex-wrap:wrap">
-              <label class="btn btn-g btn-sm" style="cursor:pointer;font-size:.72rem" title="Upload Excel or CSV to replace library" data-i18n-title="Upload Excel or CSV to replace library">
+              <label class="btn btn-g btn-sm" style="cursor:pointer;font-size:.72rem" title="Upload Excel (.xlsx) to replace library" data-i18n-title="Upload Excel (.xlsx) to replace library">
                 <span data-i18n="↑ Upload">↑ Upload</span>
-                <input type="file" accept=".xlsx,.xls,.csv" style="display:none" onchange="importExcel(event)">
+                <input type="file" accept=".xlsx,.xls" style="display:none" onchange="importExcel(event)">
               </label>
-              <button class="btn btn-g btn-sm" onclick="exportExcel()" style="font-size:.72rem" title="Download library as Excel" data-i18n="↓ Download" data-i18n-title="Download library as Excel">↓ Download</button>
+              <button class="btn btn-g btn-sm" onclick="exportExcel()" style="font-size:.72rem" title="Download library as Excel (.xlsx)" data-i18n="↓ Download" data-i18n-title="Download library as Excel (.xlsx)">↓ Download</button>
               <button class="btn btn-g btn-sm" onclick="addSheetRow()" style="font-size:.72rem" data-i18n="+ Row">+ Row</button>
               <button class="btn btn-p btn-sm" onclick="saveSheetEdits()" style="font-size:.72rem" data-i18n="✓ Save All">✓ Save All</button>
             </div>
           </div>
           <div style="overflow-x:auto">
-            <table id="sheetTbl" style="width:100%;border-collapse:collapse;font-size:.8rem">
+            <table id="sheetTbl" style="border-collapse:collapse;font-size:.8rem;table-layout:fixed">
+              <colgroup id="sheetCols"></colgroup>
               <thead id="sheetHead"></thead>
               <tbody id="sheetBody"></tbody>
             </table>
@@ -706,7 +728,7 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
             <svg width="9" height="9" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6l4 4 4-4"/></svg>
           </div>
           <button class="btn btn-g btn-sm" onclick="showMod('blkMod')" data-i18n="Block Days">Block Days</button>
-          <button class="btn btn-p btn-sm" onclick="openNewConcert();nav('concerts')" data-i18n="+ Event">+ Event</button>
+          <button class="btn btn-p btn-sm" onclick="openNewConcert();nav('concerts')" data-i18n="+ Concert">+ Concert</button>
         </div>
       </div>
 
@@ -800,7 +822,7 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
       <!-- Content (hidden when no band) -->
       <div id="concertsContent">
         <div style="display:flex;gap:9px;align-items:center;margin-bottom:15px;flex-wrap:wrap">
-          <div style="flex:1"><div style="font-size:1.12rem;font-weight:700;letter-spacing:-.03em">Concerts</div><div style="font-size:.74rem;color:var(--ink2);margin-top:2px" id="concertCount"></div></div>
+          <div style="flex:1"><div style="font-size:1.12rem;font-weight:700;letter-spacing:-.03em" data-i18n="Concerts">Concerts</div><div style="font-size:.74rem;color:var(--ink2);margin-top:2px" id="concertCount"></div></div>
         </div>
         <div class="clist" id="concertListUpcoming"></div>
         <div id="pastConcertSection" style="margin-top:24px">
@@ -832,7 +854,7 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
       <!-- Content (hidden when no band) -->
       <div id="membersContent">
         <div style="display:flex;gap:9px;align-items:center;margin-bottom:15px;flex-wrap:wrap">
-          <div style="flex:1" data-i18n="Members"><div style="font-size:1.12rem;font-weight:700;letter-spacing:-.03em">Members</div><div style="font-size:.74rem;color:var(--ink2);margin-top:2px" id="memberCount"></div></div>
+          <div style="flex:1"><div style="font-size:1.12rem;font-weight:700;letter-spacing:-.03em" data-i18n="Members">Members</div><div style="font-size:.74rem;color:var(--ink2);margin-top:2px" id="memberCount"></div></div>
           <button class="btn btn-g btn-sm" onclick="openInvMod()" data-i18n="Invite Member">Invite Member</button>
         </div>
         <div class="memgrid" id="memGrid"></div>
@@ -921,7 +943,9 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
                   <div class="fg" style="flex:1;min-width:110px"><label style="font-size:.69rem">Genre</label>
                     <select id="beGenreInline" style="font-size:.83rem">
                       <option>Jazz</option><option>Funk</option><option>Soul</option><option>Blues</option>
-                      <option>Rock</option><option>Pop</option><option>Latin</option><option>R&amp;B</option>
+                      <option>Rock</option><option>Hard-Rock</option><option>Country</option><option>Folk</option><option>Pop</option><option>Latin</option><option>R&amp;B</option><option>Reggae</option>
+                      <option>Samba</option><option>Bossa Nova</option><option>MPB</option><option>Pagode</option>
+                      <option>Forró</option><option>Choro</option><option>Sertanejo</option><option>Brazilian Funk</option>
                       <option>Classical</option><option>Electronic</option><option>Mixed / Other</option>
                     </select>
                   </div>
@@ -948,6 +972,11 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
               <button class="btn btn-g btn-sm" style="color:var(--r);border-color:var(--r2)" onclick="promptDeleteBand()" data-i18n="Delete Band">Delete Band</button>
             </div>
           </div>
+        </div>
+        <div class="bp-code-row" style="display:none;margin-top:10px;padding:8px 12px;background:var(--bg2);border:1px solid var(--bd);border-radius:var(--rad);display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+          <span style="font-size:.7rem;font-weight:700;color:var(--ink2);letter-spacing:.04em;text-transform:uppercase;white-space:nowrap" data-i18n="Invite Link">Invite Link</span>
+          <input id="bpJoinCode" readonly onclick="this.select()" style="font-size:.72rem;color:var(--ink);flex:1;min-width:0;background:transparent;border:none;outline:none;cursor:text;font-family:monospace">
+          <button class="btn btn-g btn-sm" style="flex-shrink:0;font-size:.72rem" onclick="copyBandInviteLink()" data-i18n="Copy">Copy</button>
         </div>
       </div>
 
@@ -1143,7 +1172,7 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
               <div class="fg" data-i18n="Secondary" data-i18n="(optional)" data-i18n="None"><label>Secondary <span style="font-weight:400;color:var(--ink3)">(optional)</span></label><select id="mpInst2" onchange="renderMpInstPreview()"><option value="">None</option></select></div>
             </div>
             <div id="mpInstPreview" style="display:none;margin-bottom:10px" data-i18n="Preview"><div style="font-size:.72rem;color:var(--ink3);margin-bottom:5px">Preview</div><div id="mpInstPills" style="display:flex;gap:6px;flex-wrap:wrap"></div></div>
-            <div class="fg" data-i18n="Vocals" data-i18n="No vocals" data-i18n="Lead vocals" data-i18n="Backing vocals" data-i18n="Lead & backing"><label>Vocals</label><select id="mpVocals"><option>No vocals</option><option>Lead vocals</option><option>Backing vocals</option><option>Lead &amp; backing</option></select></div>
+            <div class="fg"><label data-i18n="Vocals">Vocals</label><select id="mpVocals"><option value="None" data-i18n="No vocals">No vocals</option><option value="Lead" data-i18n="Lead vocals">Lead vocals</option><option value="Backing" data-i18n="Backing vocals">Backing vocals</option><option value="Both" data-i18n="Lead &amp; backing">Lead &amp; backing</option></select></div>
             <div class="fg" data-i18n="Equipment & Gear" data-i18n="(optional)"><label>Equipment &amp; Gear <span style="font-weight:400;color:var(--ink3)">(optional)</span></label><textarea id="mpGear" style="min-height:60px" placeholder="e.g. Fender Stratocaster, Boss pedalboard…"></textarea></div>
           </div>
         </div>
@@ -1232,7 +1261,7 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
         </div>
 
         <div class="card">
-          <div class="ct" style="margin-bottom:4px" data-i18n="App URL">App Language</div>
+          <div class="ct" style="margin-bottom:4px" data-i18n="App Language">App Language</div>
           <div style="font-size:.75rem;color:var(--ink3);margin-bottom:14px" data-i18n="Controls date formats, day names, and interface labels.">Controls date formats, day names, and interface labels.</div>
           <div class="fg" style="max-width:280px" data-i18n="Language"><label>Language</label><select id="settLang"></select></div>
           <div style="margin-top:14px">
@@ -1241,7 +1270,7 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
         </div>
 
         <div class="card">
-          <div class="ct" style="margin-bottom:4px" data-i18n="App Language">Change Password</div>
+          <div class="ct" style="margin-bottom:4px" data-i18n="Change Password">Change Password</div>
           <div style="font-size:.75rem;color:var(--ink3);margin-bottom:14px" data-i18n="Set a new password for your account.">Set a new password for your account.</div>
           <div class="fg" style="max-width:280px">
             <label data-i18n="New password" data-i18n="(min. 6 chars)">New password <span style="font-weight:400;color:var(--ink3)">(min. 6 chars)</span></label>
@@ -1257,10 +1286,10 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
         </div>
 
         <div class="card">
-          <div class="ct" style="margin-bottom:4px" data-i18n="Change Password">Integrations</div>
+          <div class="ct" style="margin-bottom:4px" data-i18n="Integrations">Integrations</div>
           <div style="display:flex;align-items:flex-start;gap:9px;padding:11px 13px;background:var(--bl2);border:1px solid rgba(96,165,250,.25);border-radius:var(--rad);font-size:.76rem;color:var(--bl);margin-top:10px">
             <span style="font-size:1rem;flex-shrink:0">📅</span>
-            <span><strong>Google Calendar sync</strong> — connect your Google Calendar so rehearsals and concerts appear automatically. <span style="text-decoration:underline;cursor:pointer" onclick="toast2('Google Calendar sync coming soon')">Set up →</span></span>
+            <span><strong>Google Calendar sync</strong> — connect your Google Calendar so rehearsals and concerts appear automatically. <span style="text-decoration:underline;cursor:pointer" onclick="toast2(t('Google Calendar sync coming soon'))">Set up →</span></span>
           </div>
         </div>
 
@@ -1335,7 +1364,10 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
     <div class="fg" data-i18n="Genre"><label>Genre</label>
       <select id="nsg">
         <option>Jazz</option><option>Funk</option><option>Soul</option><option>Blues</option>
-        <option>Pop</option><option>Rock</option><option>Latin</option><option>R&amp;B</option><option>Other</option>
+        <option>Pop</option><option>Rock</option><option>Hard-Rock</option><option>Country</option><option>Folk</option><option>Latin</option><option>R&amp;B</option><option>Reggae</option><option>Classical</option>
+        <option>Samba</option><option>Bossa Nova</option><option>MPB</option><option>Pagode</option>
+        <option>Forró</option><option>Choro</option><option>Sertanejo</option><option>Brazilian Funk</option>
+        <option>Other</option>
       </select>
     </div>
     <div class="fg" data-i18n="Key"><label>Key</label>
@@ -1348,7 +1380,7 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
     </div>
   </div>
   <div class="fg">
-    <label><span data-i18n="Duration (optional)">Duration <span style="font-weight:400;color:var(--ink3)">(optional)</span></span></label>
+    <label><span data-i18n-html="Duration (optional)">Duration <span style="font-weight:400;color:var(--ink3)">(optional)</span></span></label>
     <div style="display:flex;gap:8px;align-items:center">
       <input id="nsDurMin" type="number" min="0" max="59" placeholder="min" style="flex:1;padding:9px 13px;background:var(--bg);border:1.5px solid var(--bd);border-radius:var(--rad);color:var(--ink);font-family:var(--font);font-size:.83rem;outline:none;transition:border-color .13s" onfocus="this.style.borderColor='var(--a)'" onblur="this.style.borderColor='var(--bd)'">
       <span style="color:var(--ink3);font-weight:600">:</span>
@@ -1365,6 +1397,7 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
   <div class="fg" data-i18n="Spotify URL"><label>Spotify URL</label><input id="nsSpotify" placeholder="https://open.spotify.com/track/…"></div>
   <div class="fg" data-i18n="YouTube URL"><label>YouTube URL</label><input id="nsYoutube" placeholder="https://youtube.com/watch?v=…"></div>
   <div class="fg" data-i18n="Apple Music URL"><label>Apple Music URL</label><input id="nsApple" placeholder="https://music.apple.com/…"></div>
+  <div class="fg" data-i18n="Amazon Music URL"><label>Amazon Music URL</label><input id="nsAmazon" placeholder="https://music.amazon.com/…"></div>
 
   <div class="moft">
     <button class="btn btn-g" onclick="closeMod('alsMod')" data-i18n="Cancel">Cancel</button>
@@ -1375,28 +1408,35 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
 
 <!-- EVENT / CONCERT -->
 <!-- INVITE -->
+<!-- INVITE -->
 <div class="mov" id="invMod" style="display:none" onclick="closeMB(event,'invMod')">
 <div class="mod">
   <div class="mott">Invite a Musician</div>
-  <div class="most">They'll get a pre-filled profile and temporary password.</div>
-  <div class="invopts">
-    <div class="invopt on" onclick="selInv(this)"><div class="invic">✉️</div><div class="invl">Email</div></div>
-    <div class="invopt" onclick="selInv(this)"><div class="invic">💬</div><div class="invl">WhatsApp</div></div>
-    <div class="invopt" onclick="selInv(this)"><div class="invic">🔗</div><div class="invl">Link</div></div>
+
+  <!-- Option A: existing user lookup -->
+  <div style="padding:12px;background:var(--a2);border:1px solid rgba(108,99,255,.3);border-radius:var(--rad);margin-bottom:16px">
+    <div style="font-size:.72rem;font-weight:700;color:var(--a);letter-spacing:.04em;text-transform:uppercase;margin-bottom:8px">Already on Bandapp?</div>
+    <div style="display:flex;gap:7px;align-items:flex-end">
+      <div class="fg" style="margin:0;flex:1"><label>Their email address</label><input type="email" id="invLookupEmail" placeholder="musician@email.com" onkeydown="if(event.key==='Enter')lookupInvitee()"></div>
+      <button class="btn btn-p btn-sm" id="invLookupBtn" onclick="lookupInvitee()" style="flex-shrink:0">Find →</button>
+    </div>
+    <div id="invLookupResult" style="display:none;margin-top:10px"></div>
+  </div>
+
+  <!-- Divider -->
+  <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px">
+    <div style="flex:1;height:1px;background:var(--bd)"></div>
+    <div style="font-size:.68rem;color:var(--ink3);font-weight:700;letter-spacing:.05em">OR INVITE A NEW USER</div>
+    <div style="flex:1;height:1px;background:var(--bd)"></div>
+  </div>
+
+  <!-- Option B: new user — invite via Supabase email -->
+  <div style="font-size:.75rem;color:var(--ink2);padding:8px 11px;background:var(--a2);border:1px solid rgba(108,99,255,.2);border-radius:var(--rad);margin-bottom:12px">
+    📧 An invite email will be sent. The musician clicks the link, sets a password, and lands straight in the band — no sign-up form needed.
   </div>
   <div class="fr"><div class="fg"><label>First Name</label><input id="invFirstName" placeholder="Sophie"></div><div class="fg"><label>Last Name</label><input id="invLastName" placeholder="Vandenberghe"></div></div>
-  <div class="fg"><label>Email</label><input type="email" placeholder="sophie@email.com"></div>
-  <div class="fg">
-    <label>Phone / WhatsApp</label>
-    <div class="phone-row">
-      <div class="phone-cc-wrap">
-        <div class="phone-cc-display" id="invPhoneCcDisplay">+32 <svg width="10" height="10" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6l4 4 4-4"/></svg></div>
-        <select id="invPhoneCc" onchange="updatePhoneCcDisplay('invPhoneCc','invPhoneCcDisplay')"></select>
-      </div>
-      <input class="phone-num" type="tel" id="invPhoneNum" placeholder="479 123 456">
-    </div>
-  </div>
-  <div class="fr"><div class="fg"><label>Instrument</label><select><option>Guitar</option><option>Piano / Keys</option><option>Bass</option><option>Drums</option><option>Saxophone</option><option>Trumpet</option><option>Violin</option><option>Vocals</option><option>Other</option></select></div><div class="fg"><label>Role</label><select id="invRole" onchange="toggleInvGuestDates(this)"><option>Member</option><option>Admin</option><option>Guest</option></select></div></div>
+  <div class="fg"><label>Email</label><input type="email" id="invEmail" placeholder="sophie@email.com"></div>
+  <div class="fr"><div class="fg"><label>Instrument</label><select id="invInstrument"><option value="">— Instrument —</option></select></div><div class="fg"><label>Role</label><select id="invRole" onchange="toggleInvGuestDates(this)"><option>Member</option><option>Admin</option><option>Guest</option></select></div></div>
   <div id="invGuestDates" style="display:none">
     <div style="padding:9px 12px;background:var(--amb2);border:1px solid rgba(217,119,6,.3);border-radius:var(--rad);font-size:.76rem;color:var(--amb);margin-bottom:10px">Guests have full member access during the active date range, then move to the Guest Directory.</div>
     <div class="fr">
@@ -1404,7 +1444,37 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
       <div class="fg"><label>Guest End Date</label><input type="date" id="invGuestEnd"></div>
     </div>
   </div>
-  <div class="moft"><button class="btn btn-g" onclick="closeMod('invMod')">Cancel</button><button class="btn btn-p" onclick="openInviteMessage()">Next: Review Message →</button></div>
+  <div class="moft"><button class="btn btn-g" onclick="closeMod('invMod')">Cancel</button><button class="btn btn-p" id="invSendBtn" onclick="sendInviteViaEdgeFunction()">Send Invite Email 📧</button></div>
+</div>
+</div>
+
+<!-- JOIN BAND -->
+<div class="mov" id="joinBandMod" style="display:none" onclick="closeMB(event,'joinBandMod')">
+<div class="mod" style="max-width:420px">
+  <div class="mott">Join a Band</div>
+  <div class="most">Paste the band code shared by your admin to join as a member.</div>
+  <div class="fg"><label>Band Code</label><input id="joinBandCode" placeholder="Paste code here…" style="font-family:monospace;font-size:.85rem" onkeydown="if(event.key==='Enter')joinBandByCode()"></div>
+  <div id="joinBandResult" style="display:none;margin-bottom:8px"></div>
+  <div class="moft">
+    <button class="btn btn-g" onclick="closeMod('joinBandMod')">Cancel</button>
+    <button class="btn btn-p" id="joinBandBtn" onclick="joinBandByCode()">Join Band</button>
+  </div>
+</div>
+</div>
+
+<!-- ONBOARDING MODAL — shown to invited users on first login -->
+<div class="mov" id="onboardingMod" style="display:none">
+<div class="mod" style="max-width:420px">
+  <div style="text-align:center;margin-bottom:18px">
+    <div style="font-size:2.2rem;margin-bottom:8px">🎸</div>
+    <div class="mott" style="margin-bottom:6px">Welcome to the band!</div>
+    <div class="most" id="onboardingBandMsg">You've been added to the band. Set a password to secure your account, then complete your profile.</div>
+  </div>
+  <div class="fg"><label>New Password</label><input type="password" id="onboardingPw" placeholder="At least 6 characters" autocomplete="new-password"></div>
+  <div class="fg"><label>Confirm Password</label><input type="password" id="onboardingPwConfirm" placeholder="Repeat password" autocomplete="new-password"></div>
+  <div style="margin-top:4px">
+    <button class="btn btn-p btn-fw" id="onboardingSaveBtn" onclick="saveOnboardingPassword()">Set Password &amp; Continue →</button>
+  </div>
 </div>
 </div>
 
@@ -1427,7 +1497,10 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
   <div class="mott" data-i18n="Your Bands">Your Bands</div>
   <div style="font-size:.75rem;color:var(--ink2);margin-bottom:12px">Switch between bands or create a new one.</div>
   <div style="display:flex;flex-direction:column;gap:7px;margin-bottom:14px" id="bandList"></div>
-  <button class="btn btn-g btn-fw" onclick="closeMod('bswMod');openNewBand()" data-i18n="+ Create New Band">+ Create New Band</button>
+  <div style="display:flex;gap:7px">
+    <button class="btn btn-g" style="flex:1" onclick="closeMod('bswMod');openNewBand()" data-i18n="+ Create New Band">+ Create New Band</button>
+    <button class="btn btn-g" style="flex:1" onclick="closeMod('bswMod');openJoinBandMod()" data-i18n="Join a Band">Join a Band</button>
+  </div>
 </div>
 </div>
 
@@ -1446,7 +1519,9 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
   <div class="fg" data-i18n="Genre / Style"><label>Genre / Style</label>
     <select id="nbGenre">
       <option>Jazz</option><option>Funk</option><option>Soul</option><option>Blues</option>
-      <option>Rock</option><option>Pop</option><option>Latin</option><option>R&amp;B</option>
+      <option>Rock</option><option>Hard-Rock</option><option>Country</option><option>Folk</option><option>Pop</option><option>Latin</option><option>R&amp;B</option><option>Reggae</option>
+      <option>Samba</option><option>Bossa Nova</option><option>MPB</option><option>Pagode</option>
+      <option>Forró</option><option>Choro</option><option>Sertanejo</option><option>Brazilian Funk</option>
       <option>Classical</option><option>Mixed / Other</option>
     </select>
   </div>
@@ -1535,9 +1610,11 @@ let slSongs={};
 function getSlS(){return slSongs[activeSetlistId]||(slSongs[activeSetlistId]=[]);}
 let slS=getSlS();
 
+let _setlistMap = {}; // id → setlist, rebuilt after every fetch
 async function loadSetlists(){
-  if(!activeBandId){ setlists=[]; slSongs={}; slS=[]; return; }
+  if(!activeBandId){ setlists=[]; slSongs={}; slS={}; _setlistMap={}; return; }
   setlists = await SetlistsDB.fetch(activeBandId);
+  _setlistMap = Object.fromEntries(setlists.map(s=>[s.id,s]));
   if(!activeSetlistId && setlists.length) activeSetlistId=setlists[0].id;
   if(activeSetlistId) await loadSetlistSongs(activeSetlistId);
   slS=getSlS();
@@ -1549,13 +1626,14 @@ let myC={};
 // Loads songs + personal notes from Supabase into module-level globals
 async function loadSongs(){
   if(!activeBandId){ songs=[]; myC={}; return; }
-  songs = await SongsDB.fetch(activeBandId);
-  myC   = await SongsDB.fetchNotes(activeBandId);
+  const raw=await SongsDB.fetch(activeBandId);
+  songs=raw.map(s=>({...s,key:normalizeKey(s.key)}));
+  myC=await SongsDB.fetchNotes(activeBandId);
 }
 // Finds a song by UUID or legacy integer id — bridges the transition
 // period where setlists still carry integer song ids.
 function songByAnyId(id){return songs.find(x=>x.id===id||x.legacy_id===id);}
-const TODAY_STR='2026-05-20'; // demo today
+const TODAY_STR=new Date().toLocaleDateString('en-CA'); // YYYY-MM-DD
 
 let members=[];
 let guestDirectory=[];
@@ -1569,10 +1647,14 @@ async function loadMembers(){
     bday:m.bday, nat:m.nat, country:m.country, lang:m.lang,
     bio:m.bio, gear:m.gear,
     phone:[m.phoneDial,m.phoneNum].filter(Boolean).join(' '),
-    email:'',
+    email:m.email||'',
     spotify:m.spotify, apple:m.apple, youtube:m.youtube,
     instagram:m.instagram, facebook:m.facebook, website:m.website,
   }));
+  // Seed memberPhotos from DB photo_url (fallback to localStorage for same-device uploads)
+  members.forEach((m,i)=>{
+    memberPhotos[i]=m.photo||localStorage.getItem(`mpPhoto_${m.id}`)||null;
+  });
   // Resolve currentUser's index from their auth UUID
   const newIdx=members.findIndex(m=>m.id===currentUser.id);
   if(newIdx>=0) currentUser.memberIdx=newIdx;
@@ -1589,9 +1671,16 @@ function isGuestExpired(m){
 function activeMembers(){return members.filter(m=>m.role!=='guest'||isGuestActive(m));}
 function expiredGuests(){return members.filter(m=>isGuestExpired(m));}
 let concerts=[];
+let _concGen=0;
 
 async function loadConcerts(){
-  concerts = await ConcertsDB.fetch(activeBandId);
+  const gen=++_concGen;
+  const data=await ConcertsDB.fetch(activeBandId);
+  if(gen!==_concGen)return;
+  const photoMap=await ConcertsDB.fetchPhotos(data.map(c=>c.id));
+  if(gen!==_concGen)return;
+  data.forEach(c=>{ c.photos=photoMap[c.id]||[]; });
+  concerts=data;
   buildCalEv();
 }
 // Derives a concert/rehearsal dot map from the live arrays.
@@ -1616,13 +1705,20 @@ function concertsForSetlist(setlistId){
 
 // ── DATE HELPERS ──────────────────────────────────────────
 const MONTH_MAP = {JAN:0,FEB:1,MAR:2,APR:3,MAY:4,JUN:5,JUL:6,AUG:7,SEP:8,OCT:9,NOV:10,DEC:11};
-const TODAY = new Date(2026, 4, 20); // demo "today" = May 20 2026
+const TODAY = (() => { const d = new Date(); d.setHours(0,0,0,0); return d; })();
 
 // ── REHEARSALS ────────────────────────────────────────────
 let rehearsals=[];
+let _rehGen=0;
 
 async function loadRehearsals(){
-  rehearsals = await RehearsalsDB.fetch(activeBandId);
+  const gen=++_rehGen;
+  const data=await RehearsalsDB.fetch(activeBandId);
+  if(gen!==_rehGen)return;
+  const photoMap=await RehearsalsDB.fetchPhotos(data.map(r=>r.id));
+  if(gen!==_rehGen)return;
+  data.forEach(r=>{ r.photos=photoMap[r.id]||[]; r._ts=rehearsalDate(r).getTime(); });
+  rehearsals=data;
   buildCalEv();
 }
 
@@ -1630,7 +1726,7 @@ function rehearsalDate(r){
   if(r.date) return new Date(r.date+'T12:00:00');
   return new Date(parseInt(r.year),MONTH_MAP[r.month],parseInt(r.day));
 }
-function isRehPast(r){return rehearsalDate(r)<TODAY;}
+function isRehPast(r){return (r._ts||rehearsalDate(r).getTime())<TODAY.getTime();}
 
 function renderRehearsals(){
   const noBand=document.getElementById('rehearsalsNoBand');
@@ -1644,14 +1740,14 @@ function renderRehearsals(){
   if(content)content.style.display='';
   const cancelled=rehearsals.filter(r=>r.cancelled);
   const active   =rehearsals.filter(r=>!r.cancelled);
-  const upcoming =active.filter(r=>!isRehPast(r)).sort((a,b)=>rehearsalDate(a)-rehearsalDate(b));
-  const past     =active.filter(r=> isRehPast(r)).sort((a,b)=>rehearsalDate(b)-rehearsalDate(a));
+  const upcoming =active.filter(r=>!isRehPast(r)).sort((a,b)=>a._ts-b._ts);
+  const past     =active.filter(r=> isRehPast(r)).sort((a,b)=>b._ts-a._ts);
   const countEl  =document.getElementById('rehearsalCount');
-  if(countEl)countEl.textContent=`${upcoming.length} upcoming · ${past.length} past${cancelled.length?` · ${cancelled.length} cancelled`:''}`;
+  if(countEl)countEl.textContent=`${upcoming.length} ${t('upcoming')} · ${past.length} ${t('past')}${cancelled.length?` · ${cancelled.length} ${t('cancelled')}`:''}`;
   document.getElementById('rehearsalListUpcoming').innerHTML=upcoming.length
     ?upcoming.map(r=>rehearsalCard(r,'upcoming')).join('')
-    :`<div style="padding:20px;text-align:center;font-size:.82rem;color:var(--ink3)">No upcoming rehearsals — click + New Rehearsal to schedule one.</div>`;
-  document.getElementById('rehearsalListPast').innerHTML=past.length?past.map(r=>rehearsalCard(r,'past')).join(''):`<div style="padding:12px;font-size:.78rem;color:var(--ink3)">No past rehearsals yet.</div>`;
+    :`<div style="padding:20px;text-align:center;font-size:.82rem;color:var(--ink3)">${t('No upcoming rehearsals — click + New Rehearsal to schedule one.')}</div>`;
+  document.getElementById('rehearsalListPast').innerHTML=past.length?past.map(r=>rehearsalCard(r,'past')).join(''):`<div style="padding:12px;font-size:.78rem;color:var(--ink3)">${t('No past rehearsals yet.')}</div>`;
   const pastSec=document.getElementById('pastRehearsalSection');if(pastSec)pastSec.style.display=past.length?'':'none';
   const cancList=document.getElementById('rehearsalListCancelled');if(cancList)cancList.innerHTML=cancelled.map(r=>rehearsalCard(r,'cancelled')).join('');
   const cancSec=document.getElementById('cancelledRehearsalSection');if(cancSec)cancSec.style.display=cancelled.length?'':'none';
@@ -1661,19 +1757,19 @@ function rehearsalCard(r,style){
   const pastStyle=style==='past', cancelStyle=style==='cancelled';
   const photos=(r.photos||[]).slice(0,4);
   const photoHtml=photos.length
-    ?`<div class="concert-photos">${photos.map((p,i)=>`<img class="concert-thumb" src="${p}" alt="Photo ${i+1}" onclick="event.stopPropagation();openRehPhotoLightbox('${r.id}',${i})">`).join('')}${!cancelStyle?`<label class="concert-thumb-add" onclick="event.stopPropagation()"><input type="file" accept="image/*" style="display:none" onchange="addRehPhoto(event,'${r.id}')">+</label>`:''}</div>`
+    ?`<div class="concert-photos">${photos.map((p,i)=>`<img class="concert-thumb" src="${p.url}" alt="Photo ${i+1}" onclick="event.stopPropagation();openRehPhotoLightbox('${r.id}',${i})">`).join('')}${!cancelStyle?`<label class="concert-thumb-add" onclick="event.stopPropagation()"><input type="file" accept="image/*" style="display:none" onchange="addRehPhoto(event,'${r.id}')">+</label>`:''}</div>`
     :cancelStyle?'':`<div class="concert-photos"><label class="concert-thumb-add" onclick="event.stopPropagation()"><input type="file" accept="image/*" style="display:none" onchange="addRehPhoto(event,'${r.id}')">📷</label></div>`;
-  const slLinked=r.setlistId?setlists.find(x=>x.id===r.setlistId):null;
+  const slLinked=r.setlistId?(_setlistMap[r.setlistId]||null):null;
   const badge=cancelStyle
-    ?`<span style="margin-left:8px;font-size:.66rem;padding:2px 7px;border-radius:99px;background:var(--r2);color:var(--r);font-weight:600;vertical-align:middle">Cancelled</span>`
-    :pastStyle?`<span style="margin-left:8px;font-size:.66rem;padding:2px 7px;border-radius:99px;background:var(--bg2);color:var(--ink3);font-weight:600;vertical-align:middle">Past</span>`:'';
+    ?`<span style="margin-left:8px;font-size:.66rem;padding:2px 7px;border-radius:99px;background:var(--r2);color:var(--r);font-weight:600;vertical-align:middle">${t('Cancelled')}</span>`
+    :pastStyle?`<span style="margin-left:8px;font-size:.66rem;padding:2px 7px;border-radius:99px;background:var(--bg2);color:var(--ink3);font-weight:600;vertical-align:middle">${t('Past')}</span>`:'';
   const actions=cancelStyle||pastStyle
-    ?`<button class="btn btn-g btn-sm" data-action="view">View</button>`
-    :`<button class="btn btn-g btn-sm" style="color:var(--amb);border-color:var(--amb2)" data-action="cancel">Cancel</button>
-      <button class="btn btn-g btn-sm" data-action="view">View</button>`;
+    ?`<button class="btn btn-g btn-sm" data-action="view">${t('View')}</button>`
+    :`<button class="btn btn-g btn-sm" style="color:var(--amb);border-color:var(--amb2)" data-action="cancel">${t('Cancel')}</button>
+      <button class="btn btn-g btn-sm" data-action="view">${t('View')}</button>`;
   return`<div class="ccrd${pastStyle?' past':''}${cancelStyle?' cancelled':''}" data-rid="${r.id}" onclick="handleRehCardClick(event,'${r.id}')">
     <div class="cdb">
-      <div class="cdmo">${r.month}</div>
+      <div class="cdmo">${t(r.month)}</div>
       <div class="cddy" style="${pastStyle||cancelStyle?'color:var(--ink3)':''}">${r.day}</div>
       <div class="cdyr">${r.year}</div>
     </div>
@@ -1684,7 +1780,7 @@ function rehearsalCard(r,style){
         <span class="cmi"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M8 4v4l3 2"/></svg>${r.start}–${r.end}</span>
       </div>
       <div class="cbadges">
-        <span class="pill ${cancelStyle?'pr':'pg'}">${cancelStyle?'🚫 Cancelled':'Rehearsal'}</span>
+        <span class="pill ${cancelStyle?'pr':'pg'}">${cancelStyle?t('🚫 Cancelled'):t('Rehearsal')}</span>
         ${slLinked&&!cancelStyle?`<span class="pill pp" style="cursor:pointer" data-action="setlist" data-slid="${r.setlistId}">♩ ${slLinked.name}</span>`:''}
       </div>
       ${photoHtml}
@@ -1723,15 +1819,16 @@ function shareRehearsal(id){
 function openRehView(id){
   const r=rehearsals.find(x=>x.id===id);if(!r)return;
   const past=isRehPast(r);
-  const slLinked=r.setlistId?setlists.find(x=>x.id===r.setlistId):null;
+  const slLinked=r.setlistId?(_setlistMap[r.setlistId]||null):null;
   const MO_FULL={JAN:'January',FEB:'February',MAR:'March',APR:'April',MAY:'May',JUN:'June',JUL:'July',AUG:'August',SEP:'September',OCT:'October',NOV:'November',DEC:'December'};
 
   // Title & badge
   document.getElementById('rvTitle').textContent=r.title;
-  document.getElementById('rvPastBadge').style.display=past?'':'none';
+  document.getElementById('rvPastBadge').style.display=(past&&!r.cancelled)?'':'none';
+  document.getElementById('rvCancelledBadge').style.display=r.cancelled?'':'none';
 
   // Details
-  document.getElementById('rvDate').textContent=`${MO_FULL[r.month]} ${r.day}, ${r.year}`;
+  document.getElementById('rvDate').textContent=`${t(MO_FULL[r.month])} ${r.day}, ${r.year}`;
   document.getElementById('rvTime').textContent=`${r.start} – ${r.end}`;
   document.getElementById('rvLocation').textContent=r.location||'—';
   document.getElementById('rvNotes').textContent=r.notes||'';
@@ -1750,12 +1847,16 @@ function openRehView(id){
   // Photos
   const photos=r.photos||[];
   document.getElementById('rvPhotos').innerHTML=photos.length
-    ?photos.map((p,i)=>`<img src="${p}" style="width:72px;height:72px;border-radius:8px;object-fit:cover;border:1.5px solid var(--bd);cursor:pointer" onclick="openRehPhotoLightbox('${r.id}',${i})">`).join('')
+    ?photos.map((p,i)=>`<img src="${p.url}" style="width:72px;height:72px;border-radius:8px;object-fit:cover;border:1.5px solid var(--bd);cursor:pointer" onclick="openRehPhotoLightbox('${r.id}',${i})">`).join('')
     :`<span style="font-size:.76rem;color:var(--ink3)">No photos yet</span>`;
 
-  // Action buttons — past: delete only; upcoming: share + edit + delete
+  // Action buttons — cancelled: close + delete (admin); past: close only; upcoming: share + edit + cancel
   const actions=document.getElementById('rvActions');
-  if(past||r.cancelled){
+  const isAdmin=currentUser.role==='admin';
+  if(r.cancelled){
+    actions.innerHTML=`<button class="btn btn-g" onclick="closeMod('reViewMod')">Close</button>`
+      +(isAdmin?`<button class="btn btn-g btn-sm" style="color:var(--red,#e53935);border-color:var(--red,#e53935)" onclick="deleteRehearsal('${r.id}')">🗑 Delete</button>`:'');
+  } else if(past){
     actions.innerHTML=`<button class="btn btn-g" onclick="closeMod('reViewMod')">Close</button>`;
   } else {
     actions.innerHTML=`
@@ -1823,22 +1924,33 @@ async function saveRehEdit(){
 function addRehPhoto(event,id){
   const file=event.target.files[0];if(!file)return;
   const r=rehearsals.find(x=>x.id===id);if(!r)return;
+  event.target.value='';
   const reader=new FileReader();
-  reader.onload=e=>{if(!r.photos)r.photos=[];r.photos.push(e.target.result);renderRehearsals();if(editingRehId===id)renderRehPhotoArea(id);toast2('Photo added!');};
-  reader.readAsDataURL(file);event.target.value='';
+  reader.onload=async e=>{
+    const url=await compressImage(e.target.result,1024,0.75);
+    try{
+      const photo=await RehearsalsDB.addPhoto(id,url);
+      if(!r.photos)r.photos=[];
+      r.photos.push(photo);
+      renderRehearsals();
+      if(editingRehId===id)renderRehPhotoArea(id);
+      toast2('Photo added!');
+    }catch(err){toast2('Failed to save photo','w');console.error('[bandapp] addRehPhoto:',err);}
+  };
+  reader.readAsDataURL(file);
 }
 function renderRehPhotoArea(id){
   const r=rehearsals.find(x=>x.id===id);
   const area=document.getElementById('rePhotoArea');if(!area)return;
   const photos=r?r.photos||[]:[];
-  area.innerHTML=photos.map((p,i)=>`<div style="position:relative;display:inline-block"><img src="${p}" style="width:64px;height:64px;border-radius:8px;object-fit:cover;border:1.5px solid var(--bd)"><button onclick="removeRehPhoto('${id}',${i})" style="position:absolute;top:-6px;right:-6px;width:18px;height:18px;border-radius:50%;background:var(--r);border:2px solid var(--w);color:#fff;font-size:.55rem;cursor:pointer;display:flex;align-items:center;justify-content:center">✕</button></div>`).join('')
+  area.innerHTML=photos.map((p,i)=>`<div style="position:relative;display:inline-block"><img src="${p.url}" style="width:64px;height:64px;border-radius:8px;object-fit:cover;border:1.5px solid var(--bd)"><button onclick="removeRehPhoto('${id}',${i})" style="position:absolute;top:-6px;right:-6px;width:18px;height:18px;border-radius:50%;background:var(--r);border:2px solid var(--w);color:#fff;font-size:.55rem;cursor:pointer;display:flex;align-items:center;justify-content:center">✕</button></div>`).join('')
     +`<label style="width:64px;height:64px;border-radius:8px;border:2px dashed var(--bd);display:inline-flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;color:var(--ink3);font-size:.65rem;gap:3px" onmouseover="this.style.borderColor='var(--a)'" onmouseout="this.style.borderColor='var(--bd)'"><span style="font-size:1.3rem">📷</span>Add photo<input type="file" accept="image/*" style="display:none" onchange="addRehPhoto(event,'${id||editingRehId||''}')"></label>`;
 }
-function removeRehPhoto(id,idx){const r=rehearsals.find(x=>x.id===id);if(!r||!r.photos)return;r.photos.splice(idx,1);renderRehPhotoArea(id);renderRehearsals();toast2('Photo removed','w');}
+async function removeRehPhoto(id,idx){const r=rehearsals.find(x=>x.id===id);if(!r||!r.photos)return;const photo=r.photos[idx];if(photo?.id)await RehearsalsDB.removePhoto(photo.id);r.photos.splice(idx,1);renderRehPhotoArea(id);renderRehearsals();toast2('Photo removed','w');}
 function openRehPhotoLightbox(id,idx){
   const r=rehearsals.find(x=>x.id===id);if(!r||!r.photos||!r.photos[idx])return;
   const o=document.createElement('div');o.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:9000;display:flex;align-items:center;justify-content:center;cursor:pointer';o.onclick=()=>document.body.removeChild(o);
-  o.innerHTML=`<img src="${r.photos[idx]}" style="max-width:90vw;max-height:90vh;border-radius:12px;object-fit:contain">`;document.body.appendChild(o);
+  o.innerHTML=`<img src="${r.photos[idx].url}" style="max-width:90vw;max-height:90vh;border-radius:12px;object-fit:contain">`;document.body.appendChild(o);
 }
 
 // ── COUNTRY DIAL CODES ───────────────────────────────────
@@ -1978,6 +2090,8 @@ function setNotifPref(pref){
   }
   const w=document.getElementById('settNotifWarn');if(w)w.style.display='none';
   bandNotifPref[activeBandId]=pref;
+  localStorage.setItem(`bandNotifPref_${activeBandId}`,pref);
+  BandsDB.upsert({id:activeBandId,notif_pref:pref});
   Object.entries(idMap).forEach(([p,id])=>{const el=document.getElementById(id);if(el)el.classList.toggle('on',p===pref);});
   const notes={
     email:'Default: Email notification only.',
@@ -2034,18 +2148,25 @@ function validateWaLink(input){
   input.style.borderColor = valid ? '' : 'var(--r)';
 }
 
-function saveWaLink(){
+async function saveWaLink(){
   const val=document.getElementById('waLinkInput').value.trim();
   if(val&&!val.startsWith('https://chat.whatsapp.com/')){
     toast2('Please enter a valid WhatsApp group link','w');return;
   }
   bandWaLinks[activeBandId]=val||null;
+  const _wb=getActiveBand();if(_wb)_wb.wa_link=val||null;
+  if(val) localStorage.setItem(`bandWaLink_${activeBandId}`,val);
+  else localStorage.removeItem(`bandWaLink_${activeBandId}`);
+  await BandsDB.upsert({id:activeBandId,wa_link:val||null});
   refreshWaUI();refreshNotifSettUI();
   toast2(val?'WhatsApp group link saved!':'Link removed');
 }
 
-function removeWaLink(){
+async function removeWaLink(){
   bandWaLinks[activeBandId]=null;
+  const _wb=getActiveBand();if(_wb)_wb.wa_link=null;
+  localStorage.removeItem(`bandWaLink_${activeBandId}`);
+  await BandsDB.upsert({id:activeBandId,wa_link:null});
   document.getElementById('waLinkInput').value='';
   refreshWaUI();refreshNotifSettUI();
   toast2('WhatsApp link removed','w');
@@ -2082,6 +2203,14 @@ let activeBandId=null;
 
 async function loadBands(){
   BANDS=await BandsDB.fetch();
+  BANDS.forEach(b=>{
+    bandWaLinks[b.id]   = b.wa_link    || localStorage.getItem(`bandWaLink_${b.id}`)    || null;
+    bandNotifPref[b.id] = b.notif_pref || localStorage.getItem(`bandNotifPref_${b.id}`) || null;
+  });
+  // Hydrate band gallery photos from DB
+  await Promise.all(BANDS.map(async b=>{
+    b.photos = await BandsDB.fetchPhotos(b.id);
+  }));
 }
 
 function getActiveBand(){return BANDS.find(b=>b.id===activeBandId);}
@@ -2093,13 +2222,8 @@ async function switchBand(id){
   const b=getActiveBand();
   closeMod('bswMod');
   toast2(`Switching to ${b?.name||'band'}…`);
-  await loadSongs();
-  await loadSetlists();
-  await loadConcerts();
-  await loadRehearsals();
-  await loadMembers();
-  await loadBlackouts();
-  renderSLDropdown();renderSL();renderSlMeta();renderLib();updateLibCount();updateSidebarCounts();
+  await Promise.all([loadSongs(),loadSetlists(),loadConcerts(),loadRehearsals(),loadMembers(),loadBlackouts()]);
+  renderSLDropdown();renderSL();renderSlMeta();renderLib();if(libView==='sheet')renderSheet();updateLibCount();updateSidebarCounts();
   setCalView(calView);renderRehearsals();renderConcerts();renderMembers();
   renderGuestDir();renderBP();renderAsList();renderBandList();
   syncCurrentUserToUI();renderDashboard();updateSidebarCounts();refreshWaUI();
@@ -2119,27 +2243,33 @@ async function createNewBand(){
   if(!name){toast2('Please enter a band name','w');return;}
   const btn=document.querySelector('#newBandMod .btn-p');
   if(btn){btn.disabled=true;btn.textContent='Creating…';}
-  const countryCode=document.getElementById('nbCountry').value;
-  const countryName=countryCode?(ISO_COUNTRIES.find(x=>x.c===countryCode)?.n||countryCode):'';
-  const initials=name.split(' ').filter(Boolean).map(w=>w[0]).join('').toUpperCase().slice(0,2)||name.slice(0,2).toUpperCase();
-  const colors=['#16A34A','#DC2626','#9333EA','#D97706','#0891B2'];
-  const color=colors[BANDS.length%colors.length];
-  const saved=await BandsDB.upsert({
-    name,initials,color,
-    city:document.getElementById('nbCity').value.trim(),
-    country:countryName,
-    genre:document.getElementById('nbGenre').value,
-    bio:document.getElementById('nbBio').value.trim(),
-  });
-  if(btn){btn.disabled=false;btn.textContent='Create Band';}
-  if(!saved){return;}
-  await BandsDB.addMember(saved.id,currentUser.id,'admin');
-  await loadBands();
-  closeMod('newBandMod');
-  ['nbName','nbCity','nbBio'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
-  const nbC=document.getElementById('nbCountry');if(nbC)nbC.value='';
-  toast2(`"${name}" created!`);
-  await switchBand(saved.id);
+  try{
+    const countryCode=document.getElementById('nbCountry').value;
+    const countryName=countryCode?(ISO_COUNTRIES.find(x=>x.c===countryCode)?.n||countryCode):'';
+    const initials=name.split(' ').filter(Boolean).map(w=>w[0]).join('').toUpperCase().slice(0,2)||name.slice(0,2).toUpperCase();
+    const colors=['#16A34A','#DC2626','#9333EA','#D97706','#0891B2'];
+    const color=colors[BANDS.length%colors.length];
+    const saved=await BandsDB.upsert({
+      name,initials,color,
+      city:document.getElementById('nbCity').value.trim(),
+      country:countryName,
+      genre:document.getElementById('nbGenre').value,
+      bio:document.getElementById('nbBio').value.trim(),
+    });
+    if(!saved){if(btn){btn.disabled=false;btn.textContent='Create Band';}return;}
+    await BandsDB.addMember(saved.id,currentUser.id,'admin');
+    await loadBands();
+    closeMod('newBandMod');
+    ['nbName','nbCity','nbBio'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+    const nbC=document.getElementById('nbCountry');if(nbC)nbC.value='';
+    toast2(`"${name}" created!`);
+    await switchBand(saved.id);
+  }catch(e){
+    console.error('[bandapp] createNewBand error:',e);
+    toast2('Something went wrong creating the band','w');
+  }finally{
+    if(btn){btn.disabled=false;btn.textContent='Create Band';}
+  }
 }
 let calEv={"2026-05-15":["birthday"]}; // rebuilt by buildCalEv() after data loads
 
@@ -2213,9 +2343,15 @@ function hasCrossBandConflict(memberIdx, key){
 }
 let curMonth=new Date(2026,4,1);
 let blackouts=[];
+let _boGen=0;
 
+let _boMapCache=null,_boMapVer=0,_boMapCacheVer=-1;
 async function loadBlackouts(){
-  blackouts=await BlackoutsDB.fetch(activeBandId);
+  const gen=++_boGen;
+  const data=await BlackoutsDB.fetch(activeBandId);
+  if(gen!==_boGen)return;
+  blackouts=data;
+  _boMapVer++;
 }
 
 // ── CURRENT USER ─────────────────────────────────────────
@@ -2259,8 +2395,8 @@ function syncCurrentUserToUI(){
   const footRole = document.querySelector('.sbar-foot-text div:last-child');
   if(footRole){
     const inst = u.instrument;
-    const role = u.role === 'admin' ? 'Admin' : 'Member';
-    footRole.textContent = inst ? `${inst} · ${role}` : role;
+    const role = t(u.role === 'admin' ? 'Admin' : 'Member');
+    footRole.textContent = inst ? `${t(inst)} · ${role}` : role;
   }
 
   // Sidebar band button
@@ -2272,11 +2408,11 @@ function syncCurrentUserToUI(){
   const bandNameEl = document.querySelector('.bb .sb-band-name');
   if(bandNameEl) bandNameEl.textContent = band?.name || 'No band';
   const bandRoleEl = document.querySelector('.bb .sb-label div:last-child');
-  if(bandRoleEl) bandRoleEl.textContent = band ? (u.role === 'admin' ? 'Admin' : 'Member') : 'Join or create';
+  if(bandRoleEl) bandRoleEl.textContent = band ? t(u.role === 'admin' ? 'Admin' : 'Member') : t('Join or create');
 
   // Page subtitle
   const pgS = document.getElementById('pgS');
-  if(pgS) pgS.textContent = band ? `${band.name} · ${members.length} member${members.length !== 1 ? 's' : ''}` : '';
+  if(pgS) pgS.textContent = band ? `${band.name} · ${members.length} ${t(members.length !== 1 ? 'members' : 'member')}` : '';
 
   // Dashboard greeting
   const greet = document.getElementById('dshG');
@@ -2297,7 +2433,7 @@ const SUPPORTED_LANGUAGES = [
   { code: 'en',    flag: '🇬🇧', native: 'English',    english: 'English'    },
   { code: 'nl',    flag: '🇳🇱', native: 'Nederlands',  english: 'Dutch'      },
   { code: 'fr',    flag: '🇫🇷', native: 'Français',    english: 'French'     },
-  { code: 'pt',    flag: '🇵🇹', native: 'Português',   english: 'Portuguese' },
+  { code: 'pt',    flag: '🇧🇷', native: 'Português',   english: 'Portuguese' },
   { code: 'es',    flag: '🇪🇸', native: 'Español',     english: 'Spanish'    },
   { code: 'de',    flag: '🇩🇪', native: 'Deutsch',     english: 'German'     },
   { code: 'it',    flag: '🇮🇹', native: 'Italiano',    english: 'Italian'    },
@@ -2314,12 +2450,14 @@ function populateLangSelect(selectId, selectedCode) {
 // AUTH
 function switchTab(t){
   // Reset all alternate auth states
-  ['sf-confirm','ff','ff-sent','reset-pw-form'].forEach(id=>{const el=document.getElementById(id);if(el)el.style.display='none';});
+  ['sf-confirm','ff','ff-sent','reset-pw-form','authLoading'].forEach(id=>{const el=document.getElementById(id);if(el)el.style.display='none';});
   const tabs=document.getElementById('auth-tabs');
   if(tabs)tabs.style.display='flex';
   document.querySelectorAll('#authScreen .stb').forEach((b,i)=>b.classList.toggle('on',(i===0&&t==='login')||(i===1&&t==='signup')));
   document.getElementById('lf').style.display=t==='login'?'':'none';
   document.getElementById('sf').style.display=t==='signup'?'':'none';
+  const loginBtn=document.getElementById('loginBtn');
+  if(loginBtn){loginBtn.disabled=false;loginBtn.textContent='Sign in';}
 }
 function showForgotPassword(){
   document.getElementById('lf').style.display='none';
@@ -2339,10 +2477,32 @@ function nav(p){
   const f=[...document.querySelectorAll('.ni')].find(n=>n.getAttribute('onclick')?.includes(p));
   if(f)f.classList.add('on');
   const T={dashboard:'Dashboard',setlists:'Set Lists',library:'Song Library',calendar:'Calendar',rehearsals:'Rehearsals',concerts:'Concerts',members:'Members',guestdir:'Guest Directory',bandprofile:'Band Profile',myprofile:'My Profile',settings:'Settings'};
-  document.getElementById('pgT').textContent=T[p]||p;
+  document.getElementById('pgT').textContent=t(T[p]||p);
   if(p==='myprofile') populateMpPage().catch(console.error);
   if(p==='settings') populateSettingsPage();
+  applyI18n();
   closeSb();
+}
+function changeLang(lang){
+  currentUser.lang=lang;
+  applyI18n();
+  // Re-render all JS-generated page content so translated strings update immediately
+  renderDashboard();
+  renderRehearsals();
+  renderConcerts();
+  renderMembers();
+  renderBP();
+  renderCal();
+  renderLib();
+  renderSL();renderSlMeta();
+  populateMpPage().catch(console.error);
+  const active=document.querySelector('.pg-area.on');
+  if(active){
+    const pageId=active.id.replace('pg-','');
+    const T={dashboard:'Dashboard',setlists:'Set Lists',library:'Song Library',calendar:'Calendar',rehearsals:'Rehearsals',concerts:'Concerts',members:'Members',guestdir:'Guest Directory',bandprofile:'Band Profile',myprofile:'My Profile',settings:'Settings'};
+    document.getElementById('pgT').textContent=t(T[pageId]||pageId);
+  }
+  syncCurrentUserToUI();
 }
 function toggleSbMinimize(){
   const sb=document.getElementById('sb');
@@ -2482,6 +2642,7 @@ function openSongMedia(s,rowIdx){
   if(s.spotify)links.push({label:'🎵 Spotify',url:s.spotify});
   if(s.youtube)links.push({label:'▶ YouTube',url:s.youtube});
   if(s.apple)links.push({label:'🍎 Apple Music',url:s.apple});
+  if(s.amazon)links.push({label:'🎵 Amazon Music',url:s.amazon});
   if(!links.length)return'';
   if(links.length===1)return`<button class="lb2" title="${links[0].label}" data-url="${links[0].url}" onclick="openMediaUrl(this)">▶</button>`;
   return`<button class="lb2" title="Open media" onclick="openMediaPicker(${rowIdx})">▶</button>`;
@@ -2492,6 +2653,7 @@ function openMediaPicker(rowIdx){
   if(s.spotify)links.push({label:'🎵 Spotify',url:s.spotify});
   if(s.youtube)links.push({label:'▶ YouTube',url:s.youtube});
   if(s.apple)links.push({label:'🍎 Apple Music',url:s.apple});
+  if(s.amazon)links.push({label:'🎵 Amazon Music',url:s.amazon});
   const titleEl=document.getElementById('mediaPickerTitle');
   const listEl=document.getElementById('mediaPickerList');
   if(titleEl)titleEl.textContent=s.title;
@@ -2585,6 +2747,10 @@ function renderSLDropdown(){
   if(slContent) slContent.style.display=showEmpty?'none':'';
   const dd=document.getElementById('slDropdown');if(!dd)return;
   dd.innerHTML=setlists.map(sl=>`<option value="${sl.id}"${sl.id===activeSetlistId?' selected':''}>${sl.name}</option>`).join('');
+  // Keep the visible name heading in sync with whichever setlist is active
+  const activeSl=setlists.find(x=>x.id===activeSetlistId);
+  const slNameEl=document.getElementById('slName');
+  if(slNameEl) slNameEl.textContent=activeSl?activeSl.name:(setlists.length?'Set List':'');
 }
 async function selSLDropdown(sel){
   const id=sel.value; // UUID string — no parseInt
@@ -2644,6 +2810,15 @@ function renderSlMeta(){
   const sl=setlists.find(x=>x.id===activeSetlistId);
   if(!sl)return;
 
+  // Update "My View" button and personal view header with current user's name
+  const myViewBtn=document.getElementById('myViewBtn');
+  if(myViewBtn) myViewBtn.textContent=`${t('My View')} (${currentUser.firstName||currentUser.name||'Me'})`;
+  const pvHeader=document.getElementById('pvHeader');
+  if(pvHeader){
+    const inst=currentUser.instrument;
+    pvHeader.textContent=`✦ Personal view — ${currentUser.name}${inst?' ('+t(inst)+')':''}`;
+  }
+
   // Meta pills
   const meta=document.getElementById('slMeta');
   const totalSec=slTotalDur();
@@ -2687,7 +2862,12 @@ async function linkSlToConcert(concertId, unlinkId){
     renderSlMeta();renderConcerts();toast2('Concert unlinked');return;
   }
   if(!concertId)return;
-  await ConcertsDB.linkSetlist(concertId, activeSetlistId);
+  try{
+    await ConcertsDB.linkSetlist(concertId, activeSetlistId);
+  }catch(e){
+    toast2(e?.code==='42501'?t('Permission denied — only band admins can link concerts'):e.message||t('Failed to link concert'),'w');
+    return;
+  }
   await loadConcerts();
   renderSlMeta();renderConcerts();
   toast2('Set list linked to concert!');
@@ -2707,7 +2887,7 @@ function renderSlLinkList(){
   const past=concerts.filter(c=>isPast(c));
   const makeItem=c=>`
     <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--bg);border:1.5px solid var(--bd);border-radius:var(--rad);cursor:pointer;transition:border-color .13s" onclick="linkSlToConcert('${c.id}')" onmouseover="this.style.borderColor='var(--a)'" onmouseout="this.style.borderColor='var(--bd)'">
-      <div style="flex:1"><div style="font-weight:600;font-size:.85rem">${c.title}</div><div style="font-size:.72rem;color:var(--ink2)">${c.month} ${c.day}, ${c.year} · ${c.venue}</div></div>
+      <div style="flex:1"><div style="font-weight:600;font-size:.85rem">${c.title}</div><div style="font-size:.72rem;color:var(--ink2)">${t(c.month)} ${c.day}, ${c.year} · ${c.venue}</div></div>
       ${(c.setlistIds||[]).length&&!(c.setlistIds||[]).includes(activeSetlistId)?`<span class="pill pgray" style="font-size:.66rem">Has setlist</span>`:''}
       ${(c.setlistIds||[]).includes(activeSetlistId)?`<span class="pill pg" style="font-size:.66rem">✓ Linked</span>`:''}
     </div>`;
@@ -2771,7 +2951,10 @@ async function createNewSetList(){
   }catch(e){toast2(e.message||'Failed to create set list','w');console.error('[bandapp] createNewSetList error:',e);return;}
   if(!newSL)return;
   slSongs[newSL.id]=[];
+  // Create the concert↔setlist link in the junction table when a concert was chosen
+  if(cid) await ConcertsDB.linkSetlist(cid, newSL.id);
   await loadSetlists();
+  if(cid) await loadConcerts(); // refresh so renderSlMeta picks up the new link
   closeMod('slMod');
   activeSetlistId=newSL.id;
   slS=getSlS();
@@ -2789,18 +2972,66 @@ async function createNewSetList(){
 
 // LIBRARY
 let aG='All';
-function renderLib(filter='All',search=''){
+
+function getLibFiltered(){
+  const title=(document.getElementById('libFTitle')?.value||'').toLowerCase().trim();
+  const artist=(document.getElementById('libFArtist')?.value||'').toLowerCase().trim();
+  const key=document.getElementById('libFKey')?.value||'';
+  return songs.filter(s=>{
+    if(aG!=='All'&&s.genre!==aG)return false;
+    if(key&&s.key!==key)return false;
+    if(title&&!s.title.toLowerCase().includes(title))return false;
+    if(artist&&!s.artist.toLowerCase().includes(artist))return false;
+    return true;
+  });
+}
+
+function renderLibFilters(){
+  const chipsEl=document.getElementById('genreChips');
+  if(chipsEl){
+    const usedGenres=[...new Set(songs.map(s=>s.genre).filter(Boolean))].sort((a,b)=>a.localeCompare(b));
+    chipsEl.innerHTML=usedGenres.map(g=>`<button class="chip${aG===g?' on':''}" onclick="filtG('${g.replace(/'/g,"\\'")}',this)">${g}</button>`).join('');
+    const allChip=document.getElementById('genreChipAll');
+    if(allChip)allChip.classList.toggle('on',aG==='All');
+  }
+  const keySelect=document.getElementById('libFKey');
+  if(keySelect){
+    const cur=keySelect.value;
+    const usedKeys=[...new Set(songs.map(s=>s.key).filter(Boolean))].sort((a,b)=>{const ai=KEYS_LIST.indexOf(a),bi=KEYS_LIST.indexOf(b);return(ai<0?999:ai)-(bi<0?999:bi);});
+    keySelect.innerHTML='<option value="">Key: All</option>'+usedKeys.map(k=>`<option value="${k}"${cur===k?' selected':''}>${k}</option>`).join('');
+  }
+  const title=document.getElementById('libFTitle')?.value||'';
+  const artist=document.getElementById('libFArtist')?.value||'';
+  const key=document.getElementById('libFKey')?.value||'';
+  const clearBtn=document.getElementById('libFClear');
+  if(clearBtn)clearBtn.style.display=(title||artist||key||aG!=='All')?'':'none';
+}
+
+function applyLibFilters(){
+  renderLibFilters();
+  if(libView==='sheet'){renderSheet();}else{renderLib();}
+}
+
+function clearLibFilters(){
+  ['libFTitle','libFArtist'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  const k=document.getElementById('libFKey');if(k)k.value='';
+  aG='All';
+  applyLibFilters();
+}
+
+function renderLib(){
+  renderLibFilters();
   const grid=document.getElementById('libGrid');
-  const f=songs.filter(s=>(filter==='All'||s.genre===filter)&&(s.title+s.artist).toLowerCase().includes(search.toLowerCase()));
+  const f=getLibFiltered();
   if(!f.length){
     const msg=songs.length
-      ?`<div class="es" style="grid-column:1/-1"><div class="es-ico">🔍</div><h3>No songs found</h3><p>Try another filter or search term.</p></div>`
-      :`<div class="es" style="grid-column:1/-1"><div class="es-ico">🎵</div><h3>Your library is empty</h3><p>Start by adding songs to your library.</p></div>`;
+      ?`<div class="es" style="grid-column:1/-1"><div class="es-ico">🔍</div><h3>${t('No songs found')}</h3><p>${t('Try another filter or search term.')}</p></div>`
+      :`<div class="es" style="grid-column:1/-1"><div class="es-ico">🎵</div><h3>${t('No songs in library yet')}</h3><p>${t('Start by adding songs to your library.')}</p></div>`;
     grid.innerHTML=msg;return;
   }
   grid.innerHTML=f.map(s=>`
     <div class="songcard${s.hidden?' hidden-song':''}" onclick="openSongEdit('${s.id}')">
-      ${s.hidden?`<div style="position:absolute;top:10px;right:10px;font-size:.62rem;font-weight:700;color:var(--ink3);background:var(--bg2);border:1px solid var(--bd);border-radius:99px;padding:2px 7px;letter-spacing:.04em">HIDDEN</div>`:''}
+      ${s.hidden?`<div style="position:absolute;top:10px;right:10px;font-size:.62rem;font-weight:700;color:var(--ink3);background:var(--bg2);border:1px solid var(--bd);border-radius:99px;padding:2px 7px;letter-spacing:.04em">${t('HIDDEN')}</div>`:''}
       <div class="sctt" style="padding-right:${s.hidden?'52px':'0'}">${s.title}</div>
       <div class="scar">${s.artist}${s.dur?`<span style="float:right;font-family:var(--mono);font-size:.72rem;color:var(--ink3)">${fmtDur(s.dur)}</span>`:''}</div>
       <div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:2px">
@@ -2808,15 +3039,10 @@ function renderLib(filter='All',search=''){
         <span class="kp">${s.key}</span>
       </div>
       <div class="sclinks">
-        ${s.spotify
-          ?`<button class="svb svb-sp" data-url="${s.spotify}" onclick="event.stopPropagation();openMediaUrl(this)">Spotify</button>`
-          :`<button class="svb svb-sp" disabled style="opacity:.3;cursor:not-allowed">Spotify</button>`}
-        ${s.youtube
-          ?`<button class="svb svb-yt" data-url="${s.youtube}" onclick="event.stopPropagation();openMediaUrl(this)">YouTube</button>`
-          :`<button class="svb svb-yt" disabled style="opacity:.3;cursor:not-allowed">YouTube</button>`}
-        ${s.apple
-          ?`<button class="svb" data-url="${s.apple}" onclick="event.stopPropagation();openMediaUrl(this)">Apple</button>`
-          :`<button class="svb" disabled style="opacity:.3;cursor:not-allowed">Apple</button>`}
+        ${s.spotify?`<button class="svb svb-sp" data-url="${s.spotify}" onclick="event.stopPropagation();openMediaUrl(this)">Spotify</button>`:''}
+        ${s.youtube?`<button class="svb svb-yt" data-url="${s.youtube}" onclick="event.stopPropagation();openMediaUrl(this)">YouTube</button>`:''}
+        ${s.apple?`<button class="svb" data-url="${s.apple}" onclick="event.stopPropagation();openMediaUrl(this)">Apple</button>`:''}
+        ${s.amazon?`<button class="svb svb-am" data-url="${s.amazon}" onclick="event.stopPropagation();openMediaUrl(this)">Amazon</button>`:''}
       </div>
       <!-- corner action buttons — visible on hover -->
       <div class="sc-actions" onclick="event.stopPropagation()">
@@ -2835,20 +3061,27 @@ function renderLib(filter='All',search=''){
       </div>
     </div>`).join('');
 }
-function filtG(g,el){document.querySelectorAll('.lf .chip').forEach(c=>c.classList.remove('on'));el.classList.add('on');aG=g;renderLib(g);}
-function filterLib(v){renderLib(aG,v);}
+function filtG(g){aG=g;applyLibFilters();}
+function filterLib(v){applyLibFilters();}
 function openAddSong(){
   if(!activeBandId){toast2('Create a band first before adding songs','w');return;}
+  _addSongDupConfirmed=false;
   showMod('alsMod');
 }
+let _addSongDupConfirmed=false;
 async function addSong(){
   if(!activeBandId){toast2('No band selected — please create or join a band first','w');return;}
   const title=document.getElementById('nst').value.trim();
   if(!title){toast2('Please enter a song title','w');return;}
   const artist=document.getElementById('nsa').value.trim();
-  const key=(t,a)=>(t+'|'+a).toLowerCase();
-  const dup=songs.find(s=>key(s.title,s.artist||'')===key(title,artist));
-  if(dup&&!confirm(`"${dup.title}"${dup.artist?' by '+dup.artist:''} is already in the library. Add anyway?`))return;
+  const dupKey=(a,b)=>(a+'|'+b).toLowerCase();
+  const dup=songs.find(s=>dupKey(s.title,s.artist||'')===dupKey(title,artist));
+  if(dup&&!_addSongDupConfirmed){
+    _addSongDupConfirmed=true;
+    toast2(`"${dup.title}" is already in the library — click Add again to add anyway.`,'w');
+    return;
+  }
+  _addSongDupConfirmed=false;
   const min=parseInt(document.getElementById('nsDurMin').value)||0;
   const sec=parseInt(document.getElementById('nsDurSec').value)||0;
   const dur=min*60+sec||0;
@@ -2865,23 +3098,27 @@ async function addSong(){
       spotify:document.getElementById('nsSpotify').value.trim(),
       youtube:document.getElementById('nsYoutube').value.trim(),
       apple:document.getElementById('nsApple').value.trim(),
+      amazon:document.getElementById('nsAmazon').value.trim(),
       hidden:false,
     });
-  }catch(e){toast2(e.message||'Failed to add song','w');console.error('[bandapp] addSong error:',e);return;}
-  if(!s)return;
-  ['nst','nsa','nsnote','nsSpotify','nsYoutube','nsApple','nsDurMin','nsDurSec'].forEach(id=>{
+  }catch(e){
+    const msg=e?.code==='42501'?t('Permission denied — only band admins can add songs'):e.message||t('Failed to add song');
+    toast2(msg,'w');
+    console.error('[bandapp] addSong error:',e);
+    return;
+  }
+  if(!s){toast2(t('Failed to add song — please try again'),'w');return;}
+  ['nst','nsa','nsnote','nsSpotify','nsYoutube','nsApple','nsAmazon','nsDurMin','nsDurSec'].forEach(id=>{
     const el=document.getElementById(id);if(el)el.value='';
   });
   closeMod('alsMod');
-  await loadSongs();
-  renderLib(aG);
-  updateLibCount();
-  if(libView==='sheet')renderSheet();
-  toast2(`✦ "${title}" added to library!`);
+  aG='All';
+  try{ await loadSongs();renderLib();updateLibCount();if(libView==='sheet')renderSheet(); }catch(e){ console.error('[bandapp] post-add refresh failed:',e); }
+  toast2(`✦ "${title}" ${t('added to library!')}`);
 }
 
 // ── LIBRARY VIEW TOGGLE ───────────────────────────────────
-let libView='cards';
+let libView=window.matchMedia('(max-width:640px)').matches?'cards':'sheet';
 function setLibView(v){
   libView=v;
   const bc=document.getElementById('libViewCards');
@@ -2890,9 +3127,9 @@ function setLibView(v){
   bs.style.background=v==='sheet'?'var(--a)':'transparent';bs.style.color=v==='sheet'?'#fff':'var(--ink2)';
   document.getElementById('libViewCardsArea').style.display=v==='cards'?'':'none';
   document.getElementById('libViewSheetArea').style.display=v==='sheet'?'':'none';
-  document.getElementById('libFilters').style.display=v==='cards'?'':'none';
-  if(v==='sheet')renderSheet();
+  if(v==='sheet'&&songs.length)renderSheet();
 }
+setLibView(libView);
 
 function updateLibCount(){
   const el=document.getElementById('libCount');
@@ -2911,8 +3148,12 @@ function updateSidebarCounts(){
 }
 
 // ── SPREADSHEET ───────────────────────────────────────────
-const GENRES_LIST=['Jazz','Funk','Soul','Blues','Pop','Rock','Latin','R&B','Other'];
-const KEYS_LIST=['Am','C','G','D','Dm','F','Bb','Eb','Gm','Em','A','E','Fm','Cm','Bm','Ab','Db'];
+const GENRES_LIST=['Jazz','Funk','Soul','Blues','Pop','Rock','Hard-Rock','Country','Folk','Latin','R&B','Reggae','Classical','Samba','Bossa Nova','MPB','Pagode','Forró','Choro','Sertanejo','Brazilian Funk','Other'];
+const KEYS_LIST=['','C','C♯','D♭','D','E♭','E','F','F♯','G♭','G','A♭','A','B♭','B','C♭','Am','A♯m','B♭m','Bm','Cm','C♯m','Dm','D♯m','E♭m','Em','Fm','F♯m','Gm','G♯m','A♭m'];
+const KEY_NORMALIZE={'Bb':'B♭','Eb':'E♭','Ab':'A♭','Db':'D♭','Gb':'G♭','Cb':'C♭','C#':'C♯','F#':'F♯','G#':'G♯','A#':'A♯','D#':'D♯','B#':'B♯','Bbm':'B♭m','Ebm':'E♭m','Abm':'A♭m','Dbm':'D♭m','Gbm':'G♭m','C#m':'C♯m','F#m':'F♯m','G#m':'G♯m','A#m':'A♯m','D#m':'D♯m'};
+function normalizeKey(k){return KEY_NORMALIZE[String(k||'').trim()]||String(k||'').trim();}
+// Populate seKey select options from KEYS_LIST (single source of truth)
+(function(){const el=document.getElementById('seKey');if(el)el.innerHTML=KEYS_LIST.map(k=>`<option value="${k}">${k||'—'}</option>`).join('');})();
 
 // Duration formatting: seconds → X:YY:ZZ
 function fmtDur(sec){
@@ -2937,6 +3178,43 @@ function slTotalDur(){
   return getSlS().reduce((acc,id)=>{const s=songByAnyId(id);return acc+(s&&s.dur?s.dur:0);},0);
 }
 let sheetSortCol=null, sheetSortDir='asc';
+const SHEET_COL_DEFAULT_W={title:200,artist:150,genre:100,key:75,dur:95,note:170,spotify:160,youtube:160,apple:160,amazon:160,hidden:60};
+let _sheetColWidths={};
+function sheetColW(field){return _sheetColWidths[field]||SHEET_COL_DEFAULT_W[field]||120;}
+function sheetTblW(){return 32+SHEET_COLS.reduce((s,c)=>s+sheetColW(c.field),0)+36;}
+function setSheetTblWidth(){
+  const tbl=document.getElementById('sheetTbl');if(!tbl)return;
+  const cw=tbl.parentElement?.clientWidth||0;
+  tbl.style.width=Math.max(sheetTblW(),cw)+'px';
+}
+let _colResize=null;
+function startColResize(e,field,thEl){
+  e.preventDefault();e.stopPropagation();
+  const tbl=document.getElementById('sheetTbl');
+  _colResize={field,startX:e.clientX,startW:sheetColW(field),startTblW:parseInt(tbl?.style.width)||tbl?.offsetWidth||0,thEl};
+  thEl.querySelector('.sh-resize').classList.add('active');
+  document.addEventListener('mousemove',onColResizeMove);
+  document.addEventListener('mouseup',onColResizeUp);
+}
+function onColResizeMove(e){
+  if(!_colResize)return;
+  const w=Math.max(50,_colResize.startW+(e.clientX-_colResize.startX));
+  _colResize.thEl.style.width=w+'px';
+  const cg=document.getElementById('sheetCols');
+  if(cg){const idx=SHEET_COLS.findIndex(c=>c.field===_colResize.field);const cols=[...cg.querySelectorAll('col')];if(idx>=0&&cols[idx+1])cols[idx+1].style.width=w+'px';}
+  const tbl=document.getElementById('sheetTbl');
+  if(tbl){const delta=w-_colResize.startW;tbl.style.width=Math.max(_colResize.startTblW+delta,tbl.parentElement?.clientWidth||0)+'px';}
+}
+function onColResizeUp(e){
+  if(!_colResize)return;
+  const w=Math.max(50,_colResize.startW+(e.clientX-_colResize.startX));
+  _sheetColWidths[_colResize.field]=w;
+  _colResize.thEl.querySelector('.sh-resize')?.classList.remove('active');
+  _colResize=null;
+  document.removeEventListener('mousemove',onColResizeMove);
+  document.removeEventListener('mouseup',onColResizeUp);
+  setSheetTblWidth();
+}
 
 const SHEET_COLS=[
   {label:'Title',   field:'title',   width:null},
@@ -2947,6 +3225,8 @@ const SHEET_COLS=[
   {label:'Notes',   field:'note',    width:null},
   {label:'Spotify', field:'spotify', width:'180px'},
   {label:'YouTube', field:'youtube', width:'180px'},
+  {label:'Apple',   field:'apple',   width:'180px'},
+  {label:'Amazon',  field:'amazon',  width:'180px'},
   {label:'Hidden',  field:'hidden',  width:'60px'},
 ];
 
@@ -2957,8 +3237,9 @@ function sortSheet(field){
 }
 
 function getSortedSongs(){
-  if(!sheetSortCol)return [...songs];
-  return [...songs].sort((a,b)=>{
+  const base=getLibFiltered();
+  if(!sheetSortCol)return base;
+  return [...base].sort((a,b)=>{
     let va=a[sheetSortCol]??'', vb=b[sheetSortCol]??'';
     if(typeof va==='boolean'){va=va?1:0;vb=vb?1:0;}
     else{va=String(va).toLowerCase();vb=String(vb).toLowerCase();}
@@ -2970,12 +3251,15 @@ function getSortedSongs(){
 
 function renderSheetHead(){
   const head=document.getElementById('sheetHead');if(!head)return;
+  setSheetTblWidth();
+  // Sync colgroup widths
+  const cg=document.getElementById('sheetCols');
+  if(cg)cg.innerHTML=`<col style="width:32px">`+SHEET_COLS.map(col=>`<col style="width:${sheetColW(col.field)}px">`).join('')+`<col style="width:36px">`;
   const cols=SHEET_COLS.map(col=>{
     const isActive=sheetSortCol===col.field;
     const icon=isActive?(sheetSortDir==='asc'?'▲':'▼'):'⇅';
     const cls=`sh-hd${isActive?' sort-'+sheetSortDir:''}`;
-    const w=col.width?`style="width:${col.width}"`:'';
-    return`<th class="${cls}" ${w} onclick="sortSheet('${col.field}')">${col.label}<span class="sh-sort-icon">${icon}</span></th>`;
+    return`<th class="${cls}" style="width:${sheetColW(col.field)}px" onclick="sortSheet('${col.field}')">${col.label}<span class="sh-sort-icon">${icon}</span><div class="sh-resize" onmousedown="startColResize(event,'${col.field}',this.parentElement)" onclick="event.stopPropagation()"></div></th>`;
   }).join('');
   head.innerHTML=`<tr style="background:var(--bg);position:sticky;top:0;z-index:2">
     <th style="width:32px;padding:8px 6px;border-bottom:2px solid var(--bd);text-align:center;font-size:.68rem;font-weight:700;color:var(--ink3)">#</th>
@@ -2985,26 +3269,29 @@ function renderSheetHead(){
 }
 
 function renderSheet(){
+  renderLibFilters();
   renderSheetHead();
   const body=document.getElementById('sheetBody');if(!body)return;
   const sorted=getSortedSongs();
   body.innerHTML=sorted.map((s,i)=>`
     <tr class="sh-row${s.hidden?' hidden-row':''}" data-id="${s.id}">
       <td><div class="sh-cell-num">${i+1}</div></td>
-      <td><input class="sh-cell" value="${esc(s.title)}" data-field="title" data-id="${s.id}" onchange="sheetEdit(this)"></td>
-      <td><input class="sh-cell" value="${esc(s.artist)}" data-field="artist" data-id="${s.id}" onchange="sheetEdit(this)"></td>
+      <td><input class="sh-cell" value="${esc(s.title)}" data-field="title" data-id="${s.id}" onchange="sheetEdit(this)" onkeydown="sheetKeyDown(event,this)"></td>
+      <td><input class="sh-cell" value="${esc(s.artist)}" data-field="artist" data-id="${s.id}" onchange="sheetEdit(this)" onkeydown="sheetKeyDown(event,this)"></td>
       <td><select class="sh-sel" data-field="genre" data-id="${s.id}" onchange="sheetEdit(this)">${GENRES_LIST.map(g=>`<option value="${g}"${s.genre===g?' selected':''}>${g}</option>`).join('')}</select></td>
-      <td><select class="sh-sel" data-field="key" data-id="${s.id}" onchange="sheetEdit(this)">${KEYS_LIST.map(k=>`<option value="${k}"${s.key===k?' selected':''}>${k}</option>`).join('')}</select></td>
+      <td><select class="sh-sel" data-field="key" data-id="${s.id}" onchange="sheetEdit(this)">${KEYS_LIST.map(k=>`<option value="${k}"${s.key===k?' selected':''}>${k||'—'}</option>`).join('')}</select></td>
       <td style="white-space:nowrap">
         <div style="display:flex;align-items:center;gap:3px">
-          <input class="sh-cell" style="width:38px;text-align:center;padding:4px 5px;font-family:var(--mono);font-size:.78rem" type="number" min="0" max="99" placeholder="0" value="${s.dur?Math.floor(s.dur/60):''}" data-field="durMin" data-id="${s.id}" onchange="sheetEditDur(this)" title="Minutes">
+          <input class="sh-cell" style="width:38px;text-align:center;padding:4px 5px;font-family:var(--mono);font-size:.78rem" type="number" min="0" max="99" placeholder="0" value="${s.dur?Math.floor(s.dur/60):''}" data-field="durMin" data-id="${s.id}" onchange="sheetEditDur(this)" onkeydown="sheetKeyDownDur(event,this,'durSec')" title="Minutes">
           <span style="color:var(--ink3);font-weight:700;font-size:.8rem">:</span>
-          <input class="sh-cell" style="width:34px;text-align:center;padding:4px 5px;font-family:var(--mono);font-size:.78rem" type="number" min="0" max="59" placeholder="00" value="${s.dur?String(s.dur%60).padStart(2,'0'):''}" data-field="durSec" data-id="${s.id}" onchange="sheetEditDur(this)" title="Seconds">
+          <input class="sh-cell" style="width:34px;text-align:center;padding:4px 5px;font-family:var(--mono);font-size:.78rem" type="number" min="0" max="59" placeholder="00" value="${s.dur?String(s.dur%60).padStart(2,'0'):''}" data-field="durSec" data-id="${s.id}" onchange="sheetEditDur(this)" onkeydown="sheetKeyDownDur(event,this,'durMin')" title="Seconds">
         </div>
       </td>
-      <td><input class="sh-cell" style="min-width:140px" value="${esc(s.note||'')}" data-field="note" data-id="${s.id}" onchange="sheetEdit(this)"></td>
-      <td><input class="sh-cell" style="min-width:150px;font-size:.72rem" value="${esc(s.spotify||'')}" placeholder="Spotify URL" data-field="spotify" data-id="${s.id}" onchange="sheetEdit(this)"></td>
-      <td><input class="sh-cell" style="min-width:150px;font-size:.72rem" value="${esc(s.youtube||'')}" placeholder="YouTube URL" data-field="youtube" data-id="${s.id}" onchange="sheetEdit(this)"></td>
+      <td><input class="sh-cell" style="min-width:140px" value="${esc(s.note||'')}" data-field="note" data-id="${s.id}" onchange="sheetEdit(this)" onkeydown="sheetKeyDown(event,this)"></td>
+      <td><input class="sh-cell" style="min-width:150px;font-size:.72rem" value="${esc(s.spotify||'')}" placeholder="Spotify URL" data-field="spotify" data-id="${s.id}" onchange="sheetEdit(this)" onkeydown="sheetKeyDown(event,this)"></td>
+      <td><input class="sh-cell" style="min-width:150px;font-size:.72rem" value="${esc(s.youtube||'')}" placeholder="YouTube URL" data-field="youtube" data-id="${s.id}" onchange="sheetEdit(this)" onkeydown="sheetKeyDown(event,this)"></td>
+      <td><input class="sh-cell" style="min-width:150px;font-size:.72rem" value="${esc(s.apple||'')}" placeholder="Apple Music URL" data-field="apple" data-id="${s.id}" onchange="sheetEdit(this)" onkeydown="sheetKeyDown(event,this)"></td>
+      <td><input class="sh-cell" style="min-width:150px;font-size:.72rem" value="${esc(s.amazon||'')}" placeholder="Amazon Music URL" data-field="amazon" data-id="${s.id}" onchange="sheetEdit(this)" onkeydown="sheetKeyDown(event,this)"></td>
       <td><div class="sh-chk"><input type="checkbox"${s.hidden?' checked':''} style="accent-color:var(--a);width:15px;height:15px;cursor:pointer" data-field="hidden" data-id="${s.id}" onchange="sheetEdit(this)"></div></td>
       <td style="text-align:center;padding:4px"><button class="btn-ic btn" onclick="deleteSheetRow('${s.id}')" style="width:24px;height:24px;color:var(--r);border-color:var(--r2)" title="Delete"><svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 4h12M5 4V2h6v2M6 7v5M10 7v5M3 4l1 10h8l1-10"/></svg></button></td>
     </tr>`).join('');
@@ -3018,6 +3305,7 @@ function sheetEdit(el){
   s[field]=field==='hidden'?el.checked:field==='dur'?parseInt(el.value)||0:el.value;
   if(field==='hidden'){const row=el.closest('tr');if(row)row.className='sh-row'+(s.hidden?' hidden-row':'');}
   updateLibCount();
+  saveSheetRow(id);
 }
 
 function sheetEditDur(el){
@@ -3030,6 +3318,47 @@ function sheetEditDur(el){
   const sec=parseInt(secEl?.value)||0;
   s.dur=min*60+sec||undefined;
   updateLibCount();
+  saveSheetRow(id);
+}
+
+async function saveSheetRow(id){
+  const s=songs.find(x=>x.id===id);if(!s)return;
+  const saved=await SongsDB.upsert(s);
+  if(saved){
+    if(s.id!==saved.id)s.id=saved.id;
+    const row=document.querySelector(`#sheetBody tr[data-id="${id}"]`);
+    if(row){row.style.outline='2px solid var(--g)';setTimeout(()=>{row.style.outline='';},700);}
+  }
+}
+
+function sheetKeyDown(e,el){
+  if(e.key!=='Enter')return;
+  e.preventDefault();
+  // Ensure in-memory is current before blur triggers onchange
+  const id=el.dataset.id,field=el.dataset.field;
+  const s=songs.find(x=>x.id===id);if(s)s[field]=el.value;
+  const rows=[...document.querySelectorAll('#sheetBody tr')];
+  const curIdx=rows.indexOf(el.closest('tr'));
+  const next=curIdx>=0&&curIdx<rows.length-1?rows[curIdx+1].querySelector(`[data-field="${field}"]`):null;
+  if(next){next.focus();if(next.select)next.select();}else{el.blur();}
+}
+
+function sheetKeyDownDur(e,el,nextSib){
+  if(e.key!=='Enter')return;
+  e.preventDefault();
+  const id=el.dataset.id;
+  // durMin → durSec same row; durSec → durMin next row
+  const row=el.closest('tr');
+  if(el.dataset.field==='durMin'){
+    const sib=row.querySelector(`[data-field="${nextSib}"]`);
+    if(sib){sib.focus();sib.select();}
+  }else{
+    const rows=[...document.querySelectorAll('#sheetBody tr')];
+    const curIdx=rows.indexOf(row);
+    const nextRow=curIdx>=0&&curIdx<rows.length-1?rows[curIdx+1]:null;
+    const target=nextRow?nextRow.querySelector('[data-field="durMin"]'):null;
+    if(target){target.focus();target.select();}else{el.blur();}
+  }
 }
 
 async function saveSheetEdits(){
@@ -3043,51 +3372,48 @@ async function saveSheetEdits(){
 }
 
 async function addSheetRow(){
-  const ns=await SongsDB.upsert({band_id:activeBandId,title:'',artist:'',genre:'Jazz',key:'Am',note:'',hidden:false,spotify:'',youtube:'',apple:''});
+  const ns=await SongsDB.upsert({band_id:activeBandId,title:'',artist:'',genre:'Jazz',key:'',note:'',hidden:false,spotify:'',youtube:'',apple:''});
   if(!ns)return;
   await loadSongs();renderSheet();updateLibCount();
   const rows=document.querySelectorAll('#sheetBody tr');
   if(rows.length){const inp=rows[rows.length-1].querySelector('input');if(inp){inp.focus();inp.select();}}
 }
 
+async function songUsedInSetlists(songId){
+  const {data,error}=await supabase.from('setlist_songs').select('setlist_id').eq('song_id',songId);
+  if(error||!data?.length)return[];
+  return data.map(r=>{const sl=setlists.find(x=>x.id===r.setlist_id);return sl?sl.name:'Unknown Set List';});
+}
+
 async function deleteSheetRow(id){
   const s=songByAnyId(id);if(!s)return;
+  const usedIn=await songUsedInSetlists(s.id);
+  if(usedIn.length){toast2(`Song can't be deleted as it is being used by Set List "${usedIn.join('", "')}". Please first remove it from the setlist(s).`,'w');return;}
   if(!confirm(`Delete "${s.title}"?`))return;
   await SongsDB.delete(s.id);
-  await loadSongs();renderSheet();renderLib(aG);updateLibCount();toast2('Song deleted','w');
+  await loadSongs();renderSheet();renderLib();updateLibCount();toast2('Song deleted','w');
 }
 
 // ── EXCEL EXPORT ──────────────────────────────────────────
 function exportExcel(){
   const headers=['Title','Artist','Genre','Key','Duration (sec)','Notes','Spotify','YouTube','Apple Music','Hidden'];
   const rows=songs.map(s=>[s.title,s.artist,s.genre,s.key,s.dur||'',s.note||'',s.spotify||'',s.youtube||'',s.apple||'',s.hidden?'Yes':'No']);
-
   try{
-    if(typeof XLSX!=='undefined'){
-      const wb=XLSX.utils.book_new();
-      const ws=XLSX.utils.aoa_to_sheet([headers,...rows]);
-      ws['!cols']=[{wch:28},{wch:22},{wch:10},{wch:6},{wch:14},{wch:32},{wch:38},{wch:38},{wch:38},{wch:7}];
-      XLSX.utils.book_append_sheet(wb,ws,'Song Library');
-      // Use base64 blob approach — works on iOS Safari
-      const wbout=XLSX.write(wb,{bookType:'xlsx',type:'base64'});
-      const dataUri='data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,'+wbout;
-      const a=document.createElement('a');
-      a.href=dataUri;
-      a.download='Bandapp_Song_Library.xlsx';
-      document.body.appendChild(a);a.click();document.body.removeChild(a);
-      toast2('Library downloaded!');
-      return;
-    }
-  }catch(err){console.warn('XLSX export failed, falling back to CSV',err);}
-
-  // CSV fallback
-  const csv=[headers,...rows].map(r=>r.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(',')).join('\r\n');
-  const dataUri='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);
-  const a=document.createElement('a');
-  a.href=dataUri;
-  a.download='Bandapp_Song_Library.csv';
-  document.body.appendChild(a);a.click();document.body.removeChild(a);
-  toast2('Downloaded as CSV');
+    const wb=XLSX.utils.book_new();
+    const ws=XLSX.utils.aoa_to_sheet([headers,...rows]);
+    ws['!cols']=[{wch:28},{wch:22},{wch:10},{wch:6},{wch:14},{wch:32},{wch:38},{wch:38},{wch:38},{wch:7}];
+    XLSX.utils.book_append_sheet(wb,ws,'Song Library');
+    const wbout=XLSX.write(wb,{bookType:'xlsx',type:'base64'});
+    const dataUri='data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,'+wbout;
+    const a=document.createElement('a');
+    a.href=dataUri;
+    a.download='Bandapp_Song_Library.xlsx';
+    document.body.appendChild(a);a.click();document.body.removeChild(a);
+    toast2('Library downloaded!');
+  }catch(err){
+    toast2('Export failed — please try again','w');
+    console.error('[bandapp] exportExcel:',err);
+  }
 }
 
 // ── EXCEL IMPORT ──────────────────────────────────────────
@@ -3096,35 +3422,23 @@ function importExcel(event){
   const reader=new FileReader();
   reader.onload=async e=>{
     try{
-      let imported=[];
-      if(typeof XLSX!=='undefined'&&!file.name.endsWith('.csv')){
-        const wb=XLSX.read(e.target.result,{type:'binary'});
-        const rows=XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]],{defval:''});
-        imported=rows.map((r,i)=>{
-          const k=Object.fromEntries(Object.entries(r).map(([key,val])=>[key.toLowerCase().trim(),val]));
-          return{id:i+1,title:String(k.title||k['song title']||k.song||'Untitled').trim(),artist:String(k.artist||'').trim(),genre:String(k.genre||'Jazz').trim(),key:String(k.key||'C').trim(),note:String(k.notes||k['band notes']||k.note||'').trim(),spotify:String(k.spotify||k['spotify url']||'').trim(),youtube:String(k.youtube||k['youtube url']||'').trim(),apple:String(k['apple music']||k.apple||'').trim(),hidden:(String(k.hidden||'').toLowerCase()==='yes')};
-        });
-      } else {
-        const lines=e.target.result.split(/\r?\n/).filter(l=>l.trim());
-        if(lines.length<2){toast2('Empty file','w');return;}
-        const hdrs=lines[0].split(',').map(h=>h.replace(/^"|"$/g,'').toLowerCase().trim());
-        imported=lines.slice(1).map((line,i)=>{
-          const vals=line.match(/("(?:[^"]|"")*"|[^,]*)/g)||[];
-          const r=Object.fromEntries(hdrs.map((h,j)=>[h,(vals[j]||'').replace(/^"|"$/g,'').replace(/""/g,'"')]));
-          return{id:i+1,title:r.title||'Untitled',artist:r.artist||'',genre:r.genre||'Jazz',key:r.key||'C',note:r.notes||r.note||'',spotify:r.spotify||'',youtube:r.youtube||'',apple:r.apple||'',hidden:r.hidden==='Yes'};
-        });
-      }
+      const wb=XLSX.read(e.target.result,{type:'binary'});
+      const rows=XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]],{defval:''});
+      const imported=rows.map((r,i)=>{
+        const k=Object.fromEntries(Object.entries(r).map(([key,val])=>[key.toLowerCase().trim(),val]));
+        return{id:i+1,title:String(k.title||k['song title']||k.song||'Untitled').trim(),artist:String(k.artist||'').trim(),genre:String(k.genre||'Jazz').trim(),key:normalizeKey(String(k.key).trim()),note:String(k.notes||k['band notes']||k.note||'').trim(),spotify:String(k.spotify||k['spotify url']||'').trim(),youtube:String(k.youtube||k['youtube url']||'').trim(),apple:String(k['apple music']||k.apple||'').trim(),hidden:(String(k.hidden||'').toLowerCase()==='yes')};
+      });
       if(!imported.length){toast2('No songs found in file','w');return;}
-      if(confirm(`Import ${imported.length} songs? This will replace your current library.`)){
-        // Delete all existing songs for this band then insert the imported set
-        await supabase.from('songs').delete().eq('band_id',activeBandId);
+      const existing=songs.length;
+      const msg=existing?`Add ${imported.length} song${imported.length!==1?'s':''} to your existing library (${existing} song${existing!==1?'s':''})?`:`Import ${imported.length} song${imported.length!==1?'s':''} into your library?`;
+      if(confirm(msg)){
         await Promise.all(imported.map(s=>SongsDB.upsert({band_id:activeBandId,...s,id:undefined})));
-        await loadSongs();renderLib(aG);renderSheet();updateLibCount();
-        toast2(`✓ ${imported.length} songs imported!`);
+        await loadSongs();renderLib();renderSheet();updateLibCount();
+        toast2(`✓ ${imported.length} song${imported.length!==1?'s':''} added to library!`);
       }
-    }catch(err){toast2('Could not read file','w');console.error(err);}
+    }catch(err){toast2('Could not read file — please use an Excel (.xlsx) file','w');console.error('[bandapp] importExcel:',err);}
   };
-  file.name.endsWith('.csv')?reader.readAsText(file):reader.readAsBinaryString(file);
+  reader.readAsBinaryString(file);
   event.target.value='';
 }
 
@@ -3138,7 +3452,9 @@ function openSongEdit(id){
   document.getElementById('seName').value=s.title;
   document.getElementById('seArtist').value=s.artist;
   document.getElementById('seGenre').value=s.genre;
-  document.getElementById('seKey').value=s.key;
+  const seKeyEl=document.getElementById('seKey');
+  if(seKeyEl.options.length!==KEYS_LIST.length)seKeyEl.innerHTML=KEYS_LIST.map(k=>`<option value="${k}">${k||'—'}</option>`).join('');
+  seKeyEl.value=normalizeKey(s.key);
   document.getElementById('seNote').value=s.note||'';
   // Duration
   const dur=s.dur||0;
@@ -3148,6 +3464,7 @@ function openSongEdit(id){
   document.getElementById('seSpotify').value=s.spotify||'';
   document.getElementById('seYoutube').value=s.youtube||'';
   document.getElementById('seApple').value=s.apple||'';
+  document.getElementById('seAmazon').value=s.amazon||'';
   // update hidden toggle
   const hBtn=document.getElementById('seHideBtn');
   hBtn.textContent=s.hidden?'👁 Unhide Song':'🙈 Hide Song';
@@ -3161,27 +3478,35 @@ async function saveSongEdit(){
   const s=songByAnyId(editingSongId);if(!s)return;
   const seMin=parseInt(document.getElementById('seDurMin').value)||0;
   const seSec=parseInt(document.getElementById('seDurSec').value)||0;
-  await SongsDB.upsert({
-    id:s.id,
-    band_id:activeBandId,
-    title:document.getElementById('seName').value.trim()||s.title,
-    artist:document.getElementById('seArtist').value.trim()||s.artist,
-    genre:document.getElementById('seGenre').value,
-    key:document.getElementById('seKey').value,
-    note:document.getElementById('seNote').value,
-    dur:seMin*60+seSec||null,
-    spotify:document.getElementById('seSpotify').value,
-    youtube:document.getElementById('seYoutube').value,
-    apple:document.getElementById('seApple').value,
-    hidden:s.hidden,
-  });
-  closeMod('seMod');await loadSongs();renderLib(aG);toast2('Song updated!');
+  try{
+    await SongsDB.upsert({
+      id:s.id,
+      band_id:activeBandId,
+      title:document.getElementById('seName').value.trim()||s.title,
+      artist:document.getElementById('seArtist').value.trim()||s.artist,
+      genre:document.getElementById('seGenre').value,
+      key:document.getElementById('seKey').value,
+      note:document.getElementById('seNote').value,
+      dur:seMin*60+seSec||null,
+      spotify:document.getElementById('seSpotify').value,
+      youtube:document.getElementById('seYoutube').value,
+      apple:document.getElementById('seApple').value,
+      amazon:document.getElementById('seAmazon').value,
+      hidden:s.hidden,
+    });
+  }catch(e){
+    const msg=e?.code==='42501'?t('Permission denied — you are not a member of this band'):e.message||t('Failed to save song');
+    toast2(msg,'w');
+    console.error('[bandapp] saveSongEdit error:',e);
+    return;
+  }
+  closeMod('seMod');await loadSongs();renderLib();toast2('Song updated!');
 }
 
 async function toggleHideSong(id){
   const s=songByAnyId(id);if(!s)return;
   const hidden=!s.hidden;
-  await SongsDB.upsert({...s,hidden});
+  try{ await SongsDB.upsert({...s,hidden}); }catch(e){ toast2(e.message||t('Failed to save song'),'w');return; }
   await loadSongs();
   const updated=songByAnyId(s.id);
   if(editingSongId===s.id){
@@ -3191,16 +3516,18 @@ async function toggleHideSong(id){
     hBtn.style.borderColor=updated.hidden?'#86EFAC':'var(--bd)';
     hBtn.style.color=updated.hidden?'var(--g)':'var(--ink2)';
   }
-  renderLib(aG);
+  renderLib();
   toast2(updated.hidden?'Song hidden from setlists':'Song visible again');
 }
 
 async function deleteSong(id){
   const s=songByAnyId(id);if(!s)return;
+  const usedIn=await songUsedInSetlists(s.id);
+  if(usedIn.length){toast2(`Song can't be deleted as it is being used by Set List "${usedIn.join('", "')}". Please first remove it from the setlist(s).`,'w');return;}
   if(!confirm(`Delete "${s.title}"? This cannot be undone.`))return;
   await SongsDB.delete(s.id);
   if(editingSongId===s.id)closeMod('seMod');
-  await loadSongs();renderLib(aG);toast2('Song deleted','w');
+  await loadSongs();renderLib();toast2('Song deleted','w');
 }
 function openAsMod(){
   const sl=setlists.find(x=>x.id===activeSetlistId);
@@ -3268,7 +3595,18 @@ async function addSelectedSongs(){
 function isBO(key){return blackouts.some(b=>b.scope==='band'&&key>=b.from&&key<=b.to);}
 function getBOLbl(key){const b=blackouts.find(b=>b.scope==='band'&&key>=b.from&&key<=b.to);return b?b.label:null;}
 function isMBO(mi,key){const uid=members[mi]?.id;return !!uid&&blackouts.some(b=>b.scope==='members'&&b.mids.includes(uid)&&key>=b.from&&key<=b.to);}
-function getBOMap(){const m={};blackouts.filter(b=>b.scope==='band').forEach(b=>{for(let d=new Date(b.from+'T00:00:00');d<=new Date(b.to+'T00:00:00');d.setDate(d.getDate()+1))m[d.toISOString().slice(0,10)]=b.label;});return m;}
+function getBOMap(){
+  if(_boMapCache&&_boMapCacheVer===_boMapVer)return _boMapCache;
+  const m={};
+  blackouts.filter(b=>b.scope==='band').forEach(b=>{
+    for(let d=new Date(b.from+'T00:00:00');d<=new Date(b.to+'T00:00:00');d.setDate(d.getDate()+1)){
+      const k=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+      m[k]=b.label;
+    }
+  });
+  _boMapCache=m;_boMapCacheVer=_boMapVer;
+  return m;
+}
 function fmtD(iso){return new Date(iso+'T00:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});}
 function openAddBO(){clrBOF();showMod('boMod');}
 function clrBOF(){['boId','boLab','boFr','boTo'].forEach(id=>document.getElementById(id).value='');document.getElementById('boSc').value='band';togBOM();document.querySelectorAll('.bomc').forEach(c=>c.classList.remove('on'));}
@@ -3281,11 +3619,16 @@ async function savBO(){
   const scope=document.getElementById('boSc').value;
   if(!label||!from){toast2('Fill in label and start date','w');return;}
   const mids=scope==='members'?[...document.querySelectorAll('.bomc.on')].map(c=>c.dataset.mid):[];
+  if(scope==='members'&&mids.length===0){toast2('Select at least one member','w');return;}
   const payload={label,from,to,scope,mids};
   if(id) payload.id=id;
   const saved=await BlackoutsDB.upsert(payload);
   if(!saved)return;
   await loadBlackouts();
+  if(!blackouts.find(b=>b.id===saved.id)){
+    blackouts=[...blackouts,saved];
+    _boMapVer++;
+  }
   closeMod('boMod');renderBOList();renderCal();syncBOPill();toast2(id?'Blackout updated':'Blackout added');
 }
 async function delBO(id){
@@ -3295,7 +3638,7 @@ async function delBO(id){
 }
 function togBOM(){document.getElementById('boMR').style.display=document.getElementById('boSc').value==='members'?'':'none';}
 function togBOMc(el){el.classList.toggle('on');}
-function syncBOPill(){const n=blackouts.filter(b=>b.scope==='band').length;document.getElementById('boLbl').textContent=n===0?'No blackouts':`${n} blackout period${n>1?'s':''}`;document.getElementById('boIco').textContent=n>0?'🚫':'📅';}
+function syncBOPill(){const n=blackouts.filter(b=>b.scope==='band').length;document.getElementById('boLbl').textContent=n===0?t('No blackouts'):`${n} ${t(n>1?'blackout periods':'blackout period')}`;document.getElementById('boIco').textContent=n>0?'🚫':'📅';}
 function renderBOList(){
   const el=document.getElementById('boList');if(!el)return;
   if(!blackouts.length){el.innerHTML=`<div class="es" style="padding:20px"><div class="es-ico" style="font-size:1.6rem">📅</div><h3>No blackout periods</h3><p>Add holidays, closures, or absences.</p></div>`;return;}
@@ -3349,24 +3692,27 @@ function renderCal(){
   if(noBand)noBand.style.display='none';
   if(content)content.style.display='';
   const yr=curMonth.getFullYear(),mo=curMonth.getMonth();
-  const lbl=`${MN[mo]} ${yr}`;
+  const lbl=`${t(MN[mo])} ${yr}`;
   document.getElementById('calLbl').textContent=lbl;
   const calMS=document.getElementById('calMS');if(calMS)calMS.textContent=lbl;
 
   if(calView==='full'){
     const boMap=getBOMap();
     const fd=new Date(yr,mo,1).getDay(),dim=new Date(yr,mo+1,0).getDate();
+    // Pre-compute cross-band blocked-day Sets once per member (not per day cell)
+    const memberBlocks=members.map(m=>getCrossBandBlocks(m.name));
     let h=DN.map(d=>`<div class="cdl">${d}</div>`).join('');
     for(let i=0;i<fd;i++)h+=`<div class="cd ce"></div>`;
     for(let d=1;d<=dim;d++){
       const key=`${yr}-${String(mo+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-      const ev=calEv[key]||[];const isT=yr===2026&&mo===4&&d===19;const bol=boMap[key];
+      const ev=calEv[key]||[];const isT=key===TODAY_STR;const bol=boMap[key];
       const full=!bol&&isFB(yr,mo,d)&&!ev.includes('concert')&&!ev.includes('rehearsal');
-      // Detect if any member has a cross-band conflict on this day
-      const xbConflicts=members.map((m,i)=>hasCrossBandConflict(i,key));
-      const hasXB=!bol&&!ev.includes('concert')&&!ev.includes('rehearsal')&&xbConflicts.some(Boolean);
+      // Use pre-computed Sets for O(1) lookup per member per day
+      const hasXB=!bol&&!ev.includes('concert')&&!ev.includes('rehearsal')&&memberBlocks.some(s=>s.has(key));
+      const isPastDay=key<TODAY_STR;
       let cls='cd';
       if(isT)cls+=' cto';
+      if(isPastDay)cls+=' cd-past';
       if(bol)cls+=' cbo';
       else if(ev.includes('concert'))cls+=' ccon';
       else if(ev.includes('rehearsal'))cls+=' creh';
@@ -3376,12 +3722,11 @@ function renderCal(){
       if(full)inn+=`<div class="cltn">⚡</div>`;
       if(bol)inn+=`<div class="cbol">${bol}</div>`;
       if(hasXB&&!full){
-        // show which band is causing the conflict
-        const xbLabel=members.reduce((acc,m,i)=>{const lbl=getCrossBandLabel(m.name,key);return lbl||acc;},'');
+        const xbLabel=members.reduce((acc,m)=>{const lbl=getCrossBandLabel(m.name,key);return lbl||acc;},'');
         if(xbLabel)inn+=`<div class="cd-xblabel">${xbLabel}</div>`;
       }
       ev.forEach(e=>{if(e==='concert')inn+=`<div class="cdot cdot-c"></div>`;if(e==='rehearsal')inn+=`<div class="cdot cdot-r"></div>`;if(e==='birthday')inn+=`<div class="cdot cdot-b"></div>`;});
-      const clk=bol||hasXB?'':`onclick="calClk(${d},'${key}',${full})"`;
+      const clk=bol||hasXB||isPastDay?'':`onclick="calClk(${d},'${key}',${full})"`;
       h+=`<div class="${cls}" ${clk}>${inn}</div>`;
     }
     document.getElementById('calGrid').innerHTML=h;
@@ -3391,7 +3736,7 @@ function renderCal(){
   }
 }
 
-function calClk(d,key,isFull){const ev=calEv[key]||[];if(ev.includes('rehearsal')){toast2(`Rehearsal on ${d}`);return;}if(ev.includes('concert')){toast2(`Concert on ${d}`);return;}openRehMod(d,key,isFull);}
+function calClk(d,key,isFull){if(key<TODAY_STR)return;const ev=calEv[key]||[];if(ev.includes('rehearsal')){toast2(`${t('Rehearsal')} - ${d}`);return;}if(ev.includes('concert')){toast2(`${t('Concert')} - ${d}`);return;}openRehMod(d,key,isFull);}
 function chMonth(dir){curMonth.setMonth(curMonth.getMonth()+dir);renderCal();}
 
 
@@ -3401,8 +3746,8 @@ function renderAvail(){
   const boMap=getBOMap();const days=Array.from({length:dim},(_,i)=>i+1);
   const fullC=new Set(),boC=new Set();
   days.forEach(d=>{const key=`${yr}-${String(mo+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;if(boMap[key])boC.add(d);else if(isFB(yr,mo,d))fullC.add(d);});
-  document.getElementById('avHdr').innerHTML=`<th class="nc2" style="font-size:.68rem;font-weight:700;color:var(--ink3)">Member</th>`+
-    days.map(d=>{let cls='';if(fullC.has(d))cls='cfl';if(boC.has(d))cls='cbl';const key=`${yr}-${String(mo+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;return`<th class="${cls}" title="${boMap[key]||''}">${d}${boC.has(d)?'*':''}</th>`;}).join('');
+  document.getElementById('avHdr').innerHTML=`<th class="nc2" style="font-size:.68rem;font-weight:700;color:var(--ink3)">${t('Member')}</th>`+
+    days.map(d=>{const key=`${yr}-${String(mo+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;const isPast=key<TODAY_STR;let cls='';if(!isPast&&fullC.has(d))cls='cfl';if(boC.has(d))cls='cbl';return`<th class="${cls}" title="${boMap[key]||''}">${d}${boC.has(d)?'*':''}</th>`;}).join('');
   document.getElementById('avBody').innerHTML=members.map((m,mi)=>{
     const cells=days.map(d=>{
       const key=`${yr}-${String(mo+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
@@ -3410,10 +3755,11 @@ function renderAvail(){
       const av=getMAvail(yr,mo,d)[mi];
       const isFull=fullC.has(d);const isB=boC.has(d);
       const xbLabel=getCrossBandLabel(m.name,key);
+      const isMemberBO=isMBO(mi,key);
       let inn='',cls='ac ac-no';
       if(ev.includes('concert')){cls='ac ac-co';inn='★';}
       else if(ev.includes('rehearsal')){cls='ac ac-re';inn='♩';}
-      else if(isB)cls='ac ac-bo';
+      else if(isB||isMemberBO)cls='ac ac-bo';
       else if(xbLabel){cls='ac ac-xband';inn='⊘';} // cross-band conflict
       else if(av&&isFull)cls='ac ac-fl';
       else if(av)cls='ac ac-av';
@@ -3426,22 +3772,22 @@ function renderAvail(){
     return`<tr><td class="nc2" style="position:sticky;left:0;background:var(--w);z-index:1"><div style="display:flex;align-items:center;gap:7px"><div class="mav2" style="width:21px;height:21px;font-size:.55rem;background:${m.color}">${m.init}</div><span style="font-size:.77rem;font-weight:500">${m.name.split(' ')[0]}</span>${multiBadge}</div></td>${cells}</tr>`;
   }).join('');
   const chips=document.getElementById('fbChips');
-  const fd=[...fullC].sort((a,b)=>a-b).filter(d=>{const key=`${yr}-${String(mo+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;const ev=calEv[key]||[];return!ev.includes('rehearsal')&&!ev.includes('concert');});
-  chips.innerHTML=fd.length?fd.map(d=>{const dow=DN[new Date(yr,mo,d).getDay()];return`<div class="fbc" onclick="openRehMod(${d},'${yr}-${String(mo+1).padStart(2,'0')}-${String(d).padStart(2,'0')}',true)">⚡ ${dow} ${d} ${MAb[mo]}</div>`;}).join(''):`<span style="font-size:.74rem;color:var(--ink3)">No full-band days this month</span>`;
+  const fd=[...fullC].sort((a,b)=>a-b).filter(d=>{const key=`${yr}-${String(mo+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;const ev=calEv[key]||[];return key>=TODAY_STR&&!ev.includes('rehearsal')&&!ev.includes('concert');});
+  chips.innerHTML=fd.length?fd.map(d=>{const dow=t(DN[new Date(yr,mo,d).getDay()]);return`<div class="fbc" onclick="openRehMod(${d},'${yr}-${String(mo+1).padStart(2,'0')}-${String(d).padStart(2,'0')}',true)">⚡ ${dow} ${d} ${t(MAb[mo])}</div>`;}).join(''):`<span style="font-size:.74rem;color:var(--ink3)">${t('No full-band days this month')}</span>`;
 }
 
 function renderBest(){
   const yr=curMonth.getFullYear(),mo=curMonth.getMonth();
-  const today=new Date(2026,4,19);const dim=new Date(yr,mo+1,0).getDate();const res=[];
-  for(let d=1;d<=dim;d++){const key=`${yr}-${String(mo+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;const ev=calEv[key]||[];if(ev.includes('concert')||ev.includes('rehearsal'))continue;if(isBO(key))continue;if(new Date(yr,mo,d)<today)continue;const cnt=cntAv(yr,mo,d);if(cnt<2)continue;res.push({d,key,cnt,avs:getMAvail(yr,mo,d),full:cnt===members.length});}
+  const dim=new Date(yr,mo+1,0).getDate();const res=[];
+  for(let d=1;d<=dim;d++){const key=`${yr}-${String(mo+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;const ev=calEv[key]||[];if(ev.includes('concert')||ev.includes('rehearsal'))continue;if(isBO(key))continue;if(key<TODAY_STR)continue;const cnt=cntAv(yr,mo,d);if(cnt<2)continue;res.push({d,key,cnt,avs:getMAvail(yr,mo,d),full:cnt===members.length});}
   res.sort((a,b)=>b.cnt-a.cnt||a.d-b.d);const best=res.slice(0,3);
   const fn=best.filter(b=>b.full).length;
-  document.getElementById('bestSub').textContent=fn>0?`${fn} day${fn>1?'s':''} where all ${members.length} members are free this month.`:'Showing best partial availability — no full-band days found.';
-  const dn2=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];const rl=['bc1','',''];const rlbl=['⚡ Best day','2nd choice','3rd choice'];
+  document.getElementById('bestSub').textContent=fn>0?`${fn} day${fn>1?'s':''} where all ${members.length} members are free this month.`:t('Showing best partial availability — no full-band days found.');
+  const dn2=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];const rl=['bc1','',''];const rlbl=[t('⚡ Best day'),t('2nd choice'),t('3rd choice')];
   document.getElementById('bestList').innerHTML=best.map((b,i)=>{
     const dow=dn2[new Date(yr,mo,b.d).getDay()];
     const avs=members.map((m,mi)=>`<div class="bcav" style="background:${b.avs[mi]?m.color:'#CCC'}">${m.init}</div>`).join('');
-    return`<div class="bcard ${rl[i]}" onclick="openRehMod(${b.d},'${b.key}',${b.full})"><div class="bcrk">${b.full?'⚡ ':''}${rlbl[i]}</div><div class="bcdt">${dow} ${b.d}</div><div class="bcdw">${MAb[mo]} ${yr}</div><div class="bcavs">${avs}</div><div class="bccnt"><strong>${b.cnt}/${members.length}</strong> available</div><button class="bcbtn" onclick="event.stopPropagation();openRehMod(${b.d},'${b.key}',${b.full})">Set as rehearsal →</button></div>`;
+    return`<div class="bcard ${rl[i]}" onclick="openRehMod(${b.d},'${b.key}',${b.full})"><div class="bcrk">${b.full?'⚡ ':''}${rlbl[i]}</div><div class="bcdt">${t(dow)} ${b.d}</div><div class="bcdw">${t(MAb[mo])} ${yr}</div><div class="bcavs">${avs}</div><div class="bccnt"><strong>${b.cnt}/${members.length}</strong> ${t('available')}</div><button class="bcbtn" onclick="event.stopPropagation();openRehMod(${b.d},'${b.key}',${b.full})">${t('Set as rehearsal →')}</button></div>`;
   }).join('');
 }
 
@@ -3450,36 +3796,92 @@ function openRehMod(d,key,isFull){
   const yr=curMonth.getFullYear(),mo=curMonth.getMonth();
   pendKey=key;
   const dows=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
-  document.getElementById('rmTt').textContent=`Rehearsal — ${dows[new Date(yr,mo,d).getDay()]}, ${MN[mo]} ${d}`;
+  document.getElementById('rmTt').textContent=`${t('Rehearsal')} — ${t(dows[new Date(yr,mo,d).getDay()])}, ${t(MN[mo])} ${d}`;
   document.getElementById('rmSub').textContent=isFull?`All ${members.length} members are available 🎉`:`${cntAv(yr,mo,d)} of ${members.length} members available.`;
   const avs=getMAvail(yr,mo,d);
   document.getElementById('rmMem').innerHTML=members.map((m,i)=>`<div style="display:flex;align-items:center;gap:5px;padding:5px 10px;border-radius:8px;background:${avs[i]?'var(--g2)':'var(--r2)'};border:1px solid ${avs[i]?'#86EFAC':'#FECACA'}"><div class="mav2" style="width:19px;height:19px;font-size:.52rem;background:${m.color}">${m.init}</div><span style="font-size:.74rem;font-weight:500;color:${avs[i]?'var(--g)':'var(--r)'}">${m.name.split(' ')[0]}</span></div>`).join('');
-  // apply band default notification preference
+  // Always reset the WA error state so it never bleeds in from a prior open
+  const errEl=document.getElementById('rmWaErr');
+  if(errEl)errEl.style.display='none';
+  // apply band default notification preference; fall back to email if WA not configured
   const pref=getBandNotifPref();
-  rehNotifSel=pref;
-  selNotif(pref);
+  const waLinked=!!bandWaLinks[activeBandId];
+  const effectivePref=(pref==='whatsapp'||pref==='both')&&!waLinked?'email':pref;
+  rehNotifSel=effectivePref;
+  selNotif(effectivePref);
   showMod('rehMod');
 }
 
-function confReh(){
+async function confReh(){
+  if(!pendKey){toast2('No date selected — please pick a day first','w');return;}
+
   const ch=rehNotifSel||getBandNotifPref();
   const waLinked=!!bandWaLinks[activeBandId];
-  // block if WhatsApp selected but not configured
   if((ch==='whatsapp'||ch==='both')&&!waLinked){
     document.getElementById('rmWaErr').style.display='';
     document.getElementById('rmNotifNote').style.display='none';
     toast2('Add a WhatsApp group link in Band Profile first','w');
     return;
   }
-  if(pendKey)calEv[pendKey]=['rehearsal'];
+  const title=(document.getElementById('rmNm').value||'').trim()||'Rehearsal';
+  const start=document.getElementById('rmSt').value||null;
+  const end=document.getElementById('rmEn').value||null;
+  const location=(document.getElementById('rmLoc').value||'').trim()||null;
+  const notes=(document.getElementById('rmNt').value||'').trim()||null;
+
+  // Build the WA message before clearing pendKey, but send AFTER the async saves.
+  // Opening WhatsApp (even as a deep link) backgrounds this tab on mobile and pauses
+  // any in-flight awaits — causing the rehearsal to never persist (#33) and the
+  // email notification to never fire (#25).  Save everything first, then open WA.
+  const waMsg=(ch==='whatsapp'||ch==='both')&&waLinked
+    ?`🎸 ${title} confirmed!\n📅 ${pendKey}${start?' ⏰ '+start:''}${location?'\n📍 '+location:''}`
+    :null;
+
   closeMod('rehMod');
-  renderCal();
-  const msgs={
-    email:'Rehearsal confirmed! Band notified by email ✓',
-    whatsapp:'Rehearsal confirmed! WhatsApp group notified 💬',
-    both:'Rehearsal confirmed! Email + WhatsApp group notified 📣',
-  };
-  toast2(msgs[ch]||'Rehearsal scheduled!');
+  const confirmedKey=pendKey;
+  pendKey=null;
+
+  try {
+    const saved=await RehearsalsDB.upsert({title,date:confirmedKey,start,end,location,notes,band_id:activeBandId});
+    if(!saved){return;}
+    await loadRehearsals();
+    // If loadRehearsals was preempted by a concurrent load (gen mismatch), the new rehearsal
+    // may not yet be in the array. Add it optimistically so the calendar dot appears immediately.
+    if(!rehearsals.find(r=>r.id===saved.id)){
+      if(!saved._ts) saved._ts=rehearsalDate(saved).getTime();
+      if(!saved.photos) saved.photos=[];
+      rehearsals=[...rehearsals,saved];
+      buildCalEv();
+    }
+    renderCal();
+    renderRehearsals();
+
+    if((ch==='email'||ch==='both')&&saved?.id){
+      supabase.functions.invoke('notify-rehearsal',{
+        body:{band_id:activeBandId,title,date:confirmedKey,start,end,location,notes},
+      }).then(r=>{if(r.error)console.error('[bandapp] notify-rehearsal:',r.error);})
+        .catch(e=>console.error('[bandapp] notify-rehearsal:',e));
+    }
+
+    const msgs={
+      email:'Rehearsal confirmed! Band notified by email ✓',
+      whatsapp:'Rehearsal confirmed! WhatsApp opening — select your band group to send 💬',
+      both:'Rehearsal confirmed! Email sent + WhatsApp opening 📣',
+    };
+    toast2(msgs[ch]||'Rehearsal scheduled!');
+
+    // Open WhatsApp with the pre-filled message AFTER all data is saved.
+    // wa.me/?text= pre-fills the message in the share sheet so the user just taps
+    // the band group to send it.  On mobile this is an app deep-link (not a browser
+    // popup), so it works reliably even after the awaits above.
+    if(waMsg){
+      navigator.clipboard.writeText(waMsg).catch(()=>{});
+      window.open(`https://wa.me/?text=${encodeURIComponent(waMsg)}`,'_blank');
+    }
+  } catch(e) {
+    console.error('[bandapp] confReh error:', e);
+    toast2('Something went wrong saving the rehearsal','w');
+  }
 }
 
 // CONCERTS
@@ -3587,11 +3989,11 @@ function renderConcerts(){
   const upcoming = active.filter(c=>!isPast(c)).sort((a,b)=>concertDate(a)-concertDate(b));
   const past     = active.filter(c=> isPast(c)).sort((a,b)=>concertDate(b)-concertDate(a));
   const countEl  = document.getElementById('concertCount');
-  if(countEl) countEl.textContent=`${upcoming.length} upcoming · ${past.length} past${cancelled.length?` · ${cancelled.length} cancelled`:''}`;
+  if(countEl) countEl.textContent=`${upcoming.length} ${t('upcoming')} · ${past.length} ${t('past')}${cancelled.length?` · ${cancelled.length} ${t('cancelled')}`:''}`;
   document.getElementById('concertListUpcoming').innerHTML=upcoming.length
     ?upcoming.map(c=>concertCard(c,'upcoming')).join('')
-    :`<div style="padding:20px;text-align:center;font-size:.82rem;color:var(--ink3)">No upcoming concerts — click + New Concert to add one.</div>`;
-  document.getElementById('concertListPast').innerHTML=past.length?past.map(c=>concertCard(c,'past')).join(''):`<div style="padding:12px;font-size:.78rem;color:var(--ink3)">No past concerts yet.</div>`;
+    :`<div style="padding:20px;text-align:center;font-size:.82rem;color:var(--ink3)">${t('No upcoming concerts — click + New Concert to add one.')}</div>`;
+  document.getElementById('concertListPast').innerHTML=past.length?past.map(c=>concertCard(c,'past')).join(''):`<div style="padding:12px;font-size:.78rem;color:var(--ink3)">${t('No past concerts yet.')}</div>`;
   document.getElementById('pastConcertSection').style.display=past.length?'':'none';
   document.getElementById('concertListCancelled').innerHTML=cancelled.map(c=>concertCard(c,'cancelled')).join('');
   document.getElementById('cancelledConcertSection').style.display=cancelled.length?'':'none';
@@ -3601,18 +4003,18 @@ function concertCard(c,style){
   const pastStyle=style==='past', cancelStyle=style==='cancelled';
   const photos=(c.photos||[]).slice(0,4);
   const photoHtml=photos.length
-    ?`<div class="concert-photos">${photos.map((p,i)=>`<img class="concert-thumb" src="${p}" alt="Concert photo ${i+1}" onclick="event.stopPropagation();openPhotoLightbox('${c.id}',${i})">`).join('')}${!cancelStyle?`<label class="concert-thumb-add" onclick="event.stopPropagation()"><input type="file" accept="image/*" style="display:none" onchange="addConcertPhoto(event,'${c.id}')">+</label>`:''}</div>`
+    ?`<div class="concert-photos">${photos.map((p,i)=>`<img class="concert-thumb" src="${p.url}" alt="Concert photo ${i+1}" onclick="event.stopPropagation();openPhotoLightbox('${c.id}',${i})">`).join('')}${!cancelStyle?`<label class="concert-thumb-add" onclick="event.stopPropagation()"><input type="file" accept="image/*" style="display:none" onchange="addConcertPhoto(event,'${c.id}')">+</label>`:''}</div>`
     :cancelStyle?``:
     `<div class="concert-photos"><label class="concert-thumb-add" onclick="event.stopPropagation()"><input type="file" accept="image/*" style="display:none" onchange="addConcertPhoto(event,'${c.id}')">📷</label></div>`;
-  const badge=cancelStyle?`<span style="margin-left:8px;font-size:.66rem;padding:2px 7px;border-radius:99px;background:var(--r2);color:var(--r);font-weight:600;vertical-align:middle">Cancelled</span>`
-    :pastStyle?`<span style="margin-left:8px;font-size:.66rem;padding:2px 7px;border-radius:99px;background:var(--bg2);color:var(--ink3);font-weight:600;vertical-align:middle">Past</span>`:'';
+  const badge=cancelStyle?`<span style="margin-left:8px;font-size:.66rem;padding:2px 7px;border-radius:99px;background:var(--r2);color:var(--r);font-weight:600;vertical-align:middle">${t('Cancelled')}</span>`
+    :pastStyle?`<span style="margin-left:8px;font-size:.66rem;padding:2px 7px;border-radius:99px;background:var(--bg2);color:var(--ink3);font-weight:600;vertical-align:middle">${t('Past')}</span>`:'';
   const actions=cancelStyle||pastStyle
-    ?`<button class="btn btn-g btn-sm" data-action="view">View</button>`
-    :`<button class="btn btn-g btn-sm" style="color:var(--amb);border-color:var(--amb2)" data-action="cancel">Cancel</button>
-      <button class="btn btn-g btn-sm" data-action="view">View</button>`;
+    ?`<button class="btn btn-g btn-sm" data-action="view">${t('View')}</button>`
+    :`<button class="btn btn-g btn-sm" style="color:var(--amb);border-color:var(--amb2)" data-action="cancel">${t('Cancel')}</button>
+      <button class="btn btn-g btn-sm" data-action="view">${t('View')}</button>`;
   return`<div class="ccrd${pastStyle?' past':''}${cancelStyle?' cancelled':''}" data-cid="${c.id}" onclick="handleConcertCardClick(event,'${c.id}')">
     <div class="cdb">
-      <div class="cdmo">${c.month}</div>
+      <div class="cdmo">${t(c.month)}</div>
       <div class="cddy" style="${pastStyle||cancelStyle?'color:var(--ink3)':''}">${c.day}</div>
       <div class="cdyr">${c.year}</div>
     </div>
@@ -3624,9 +4026,9 @@ function concertCard(c,style){
         <span class="cmi"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 14s1-3 6-3 6 3 6 3M8 8a3 3 0 100-6 3 3 0 000 6z"/></svg>~${c.audience}</span>
       </div>
       <div class="cbadges">
-        <span class="pill ${cancelStyle?'pr':'pp'}">${cancelStyle?'🚫 Cancelled':'Concert'}</span>
-        ${!cancelStyle&&c.paid?`<span class="pill pg">€ ${c.total}</span><span class="pill pgray">${c.price}</span>`:!cancelStyle?'<span class="pill pgray">Free</span>':''}
-        ${(c.setlistIds||[]).map(sid=>{const sl=setlists.find(x=>x.id===sid);return sl?`<span class="pill pp" style="cursor:pointer" data-action="setlist" data-slid="${sid}">♩ ${sl.name}</span>`:''}).join('')}
+        <span class="pill ${cancelStyle?'pr':'pp'}">${cancelStyle?t('🚫 Cancelled'):t('Concert')}</span>
+        ${!cancelStyle&&c.paid?`<span class="pill pg">€ ${c.total}</span><span class="pill pgray">${c.price}</span>`:!cancelStyle?`<span class="pill pgray">${t('Free')}</span>`:''}
+        ${(c.setlistIds||[]).map(sid=>{const sl=_setlistMap[sid];return sl?`<span class="pill pp" style="cursor:pointer" data-action="setlist" data-slid="${sid}">♩ ${sl.name}</span>`:''}).join('')}
 
       </div>
       ${photoHtml}
@@ -3660,25 +4062,37 @@ function promptCancel(type,id){
 async function confirmCancel(notify){
   if(!cancelTarget)return;
   const {type,id}=cancelTarget;
-  if(type==='concert'){
-    const c=concerts.find(x=>x.id===id);
-    if(c){
-      await ConcertsDB.upsert({...c, cancelled:true});
-      await loadConcerts();
-      renderConcerts();renderCal();updateSidebarCounts();
+  const appUrl=(localStorage.getItem('appUrl')||window.location.origin+'/').replace(/[?#].*/,'').replace(/\/+$/,'');
+  let msg=`🚫 Event cancelled. Please check Bandapp for updates: ${appUrl}`;
+  try{
+    if(type==='concert'){
+      const c=concerts.find(x=>x.id===id);
+      if(c){
+        msg=`🚫 Concert on ${c.date} cancelled. Please check Bandapp for updates: ${appUrl}`;
+        const saved=await ConcertsDB.upsert({...c, cancelled:true});
+        if(!saved){closeMod('cancelMod');cancelTarget=null;return;}
+        syncCrossBandBlackouts(saved);
+        await loadConcerts();
+        renderConcerts();renderCal();updateSidebarCounts();
+      }
+    } else {
+      const r=rehearsals.find(x=>x.id===id);
+      if(r){
+        msg=`🚫 Rehearsal on ${r.date} cancelled. Please check Bandapp for updates: ${appUrl}`;
+        const saved=await RehearsalsDB.upsert({...r, cancelled:true});
+        if(!saved){closeMod('cancelMod');cancelTarget=null;return;}
+        await loadRehearsals();
+        renderRehearsals();renderCal();updateSidebarCounts();
+      }
     }
-  } else {
-    const r=rehearsals.find(x=>x.id===id);
-    if(r){
-      await RehearsalsDB.upsert({...r, cancelled:true});
-      await loadRehearsals();
-      renderRehearsals();renderCal();updateSidebarCounts();
-    }
+  } catch(e){
+    console.error('[bandapp] confirmCancel error:',e);
+    toast2('Something went wrong cancelling the event','w');
+    closeMod('cancelMod');cancelTarget=null;return;
   }
   closeMod('cancelMod');closeMod('cvMod');closeMod('reViewMod');cancelTarget=null;
   const ch=getBandNotifPref();const waLinked=!!bandWaLinks[activeBandId];
   if(notify){
-    const msg='🚫 Event cancelled. Please check Bandapp for updates.';
     if(ch==='email')toast2('Cancellation sent by email ✉️');
     else if(ch==='whatsapp'&&waLinked){window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`,'_blank');toast2('WhatsApp notification sent 💬');}
     else if(ch==='both'&&waLinked){window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`,'_blank');toast2('Cancellation sent by email + WhatsApp 📣');}
@@ -3694,10 +4108,10 @@ function openConcertView(id){
   document.getElementById('cvTitle').textContent=c.title;
   document.getElementById('cvCancelledBadge').style.display=c.cancelled?'':'none';
   document.getElementById('cvPastBadge').style.display=(past&&!c.cancelled)?'':'none';
-  document.getElementById('cvDate').textContent=`${MO_FULL[c.month]} ${c.day}, ${c.year}`;
+  document.getElementById('cvDate').textContent=`${t(MO_FULL[c.month])} ${c.day}, ${c.year}`;
   document.getElementById('cvTime').textContent=`${c.time} · ${c.duration} min`;
   document.getElementById('cvVenue').textContent=c.venue||'—';
-  document.getElementById('cvAudience').textContent=c.audience?`~${c.audience} people`:'';
+  document.getElementById('cvAudience').textContent=c.audience?`~${c.audience} ${t('people')}`:'';
   const paidEl=document.getElementById('cvPaidRow');
   if(c.paid&&c.total){paidEl.style.display='';document.getElementById('cvPaid').textContent=`${c.total}${c.price?' · '+c.price:''}`;}
   else paidEl.style.display='none';
@@ -3711,18 +4125,22 @@ function openConcertView(id){
   } else cvSlRow.style.display='none';
   const photos=c.photos||[];
   document.getElementById('cvPhotos').innerHTML=photos.length
-    ?photos.map((p,i)=>`<img src="${p}" style="width:72px;height:72px;border-radius:8px;object-fit:cover;border:1.5px solid var(--bd);cursor:pointer" onclick="openPhotoLightbox('${c.id}',${i})">`).join('')
-    :`<span style="font-size:.76rem;color:var(--ink3)">No photos yet</span>`;
+    ?photos.map((p,i)=>`<img src="${p.url}" style="width:72px;height:72px;border-radius:8px;object-fit:cover;border:1.5px solid var(--bd);cursor:pointer" onclick="openPhotoLightbox('${c.id}',${i})">`).join('')
+    :`<span style="font-size:.76rem;color:var(--ink3)">${t('No photos yet')}</span>`;
   const actions=document.getElementById('cvActions');
-  if(c.cancelled||past){
-    actions.innerHTML=`<button class="btn btn-g" onclick="closeMod('cvMod')">Close</button>`;
+  const isAdminCv=currentUser.role==='admin';
+  if(c.cancelled){
+    actions.innerHTML=`<button class="btn btn-g" onclick="closeMod('cvMod')">${t('Close')}</button>`
+      +(isAdminCv?`<button class="btn btn-g btn-sm" style="color:var(--red,#e53935);border-color:var(--red,#e53935)" onclick="deleteConcert('${c.id}')">🗑 Delete</button>`:'');
+  } else if(past){
+    actions.innerHTML=`<button class="btn btn-g" onclick="closeMod('cvMod')">${t('Close')}</button>`;
   } else {
     const slBtns=(c.setlistIds||[]).map(sid=>{const sl=setlists.find(x=>x.id===sid);return sl?`<button class="btn btn-p btn-sm" onclick="openSetlistFromConcert('${sid}')">♩ ${sl.name}</button>`:''}).join('');
     actions.innerHTML=`
-      <button class="btn btn-g" onclick="closeMod('cvMod')">Close</button>
-      <button class="btn btn-g btn-sm" style="color:var(--amb);border-color:var(--amb2)" onclick="closeMod('cvMod');promptCancel('concert','${c.id}')">🚫 Cancel</button>
-      <button class="btn btn-g btn-sm" onclick="closeMod('cvMod');openConcertEdit('${c.id}')">Edit</button>
-      <button class="btn btn-g btn-sm" onclick="closeMod('cvMod');openConcertLinkFromConcert('${c.id}')">♩ Link Set List</button>
+      <button class="btn btn-g" onclick="closeMod('cvMod')">${t('Close')}</button>
+      <button class="btn btn-g btn-sm" style="color:var(--amb);border-color:var(--amb2)" onclick="closeMod('cvMod');promptCancel('concert','${c.id}')">${t('🚫 Cancel')}</button>
+      <button class="btn btn-g btn-sm" onclick="closeMod('cvMod');openConcertEdit('${c.id}')">${t('Edit')}</button>
+      <button class="btn btn-g btn-sm" onclick="closeMod('cvMod');openConcertLinkFromConcert('${c.id}')">♩ ${t('Link Set List')}</button>
       ${slBtns}`;
   }
   showMod('cvMod');
@@ -3731,8 +4149,35 @@ async function deleteConcert(id){
   const c=concerts.find(x=>x.id===id);if(!c)return;
   if(!confirm(`Delete "${c.title}"? This cannot be undone.`))return;
   await ConcertsDB.delete(id);
+  // Cross-band blackouts are removed automatically by ON DELETE CASCADE on source_concert_id
   await loadConcerts();
   closeMod('cvMod');renderConcerts();toast2('Concert deleted','w');
+}
+
+// Creates / refreshes / removes blackout blocks in every other band the current user
+// belongs to whenever a concert in the active band is saved or cancelled.
+async function syncCrossBandBlackouts(concert){
+  const otherBandIds=(currentUser._memberships||[])
+    .map(m=>m.band_id)
+    .filter(id=>id!==activeBandId);
+  if(!otherBandIds.length)return;
+  // Always wipe stale blocks first (handles date/title changes and cancellation)
+  if(concert.id)await BlackoutsDB.deleteByConcertId(concert.id);
+  // Don't recreate for cancelled concerts or dateless concerts
+  if(concert.cancelled||!concert.date)return;
+  const bandName=getActiveBand()?.name||'Other band';
+  const label=`${bandName}: ${concert.title}`;
+  await Promise.all(otherBandIds.map(bandId=>
+    BlackoutsDB.upsert({
+      band_id:           bandId,
+      label,
+      from:              concert.date,
+      to:                concert.date,
+      scope:             'members',
+      mids:              [currentUser.id],
+      source_concert_id: concert.id,
+    })
+  ));
 }
 
 
@@ -3845,22 +4290,27 @@ async function saveConcertEdit(){
   await loadConcerts();
   closeMod('ceMod');renderConcerts();renderCal();renderSlMeta();updateSidebarCounts();
   toast2(editingConcertId?'Concert updated!':'Concert added!');
+  syncCrossBandBlackouts(saved);
 }
 
 // ── CONCERT PHOTOS ────────────────────────────────────────
-function addConcertPhoto(event, id){
+function addConcertPhoto(event,id){
   const file=event.target.files[0];if(!file)return;
   const c=concerts.find(x=>x.id===id);if(!c)return;
+  event.target.value='';
   const reader=new FileReader();
-  reader.onload=e=>{
-    if(!c.photos)c.photos=[];
-    c.photos.push(e.target.result);
-    renderConcerts();
-    if(editingConcertId===id)renderConcertPhotoArea(id);
-    toast2('Photo added!');
+  reader.onload=async e=>{
+    const url=await compressImage(e.target.result,1024,0.75);
+    try{
+      const photo=await ConcertsDB.addPhoto(id,url);
+      if(!c.photos)c.photos=[];
+      c.photos.push(photo);
+      renderConcerts();
+      if(editingConcertId===id)renderConcertPhotoArea(id);
+      toast2('Photo added!');
+    }catch(err){toast2('Failed to save photo','w');console.error('[bandapp] addConcertPhoto:',err);}
   };
   reader.readAsDataURL(file);
-  event.target.value='';
 }
 
 function renderConcertPhotoArea(id){
@@ -3869,7 +4319,7 @@ function renderConcertPhotoArea(id){
   const photos=c?c.photos||[]:[];
   area.innerHTML=photos.map((p,i)=>`
     <div style="position:relative;display:inline-block">
-      <img src="${p}" style="width:64px;height:64px;border-radius:8px;object-fit:cover;border:1.5px solid var(--bd)">
+      <img src="${p.url}" style="width:64px;height:64px;border-radius:8px;object-fit:cover;border:1.5px solid var(--bd)">
       <button onclick="removeConcertPhoto('${id}',${i})" style="position:absolute;top:-6px;right:-6px;width:18px;height:18px;border-radius:50%;background:var(--r);border:2px solid var(--w);color:#fff;font-size:.55rem;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1">✕</button>
     </div>`).join('')
     +`<label style="width:64px;height:64px;border-radius:8px;border:2px dashed var(--bd);display:inline-flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;color:var(--ink3);font-size:.65rem;gap:3px;transition:border-color .12s" onmouseover="this.style.borderColor='var(--a)'" onmouseout="this.style.borderColor='var(--bd)'">
@@ -3878,8 +4328,10 @@ function renderConcertPhotoArea(id){
     </label>`;
 }
 
-function removeConcertPhoto(id,idx){
+async function removeConcertPhoto(id,idx){
   const c=concerts.find(x=>x.id===id);if(!c||!c.photos)return;
+  const photo=c.photos[idx];
+  if(photo?.id)await ConcertsDB.removePhoto(photo.id);
   c.photos.splice(idx,1);renderConcertPhotoArea(id);renderConcerts();toast2('Photo removed','w');
 }
 
@@ -3889,7 +4341,7 @@ function openPhotoLightbox(id,idx){
   const overlay=document.createElement('div');
   overlay.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:9000;display:flex;align-items:center;justify-content:center;cursor:pointer';
   overlay.onclick=()=>document.body.removeChild(overlay);
-  overlay.innerHTML=`<img src="${c.photos[idx]}" style="max-width:90vw;max-height:90vh;border-radius:12px;object-fit:contain">`;
+  overlay.innerHTML=`<img src="${c.photos[idx].url}" style="max-width:90vw;max-height:90vh;border-radius:12px;object-fit:contain">`;
   document.body.appendChild(overlay);
 }
 
@@ -4044,7 +4496,7 @@ function instIcon(name){
 
 function populateInstrumentSelects(){
   const opts=INSTRUMENTS.map(x=>`<option value="${x.v}">${x.i} ${x.label}</option>`).join('');
-  [{id:'pfInst1',blank:'— Select —'},{id:'pfInst2',blank:'None'},{id:'mpInst1',blank:'— Select —'},{id:'mpInst2',blank:'None'}].forEach(({id,blank})=>{
+  [{id:'pfInst1',blank:'— Select —'},{id:'pfInst2',blank:'None'},{id:'mpInst1',blank:'— Select —'},{id:'mpInst2',blank:'None'},{id:'invInstrument',blank:'— Instrument —'}].forEach(({id,blank})=>{
     const el=document.getElementById(id);
     if(el)el.innerHTML=`<option value="">${blank}</option>${opts}`;
   });
@@ -4076,7 +4528,7 @@ function renderMembers(){
   }
   if(noBand)noBand.style.display='none';
   if(content)content.style.display='';
-  const days=['Mo','Tu','We','Th','Fr','Sa','Su'];
+  const days=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].map(d=>t(d));
   const active=activeMembers();
   // sort: admin first, then members, then guests at bottom
   const sorted=[...active].sort((a,b)=>{
@@ -4087,6 +4539,7 @@ function renderMembers(){
   const guests=sorted.filter(m=>m.role==='guest');
   if(countEl)countEl.textContent=`${sorted.filter(m=>m.role!=='guest').length} members${guests.length?` · ${guests.length} guest${guests.length>1?'s':''}`:''}`;
 
+  const iAmAdmin=getActiveBand()?.role==='Admin';
   document.getElementById('memGrid').innerHTML=sorted.map((m,i)=>{
     const idx=members.indexOf(m);
     const ex=extraData[idx]||{};
@@ -4095,11 +4548,13 @@ function renderMembers(){
     const icon2=m.inst2?instIcon(m.inst2):'';
     const isGuest=m.role==='guest';
     const rolePill=m.role==='admin'
-      ?`<span class="pill pp">Admin</span>`
+      ?`<span class="pill pp">${t('Admin')}</span>`
       :isGuest
-        ?`<span class="pill pamb">Guest</span><span style="font-size:.67rem;color:var(--ink3);margin-left:4px">until ${m.guestEnd}</span>`
-        :`<span class="pill pgray">Member</span>`;
-    const guestBorder=isGuest?'border:1.5px dashed var(--amb);':''
+        ?`<span class="pill pamb">${t('Guest')}</span><span style="font-size:.67rem;color:var(--ink3);margin-left:4px">until ${m.guestEnd}</span>`
+        :`<span class="pill pgray">${t('Member')}</span>`;
+    const guestBorder=isGuest?'border:1.5px dashed var(--amb);':'';
+    const vmap={'Lead':'Lead vocals','Backing':'Backing vocals','None':'No vocals','Both':'Lead & backing'};
+    const vocalsText=m.vocals&&m.vocals!=='None'?`${t('Vocals')}: ${t(vmap[m.vocals]||m.vocals)}`:'';
     return`<div class="memcard" style="${guestBorder}">
       <div class="mctop">
         <div class="mcav" style="background:${m.color};cursor:pointer;${memberPhotos[idx]?`background-image:url(${memberPhotos[idx]});background-size:cover;background-position:center`:''}" onclick="openProfile(${idx})">${memberPhotos[idx]?'':m.init}</div>
@@ -4108,19 +4563,20 @@ function renderMembers(){
             ${m.name}${flag?`<span title="${isoName(ex.nat)}" style="font-size:.95rem;line-height:1">${flag}</span>`:''}
           </div>
           <div class="mci" style="display:flex;align-items:center;gap:5px;flex-wrap:wrap;margin-top:3px">
-            <span style="display:inline-flex;align-items:center;gap:3px">${icon1} ${m.instrument}</span>
-            ${m.inst2?`<span style="color:var(--bd)">·</span><span style="display:inline-flex;align-items:center;gap:3px;color:var(--ink3)">${icon2} ${m.inst2}</span>`:''}
+            <span style="display:inline-flex;align-items:center;gap:3px">${icon1} ${t(m.instrument)}</span>
+            ${m.inst2?`<span style="color:var(--bd)">·</span><span style="display:inline-flex;align-items:center;gap:3px;color:var(--ink3)">${icon2} ${t(m.inst2)}</span>`:''}
           </div>
           <div style="margin-top:4px;display:flex;align-items:center;gap:5px;flex-wrap:wrap">${rolePill}</div>
         </div>
       </div>
-      <div class="t1" style="margin-bottom:6px" data-i18n="Integrations">Available days</div>
+      <div class="t1" style="margin-bottom:6px">${t('Available days')}</div>
       <div class="mcdays">${m.avail.map((a,di)=>`<div class="mcd ${a?'y':'n'}">${days[di]}</div>`).join('')}</div>
-      <div style="font-size:.7rem;color:var(--ink2);margin-top:9px">Vocals: ${m.vocals}</div>
+      ${vocalsText?`<div style="font-size:.7rem;color:var(--ink2);margin-top:9px">${vocalsText}</div>`:''}
       <div class="mcfoot">
-        <button class="btn btn-g btn-sm" onclick="openProfile(${idx})">View Profile</button>
-        ${m.role==='admin'?'':`<button class="btn btn-g btn-sm" onclick="openChangeRoleModal(${idx})">${isGuest?'Make Member':'Make Guest'}</button>`}
-        ${idx!==currentUser.memberIdx?`<button class="btn btn-g btn-sm" style="color:var(--r);border-color:var(--r2)" onclick="removeMember(${idx})" title="Remove from band">Remove</button>`:''}
+        <button class="btn btn-g btn-sm" onclick="openProfile(${idx})">${t('View Profile')}</button>
+        ${iAmAdmin&&m.role!=='admin'?`<button class="btn btn-g btn-sm" onclick="openChangeRoleModal(${idx})">${t(isGuest?'Make Member':'Make Guest')}</button>`:''}
+        ${iAmAdmin&&m.role!=='admin'&&idx!==currentUser.memberIdx?`<button class="btn btn-g btn-sm" style="color:var(--a);border-color:rgba(108,99,255,.35)" onclick="makeAdmin(${idx})">⭐ ${t('Make Admin')}</button>`:''}
+        ${iAmAdmin&&idx!==currentUser.memberIdx?`<button class="btn btn-g btn-sm" style="color:var(--r);border-color:var(--r2)" onclick="removeMember(${idx})" title="${t('Remove')}">${t('Remove')}</button>`:''}
       </div>
     </div>`;
   }).join('');
@@ -4245,6 +4701,16 @@ async function openChangeRoleModal(idx){
     showMod('guestConvertMod');
   }
 }
+
+async function makeAdmin(idx){
+  const m=members[idx];if(!m||m.role==='admin')return;
+  const b=getActiveBand();if(!b||b.role!=='Admin')return;
+  if(!confirm(`Make ${m.name} an admin of ${b.name}? Admins can manage members, songs, and all band settings.`))return;
+  await MembersDB.upsertBandMember(activeBandId, m.id, {role:'admin'});
+  await loadMembers();
+  renderMembers();
+  toast2(`⭐ ${m.name.split(' ')[0]} is now an Admin!`);
+}
 let editingGuestConvertIdx=null;
 async function confirmGuestConvert(){
   // idx >= 0: converting an existing member; idx < 0: reactivating an archived guest
@@ -4305,13 +4771,45 @@ function renderBP(){
   const adminActions=document.getElementById('bpAdminActions');
   if(adminActions)adminActions.style.display=isAdmin?'flex':'none';
 
+  // Band invite link (admin only) — full URL so recipients can just click/paste
+  const codeEl=document.getElementById('bpJoinCode');
+  if(codeEl){
+    const _raw=(localStorage.getItem('appUrl')||window.location.origin+'/').replace(/[?#].*/,'').replace(/\/+$/,'');
+    codeEl.value=b?`${_raw}/?band=${b.id}`:'';
+    codeEl.closest('.bp-code-row').style.display=isAdmin&&b?'':'none';
+  }
+
   // Cover/logo clickable only for admin
   const cover=document.getElementById('bpCover');
-  if(cover)cover.style.cursor=isAdmin?'pointer':'default';
+  if(cover){
+    cover.style.cursor=isAdmin?'pointer':'default';
+    const coverUrl=b.cover_url||localStorage.getItem(`bpCover_${b.id}`);
+    if(coverUrl){
+      cover.style.backgroundImage=`url(${coverUrl})`;
+      cover.style.backgroundSize='cover';
+      cover.style.backgroundPosition='center';
+      const ov=cover.querySelector('[data-overlay]');if(ov)ov.style.display='none';
+    } else {
+      cover.style.backgroundImage='';
+      const ov=cover.querySelector('[data-overlay]');if(ov)ov.style.display='';
+    }
+  }
   const coverBadge=document.getElementById('bpCoverEditBadge');
   if(coverBadge)coverBadge.style.display=isAdmin?'flex':'none';
   const logo=document.getElementById('bpLogo');
-  if(logo)logo.style.cursor=isAdmin?'pointer':'default';
+  if(logo){
+    logo.style.cursor=isAdmin?'pointer':'default';
+    const logoUrl=b.logo_url||localStorage.getItem(`bpLogo_${b.id}`);
+    if(logoUrl){
+      logo.style.backgroundImage=`url(${logoUrl})`;
+      logo.style.backgroundSize='cover';
+      logo.style.backgroundPosition='center';
+      logo.textContent='';
+    } else {
+      logo.style.backgroundImage='';
+      logo.textContent=b.initials||b.name?.slice(0,2).toUpperCase()||'';
+    }
+  }
   const logoCam=document.getElementById('bpLogoCamBadge');
   if(logoCam)logoCam.style.display=isAdmin?'flex':'none';
 
@@ -4322,13 +4820,20 @@ function renderBP(){
 
   // Settings cards
   const days=['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
-  const active=[0,1,0,1,1,0,0];
-  document.getElementById('dtogs').innerHTML=days.map((d,i)=>`<div class="dtog ${active[i]?'on':''}" onclick="${isAdmin?"this.classList.toggle('on')":''}" style="${isAdmin?'':'pointer-events:none;opacity:.7'}">${d.slice(0,3)}</div>`).join('');
+  const active=b.rehearsal_days||[0,1,0,1,0,0,0];
+  document.getElementById('dtogs').innerHTML=days.map((d,i)=>`<div class="dtog ${active[i]?'on':''}" onclick="${isAdmin?"toggleAndSaveRehDay(this)":''}" style="${isAdmin?'':'pointer-events:none;opacity:.7'}">${t(d).slice(0,3)}</div>`).join('');
   const mc=document.getElementById('boMC');
   if(mc)mc.innerHTML=members.map(m=>`<div class="bomc chip" data-mid="${m.id}" onclick="togBOMc(this)" style="display:flex;align-items:center;gap:6px"><div class="mav2" style="width:18px;height:18px;font-size:.5rem;background:${m.color}">${m.init}</div>${m.name.split(' ')[0]}</div>`).join('');
   renderBOList();syncBOPill();
   refreshWaUI();
   refreshNotifSettUI();
+}
+
+function toggleAndSaveRehDay(el){
+  el.classList.toggle('on');
+  const rehDays=[...document.querySelectorAll('#dtogs .dtog')].map(d=>d.classList.contains('on')?1:0);
+  const b=getActiveBand();if(b)b.rehearsal_days=rehDays;
+  BandsDB.upsert({id:activeBandId,rehearsal_days:rehDays});
 }
 
 // ── BAND PROFILE INLINE EDIT ─────────────────────────────
@@ -4368,6 +4873,9 @@ async function saveBandEditInline(){
   const b=getActiveBand();if(!b)return;
   const name=document.getElementById('beNameInline').value.trim();
   if(!name){toast2('Band name is required','w');return;}
+  const platforms=PLATFORM_DEFS
+    .map(d=>({label:d.label,icon:d.icon,url:(document.getElementById('bePlat_'+d.key)?.value||'').trim()}))
+    .filter(p=>p.url);
   const saved=await BandsDB.upsert({
     id: b.id,
     name,
@@ -4378,6 +4886,7 @@ async function saveBandEditInline(){
     city: document.getElementById('beCityInline').value.trim(),
     country: document.getElementById('beCountryInline').value.trim(),
     bio: document.getElementById('beBioInline').value.trim(),
+    platforms,
   });
   if(!saved)return;
   await loadBands();
@@ -4430,19 +4939,31 @@ function renderBandPhotos(){
   if(empty)empty.style.display='none';
   grid.innerHTML=photos.map((p,i)=>`
     <div style="position:relative;aspect-ratio:1">
-      <img src="${p}" style="width:100%;height:100%;object-fit:cover;border-radius:8px;cursor:pointer;border:1.5px solid var(--bd)" onclick="openBandPhotoLightbox(${i})">
+      <img src="${p.url}" style="width:100%;height:100%;object-fit:cover;border-radius:8px;cursor:pointer;border:1.5px solid var(--bd)" onclick="openBandPhotoLightbox(${i})">
       ${isAdmin?`<button onclick="removeBandPhoto(${i})" style="position:absolute;top:-5px;right:-5px;width:18px;height:18px;border-radius:50%;background:var(--r);border:2px solid var(--w);color:#fff;font-size:.5rem;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1">✕</button>`:''}
     </div>`).join('');
 }
 function addBandPhoto(event){
   const file=event.target.files[0];if(!file)return;
   const b=getActiveBand();if(!b)return;
+  event.target.value='';
   const reader=new FileReader();
-  reader.onload=e=>{if(!b.photos)b.photos=[];b.photos.push(e.target.result);renderBandPhotos();toast2('Photo added!');};
-  reader.readAsDataURL(file);event.target.value='';
+  reader.onload=async e=>{
+    const url=await compressImage(e.target.result,1024,0.75);
+    try{
+      const photo=await BandsDB.addPhoto(b.id,url);
+      if(!b.photos)b.photos=[];
+      b.photos.push(photo);
+      renderBandPhotos();
+      toast2('Photo added!');
+    }catch(err){toast2('Failed to save photo','w');console.error('[bandapp] addBandPhoto:',err);}
+  };
+  reader.readAsDataURL(file);
 }
-function removeBandPhoto(idx){
+async function removeBandPhoto(idx){
   const b=getActiveBand();if(!b||!b.photos)return;
+  const photo=b.photos[idx];
+  if(photo?.id)await BandsDB.removePhoto(photo.id);
   b.photos.splice(idx,1);renderBandPhotos();toast2('Photo removed','w');
 }
 function openBandPhotoLightbox(idx){
@@ -4450,12 +4971,206 @@ function openBandPhotoLightbox(idx){
   const o=document.createElement('div');
   o.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:9000;display:flex;align-items:center;justify-content:center;cursor:pointer';
   o.onclick=()=>document.body.removeChild(o);
-  o.innerHTML=`<img src="${b.photos[idx]}" style="max-width:90vw;max-height:90vh;border-radius:12px;object-fit:contain">`;
+  o.innerHTML=`<img src="${b.photos[idx].url}" style="max-width:90vw;max-height:90vh;border-radius:12px;object-fit:contain">`;
   document.body.appendChild(o);
 }
 
 // INIT
-function openInvMod(){populatePhoneCc('invPhoneCc','+32');document.getElementById('invPhoneNum').value='';showMod('invMod');}
+function openInvMod(){
+  const invInst=document.getElementById('invInstrument');
+  if(invInst){populateInstrumentSelects();invInst.value='';}
+  ['invFirstName','invLastName','invEmail'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  const invRole=document.getElementById('invRole');if(invRole)invRole.value='Member';
+  const gd=document.getElementById('invGuestDates');if(gd)gd.style.display='none';
+  const lr=document.getElementById('invLookupResult');if(lr)lr.style.display='none';
+  const le=document.getElementById('invLookupEmail');if(le)le.value='';
+  showMod('invMod');
+}
+
+function openJoinBandMod(){
+  document.getElementById('joinBandCode').value='';
+  const r=document.getElementById('joinBandResult');
+  if(r){r.style.display='none';r.innerHTML='';}
+  showMod('joinBandMod');
+}
+
+async function joinBandByCode(){
+  const code=document.getElementById('joinBandCode').value.trim();
+  if(!code){toast2('Paste a band code first','w');return;}
+  const btn=document.getElementById('joinBandBtn');
+  if(btn){btn.disabled=true;btn.textContent='Joining…';}
+  const {data,error}=await supabase.rpc('join_band_by_code',{p_code:code});
+  if(btn){btn.disabled=false;btn.textContent='Join Band';}
+  const res=document.getElementById('joinBandResult');
+  if(error||!data){
+    if(res){res.style.display='';res.innerHTML=`<div style="font-size:.78rem;color:var(--r);padding:8px 10px;background:var(--r2);border-radius:var(--rad)">${error?.message||'Something went wrong'}</div>`;}
+    return;
+  }
+  if(data.error){
+    if(res){res.style.display='';res.innerHTML=`<div style="font-size:.78rem;color:var(--r);padding:8px 10px;background:var(--r2);border-radius:var(--rad)">${data.message||data.error}</div>`;}
+    return;
+  }
+  closeMod('joinBandMod');
+  await loadBands();
+  await switchBand(data.band_id);
+  toast2(`Welcome to ${data.band_name}! 🎉`);
+}
+
+async function lookupInvitee(){
+  const email=document.getElementById('invLookupEmail').value.trim();
+  if(!email){toast2('Enter an email address','w');return;}
+  const btn=document.getElementById('invLookupBtn');
+  if(btn){btn.disabled=true;btn.textContent='Finding…';}
+  const {data,error}=await supabase.rpc('find_user_by_email',{p_email:email});
+  if(btn){btn.disabled=false;btn.textContent='Find →';}
+  const res=document.getElementById('invLookupResult');
+  res.style.display='';
+  if(error||!data||data.length===0){
+    res.innerHTML=`<div style="font-size:.75rem;color:var(--ink2);padding:7px 10px;background:var(--bg2);border-radius:var(--rad)">No Bandapp account found for this email. Use the invite form below to send them a signup link.</div>`;
+    return;
+  }
+  const u=data[0];
+  const name=[u.first_name,u.last_name].filter(Boolean).join(' ')||'User';
+  res.innerHTML=`
+    <div style="padding:10px 12px;background:var(--g2);border:1px solid var(--g);border-radius:var(--rad)">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+        <span style="color:var(--g);font-size:1.1rem">✓</span>
+        <div style="flex:1"><div style="font-size:.82rem;font-weight:700">${name}</div><div style="font-size:.72rem;color:var(--ink2)">Bandapp account found</div></div>
+      </div>
+      <div class="fr" style="margin-bottom:8px">
+        <div class="fg" style="margin:0"><label style="font-size:.69rem">Role</label>
+          <select id="invFoundRole" onchange="toggleInvFoundGuest(this)" style="font-size:.8rem">
+            <option value="member">Member</option>
+            <option value="admin">Admin</option>
+            <option value="guest">Guest</option>
+          </select>
+        </div>
+      </div>
+      <div id="invFoundGuestFields" style="display:none;margin-bottom:8px">
+        <div style="padding:7px 9px;background:var(--amb2);border:1px solid rgba(217,119,6,.25);border-radius:var(--rad);font-size:.73rem;color:var(--amb);margin-bottom:8px">Guest access expires on the end date and they move to the Guest Directory.</div>
+        <div class="fr" style="margin-bottom:6px">
+          <div class="fg" style="margin:0"><label style="font-size:.69rem">Guest Start</label><input type="date" id="invFoundGuestStart"></div>
+          <div class="fg" style="margin:0"><label style="font-size:.69rem">Guest End</label><input type="date" id="invFoundGuestEnd"></div>
+        </div>
+        <div class="fg" style="margin:0"><label style="font-size:.69rem">Home Band (optional)</label><input id="invFoundGuestBand" placeholder="e.g. Brussels Big Band"></div>
+      </div>
+      <button class="btn btn-p btn-sm" onclick="addFoundMember('${u.id}')">+ Add to Band</button>
+    </div>`;
+}
+
+function toggleInvFoundGuest(sel){
+  const f=document.getElementById('invFoundGuestFields');
+  if(f)f.style.display=sel.value==='guest'?'':'none';
+}
+
+async function addFoundMember(userId){
+  const role=document.getElementById('invFoundRole')?.value||'member';
+  const guestStart=document.getElementById('invFoundGuestStart')?.value||null;
+  const guestEnd=document.getElementById('invFoundGuestEnd')?.value||null;
+  const guestBand=document.getElementById('invFoundGuestBand')?.value.trim()||null;
+  const btn=document.querySelector(`#invMod button[onclick*="addFoundMember"]`);
+  if(btn){btn.disabled=true;btn.textContent='Adding…';}
+  // Check locally first to give a fast friendly error
+  if(members.some(m=>m.id===userId)){
+    if(btn){btn.disabled=false;btn.textContent='+ Add to Band';}
+    toast2('This person is already in the band','w');return;
+  }
+  const fields={band_id:activeBandId,user_id:userId,role};
+  if(guestStart)fields.guest_start=guestStart;
+  if(guestEnd)fields.guest_end=guestEnd;
+  if(guestBand)fields.guest_band=guestBand;
+  const {error}=await supabase.from('band_members').insert(fields);
+  if(btn){btn.disabled=false;btn.textContent='+ Add to Band';}
+  if(error){handleDbError(error);return;}
+  await loadMembers();
+  closeMod('invMod');
+  renderMembers();
+  updateSidebarCounts();
+  const added=members.find(m=>m.id===userId);
+  toast2(`${added?.name||'Member'} added to the band! 🎉`);
+}
+
+async function sendInviteViaEdgeFunction(){
+  if(!activeBandId){toast2('Select a band first','w');return;}
+  const email=(document.getElementById('invEmail')?.value||'').trim();
+  const firstName=(document.getElementById('invFirstName')?.value||'').trim();
+  const lastName=(document.getElementById('invLastName')?.value||'').trim();
+  const instrument=(document.getElementById('invInstrument')?.value||'').trim();
+  const role=(document.getElementById('invRole')?.value||'member').toLowerCase();
+  if(!email){toast2('Email address is required','w');return;}
+  const btn=document.getElementById('invSendBtn');
+  if(btn){btn.disabled=true;btn.textContent='Sending…';}
+  const ctrl=new AbortController();
+  const timer=setTimeout(()=>ctrl.abort(),20000);
+  try{
+    const {data:{session}}=await supabase.auth.getSession();
+    const res=await fetch(`${SUPABASE_URL}/functions/v1/invite-member`,{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':`Bearer ${session?.access_token||''}`},
+      body:JSON.stringify({band_id:activeBandId,email,first_name:firstName,last_name:lastName,instrument,role}),
+      signal:ctrl.signal,
+    });
+    clearTimeout(timer);
+    const result=await res.json();
+    if(!res.ok){
+      toast2(result.message||result.error||'Failed to send invite','w');
+      return;
+    }
+    await loadMembers();
+    renderMembers();
+    updateSidebarCounts();
+    closeMod('invMod');
+    toast2(`Invite sent to ${email}! They'll receive an email to join the band. 🎉`);
+  }catch(e){
+    clearTimeout(timer);
+    if(e?.name==='AbortError'){
+      toast2('Request timed out — please try again','w');
+    } else {
+      toast2(e?.message||'Something went wrong sending the invite','w');
+      console.error('[bandapp] sendInvite error:',e);
+    }
+  }finally{
+    clearTimeout(timer);
+    if(btn){btn.disabled=false;btn.textContent='Send Invite Email 📧';}
+  }
+}
+
+function showOnboarding(){
+  const band=getActiveBand();
+  const msg=document.getElementById('onboardingBandMsg');
+  if(msg&&band){msg.textContent=`You've been added to "${band.name}". Set a password to secure your account, then complete your profile.`;}
+  document.getElementById('onboardingMod').style.display='flex';
+}
+
+async function saveOnboardingPassword(){
+  const pw=(document.getElementById('onboardingPw')?.value||'');
+  const pw2=(document.getElementById('onboardingPwConfirm')?.value||'');
+  if(pw.length<6){toast2('Password must be at least 6 characters','w');return;}
+  if(pw!==pw2){toast2('Passwords do not match','w');return;}
+  const btn=document.getElementById('onboardingSaveBtn');
+  if(btn){btn.disabled=true;btn.textContent='Saving…';}
+  const {error}=await supabase.auth.updateUser({password:pw,data:{needs_onboarding:null}});
+  if(btn){btn.disabled=false;btn.textContent='Set Password & Continue →';}
+  if(error){toast2(error.message,'w');return;}
+  document.getElementById('onboardingMod').style.display='none';
+  nav('myprofile');
+  toast2('Password set! Please complete your profile.');
+}
+
+function copyBandInviteLink(){
+  const inp=document.getElementById('bpJoinCode');
+  const text=inp?.value||'';
+  if(!text)return;
+  inp.select();
+  if(navigator.clipboard&&window.isSecureContext){
+    navigator.clipboard.writeText(text)
+      .then(()=>toast2('Invite link copied!'))
+      .catch(()=>{document.execCommand('copy');toast2('Invite link copied!');});
+  }else{
+    document.execCommand('copy');
+    toast2('Invite link copied!');
+  }
+}
 
 function renderDashboard(){
   const band = getActiveBand();
@@ -4468,10 +5183,10 @@ function renderDashboard(){
   const empty = txt => `<div style="color:var(--ink3);font-size:.82rem;padding:4px 0">${txt}</div>`;
 
   if(!activeBandId || !band){
-    if(dshS) dshS.textContent = 'Create or join a band to get started.';
+    if(dshS) dshS.textContent = t('Create or join a band to get started.');
     if(dshStats) dshStats.innerHTML = '';
-    if(dshUpcoming) dshUpcoming.innerHTML = empty('No band selected.');
-    if(dshMembers) dshMembers.innerHTML = empty('No band selected.');
+    if(dshUpcoming) dshUpcoming.innerHTML = empty(t('No band selected.'));
+    if(dshMembers) dshMembers.innerHTML = empty(t('No band selected.'));
     return;
   }
 
@@ -4492,56 +5207,68 @@ function renderDashboard(){
   const cCount = concerts.filter(c=>!c.cancelled&&c.date>=todayStr&&c.date.slice(0,7)===thisMonth).length;
   if(dshS){
     const parts=[];
-    if(rCount) parts.push(`${rCount} rehearsal${rCount>1?'s':''}`);
-    if(cCount) parts.push(`${cCount} concert${cCount>1?'s':''}`);
-    dshS.textContent = parts.length ? `${parts.join(' and ')} coming up this month.` : 'Nothing scheduled this month yet.';
+    if(rCount) parts.push(`${rCount} ${t(rCount>1?'rehearsals':'rehearsal')}`);
+    if(cCount) parts.push(`${cCount} ${t(cCount>1?'concerts':'concert')}`);
+    dshS.textContent = parts.length ? `${parts.join(' '+t('and')+' ')} ${t('coming up this month.')}` : t('Nothing scheduled this month yet.');
   }
 
   // Stat cards
   const nextGig = concerts.filter(c=>!c.cancelled&&c.date>=todayStr).sort((a,b)=>a.date.localeCompare(b.date))[0];
+  const _ngd=nextGig?new Date(nextGig.date+'T00:00:00'):null;
+  const _ngLabel=_ngd?`${t(MAb[_ngd.getMonth()])} ${_ngd.getDate()}`:'—';
   if(dshStats) dshStats.innerHTML =
-    `<div class="sc" onclick="nav('members')"><div class="t1">Members</div><div class="sv">${members.length}</div><div class="ss">${members.length===1?'1 member':'Active band'}</div></div>`+
-    `<div class="sc" onclick="nav('library')"><div class="t1">Songs</div><div class="sv">${songs.length}</div><div class="ss">In library</div></div>`+
-    `<div class="sc" onclick="nav('setlists')"><div class="t1">Set Lists</div><div class="sv">${setlists.length}</div><div class="ss">${setlists.length?'Ready to play':'None yet'}</div></div>`+
-    `<div class="sc" onclick="nav('concerts')"><div class="t1">Next Gig</div><div class="sv">${nextGig?new Date(nextGig.date+'T00:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric'}):'—'}</div><div class="ss">${nextGig?.venue||'None scheduled'}</div></div>`;
+    `<div class="sc" onclick="nav('members')"><div class="t1">${t('Members')}</div><div class="sv">${members.length}</div><div class="ss">${members.length===1?t('1 member'):t('Active band')}</div></div>`+
+    `<div class="sc" onclick="nav('library')"><div class="t1">${t('Songs')}</div><div class="sv">${songs.length}</div><div class="ss">${t('In library')}</div></div>`+
+    `<div class="sc" onclick="nav('setlists')"><div class="t1">${t('Set Lists')}</div><div class="sv">${setlists.length}</div><div class="ss">${setlists.length?t('Ready to play'):t('None yet')}</div></div>`+
+    `<div class="sc" onclick="nav('concerts')"><div class="t1">${t('Next Gig')}</div><div class="sv">${_ngLabel}</div><div class="ss">${nextGig?.venue||t('None scheduled')}</div></div>`;
 
   // Upcoming events list
+  const _dows=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
   if(dshUpcoming){
     dshUpcoming.innerHTML = upEv.length ? upEv.map(ev=>{
       const d=new Date(ev.date+'T00:00:00');
-      const pill=ev.type==='concert'?'<span class="pill pp">Concert</span>':'<span class="pill pg">Rehearsal</span>';
-      return`<div class="er"><div class="edb"><div class="edd">${d.toLocaleDateString('en-GB',{weekday:'short'})}</div><div class="edn">${d.getDate()}</div></div><div style="flex:1"><div class="en">${ev.title}</div><div class="em">${ev.detail}</div></div>${pill}</div>`;
-    }).join('') : empty('No upcoming events.');
+      const pill=ev.type==='concert'?`<span class="pill pp">${t('Concert')}</span>`:`<span class="pill pg">${t('Rehearsal')}</span>`;
+      return`<div class="er"><div class="edb"><div class="edd">${t(_dows[d.getDay()])}</div><div class="edn">${d.getDate()}</div></div><div style="flex:1"><div class="en">${ev.title}</div><div class="em">${ev.detail}</div></div>${pill}</div>`;
+    }).join('') : empty(t('No upcoming events.'));
   }
 
   // Band members list
   if(dshMembers){
     const active = activeMembers();
     dshMembers.innerHTML = active.length ? active.slice(0,6).map(m=>{
+      const idx=members.indexOf(m);
+      const photo=memberPhotos[idx]||null;
       const avToday=(m.avail||[])[new Date().getDay()]?'on':'off';
       const instLine=[m.instrument,m.vocals&&m.vocals!=='None'?m.vocals:''].filter(Boolean).join(' · ');
-      return`<div class="mr2"><div class="mav2" style="background:${m.color}">${m.init}</div><div style="flex:1"><div class="mn">${m.name}</div><div class="mi">${instLine}</div></div><div class="ad ${avToday}"></div></div>`;
-    }).join('') : empty('No members yet. Invite someone to join!');
+      return`<div class="mr2"><div class="mav2" style="background:${m.color};${photo?`background-image:url(${photo});background-size:cover;background-position:center`:''}">${photo?'':m.init}</div><div style="flex:1"><div class="mn">${m.name}</div><div class="mi">${instLine}</div></div><div class="ad ${avToday}"></div></div>`;
+    }).join('') : empty(t('No members yet. Invite someone to join!'));
   }
 }
 
 async function initApp(){
   populateCountrySelects();
   populateInstrumentSelects();
+  // Bands first — sets band metadata (name, color, WA links) needed for shell renders
   await loadBands();
-  await loadSongs();
-  await loadSetlists();
-  await loadConcerts();
-  await loadRehearsals();
-  await loadMembers();
-  await loadBlackouts();
-  renderSLDropdown();renderSL();renderSlMeta();renderLib();updateLibCount();updateSidebarCounts();
+  // Paint the shell immediately with user identity and navigate to the right page.
+  // Remaining data hasn't loaded yet so counts/lists show empty state briefly.
+  syncCurrentUserToUI();
+  renderBandList();
+  const isNewUser = !currentUser._memberships?.length;
+  nav(isNewUser ? 'myprofile' : (localStorage.getItem('defaultView')||'dashboard'));
+  // All remaining fetches are independent — run concurrently.
+  // Snapshot activeBandId so we can detect a mid-flight band switch (e.g. createNewBand)
+  // and skip the stale re-render; switchBand() will have already rendered the correct state.
+  const _initBandId = activeBandId;
+  await Promise.all([loadSongs(),loadSetlists(),loadConcerts(),loadRehearsals(),loadMembers(),loadBlackouts()]);
+  if(activeBandId !== _initBandId){const l=document.getElementById('appLoader');if(l)l.style.display='none';return;} // band changed while loading — don't overwrite
+  // Full re-render now that all data is available
+  renderSLDropdown();renderSL();renderSlMeta();renderLib();if(libView==='sheet')renderSheet();updateLibCount();updateSidebarCounts();
   setCalView(calView);renderRehearsals();renderConcerts();renderMembers();
   renderGuestDir();renderBP();renderAsList();renderBandList();
   syncCurrentUserToUI();renderDashboard();updateSidebarCounts();
-  // New users with no band go to My Profile to complete their info first
-  const isNewUser = !currentUser._memberships?.length;
-  nav(isNewUser ? 'myprofile' : (localStorage.getItem('defaultView')||'dashboard'));
+  const loader=document.getElementById('appLoader');
+  if(loader)loader.style.display='none';
 }
 
 // ── Bug / Feedback reporting ──────────────────────────────────
@@ -4657,7 +5384,7 @@ async function submitFeedback(){
   </div>
   <div class="fg"><label>Vocals</label>
     <select id="pfVocals">
-      <option>No vocals</option><option>Lead vocals</option><option>Backing vocals</option><option>Lead &amp; backing</option>
+      <option value="None" data-i18n="No vocals">No vocals</option><option value="Lead" data-i18n="Lead vocals">Lead vocals</option><option value="Backing" data-i18n="Backing vocals">Backing vocals</option><option value="Both" data-i18n="Lead &amp; backing">Lead &amp; backing</option>
     </select>
   </div>
 
@@ -4777,18 +5504,54 @@ function bpLogoClick(){
   if(currentUser.role!=='admin')return;
   document.getElementById('bpLogoInput').click();
 }
+function compressImage(dataUrl, maxWidth, quality){
+  return new Promise(resolve=>{
+    const img=new Image();
+    img.onload=()=>{
+      const scale=img.width>maxWidth?maxWidth/img.width:1;
+      const c=document.createElement('canvas');
+      c.width=Math.round(img.width*scale);
+      c.height=Math.round(img.height*scale);
+      c.getContext('2d').drawImage(img,0,0,c.width,c.height);
+      resolve(c.toDataURL('image/jpeg',quality));
+    };
+    img.onerror=()=>resolve(dataUrl);
+    img.src=dataUrl;
+  });
+}
+
 function handleBpCover(event) {
   const file = event.target.files[0]; if (!file) return;
   const reader = new FileReader();
-  reader.onload = e => {
-    const cover = document.getElementById('bpCover');
-    cover.style.backgroundImage = `url(${e.target.result})`;
-    cover.style.backgroundSize = 'cover';
-    cover.style.backgroundPosition = 'center';
-    // hide decorative emoji overlay once a real photo is set
-    const overlay = cover.querySelector('[data-overlay]');
-    if (overlay) overlay.style.display = 'none';
-    toast2('Cover photo updated!');
+  reader.onload = async e => {
+    try {
+      const dataUrl = await compressImage(e.target.result, 1400, 0.82);
+      const cover = document.getElementById('bpCover');
+      cover.style.backgroundImage = `url(${dataUrl})`;
+      cover.style.backgroundSize = 'cover';
+      cover.style.backgroundPosition = 'center';
+      const overlay = cover.querySelector('[data-overlay]');
+      if (overlay) overlay.style.display = 'none';
+      // Persist in-memory and localStorage optimistically
+      const _bc = getActiveBand(); if(_bc) _bc.cover_url = dataUrl;
+      try { localStorage.setItem(`bpCover_${activeBandId}`, dataUrl); } catch(_) {}
+      // Update DB — use a targeted update without .select() so Supabase doesn't echo
+      // the large base64 payload back in the response (which can exceed response limits).
+      const { error } = await supabase.from('bands').update({ cover_url: dataUrl }).eq('id', activeBandId);
+      if (error) {
+        handleDbError(error);
+        // Roll back optimistic state so the stale localStorage doesn't mask the failure
+        if(_bc) _bc.cover_url = null;
+        try { localStorage.removeItem(`bpCover_${activeBandId}`); } catch(_) {}
+        cover.style.backgroundImage = '';
+        if (overlay) overlay.style.display = '';
+        return;
+      }
+      toast2('Cover photo updated!');
+    } catch(err) {
+      toast2('Failed to update cover photo','w');
+      console.error('[bandapp] handleBpCover:', err);
+    }
   };
   reader.readAsDataURL(file);
   event.target.value = '';
@@ -4797,21 +5560,38 @@ function handleBpCover(event) {
 function handleBpLogo(event) {
   const file = event.target.files[0]; if (!file) return;
   const reader = new FileReader();
-  reader.onload = e => {
-    const logo = document.getElementById('bpLogo');
-    logo.style.backgroundImage = `url(${e.target.result})`;
-    logo.style.backgroundSize = 'cover';
-    logo.style.backgroundPosition = 'center';
-    logo.textContent = '';
-    // also update sidebar band avatar
-    const sav = document.querySelector('.bav');
-    if (sav) {
-      sav.style.backgroundImage = `url(${e.target.result})`;
-      sav.style.backgroundSize = 'cover';
-      sav.style.backgroundPosition = 'center';
-      sav.textContent = '';
+  reader.onload = async e => {
+    try {
+      const dataUrl = await compressImage(e.target.result, 400, 0.85);
+      const logo = document.getElementById('bpLogo');
+      logo.style.backgroundImage = `url(${dataUrl})`;
+      logo.style.backgroundSize = 'cover';
+      logo.style.backgroundPosition = 'center';
+      logo.textContent = '';
+      const sav = document.querySelector('.bav');
+      if (sav) {
+        sav.style.backgroundImage = `url(${dataUrl})`;
+        sav.style.backgroundSize = 'cover';
+        sav.style.backgroundPosition = 'center';
+        sav.textContent = '';
+      }
+      const _bl = getActiveBand(); if(_bl) _bl.logo_url = dataUrl;
+      try { localStorage.setItem(`bpLogo_${activeBandId}`, dataUrl); } catch(_) {}
+      const { error } = await supabase.from('bands').update({ logo_url: dataUrl }).eq('id', activeBandId);
+      if (error) {
+        handleDbError(error);
+        if(_bl) _bl.logo_url = null;
+        try { localStorage.removeItem(`bpLogo_${activeBandId}`); } catch(_) {}
+        logo.style.backgroundImage = '';
+        logo.textContent = getActiveBand()?.initials || '';
+        if (sav) { sav.style.backgroundImage = ''; sav.textContent = getActiveBand()?.initials || ''; }
+        return;
+      }
+      toast2('Band logo updated!');
+    } catch(err) {
+      toast2('Failed to update band logo','w');
+      console.error('[bandapp] handleBpLogo:', err);
     }
-    toast2('Band logo updated!');
   };
   reader.readAsDataURL(file);
   event.target.value = '';
@@ -4846,7 +5626,7 @@ function openProfile(idx){
   const allInputs=document.querySelectorAll('#profMod input, #profMod select, #profMod textarea');
   allInputs.forEach(el=>{
     el.disabled=!isOwn;
-    el.style.opacity=isOwn?'':'1';
+    if(!el.closest('.phone-cc-wrap')) el.style.opacity=isOwn?'':'1';
     el.style.cursor=isOwn?'':'default';
     el.style.background=isOwn?'':'transparent';
     el.style.borderColor=isOwn?'':'transparent';
@@ -4867,7 +5647,7 @@ function openProfile(idx){
   document.getElementById('pfLast').value=ln.join(' ');
   document.getElementById('pfBday').value=ex.bday||'';
   document.getElementById('pfNat').value=ex.nat||'';
-  document.getElementById('pfEmail').value=ex.email||`${fn.toLowerCase()}@email.com`;
+  document.getElementById('pfEmail').value=isOwn?currentUser.email||(ex.email||''):ex.email||'';
   // Phone — split into dial code + number
   initPhoneField('pfPhoneCc','pfPhoneNum',ex.phone||'');
   document.getElementById('pfCountry').value=ex.country||'';
@@ -4879,13 +5659,12 @@ function openProfile(idx){
   document.getElementById('pfInst1').value=m.instrument||'';
   document.getElementById('pfInst2').value=m.inst2||'';
   renderPfInstIcons();
-  const vmap={'Lead':'Lead vocals','Backing':'Backing vocals','None':'No vocals'};
-  document.getElementById('pfVocals').value=vmap[m.vocals]||'No vocals';
+  document.getElementById('pfVocals').value=m.vocals||'None';
 
   // availability toggles — read-only for others
   const dayNames=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
   document.getElementById('pfAvailDays').innerHTML=dayNames.map((d,i)=>`
-    <div class="dtog ${m.avail[i]?'on':''}" ${isOwn?`onclick="this.classList.toggle('on')"`:'style="pointer-events:none;opacity:.8"'} data-di="${i}">${d}</div>
+    <div class="dtog ${m.avail[i]?'on':''}" ${isOwn?`onclick="this.classList.toggle('on')"`:'style="pointer-events:none;opacity:.8"'} data-di="${i}">${t(d)}</div>
   `).join('');
 
   // equipment & links
@@ -4906,7 +5685,7 @@ async function saveProfile(){
   const m=members[editingIdx];if(!m)return;
   const fn=document.getElementById('pfFirst').value.trim();
   const ln=document.getElementById('pfLast').value.trim();
-  const vback={'No vocals':'None','Lead vocals':'Lead','Backing vocals':'Backing','Lead & backing':'Lead'};
+
   const chips=document.querySelectorAll('#pfAvailDays .dtog');
   const avail=[...chips].map(c=>c.classList.contains('on')?1:0);
   const fullPhone=getFullPhone('pfPhoneCc','pfPhoneNum');
@@ -4919,7 +5698,7 @@ async function saveProfile(){
     initials:      ((fn[0]||'')+(ln[0]||'')).toUpperCase(),
     instrument:    document.getElementById('pfInst1').value,
     instrument2:   document.getElementById('pfInst2').value,
-    vocals:        vback[document.getElementById('pfVocals').value]||'None',
+    vocals:        document.getElementById('pfVocals').value||'None',
     availability:  avail,
     bday:          document.getElementById('pfBday').value||null,
     nationality:   document.getElementById('pfNat').value,
@@ -5001,7 +5780,7 @@ async function populateMpPage(){
   const nd=document.getElementById('mpNameDisplay');
   const rd=document.getElementById('mpRoleDisplay');
   if(nd)nd.textContent=[fn,ln].filter(Boolean).join(' ')||'Your Profile';
-  if(rd)rd.textContent=m?(m.instrument?m.instrument+' · ':'')+( m.role==='admin'?'Admin':m.role==='guest'?'Guest':'Member'):'New member';
+  if(rd)rd.textContent=m?(m.instrument?t(m.instrument)+' · ':'')+t(m.role==='admin'?'Admin':m.role==='guest'?'Guest':'Member'):t('Member');
 
   // Personal info
   populateCountrySelects();
@@ -5020,13 +5799,12 @@ async function populateMpPage(){
   document.getElementById('mpInst1').value=m?.instrument||currentUser.instrument||cp.instrument||'';
   document.getElementById('mpInst2').value=m?.inst2||cp.instrument2||'';
   renderMpInstPreview();
-  const vmap={'Lead':'Lead vocals','Backing':'Backing vocals','None':'No vocals','Both':'Lead & backing'};
-  document.getElementById('mpVocals').value=vmap[m?.vocals]||vmap[cp.vocals]||'No vocals';
+  document.getElementById('mpVocals').value=m?.vocals||cp.vocals||'None';
 
   // Availability
   const dayNames=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
   document.getElementById('mpAvailDays').innerHTML=dayNames.map((d,i)=>
-    `<div class="dtog ${(m?.avail||currentUser.avail||[1,1,1,1,1,1,1])[i]?'on':''}" onclick="this.classList.toggle('on')" data-di="${i}">${d}</div>`
+    `<div class="dtog ${(m?.avail||currentUser.avail||[1,1,1,1,1,1,1])[i]?'on':''}" onclick="this.classList.toggle('on')" data-di="${i}">${t(d)}</div>`
   ).join('');
 
   // Gear & Links
@@ -5080,12 +5858,12 @@ async function mpSave(sec){
     currentUser.firstName=fn||currentUser.firstName;
     currentUser.lastName=ln||currentUser.lastName;
   } else if(sec==='music'){
-    const vback={'No vocals':'None','Lead vocals':'Lead','Backing vocals':'Backing','Lead & backing':'Both'};
+
     const inst1val=document.getElementById('mpInst1').value;
     await MembersDB.upsertProfile(profileId,{
       instrument:inst1val,
       instrument2:document.getElementById('mpInst2').value,
-      vocals:vback[document.getElementById('mpVocals').value]||'None',
+      vocals:document.getElementById('mpVocals').value||'None',
       gear:document.getElementById('mpGear').value,
     });
     currentUser.instrument=inst1val;
@@ -5147,9 +5925,8 @@ function renderMpReadViews(){
   instEl.innerHTML=[inst1,inst2].filter(Boolean)
     .map(i=>`<span class="pill pgray" style="font-size:.75rem">${i}</span>`).join('')||'<span style="color:var(--ink3);font-size:.84rem">—</span>';
   const vmap={'Lead':'Lead vocals','Backing':'Backing vocals','None':'No vocals','Both':'Lead & backing'};
-  const vback2={'No vocals':'None','Lead vocals':'Lead','Backing vocals':'Backing','Lead & backing':'Both'};
-  const vocalsCode=m?.vocals||vback2[document.getElementById('mpVocals')?.value||'']||'None';
-  document.getElementById('mpv-vocals').textContent=vmap[vocalsCode]||vocalsCode||'—';
+  const vocalsCode=m?.vocals||document.getElementById('mpVocals')?.value||'None';
+  document.getElementById('mpv-vocals').textContent=t(vmap[vocalsCode])||'—';
   const gear=ex.gear||m?.gear||document.getElementById('mpGear')?.value||'';
   const gearWrap=document.getElementById('mpv-gear-wrap');
   document.getElementById('mpv-gear').textContent=gear; gearWrap.style.display=gear?'':'none';
@@ -5160,20 +5937,31 @@ function renderMpReadViews(){
     `<div style="display:flex;flex-direction:row;flex-wrap:wrap;gap:6px">` +
     dayNames.map((d,i)=>{
       const on=(m?.avail||currentUser.avail||[1,1,1,1,1,1,1])[i];
-      return`<div class="dtog ${on?'on':''}" style="pointer-events:none">${d}</div>`;
+      return`<div class="dtog ${on?'on':''}" style="pointer-events:none">${t(d)}</div>`;
     }).join('') +
     `</div>`;
 
-  // Links
+  // Links — read from DB-sourced data (extraData / _profile), not form inputs,
+  // so the read view reflects what's actually saved rather than what's in the form.
   const linksEl=document.getElementById('mpv-links');
-  const active=MP_PLATFORMS.filter(p=>document.getElementById(p.id)?.value.trim());
-  if(active.length){
-    linksEl.innerHTML=`<div class="bpplat">`+active.map(p=>{
-      const url=document.getElementById(p.id).value.trim();
+  const ex2=extraData[currentUser.memberIdx]||{};
+  const cp2=currentUser._profile||{};
+  const linkVals={
+    mpSpotify:  ex2.spotify   ||cp2.spotify_url   ||'',
+    mpApple:    ex2.apple     ||cp2.apple_url      ||'',
+    mpYoutube:  ex2.youtube   ||cp2.youtube_url    ||'',
+    mpInstagram:ex2.instagram ||cp2.instagram_url  ||'',
+    mpFacebook: ex2.facebook  ||cp2.facebook_url   ||'',
+    mpWebsite:  ex2.website   ||cp2.website_url    ||'',
+  };
+  const activeLinks=MP_PLATFORMS.filter(p=>linkVals[p.id]?.trim());
+  if(activeLinks.length){
+    linksEl.innerHTML=`<div class="bpplat">`+activeLinks.map(p=>{
+      const url=linkVals[p.id].trim();
       return`<a class="platl" data-url="${url}" onclick="openMediaUrl(this)">${p.icon} ${p.label}</a>`;
     }).join('')+`</div>`;
   } else {
-    linksEl.innerHTML=`<span style="color:var(--ink3);font-size:.84rem">No links added yet</span>`;
+    linksEl.innerHTML=`<span style="color:var(--ink3);font-size:.84rem">${t('No links added yet')}</span>`;
   }
 }
 
@@ -5273,7 +6061,7 @@ async function saveSettings(){
   const idx=currentUser.memberIdx;
   const m=members[idx];
   if(m) await MembersDB.upsertProfile(m.id,{lang});
-  currentUser.lang=lang;
+  changeLang(lang);
   toast2('Settings saved!');
 }
 </script>
@@ -5291,21 +6079,20 @@ async function saveSettings(){
   <div class="fr">
     <div class="fg" data-i18n="Genre"><label>Genre</label>
       <select id="seGenre">
-        <option>Jazz</option><option>Funk</option><option>Soul</option>
-        <option>Blues</option><option>Pop</option><option>Rock</option><option>Latin</option><option>R&amp;B</option><option>Other</option>
+        <option>Jazz</option><option>Funk</option><option>Soul</option><option>Blues</option>
+        <option>Pop</option><option>Rock</option><option>Hard-Rock</option><option>Country</option><option>Folk</option><option>Latin</option><option>R&amp;B</option><option>Reggae</option><option>Classical</option>
+        <option>Samba</option><option>Bossa Nova</option><option>MPB</option><option>Pagode</option>
+        <option>Forró</option><option>Choro</option><option>Sertanejo</option><option>Brazilian Funk</option>
+        <option>Other</option>
       </select>
     </div>
     <div class="fg" data-i18n="Key"><label>Key</label>
-      <select id="seKey">
-        <option>Am</option><option>C</option><option>G</option><option>D</option><option>Dm</option>
-        <option>F</option><option>Bb</option><option>Eb</option><option>Gm</option><option>Em</option>
-        <option>A</option><option>E</option><option>Fm</option><option>Cm</option>
-      </select>
+      <select id="seKey"></select>
     </div>
   </div>
   <div class="fg" data-i18n="Band Notes"><label>Band Notes</label><textarea id="seNote" style="min-height:60px" placeholder="e.g. Antoine's feature, watch tempo…"></textarea></div>
   <div class="fg">
-    <label><span data-i18n="Duration (optional)">Duration <span style="font-weight:400;color:var(--ink3)">(optional)</span></span></label>
+    <label><span data-i18n-html="Duration (optional)">Duration <span style="font-weight:400;color:var(--ink3)">(optional)</span></span></label>
     <div style="display:flex;gap:8px;align-items:center">
       <input id="seDurMin" type="number" min="0" max="59" placeholder="min" style="flex:1;padding:9px 13px;background:var(--bg);border:1.5px solid var(--bd);border-radius:var(--rad);color:var(--ink);font-family:var(--font);font-size:.83rem;outline:none;transition:border-color .13s" onfocus="this.style.borderColor='var(--a)'" onblur="this.style.borderColor='var(--bd)'">
       <span style="color:var(--ink3);font-weight:600">:</span>
@@ -5320,6 +6107,7 @@ async function saveSettings(){
   <div class="fg" data-i18n="Spotify URL"><label>Spotify URL</label><input id="seSpotify" placeholder="https://open.spotify.com/track/…"></div>
   <div class="fg" data-i18n="YouTube URL"><label>YouTube URL</label><input id="seYoutube" placeholder="https://youtube.com/watch?v=…"></div>
   <div class="fg" data-i18n="Apple Music URL"><label>Apple Music URL</label><input id="seApple" placeholder="https://music.apple.com/…"></div>
+  <div class="fg" data-i18n="Amazon Music URL"><label>Amazon Music URL</label><input id="seAmazon" placeholder="https://music.amazon.com/…"></div>
 
   <!-- Actions row -->
   <div style="height:1px;background:var(--bd);margin:4px 0 14px"></div>
@@ -5490,11 +6278,11 @@ async function saveSettings(){
 <div class="mod" style="max-width:500px">
   <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:16px">
     <div>
-      <div style="font-size:.69rem;font-weight:700;color:var(--a);text-transform:uppercase;letter-spacing:.07em;margin-bottom:4px" data-i18n="🚫 Cancelled">Concert</div>
+      <div style="font-size:.69rem;font-weight:700;color:var(--a);text-transform:uppercase;letter-spacing:.07em;margin-bottom:4px" data-i18n="Concert View">Concert View</div>
       <div class="mott" id="cvTitle" style="margin-bottom:6px"></div>
       <div style="display:flex;gap:5px;flex-wrap:wrap">
-        <span id="cvCancelledBadge" class="pill pr" style="display:none">🚫 Cancelled</span>
-        <span id="cvPastBadge" class="pill pgray" style="display:none">Past</span>
+        <span id="cvCancelledBadge" class="pill pr" style="display:none" data-i18n="🚫 Cancelled">🚫 Cancelled</span>
+        <span id="cvPastBadge" class="pill pgray" style="display:none" data-i18n="Past">Past</span>
       </div>
     </div>
   </div>
@@ -5508,7 +6296,7 @@ async function saveSettings(){
     <div id="cvSlRow" style="display:flex;align-items:flex-start;gap:10px"><svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" style="color:var(--ink3);flex-shrink:0;margin-top:3px"><path d="M2 4h12M2 8h8M2 12h10"/></svg><div id="cvSlBadge" style="display:flex;gap:5px;flex-wrap:wrap"></div></div>
   </div>
   <div style="height:1px;background:var(--bd);margin-bottom:14px"></div>
-  <div style="font-size:.69rem;font-weight:700;color:var(--ink2);margin-bottom:9px;letter-spacing:.04em;text-transform:uppercase">Photos</div>
+  <div style="font-size:.69rem;font-weight:700;color:var(--ink2);margin-bottom:9px;letter-spacing:.04em;text-transform:uppercase" data-i18n="Photos">Photos</div>
   <div id="cvPhotos" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px"></div>
   <div style="height:1px;background:var(--bd);margin-bottom:13px"></div>
   <div id="cvActions" style="display:flex;gap:7px;justify-content:flex-end;flex-wrap:wrap"></div>
@@ -5540,9 +6328,10 @@ async function saveSettings(){
   <!-- Header -->
   <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:16px">
     <div>
-      <div style="font-size:.69rem;font-weight:700;color:var(--g);text-transform:uppercase;letter-spacing:.07em;margin-bottom:4px">Rehearsal</div>
+      <div style="font-size:.69rem;font-weight:700;color:var(--g);text-transform:uppercase;letter-spacing:.07em;margin-bottom:4px" data-i18n="Rehearsal">Rehearsal</div>
       <div class="mott" id="rvTitle" style="margin-bottom:6px"></div>
-      <span id="rvPastBadge" class="pill pgray" style="display:none">Past</span>
+      <span id="rvPastBadge" class="pill pgray" style="display:none" data-i18n="Past">Past</span>
+      <span id="rvCancelledBadge" class="pill pamb" style="display:none" data-i18n="Cancelled">Cancelled</span>
     </div>
   </div>
 
