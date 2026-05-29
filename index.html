@@ -3630,7 +3630,7 @@ async function addSelectedSongs(){
   closeMod('asMod');
   if(toAdd.length){
     toAdd.forEach(id=>{if(!getSlS().includes(id))getSlS().push(id);});
-    renderSL();
+    renderSL();renderSlMeta();
     await SetlistsDB.saveSongs(activeSetlistId, getSlS());
     toast2(`${toAdd.length} song${toAdd.length>1?'s':''} added to set list!`);
   } else {
