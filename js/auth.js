@@ -107,18 +107,13 @@ async function doSignUp() {
   const pw        = document.getElementById('signupPassword').value;
 
   if (!email || !pw) { toast2('Enter email and password', 'w'); return; }
-  if (pw.length < 6) { toast2('Password must be at least 6 characters', 'w'); return; }
+  if (pw.length < 8) { toast2('Password must be at least 8 characters', 'w'); return; }
 
-  const pendingBandId     = sessionStorage.getItem('pendingBandId')   || new URLSearchParams(window.location.search).get('band') || '';
-  const pendingPhone      = sessionStorage.getItem('invitePhone')      || '';
-  const pendingInstrument = sessionStorage.getItem('inviteInstrument') || '';
+  const pendingBandId = sessionStorage.getItem('pendingBandId') || new URLSearchParams(window.location.search).get('band') || '';
   const baseUrl = localStorage.getItem('appUrl') || (window.location.origin + window.location.pathname);
-  // Embed all invite params in the confirmation-email redirect URL so they survive new-tab opens
-  const _rp = new URLSearchParams();
-  if (pendingBandId)     _rp.set('band',       pendingBandId);
-  if (pendingPhone)      _rp.set('phone',       pendingPhone);
-  if (pendingInstrument) _rp.set('instrument',  pendingInstrument);
-  const redirectTo = _rp.toString() ? `${baseUrl}?${_rp.toString()}` : baseUrl;
+  // Only embed the band UUID in the confirmation redirect — no PII in URLs.
+  // Phone and instrument are stored in sessionStorage and survive across tabs without URL exposure.
+  const redirectTo = pendingBandId ? `${baseUrl}?band=${pendingBandId}` : baseUrl;
 
   const { data, error } = await supabase.auth.signUp({
     email,
@@ -261,15 +256,27 @@ supabase.auth.onAuthStateChange(async (event, session) => {
 
     // Restore invite params from confirmation-email URL into sessionStorage (new-tab safe)
     const _urlParams = new URLSearchParams(window.location.search);
-    if (_urlParams.get('phone'))      sessionStorage.setItem('invitePhone',      _urlParams.get('phone'));
-    if (_urlParams.get('instrument')) sessionStorage.setItem('inviteInstrument', _urlParams.get('instrument'));
-    // Also fall back to user metadata (set during signup) if sessionStorage is empty
     const _meta = session.user.user_metadata || {};
-    if (!sessionStorage.getItem('invitePhone')      && _meta.pending_phone)      sessionStorage.setItem('invitePhone',      _meta.pending_phone);
-    if (!sessionStorage.getItem('inviteInstrument') && _meta.pending_instrument) sessionStorage.setItem('inviteInstrument', _meta.pending_instrument);
+
+    // If an opaque invite token is in the URL, look up the metadata server-side
+    // so no PII ever travels in query parameters.
+    const _inviteToken = _urlParams.get('invite') || sessionStorage.getItem('inviteToken') || '';
+    if (_inviteToken) {
+      try {
+        const { data: _invData } = await supabase.rpc('get_invite_by_token', { p_token: _inviteToken });
+        if (_invData && !_invData.error) {
+          if (_invData.band_id    && !sessionStorage.getItem('pendingBandId'))    sessionStorage.setItem('pendingBandId',    _invData.band_id);
+          if (_invData.band_name  && !sessionStorage.getItem('inviteBandName'))   sessionStorage.setItem('inviteBandName',   _invData.band_name);
+          if (_invData.first_name && !sessionStorage.getItem('inviteFirst'))      sessionStorage.setItem('inviteFirst',      _invData.first_name);
+          if (_invData.last_name  && !sessionStorage.getItem('inviteLast'))       sessionStorage.setItem('inviteLast',       _invData.last_name);
+          if (_invData.instrument && !sessionStorage.getItem('inviteInstrument')) sessionStorage.setItem('inviteInstrument', _invData.instrument);
+          sessionStorage.setItem('inviteToken', _inviteToken);
+        }
+      } catch (_) { /* non-fatal — band join still works via invited_band_id in metadata */ }
+    }
 
     // Auto-join band from invite link (?band=UUID) or sessionStorage or user metadata
-    const _pendingBandId = _urlParams.get('band') || sessionStorage.getItem('pendingBandId') || _meta.pending_band_id || '';
+    const _pendingBandId = _urlParams.get('band') || sessionStorage.getItem('pendingBandId') || _meta.pending_band_id || _meta.invited_band_id || '';
     if (_pendingBandId) {
       const { data: joinData, error: joinErr } = await supabase.rpc('join_band_by_code', { p_code: _pendingBandId });
       if (joinData?.success) {
@@ -277,9 +284,16 @@ supabase.auth.onAuthStateChange(async (event, session) => {
         activeBandId = joinData.band_id;
         localStorage.setItem('activeBandId', joinData.band_id);
         sessionStorage.removeItem('pendingBandId');
+        // Mark the invite token as used so it can't be replayed
+        const _usedToken = sessionStorage.getItem('inviteToken');
+        if (_usedToken) {
+          supabase.rpc('mark_invite_used', { p_token: _usedToken }).catch(() => {});
+          sessionStorage.removeItem('inviteToken');
+        }
         window.history.replaceState({}, '', window.location.pathname);
       } else if (joinData?.error === 'already_member') {
         sessionStorage.removeItem('pendingBandId');
+        sessionStorage.removeItem('inviteToken');
         window.history.replaceState({}, '', window.location.pathname);
       } else {
         // RPC not deployed or network error — clean URL but keep pendingBandId for retry on next login
@@ -339,14 +353,25 @@ supabase.auth.onAuthStateChange(async (event, session) => {
     }
 
     document.getElementById('authScreen').style.display = 'flex';
-    // Store all invite params in sessionStorage so they survive the email confirmation redirect
-    if (p.get('bandname'))   sessionStorage.setItem('inviteBandName',   p.get('bandname'));
-    if (p.get('fname'))      sessionStorage.setItem('inviteFirst',      p.get('fname'));
-    if (p.get('lname'))      sessionStorage.setItem('inviteLast',       p.get('lname'));
-    if (p.get('email'))      sessionStorage.setItem('inviteEmail',      p.get('email'));
-    if (p.get('phone'))      sessionStorage.setItem('invitePhone',      p.get('phone'));
-    if (p.get('instrument')) sessionStorage.setItem('inviteInstrument', p.get('instrument'));
-    if (p.get('band'))       sessionStorage.setItem('pendingBandId',    p.get('band'));
+
+    // Opaque invite token — look up all metadata server-side so no PII travels in the URL.
+    if (p.get('invite')) {
+      sessionStorage.setItem('inviteToken', p.get('invite'));
+      try {
+        const { data: _invData } = await supabase.rpc('get_invite_by_token', { p_token: p.get('invite') });
+        if (_invData && !_invData.error) {
+          if (_invData.band_id)    sessionStorage.setItem('pendingBandId',    _invData.band_id);
+          if (_invData.band_name)  sessionStorage.setItem('inviteBandName',   _invData.band_name);
+          if (_invData.first_name) sessionStorage.setItem('inviteFirst',      _invData.first_name);
+          if (_invData.last_name)  sessionStorage.setItem('inviteLast',       _invData.last_name);
+          if (_invData.email)      sessionStorage.setItem('inviteEmail',      _invData.email);
+          if (_invData.instrument) sessionStorage.setItem('inviteInstrument', _invData.instrument);
+        }
+      } catch (_) { /* non-fatal */ }
+    }
+
+    // Legacy plain-band join link (?band=UUID) — no PII, just the band identifier
+    if (p.get('band')) sessionStorage.setItem('pendingBandId', p.get('band'));
 
     // Switch to signup and show invite UI if ANY invite param is present
     const _hasInvite = ['bandname','fname','lname','email','phone','instrument','band'].some(k => p.get(k));

@@ -1487,7 +1487,7 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
     <div class="mott" style="margin-bottom:6px">Welcome to the band!</div>
     <div class="most" id="onboardingBandMsg">You've been added to the band. Set a password to secure your account, then complete your profile.</div>
   </div>
-  <div class="fg"><label>New Password</label><input type="password" id="onboardingPw" placeholder="At least 6 characters" autocomplete="new-password"></div>
+  <div class="fg"><label>New Password</label><input type="password" id="onboardingPw" placeholder="At least 8 characters" autocomplete="new-password"></div>
   <div class="fg"><label>Confirm Password</label><input type="password" id="onboardingPwConfirm" placeholder="Repeat password" autocomplete="new-password"></div>
   <div style="margin-top:4px">
     <button class="btn btn-p btn-fw" id="onboardingSaveBtn" onclick="saveOnboardingPassword()">Set Password &amp; Continue →</button>
@@ -5211,7 +5211,7 @@ function showOnboarding(){
 async function saveOnboardingPassword(){
   const pw=(document.getElementById('onboardingPw')?.value||'');
   const pw2=(document.getElementById('onboardingPwConfirm')?.value||'');
-  if(pw.length<6){toast2('Password must be at least 6 characters','w');return;}
+  if(pw.length<8){toast2('Password must be at least 8 characters','w');return;}
   if(pw!==pw2){toast2('Passwords do not match','w');return;}
   const btn=document.getElementById('onboardingSaveBtn');
   if(btn){btn.disabled=true;btn.textContent='Saving…';}
