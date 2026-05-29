@@ -228,6 +228,9 @@ async function doResetPassword() {
   // SIGNED_OUT is blocked by the _inPasswordRecovery guard, so we transition manually.
   try { await supabase.auth.signOut(); } catch (_) {}
   _inPasswordRecovery = false;
+  // Remove the recovery URL params so that a page refresh doesn't re-activate
+  // the _inPasswordRecovery guard and block the next normal sign-in.
+  window.history.replaceState({}, '', window.location.pathname);
   if (typeof switchTab === 'function') switchTab('login');
   toast2('Password updated! Please sign in with your new password.');
 }
@@ -293,10 +296,18 @@ supabase.auth.onAuthStateChange(async (event, session) => {
 
   // While the recovery form is open, suppress any automatic sign-in events so the
   // user isn't pushed into the app before they've set their new password.
-  if (_inPasswordRecovery) return;
+  if (_inPasswordRecovery) {
+    _clearLoginTimer(); // auth succeeded — don't let the safety timer fire as a timeout
+    return;
+  }
 
   // Only run full init on login / session restore — not on token refreshes
   if (event !== 'SIGNED_IN' && event !== 'INITIAL_SESSION') return;
+
+  // Auth call succeeded — clear the safety timer immediately.
+  // The timer only guards the auth round-trip; DB queries below are not its concern.
+  _clearLoginTimer();
+
   if (!session) {
     document.getElementById('app').classList.remove('vis');
     document.getElementById('authScreen').style.display = 'flex';
@@ -340,7 +351,6 @@ supabase.auth.onAuthStateChange(async (event, session) => {
     }
 
     // Hide auth screen and show the app shell immediately — data loads in the background
-    _clearLoginTimer();
     ['lf','sf','sf-confirm','ff','ff-sent','auth-tabs'].forEach(id => {
       const el = document.getElementById(id);
       if (el) el.style.display = 'none';
