@@ -4425,7 +4425,11 @@ async function confirmCancel(notify){
       if(c){
         msg=`🚫 Concert on ${c.date} cancelled. Please check Bandapp for updates: ${appUrl}`;
         const saved=await ConcertsDB.upsert({...c, cancelled:true});
-        if(!saved){closeMod('cancelMod');cancelTarget=null;return;}
+        if(!saved){
+          toast2('Could not cancel concert — please try again','w');
+          closeMod('cancelMod');cancelTarget=null;return;
+        }
+        logCalChange('cancelled','concert',saved.id,`Concert "${c.title}"${c.date?' on '+c.date:''} cancelled`,true);
         syncCrossBandBlackouts(saved);
         await loadConcerts();
         renderConcerts();renderCal();updateSidebarCounts();
@@ -4435,14 +4439,18 @@ async function confirmCancel(notify){
       if(r){
         msg=`🚫 Rehearsal on ${r.date} cancelled. Please check Bandapp for updates: ${appUrl}`;
         const saved=await RehearsalsDB.upsert({...r, cancelled:true});
-        if(!saved){closeMod('cancelMod');cancelTarget=null;return;}
+        if(!saved){
+          toast2('Could not cancel rehearsal — please try again','w');
+          closeMod('cancelMod');cancelTarget=null;return;
+        }
+        logCalChange('cancelled','rehearsal',saved.id,`Rehearsal "${r.title}"${r.date?' on '+r.date:''} cancelled`,true);
         await loadRehearsals();
         renderRehearsals();renderCal();updateSidebarCounts();
       }
     }
   } catch(e){
     console.error('[bandapp] confirmCancel error:',e);
-    toast2('Something went wrong cancelling the event','w');
+    toast2('Something went wrong cancelling the event — check console for details','w');
     closeMod('cancelMod');cancelTarget=null;return;
   }
   closeMod('cancelMod');closeMod('cvMod');closeMod('reViewMod');cancelTarget=null;
