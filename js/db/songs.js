@@ -73,7 +73,8 @@ const SongsDB = {
   async upsertNote(songId, note) {
     const { error } = await supabase
       .from('song_notes')
-      .upsert({ song_id: songId, user_id: currentUser.id, note });
+      .upsert({ song_id: songId, user_id: currentUser.id, note },
+               { onConflict: 'song_id,user_id' });
     if (error) { handleDbError(error); }
   },
 
