@@ -2737,7 +2737,7 @@ function renderSL(){
       <td class="sartist" style="color:var(--ink2);font-size:.75rem">${s.artist}</td>
       <td><span class="kp">${s.key}</span></td>
       <td style="font-family:var(--mono);font-size:.72rem;color:var(--ink2);white-space:nowrap">${s.dur?fmtDur(s.dur):'—'}</td>
-      <td class="lkcol">${openSongMedia(s,i)}</td>
+      <td class="lkcol" style="white-space:nowrap">${openSongMedia(s,i)}${s.lyrics?`<button class="lb2" style="color:var(--a)" data-url="${s.lyrics}" onclick="openMediaUrl(this)" title="📄 Lyrics / Sheet Music">📄</button>`:''}</td>
       <td class="nc">${s.note}</td>
       <td><button class="btn btn-xs btn-g" onclick="removeSongFromSL('${id}')">✕</button></td>
     </tr>`;
@@ -4009,7 +4009,7 @@ function chMonth(dir){curMonth.setMonth(curMonth.getMonth()+dir);renderCal();}
 function logCalChange(action, entityType, entityId, description, impactsEvent=false){
   if(!activeBandId||!currentUser.id||typeof ChangelogDB==='undefined')return;
   ChangelogDB.log(activeBandId,currentUser.id,action,entityType,entityId,description,impactsEvent)
-    .catch(()=>{});
+    .catch(e=>console.error('[bandapp] logCalChange failed:',e?.message||e));
 }
 
 // Does the given date range overlap any existing rehearsal or concert?
@@ -4060,6 +4060,14 @@ async function renderCalChangelog(){
   list.innerHTML=`<div style="text-align:center;padding:14px;font-size:.78rem;color:var(--ink3)">Loading…</div>`;
 
   const entries=await ChangelogDB.fetch(activeBandId,days,userId||null);
+
+  // null = table doesn't exist yet
+  if(entries===null){
+    list.innerHTML=`<div style="padding:12px 14px;background:var(--amb2);border:1px solid rgba(217,119,6,.35);border-radius:var(--rad);font-size:.78rem;color:var(--amb)">
+      ⚠ Change Log is not active yet. Run <strong>supabase/calendar_changelog.sql</strong> in the Supabase Dashboard SQL Editor to enable it.
+    </div>`;
+    return;
+  }
 
   if(!entries.length){
     list.innerHTML=`<div style="text-align:center;padding:14px;font-size:.78rem;color:var(--ink3)">No changes recorded in the last ${days} day${days===1?'':'s'}.</div>`;

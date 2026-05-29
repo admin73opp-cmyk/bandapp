@@ -4,7 +4,8 @@
 
 const ChangelogDB = {
 
-  // Write one entry — non-blocking; caller does not await
+  // Write one entry — non-blocking; caller does not await.
+  // On failure logs to console.error so the browser console shows the real reason.
   async log(bandId, userId, action, entityType, entityId, description, impactsEvent = false) {
     const { error } = await supabase
       .from('calendar_changelog')
@@ -17,11 +18,16 @@ const ChangelogDB = {
         description,
         impacts_event: impactsEvent,
       });
-    if (error) console.warn('[bandapp] changelog insert failed:', error.message);
+    if (error) {
+      console.error('[bandapp] changelog insert failed:', error.code, error.message);
+    }
   },
 
   // Fetch entries for the active band within `days` days, newest first.
-  // Returns objects with a synthetic `user_name` string already resolved.
+  // Returns:
+  //   null  — table does not exist (run supabase/calendar_changelog.sql)
+  //   []    — table exists but no entries match the filter
+  //   [...] — list of entries with synthetic user_name resolved
   async fetch(bandId, days = 10, userId = null) {
     const since = new Date();
     since.setDate(since.getDate() - days);
@@ -37,7 +43,15 @@ const ChangelogDB = {
     if (userId) q = q.eq('user_id', userId);
 
     const { data, error } = await q;
-    if (error) { console.warn('[bandapp] changelog fetch failed:', error.message); return []; }
+    if (error) {
+      // 42P01 = "relation does not exist" — table hasn't been created yet
+      if (error.code === '42P01' || error.message?.includes('does not exist')) {
+        console.warn('[bandapp] calendar_changelog table missing — run supabase/calendar_changelog.sql');
+        return null; // sentinel: table not found
+      }
+      console.error('[bandapp] changelog fetch failed:', error.code, error.message);
+      return [];
+    }
 
     return (data || []).map(r => ({
       ...r,
