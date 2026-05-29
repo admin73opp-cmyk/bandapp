@@ -232,6 +232,10 @@ select option{background:var(--w)}
 .cd.creh .cdn{color:#fff;font-weight:700}
 .cd.creh .cdot-r{background:#fff}
 .cd.creh .cltn{color:#fff}
+.cd.creh-warn{background:var(--amb);border:2.5px solid #92400E;box-shadow:0 0 0 1px rgba(217,119,6,.3)}
+.cd.creh-warn .cdn{color:#fff;font-weight:700}
+.cd.creh-warn .cdot-r{background:#fff}
+.creh-warn-lbl{font-size:.42rem;color:#fff;text-align:center;line-height:1.1;margin-top:1px;max-height:16px;overflow:hidden;opacity:.9}
 .cd.cbo{background:var(--r2);border-color:#FECACA;cursor:not-allowed}.cd.cbo .cdn{color:var(--r)}
 .cd.ce{background:transparent;border-color:transparent;cursor:default}
 .cdn{font-size:.75rem;font-weight:500}
@@ -771,6 +775,7 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
           <div class="cal-leg">
             <div class="li" data-i18n="Concert"><div class="ld2" style="background:var(--a)"></div>Concert</div>
             <div class="li" data-i18n="Rehearsal"><div class="ld2" style="background:#15803D;border:2px solid #86EFAC"></div>Rehearsal</div>
+            <div class="li"><div class="ld2" style="background:var(--amb);border:2px solid #92400E"></div>Rehearsal — member conflict ⚠</div>
             <div class="li" data-i18n="Birthday"><div class="ld2" style="background:var(--amb)"></div>Birthday</div>
             <div class="li" data-i18n="Blackout"><div class="ld2" style="background:var(--r)"></div>Blackout</div>
             <div class="li" data-i18n="Cross-band conflict ⊘"><div class="ld2" style="background:var(--amb);opacity:.7;border:1.5px solid var(--amb)"></div>Cross-band conflict ⊘</div>
@@ -3759,21 +3764,32 @@ function renderCal(){
     for(let d=1;d<=dim;d++){
       const key=`${yr}-${String(mo+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
       const ev=calEv[key]||[];const isT=key===TODAY_STR;const bol=boMap[key];
-      const full=!bol&&isFB(yr,mo,d)&&!ev.includes('concert')&&!ev.includes('rehearsal');
+      const isReh=ev.includes('rehearsal');
+      const full=!bol&&isFB(yr,mo,d)&&!ev.includes('concert')&&!isReh;
       // Use pre-computed Sets for O(1) lookup per member per day
-      const hasXB=!bol&&!ev.includes('concert')&&!ev.includes('rehearsal')&&memberBlocks.some(s=>s.has(key));
+      const hasXB=!bol&&!ev.includes('concert')&&!isReh&&memberBlocks.some(s=>s.has(key));
       const isPastDay=key<TODAY_STR;
+      // For scheduled rehearsals check if any member became unavailable after the fact
+      let rehConflictNames=[];
+      if(isReh&&!bol&&members.length){
+        const avs=getMAvail(yr,mo,d);
+        rehConflictNames=members.filter((_,i)=>!avs[i]).map(m=>m.firstName||m.name.split(' ')[0]);
+      }
       let cls='cd';
       if(isT)cls+=' cto';
       if(isPastDay)cls+=' cd-past';
       if(bol)cls+=' cbo';
       else if(ev.includes('concert'))cls+=' ccon';
-      else if(ev.includes('rehearsal'))cls+=' creh';
+      else if(isReh)cls+=rehConflictNames.length?' creh-warn':' creh';
       else if(full)cls+=' cfb';
       else if(hasXB)cls+=' cd-xband';
       let inn=`<div class="cdn">${d}</div>`;
       if(full)inn+=`<div class="cltn">⚡</div>`;
       if(bol)inn+=`<div class="cbol">${bol}</div>`;
+      if(rehConflictNames.length){
+        const names=rehConflictNames.slice(0,2).join(', ')+(rehConflictNames.length>2?'…':'');
+        inn+=`<div class="creh-warn-lbl">⚠ ${names}</div>`;
+      }
       if(hasXB&&!full){
         const xbLabel=members.reduce((acc,m)=>{const lbl=getCrossBandLabel(m.name,key);return lbl||acc;},'');
         if(xbLabel)inn+=`<div class="cd-xblabel">${xbLabel}</div>`;
@@ -3789,7 +3805,24 @@ function renderCal(){
   }
 }
 
-function calClk(d,key,isFull){if(key<TODAY_STR)return;const ev=calEv[key]||[];if(ev.includes('rehearsal')){toast2(`${t('Rehearsal')} - ${d}`);return;}if(ev.includes('concert')){toast2(`${t('Concert')} - ${d}`);return;}openRehMod(d,key,isFull);}
+function calClk(d,key,isFull){
+  if(key<TODAY_STR)return;
+  const ev=calEv[key]||[];
+  if(ev.includes('rehearsal')){
+    const _yr=parseInt(key.slice(0,4)),_mo=parseInt(key.slice(5,7))-1;
+    const avs=getMAvail(_yr,_mo,d);
+    const unavail=members.filter((_,i)=>!avs[i]).map(m=>m.firstName||m.name.split(' ')[0]);
+    if(unavail.length){
+      const names=unavail.slice(0,4).join(', ')+(unavail.length>4?'…':'');
+      toast2(`⚠ ${names} ${unavail.length===1?'is':'are'} unavailable on this rehearsal date`,'w');
+    } else {
+      toast2(`${t('Rehearsal')} · ${d}`);
+    }
+    return;
+  }
+  if(ev.includes('concert')){toast2(`${t('Concert')} - ${d}`);return;}
+  openRehMod(d,key,isFull);
+}
 function chMonth(dir){curMonth.setMonth(curMonth.getMonth()+dir);renderCal();}
 
 
