@@ -54,10 +54,12 @@ const MembersDB = {
   },
 
   async upsertProfile(userId, fields) {
+    // Use upsert so a missing profile row is created rather than silently
+    // dropping the save. .update() returns no error when 0 rows match, making
+    // failures invisible; .upsert() will surface a real error on conflict mismatches.
     const { error } = await supabase
       .from('profiles')
-      .update(fields)
-      .eq('id', userId);
+      .upsert({ id: userId, ...fields }, { onConflict: 'id' });
     if (error) { handleDbError(error); }
   },
 

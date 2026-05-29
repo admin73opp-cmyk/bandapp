@@ -5918,9 +5918,9 @@ function mpCancel(sec){
   document.getElementById('mp-btn-cancel-'+sec).style.display='none';
 }
 async function mpSave(sec){
-  const idx=currentUser.memberIdx;
-  const m=members[idx];
-  const profileId=m?.id||currentUser.id;
+  // Always write to the current user's own profile — never rely on memberIdx
+  // which may be stale or point to a different member after a band switch.
+  const profileId=currentUser.id;
   if(!profileId){toast2('Profile not loaded','w');return;}
   if(sec==='personal'){
     const fn=document.getElementById('mpFirst').value.trim();
