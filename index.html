@@ -3325,10 +3325,10 @@ function renderSheet(){
       <td><select class="sh-sel" data-field="genre" data-id="${s.id}" onchange="sheetEdit(this)">${GENRES_LIST.map(g=>`<option value="${g}"${s.genre===g?' selected':''}>${g}</option>`).join('')}</select></td>
       <td><select class="sh-sel" data-field="key" data-id="${s.id}" onchange="sheetEdit(this)">${KEYS_LIST.map(k=>`<option value="${k}"${s.key===k?' selected':''}>${k||'—'}</option>`).join('')}</select></td>
       <td style="white-space:nowrap">
-        <div style="display:flex;align-items:center;gap:3px">
-          <input class="sh-cell" style="width:38px;text-align:center;padding:4px 5px;font-family:var(--mono);font-size:.78rem" type="number" min="0" max="99" placeholder="0" value="${s.dur?Math.floor(s.dur/60):''}" data-field="durMin" data-id="${s.id}" onchange="sheetEditDur(this)" onkeydown="sheetKeyDownDur(event,this,'durSec')" title="Minutes">
-          <span style="color:var(--ink3);font-weight:700;font-size:.8rem">:</span>
-          <input class="sh-cell" style="width:34px;text-align:center;padding:4px 5px;font-family:var(--mono);font-size:.78rem" type="number" min="0" max="59" placeholder="00" value="${s.dur?String(s.dur%60).padStart(2,'0'):''}" data-field="durSec" data-id="${s.id}" onchange="sheetEditDur(this)" onkeydown="sheetKeyDownDur(event,this,'durMin')" title="Seconds">
+        <div style="display:flex;align-items:center;gap:2px">
+          <input class="sh-cell" style="width:38px;min-width:0;text-align:center;padding:4px 5px;font-family:var(--mono);font-size:.78rem" type="number" min="0" max="99" placeholder="0" value="${s.dur?Math.floor(s.dur/60):''}" data-field="durMin" data-id="${s.id}" onchange="sheetEditDur(this)" onkeydown="sheetKeyDownDur(event,this,'durSec')" title="Minutes">
+          <span style="color:var(--ink3);font-weight:700;font-size:.8rem;flex-shrink:0">:</span>
+          <input class="sh-cell" style="width:34px;min-width:0;text-align:center;padding:4px 5px;font-family:var(--mono);font-size:.78rem" type="number" min="0" max="59" placeholder="00" value="${s.dur?String(s.dur%60).padStart(2,'0'):''}" data-field="durSec" data-id="${s.id}" onchange="sheetEditDur(this)" onkeydown="sheetKeyDownDur(event,this,'durMin')" title="Seconds">
         </div>
       </td>
       <td><input class="sh-cell" style="min-width:140px" value="${esc(s.note||'')}" data-field="note" data-id="${s.id}" onchange="sheetEdit(this)" onkeydown="sheetKeyDown(event,this)"></td>
