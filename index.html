@@ -3434,6 +3434,54 @@ function renderSheetHead(){
   </tr>`;
 }
 
+// Returns the <td> HTML for a single song cell, keyed by field name.
+// renderSheet maps SHEET_COLS over this so body rows always follow the
+// current column order (including after a drag-to-reorder).
+function renderSheetCell(s, field){
+  switch(field){
+    case 'title':
+      return`<td><input class="sh-cell" value="${esc(s.title)}" data-field="title" data-id="${s.id}" onchange="sheetEdit(this)" onkeydown="sheetKeyDown(event,this)"></td>`;
+    case 'artist':
+      return`<td><input class="sh-cell" value="${esc(s.artist)}" data-field="artist" data-id="${s.id}" onchange="sheetEdit(this)" onkeydown="sheetKeyDown(event,this)"></td>`;
+    case 'genre':
+      return`<td><select class="sh-sel" data-field="genre" data-id="${s.id}" onchange="sheetEdit(this)">${GENRES_LIST.map(g=>`<option value="${g}"${s.genre===g?' selected':''}>${g}</option>`).join('')}</select></td>`;
+    case 'key':
+      return`<td><select class="sh-sel" data-field="key" data-id="${s.id}" onchange="sheetEdit(this)">${KEYS_LIST.map(k=>`<option value="${k}"${s.key===k?' selected':''}>${k||'—'}</option>`).join('')}</select></td>`;
+    case 'dur':
+      return`<td style="white-space:nowrap"><div style="display:flex;align-items:center;gap:2px">
+        <input class="sh-cell sh-dur" style="width:46px;min-width:0;text-align:center;padding:4px 5px;font-family:var(--mono);font-size:.78rem" type="number" min="0" max="99" placeholder="0" value="${s.dur?Math.floor(s.dur/60):''}" data-field="durMin" data-id="${s.id}" onchange="sheetEditDur(this)" onkeydown="sheetKeyDownDur(event,this,'durSec')" title="Minutes">
+        <span style="color:var(--ink3);font-weight:700;font-size:.8rem;flex-shrink:0">:</span>
+        <input class="sh-cell sh-dur" style="width:46px;min-width:0;text-align:center;padding:4px 5px;font-family:var(--mono);font-size:.78rem" type="number" min="0" max="59" placeholder="00" value="${s.dur?String(s.dur%60).padStart(2,'0'):''}" data-field="durSec" data-id="${s.id}" onchange="sheetEditDur(this)" onkeydown="sheetKeyDownDur(event,this,'durMin')" title="Seconds">
+      </div></td>`;
+    case 'note':
+      return`<td><input class="sh-cell" style="min-width:140px" value="${esc(s.note||'')}" data-field="note" data-id="${s.id}" onchange="sheetEdit(this)" onkeydown="sheetKeyDown(event,this)"></td>`;
+    case 'lyrics':
+      return`<td style="white-space:nowrap;padding:4px 6px"><div style="display:flex;align-items:center;gap:4px">
+        <input class="sh-cell" style="flex:1;min-width:100px;font-size:.72rem" value="${esc(s.lyrics||'')}" placeholder="Paste link or upload →" data-field="lyrics" data-id="${s.id}" onchange="sheetEdit(this)" onkeydown="sheetKeyDown(event,this)" title="Lyrics URL">
+        <label style="cursor:pointer;padding:3px 6px;border-radius:5px;border:1.5px solid var(--bd);background:var(--bg);font-size:.68rem;color:var(--ink2);flex-shrink:0;line-height:1.5" title="Upload lyrics file">⬆<input type="file" accept=".pdf,.png,.jpg,.jpeg,.gif,.mxl,.xml" style="display:none" onchange="handleSheetFileUpload(event,'${s.id}','lyrics')"></label>
+        ${s.lyrics?`<a href="${esc(s.lyrics)}" target="_blank" rel="noopener noreferrer" style="font-size:.8rem;text-decoration:none;flex-shrink:0" title="View Lyrics">📄</a>`:''}
+      </div></td>`;
+    case 'sheet_music':
+      return`<td style="white-space:nowrap;padding:4px 6px"><div style="display:flex;align-items:center;gap:4px">
+        <input class="sh-cell" style="flex:1;min-width:100px;font-size:.72rem" value="${esc(s.sheet_music||'')}" placeholder="Paste link or upload →" data-field="sheet_music" data-id="${s.id}" onchange="sheetEdit(this)" onkeydown="sheetKeyDown(event,this)" title="Sheet Music URL">
+        <label style="cursor:pointer;padding:3px 6px;border-radius:5px;border:1.5px solid var(--bd);background:var(--bg);font-size:.68rem;color:var(--ink2);flex-shrink:0;line-height:1.5" title="Upload sheet music file">⬆<input type="file" accept=".pdf,.png,.jpg,.jpeg,.gif,.mxl,.xml" style="display:none" onchange="handleSheetFileUpload(event,'${s.id}','sheet_music')"></label>
+        ${s.sheet_music?`<a href="${esc(s.sheet_music)}" target="_blank" rel="noopener noreferrer" style="font-size:.8rem;text-decoration:none;flex-shrink:0" title="View Sheet Music">🎵</a>`:''}
+      </div></td>`;
+    case 'spotify':
+      return`<td><input class="sh-cell" style="min-width:150px;font-size:.72rem" value="${esc(s.spotify||'')}" placeholder="Spotify URL" data-field="spotify" data-id="${s.id}" onchange="sheetEdit(this)" onkeydown="sheetKeyDown(event,this)"></td>`;
+    case 'youtube':
+      return`<td><input class="sh-cell" style="min-width:150px;font-size:.72rem" value="${esc(s.youtube||'')}" placeholder="YouTube URL" data-field="youtube" data-id="${s.id}" onchange="sheetEdit(this)" onkeydown="sheetKeyDown(event,this)"></td>`;
+    case 'apple':
+      return`<td><input class="sh-cell" style="min-width:150px;font-size:.72rem" value="${esc(s.apple||'')}" placeholder="Apple Music URL" data-field="apple" data-id="${s.id}" onchange="sheetEdit(this)" onkeydown="sheetKeyDown(event,this)"></td>`;
+    case 'amazon':
+      return`<td><input class="sh-cell" style="min-width:150px;font-size:.72rem" value="${esc(s.amazon||'')}" placeholder="Amazon Music URL" data-field="amazon" data-id="${s.id}" onchange="sheetEdit(this)" onkeydown="sheetKeyDown(event,this)"></td>`;
+    case 'hidden':
+      return`<td><div class="sh-chk"><input type="checkbox"${s.hidden?' checked':''} style="accent-color:var(--a);width:15px;height:15px;cursor:pointer" data-field="hidden" data-id="${s.id}" onchange="sheetEdit(this)"></div></td>`;
+    default:
+      return'<td></td>';
+  }
+}
+
 function renderSheet(){
   renderLibFilters();
   renderSheetHead();
@@ -3442,41 +3490,7 @@ function renderSheet(){
   body.innerHTML=sorted.map((s,i)=>`
     <tr class="sh-row${s.hidden?' hidden-row':''}" data-id="${s.id}">
       <td><div class="sh-cell-num">${i+1}</div></td>
-      <td><input class="sh-cell" value="${esc(s.title)}" data-field="title" data-id="${s.id}" onchange="sheetEdit(this)" onkeydown="sheetKeyDown(event,this)"></td>
-      <td><input class="sh-cell" value="${esc(s.artist)}" data-field="artist" data-id="${s.id}" onchange="sheetEdit(this)" onkeydown="sheetKeyDown(event,this)"></td>
-      <td><select class="sh-sel" data-field="genre" data-id="${s.id}" onchange="sheetEdit(this)">${GENRES_LIST.map(g=>`<option value="${g}"${s.genre===g?' selected':''}>${g}</option>`).join('')}</select></td>
-      <td><select class="sh-sel" data-field="key" data-id="${s.id}" onchange="sheetEdit(this)">${KEYS_LIST.map(k=>`<option value="${k}"${s.key===k?' selected':''}>${k||'—'}</option>`).join('')}</select></td>
-      <td style="white-space:nowrap">
-        <div style="display:flex;align-items:center;gap:2px">
-          <input class="sh-cell sh-dur" style="width:46px;min-width:0;text-align:center;padding:4px 5px;font-family:var(--mono);font-size:.78rem" type="number" min="0" max="99" placeholder="0" value="${s.dur?Math.floor(s.dur/60):''}" data-field="durMin" data-id="${s.id}" onchange="sheetEditDur(this)" onkeydown="sheetKeyDownDur(event,this,'durSec')" title="Minutes">
-          <span style="color:var(--ink3);font-weight:700;font-size:.8rem;flex-shrink:0">:</span>
-          <input class="sh-cell sh-dur" style="width:46px;min-width:0;text-align:center;padding:4px 5px;font-family:var(--mono);font-size:.78rem" type="number" min="0" max="59" placeholder="00" value="${s.dur?String(s.dur%60).padStart(2,'0'):''}" data-field="durSec" data-id="${s.id}" onchange="sheetEditDur(this)" onkeydown="sheetKeyDownDur(event,this,'durMin')" title="Seconds">
-        </div>
-      </td>
-      <td><input class="sh-cell" style="min-width:140px" value="${esc(s.note||'')}" data-field="note" data-id="${s.id}" onchange="sheetEdit(this)" onkeydown="sheetKeyDown(event,this)"></td>
-      <td style="white-space:nowrap;padding:4px 6px">
-        <div style="display:flex;align-items:center;gap:4px">
-          <input class="sh-cell" style="flex:1;min-width:100px;font-size:.72rem" value="${esc(s.lyrics||'')}" placeholder="Paste link or upload →" data-field="lyrics" data-id="${s.id}" onchange="sheetEdit(this)" onkeydown="sheetKeyDown(event,this)" title="Lyrics URL">
-          <label style="cursor:pointer;padding:3px 6px;border-radius:5px;border:1.5px solid var(--bd);background:var(--bg);font-size:.68rem;color:var(--ink2);flex-shrink:0;line-height:1.5" title="Upload lyrics file">
-            ⬆<input type="file" accept=".pdf,.png,.jpg,.jpeg,.gif,.mxl,.xml" style="display:none" onchange="handleSheetFileUpload(event,'${s.id}','lyrics')">
-          </label>
-          ${s.lyrics?`<a href="${esc(s.lyrics)}" target="_blank" rel="noopener noreferrer" style="font-size:.8rem;text-decoration:none;flex-shrink:0" title="View Lyrics">📄</a>`:''}
-        </div>
-      </td>
-      <td style="white-space:nowrap;padding:4px 6px">
-        <div style="display:flex;align-items:center;gap:4px">
-          <input class="sh-cell" style="flex:1;min-width:100px;font-size:.72rem" value="${esc(s.sheet_music||'')}" placeholder="Paste link or upload →" data-field="sheet_music" data-id="${s.id}" onchange="sheetEdit(this)" onkeydown="sheetKeyDown(event,this)" title="Sheet Music URL">
-          <label style="cursor:pointer;padding:3px 6px;border-radius:5px;border:1.5px solid var(--bd);background:var(--bg);font-size:.68rem;color:var(--ink2);flex-shrink:0;line-height:1.5" title="Upload sheet music file">
-            ⬆<input type="file" accept=".pdf,.png,.jpg,.jpeg,.gif,.mxl,.xml" style="display:none" onchange="handleSheetFileUpload(event,'${s.id}','sheet_music')">
-          </label>
-          ${s.sheet_music?`<a href="${esc(s.sheet_music)}" target="_blank" rel="noopener noreferrer" style="font-size:.8rem;text-decoration:none;flex-shrink:0" title="View Sheet Music">🎵</a>`:''}
-        </div>
-      </td>
-      <td><input class="sh-cell" style="min-width:150px;font-size:.72rem" value="${esc(s.spotify||'')}" placeholder="Spotify URL" data-field="spotify" data-id="${s.id}" onchange="sheetEdit(this)" onkeydown="sheetKeyDown(event,this)"></td>
-      <td><input class="sh-cell" style="min-width:150px;font-size:.72rem" value="${esc(s.youtube||'')}" placeholder="YouTube URL" data-field="youtube" data-id="${s.id}" onchange="sheetEdit(this)" onkeydown="sheetKeyDown(event,this)"></td>
-      <td><input class="sh-cell" style="min-width:150px;font-size:.72rem" value="${esc(s.apple||'')}" placeholder="Apple Music URL" data-field="apple" data-id="${s.id}" onchange="sheetEdit(this)" onkeydown="sheetKeyDown(event,this)"></td>
-      <td><input class="sh-cell" style="min-width:150px;font-size:.72rem" value="${esc(s.amazon||'')}" placeholder="Amazon Music URL" data-field="amazon" data-id="${s.id}" onchange="sheetEdit(this)" onkeydown="sheetKeyDown(event,this)"></td>
-      <td><div class="sh-chk"><input type="checkbox"${s.hidden?' checked':''} style="accent-color:var(--a);width:15px;height:15px;cursor:pointer" data-field="hidden" data-id="${s.id}" onchange="sheetEdit(this)"></div></td>
+      ${SHEET_COLS.map(col=>renderSheetCell(s,col.field)).join('')}
       ${currentUser.role==='admin'?`<td style="text-align:center;padding:4px"><button class="btn-ic btn" onclick="deleteSheetRow('${s.id}')" style="width:24px;height:24px;color:var(--r);border-color:var(--r2)" title="Delete"><svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 4h12M5 4V2h6v2M6 7v5M10 7v5M3 4l1 10h8l1-10"/></svg></button></td>`:'<td></td>'}
     </tr>`).join('');
 }
