@@ -3035,11 +3035,9 @@ function renderSlMeta(){
         `<span style="display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:99px;background:var(--g2);border:1.5px solid #86EFAC;font-size:.75rem;font-weight:600;color:var(--g);cursor:pointer;${r.date<TODAY_STR?'opacity:.65':''}" onclick="nav('rehearsals')">🎸 ${r.title}${r.date?' · '+r.date:''}</span>
          ${isAdmin?`<button class="btn btn-xs btn-g" onclick="linkSlToRehearsal(null,'${r.id}')" style="font-size:.66rem" title="Unlink">✕</button>`:''}`
       ).join('');
-      rehRow.innerHTML=`<span style="font-size:.72rem;color:var(--ink3)">Linked rehearsals:</span>${chips}${isAdmin?`<button class="btn btn-xs btn-g" onclick="openSlRehLinkModal()" style="font-size:.7rem">+ Link more</button>`:''}`;
-    } else if(isAdmin){
-      rehRow.innerHTML=`<button class="btn btn-xs btn-g" onclick="openSlRehLinkModal()" style="font-size:.7rem">🔗 Link to Rehearsal</button>`;
+      rehRow.innerHTML=`<span style="font-size:.72rem;color:var(--ink3)" data-i18n="Linked rehearsals:">${t('Linked rehearsals:')||'Linked rehearsals:'}</span>${chips}${isAdmin?`<button class="btn btn-xs btn-g" onclick="openSlRehLinkModal()" style="font-size:.7rem">+ Link more</button>`:''}`;
     } else {
-      rehRow.innerHTML='';
+      rehRow.innerHTML=`<span style="font-size:.72rem;color:var(--ink3)" data-i18n="No rehearsal linked">${t('No rehearsal linked')||'No rehearsal linked'}</span>${isAdmin?` <button class="btn btn-xs btn-g" onclick="openSlRehLinkModal()" style="font-size:.7rem">🔗 ${t('Link to Rehearsal')||'Link to Rehearsal'}</button>`:''}`;
     }
   }
 
@@ -3246,6 +3244,8 @@ function renderLib(){
         <span class="kp">${s.key}</span>
       </div>
       <div class="sclinks">
+        ${s.lyrics?`<a class="svb svb-ly" href="${s.lyrics}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">📄 Lyrics</a>`:''}
+        ${s.sheet_music?`<a class="svb svb-ly" href="${s.sheet_music}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">🎵 Sheet</a>`:''}
         ${s.spotify?`<button class="svb svb-sp" data-url="${s.spotify}" onclick="event.stopPropagation();openMediaUrl(this)">Spotify</button>`:''}
         ${s.youtube?`<button class="svb svb-yt" data-url="${s.youtube}" onclick="event.stopPropagation();openMediaUrl(this)">YouTube</button>`:''}
         ${s.apple?`<button class="svb" data-url="${s.apple}" onclick="event.stopPropagation();openMediaUrl(this)">Apple</button>`:''}
@@ -3574,13 +3574,13 @@ function renderSheetCell(s, field){
         ${s.sheet_music?`<a href="${esc(s.sheet_music)}" target="_blank" rel="noopener noreferrer" style="font-size:.8rem;text-decoration:none;flex-shrink:0" title="View Sheet Music">🎵</a>`:''}
       </div></td>`;
     case 'spotify':
-      return`<td><input class="sh-cell" style="min-width:150px;font-size:.72rem" value="${esc(s.spotify||'')}" placeholder="Spotify URL" data-field="spotify" data-id="${s.id}" onchange="sheetEdit(this)" onkeydown="sheetKeyDown(event,this)"></td>`;
+      return`<td style="white-space:nowrap;padding:4px 6px"><div style="display:flex;align-items:center;gap:3px"><input class="sh-cell" style="flex:1;min-width:120px;font-size:.72rem" value="${esc(s.spotify||'')}" placeholder="Spotify URL" data-field="spotify" data-id="${s.id}" onchange="sheetEdit(this)" onkeydown="sheetKeyDown(event,this)">${s.spotify?`<a href="${esc(s.spotify)}" target="_blank" rel="noopener noreferrer" style="font-size:.82rem;text-decoration:none;flex-shrink:0;color:#1DB954" title="Open Spotify">🎵</a>`:''}</div></td>`;
     case 'youtube':
-      return`<td><input class="sh-cell" style="min-width:150px;font-size:.72rem" value="${esc(s.youtube||'')}" placeholder="YouTube URL" data-field="youtube" data-id="${s.id}" onchange="sheetEdit(this)" onkeydown="sheetKeyDown(event,this)"></td>`;
+      return`<td style="white-space:nowrap;padding:4px 6px"><div style="display:flex;align-items:center;gap:3px"><input class="sh-cell" style="flex:1;min-width:120px;font-size:.72rem" value="${esc(s.youtube||'')}" placeholder="YouTube URL" data-field="youtube" data-id="${s.id}" onchange="sheetEdit(this)" onkeydown="sheetKeyDown(event,this)">${s.youtube?`<a href="${esc(s.youtube)}" target="_blank" rel="noopener noreferrer" style="font-size:.82rem;text-decoration:none;flex-shrink:0;color:var(--r)" title="Open YouTube">▶</a>`:''}</div></td>`;
     case 'apple':
-      return`<td><input class="sh-cell" style="min-width:150px;font-size:.72rem" value="${esc(s.apple||'')}" placeholder="Apple Music URL" data-field="apple" data-id="${s.id}" onchange="sheetEdit(this)" onkeydown="sheetKeyDown(event,this)"></td>`;
+      return`<td style="white-space:nowrap;padding:4px 6px"><div style="display:flex;align-items:center;gap:3px"><input class="sh-cell" style="flex:1;min-width:120px;font-size:.72rem" value="${esc(s.apple||'')}" placeholder="Apple Music URL" data-field="apple" data-id="${s.id}" onchange="sheetEdit(this)" onkeydown="sheetKeyDown(event,this)">${s.apple?`<a href="${esc(s.apple)}" target="_blank" rel="noopener noreferrer" style="font-size:.82rem;text-decoration:none;flex-shrink:0;color:var(--ink2)" title="Open Apple Music">🍎</a>`:''}</div></td>`;
     case 'amazon':
-      return`<td><input class="sh-cell" style="min-width:150px;font-size:.72rem" value="${esc(s.amazon||'')}" placeholder="Amazon Music URL" data-field="amazon" data-id="${s.id}" onchange="sheetEdit(this)" onkeydown="sheetKeyDown(event,this)"></td>`;
+      return`<td style="white-space:nowrap;padding:4px 6px"><div style="display:flex;align-items:center;gap:3px"><input class="sh-cell" style="flex:1;min-width:120px;font-size:.72rem" value="${esc(s.amazon||'')}" placeholder="Amazon Music URL" data-field="amazon" data-id="${s.id}" onchange="sheetEdit(this)" onkeydown="sheetKeyDown(event,this)">${s.amazon?`<a href="${esc(s.amazon)}" target="_blank" rel="noopener noreferrer" style="font-size:.82rem;text-decoration:none;flex-shrink:0;color:#FF9900" title="Open Amazon Music">🎵</a>`:''}</div></td>`;
     case 'hidden':
       return`<td><div class="sh-chk"><input type="checkbox"${s.hidden?' checked':''} style="accent-color:var(--a);width:15px;height:15px;cursor:pointer" data-field="hidden" data-id="${s.id}" onchange="sheetEdit(this)"></div></td>`;
     default:
@@ -3608,8 +3608,17 @@ function sheetEdit(el){
   const s=songs.find(x=>x.id===id);if(!s)return;
   s[field]=field==='hidden'?el.checked:field==='dur'?parseInt(el.value)||0:el.value;
   if(field==='hidden'){const row=el.closest('tr');if(row)row.className='sh-row'+(s.hidden?' hidden-row':'');}
-  // Refresh Set List icons immediately when lyrics or sheet music URL changes
-  if(field==='lyrics'||field==='sheet_music')renderSL();
+  // Refresh Set List and update view-link visibility in the spreadsheet cell
+  if(field==='lyrics'||field==='sheet_music'){
+    renderSL();
+    // Show/hide the 📄/🎵 view link in this spreadsheet row without re-rendering
+    const row=el.closest('tr');
+    if(row){
+      const icon=field==='lyrics'?'📄':'🎵';
+      const link=row.querySelector(`a[title="${field==='lyrics'?'View Lyrics':'View Sheet Music'}"]`);
+      if(link)link.style.display=s[field]?'':'none';
+    }
+  }
   updateLibCount();
   saveSheetRow(id);
 }

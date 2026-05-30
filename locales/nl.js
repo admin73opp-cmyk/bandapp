@@ -778,4 +778,10 @@ window.NL = {
   'Changes are auto-saved as you edit each cell.': 'Wijzigingen worden automatisch opgeslagen terwijl je bewerkt.',
   'Sheet Music': 'Bladmuziek',
   'Click any cell to edit': 'Klik op een cel om te bewerken',
+
+
+  /* ── REHEARSAL-SETLIST LINK ─────────────────────────────── */
+  'No rehearsal linked': 'Geen repetitie gekoppeld',
+  'Linked rehearsals:': 'Gekoppelde repetities:',
+  'Link to Rehearsal': 'Koppel aan repetitie',
 };

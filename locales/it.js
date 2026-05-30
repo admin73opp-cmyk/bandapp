@@ -778,4 +778,10 @@ window.IT = {
   'Changes are auto-saved as you edit each cell.': 'Le modifiche vengono salvate automaticamente durante la modifica.',
   'Sheet Music': 'Spartito',
   'Click any cell to edit': 'Fai clic su una cella per modificare',
+
+
+  /* ── REHEARSAL-SETLIST LINK ─────────────────────────────── */
+  'No rehearsal linked': 'Nessuna prova collegata',
+  'Linked rehearsals:': 'Prove collegate:',
+  'Link to Rehearsal': 'Collega a una prova',
 };
