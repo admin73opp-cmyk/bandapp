@@ -3520,6 +3520,8 @@ function sheetEdit(el){
   const s=songs.find(x=>x.id===id);if(!s)return;
   s[field]=field==='hidden'?el.checked:field==='dur'?parseInt(el.value)||0:el.value;
   if(field==='hidden'){const row=el.closest('tr');if(row)row.className='sh-row'+(s.hidden?' hidden-row':'');}
+  // Refresh Set List icons immediately when lyrics or sheet music URL changes
+  if(field==='lyrics'||field==='sheet_music')renderSL();
   updateLibCount();
   saveSheetRow(id);
 }
@@ -3747,7 +3749,7 @@ async function saveSongEdit(){
     console.error('[bandapp] saveSongEdit error:',e);
     return;
   }
-  closeMod('seMod');await loadSongs();renderLib();toast2('Song updated!');
+  closeMod('seMod');await loadSongs();renderLib();renderSL();toast2('Song updated!');
 }
 
 // ── Lyrics / Sheet Music ──────────────────────────────────────
