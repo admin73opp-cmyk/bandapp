@@ -704,13 +704,9 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
 
       <!-- Spreadsheet view -->
       <div id="libViewSheetArea" style="display:none">
-        <!-- #sheetScrollOuter handles BOTH axes and is height-bounded so the
-             horizontal scrollbar always stays within the viewport.
-             NO overflow:hidden / clip-path anywhere in the ancestor chain. -->
-        <div id="sheetScrollOuter" style="overflow-x:scroll;overflow-y:auto;max-height:calc(100vh - 230px);border:1px solid var(--bd);border-radius:var(--radl);box-shadow:var(--sh);background:var(--w)">
-        <div style="min-width:max-content">
-          <!-- Sheet toolbar — min-width:max-content so it scrolls with the table -->
-          <div style="padding:10px 14px;border-bottom:1px solid var(--bd);display:flex;gap:8px;align-items:center;flex-wrap:wrap;background:var(--bg);position:sticky;left:0;min-width:100vw">
+        <div style="background:var(--w);border:1px solid var(--bd);border-radius:var(--radl);box-shadow:var(--sh)">
+          <!-- Toolbar: outside the scroll area so it never moves -->
+          <div style="padding:10px 14px;border-bottom:1px solid var(--bd);display:flex;gap:8px;align-items:center;flex-wrap:wrap;background:var(--bg)">
             <span style="font-size:.72rem;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.06em" data-i18n="Click any cell to edit">Click any cell to edit</span>
             <div style="margin-left:auto;display:flex;gap:6px;flex-wrap:wrap">
               <label class="btn btn-g btn-sm" style="cursor:pointer;font-size:.72rem" title="Upload Excel (.xlsx) to replace library" data-i18n-title="Upload Excel (.xlsx) to replace library">
@@ -721,18 +717,21 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
               <button class="btn btn-g btn-sm" onclick="addSheetRow()" style="font-size:.72rem" data-i18n="+ Row">+ Row</button>
             </div>
           </div>
-          <div id="sheetScroll" style="position:relative;min-width:max-content">
-            <table id="sheetTbl" style="border-collapse:collapse;font-size:.8rem;table-layout:fixed">
-              <colgroup id="sheetCols"></colgroup>
-              <thead id="sheetHead"></thead>
-              <tbody id="sheetBody"></tbody>
-            </table>
+          <!-- Scroll container: only the table scrolls. Toolbar and footer stay fixed. -->
+          <div id="sheetScrollOuter" style="overflow-x:scroll;overflow-y:auto;max-height:calc(100vh - 270px)">
+            <div id="sheetScroll" style="position:relative">
+              <table id="sheetTbl" style="border-collapse:collapse;font-size:.8rem;table-layout:fixed">
+                <colgroup id="sheetCols"></colgroup>
+                <thead id="sheetHead"></thead>
+                <tbody id="sheetBody"></tbody>
+              </table>
+            </div>
           </div>
-          <div style="padding:8px 14px;border-top:1px solid var(--bd);font-size:.71rem;color:var(--ink3);background:var(--bg);position:sticky;left:0;min-width:100vw" data-i18n="Changes are auto-saved as you edit each cell.">
+          <!-- Footer: outside the scroll area so it never moves -->
+          <div style="padding:8px 14px;border-top:1px solid var(--bd);font-size:.71rem;color:var(--ink3);background:var(--bg)" data-i18n="Changes are auto-saved as you edit each cell.">
             <span data-i18n="Changes are auto-saved as you edit each cell.">Changes are auto-saved as you edit each cell.</span>
           </div>
-        </div><!-- /inner min-width wrapper -->
-        </div><!-- /sheetScrollOuter -->
+        </div>
       </div>
     </div>
 
@@ -3320,10 +3319,9 @@ function sheetColW(field){return _sheetColWidths[field]||SHEET_COL_DEFAULT_W[fie
 function sheetTblW(){return 32+SHEET_COLS.reduce((s,c)=>s+sheetColW(c.field),0)+36;}
 function setSheetTblWidth(){
   const tbl=document.getElementById('sheetTbl');if(!tbl)return;
-  // Measure the outer scroll wrapper (viewport-bounded) not the inner container.
-  // The outer wrapper has overflow-x:auto and is constrained by .mc / the sidebar.
   const outer=document.getElementById('sheetScrollOuter');
-  const cw=(outer?.offsetWidth||tbl.parentElement?.clientWidth||0);
+  // clientWidth of the scroll container is its inner visible width (viewport-bounded)
+  const cw=outer?.clientWidth||tbl.parentElement?.clientWidth||0;
   tbl.style.width=Math.max(sheetTblW(),cw)+'px';
 }
 let _colResize=null;
