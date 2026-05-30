@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='16' fill='%236C63FF'/><text x='16' y='22' text-anchor='middle' font-size='18' fill='white'>♪</text></svg>">
-<title>Bandapp v26</title>
+<title>Ritovo</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="js/supabase-client.js"></script>
 <script src="js/capacitor-bridge.js"></script>
@@ -122,7 +122,9 @@ select option{background:var(--w)}
 .sb-ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.22);backdrop-filter:blur(2px);z-index:99}.sb-ov.vis{display:block}
 /* sidebar pieces */
 .sb-logo{padding:17px 15px 13px;font-size:1.03rem;font-weight:700;letter-spacing:-.03em;display:flex;align-items:center;gap:7px;border-bottom:1px solid var(--bd)}
-.ld{width:7px;height:7px;border-radius:50%;background:var(--a);flex-shrink:0}
+.rit-mark,.rit-word{display:block;color:var(--ink);flex-shrink:0}
+.sb.minimized .sb-logo-word{display:none}
+.sb:not(.minimized) .sb-logo-mark{display:none}
 .sb-group{padding:9px;border-bottom:1px solid var(--bd)}
 .bb{width:100%;display:flex;align-items:center;gap:9px;padding:9px 10px;background:var(--bg);border:none;border-radius:var(--rad);cursor:pointer;transition:background .13s;text-align:left;color:var(--ink)}.bb:hover{background:var(--bg2)}
 .bav{width:29px;height:29px;border-radius:8px;background:var(--a);display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:700;color:#fff;flex-shrink:0}
@@ -146,7 +148,8 @@ select option{background:var(--w)}
 @keyframes fu{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
 @keyframes spin{to{transform:rotate(360deg)}}
 #appLoader{position:fixed;inset:0;background:var(--bg);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px}
-#appLoader .al-spinner{width:30px;height:30px;border:3px solid var(--bd);border-top-color:var(--a);border-radius:50%;animation:spin .75s linear infinite}
+#appLoader .al-logo{width:44px;height:44px;color:var(--ink);animation:rit-pulse 2.4s ease-in-out infinite}
+@keyframes rit-pulse{0%,100%{opacity:.9}50%{opacity:.35}}
 #appLoader .al-text{font-size:.82rem;color:var(--ink2)}
 /* stats */
 .sg{display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:10px;margin-bottom:17px}
@@ -429,10 +432,10 @@ html[data-theme="dark"] .sb-group-name{color:var(--ink)!important}
 <!-- AUTH -->
 <div id="authScreen">
   <div style="width:min(380px,95vw)">
-    <div style="font-size:1.45rem;font-weight:700;letter-spacing:-.04em;display:flex;align-items:center;gap:8px;margin-bottom:4px"><div class="ld"></div>Bandapp</div>
+    <div style="margin-bottom:4px;margin-left:-15px"><svg class="rit-word" width="195" height="45" viewBox="0 0 520 120" xmlns="http://www.w3.org/2000/svg" aria-label="Ritovo"><line x1="40" y1="28" x2="40" y2="92" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><text x="58" y="88" font-family="'Garamond','Georgia','Times New Roman',serif" font-size="58" font-weight="300" letter-spacing="12" fill="currentColor">ritovo</text><circle cx="468" cy="28" r="4" fill="currentColor"/></svg></div>
     <p style="font-size:.84rem;color:var(--ink2);margin-bottom:27px" data-i18n="Manage your music group, rehearsals & setlists">Manage your music group, rehearsals &amp; setlists</p>
     <div id="authLoading" style="display:none;text-align:center;padding:32px 0">
-      <div class="ld" style="width:36px;height:36px;margin:0 auto 14px"></div>
+      <svg class="rit-mark" width="40" height="40" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" style="margin:0 auto 14px;display:block;animation:rit-pulse 2.4s ease-in-out infinite" aria-hidden="true"><line x1="34" y1="32" x2="34" y2="88" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><text x="44" y="86" font-family="'Garamond','Georgia','Times New Roman',serif" font-size="56" font-weight="300" fill="currentColor">r</text><circle cx="88" cy="32" r="4.5" fill="currentColor"/></svg>
       <div style="font-size:.84rem;color:var(--ink2)" data-i18n="Loading your group…">Loading your group…</div>
     </div>
     <div id="auth-tabs" style="display:flex;background:var(--bg);border-radius:var(--rad);padding:4px;gap:3px;margin-bottom:21px">
@@ -500,7 +503,7 @@ html[data-theme="dark"] .sb-group-name{color:var(--ink)!important}
 
 <!-- APP -->
 <div id="app">
-  <div id="appLoader"><div class="al-spinner"></div><div class="al-text">Loading your group data…</div></div>
+  <div id="appLoader"><svg class="al-logo" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><line x1="34" y1="32" x2="34" y2="88" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><text x="44" y="86" font-family="'Garamond','Georgia','Times New Roman',serif" font-size="56" font-weight="300" fill="currentColor">r</text><circle cx="88" cy="32" r="4.5" fill="currentColor"/></svg><div class="al-text">Loading your group data…</div></div>
   <button id="feedbackFab" onclick="openFeedbackModal()">🐛 Bug / Feedback</button>
   <div class="sb-ov" id="sbOv" onclick="toggleSb()"></div>
   <nav class="sb" id="sb">
@@ -508,7 +511,7 @@ html[data-theme="dark"] .sb-group-name{color:var(--ink)!important}
     <div class="sb-toggle" id="sbToggle" onclick="toggleSbMinimize()" title="Collapse sidebar" data-i18n-title="Collapse sidebar">
       <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 12L6 8l4-4"/></svg>
     </div>
-    <div class="sb-logo"><div class="ld"></div><span class="sb-logo-text">Bandapp</span></div>
+    <div class="sb-logo"><svg class="rit-mark sb-logo-mark" width="22" height="22" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><line x1="34" y1="32" x2="34" y2="88" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><text x="44" y="86" font-family="'Garamond','Georgia','Times New Roman',serif" font-size="56" font-weight="300" fill="currentColor">r</text><circle cx="88" cy="32" r="4.5" fill="currentColor"/></svg><svg class="rit-word sb-logo-word sb-logo-text" width="113" height="26" viewBox="0 0 520 120" xmlns="http://www.w3.org/2000/svg" aria-label="Ritovo"><line x1="40" y1="28" x2="40" y2="92" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><text x="58" y="88" font-family="'Garamond','Georgia','Times New Roman',serif" font-size="58" font-weight="300" letter-spacing="12" fill="currentColor">ritovo</text><circle cx="468" cy="28" r="4" fill="currentColor"/></svg></div>
     <div class="sb-group">
       <button class="bb" onclick="renderBandList();showMod('bswMod')">
         <div class="bav">JC</div>
@@ -1112,7 +1115,7 @@ html[data-theme="dark"] .sb-group-name{color:var(--ink)!important}
           <div style="font-size:.75rem;color:var(--ink2);margin-bottom:13px">Set the preferred storage location for song lyrics and sheet music. Members will see this as a hint when adding files to a song.</div>
           <select id="bpLyricsRepo" class="sb2" style="max-width:320px;margin-bottom:12px">
             <option value="any">Any — members choose per song</option>
-            <option value="bandapp">Bandapp (in-app upload)</option>
+            <option value="bandapp">Ritovo (in-app upload)</option>
             <option value="gdrive">Google Drive</option>
             <option value="dropbox">Dropbox</option>
             <option value="onedrive">OneDrive (Microsoft)</option>
@@ -1506,7 +1509,7 @@ html[data-theme="dark"] .sb-group-name{color:var(--ink)!important}
 
   <!-- Option A: existing user lookup -->
   <div style="padding:12px;background:var(--a2);border:1px solid rgba(108,99,255,.3);border-radius:var(--rad);margin-bottom:16px">
-    <div style="font-size:.72rem;font-weight:700;color:var(--a);letter-spacing:.04em;text-transform:uppercase;margin-bottom:8px">Already on Bandapp?</div>
+    <div style="font-size:.72rem;font-weight:700;color:var(--a);letter-spacing:.04em;text-transform:uppercase;margin-bottom:8px">Already on Ritovo?</div>
     <div style="display:flex;gap:7px;align-items:flex-end">
       <div class="fg" style="margin:0;flex:1"><label>Their email address</label><input type="email" id="invLookupEmail" placeholder="musician@email.com" onkeydown="if(event.key==='Enter')lookupInvitee()"></div>
       <button class="btn btn-p btn-sm" id="invLookupBtn" onclick="lookupInvitee()" style="flex-shrink:0">Find →</button>
@@ -2733,7 +2736,7 @@ function openInviteMessage(){
   const lastName=(document.getElementById('invLastName')?.value||'').trim();
   const fullName=[firstName,lastName].filter(Boolean).join(' ');
 
-  const defaultMsg=`Dear ${fullName},\n\nI am very happy to invite you to join group "${group?group.name:'our group'}" on Bandapp.\n\nCheers,\n${adminName}`;
+  const defaultMsg=`Dear ${fullName},\n\nI am very happy to invite you to join group "${group?group.name:'our group'}" on Ritovo.\n\nCheers,\n${adminName}`;
 
   document.getElementById('invMsgText').value=defaultMsg;
 
@@ -3731,7 +3734,7 @@ function exportExcel(){
     const dataUri='data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,'+wbout;
     const a=document.createElement('a');
     a.href=dataUri;
-    a.download='Bandapp_Song_Library.xlsx';
+    a.download='Ritovo_Song_Library.xlsx';
     document.body.appendChild(a);a.click();document.body.removeChild(a);
     toast2('Library downloaded!');
   }catch(err){
@@ -4665,13 +4668,13 @@ async function confirmCancel(notify){
   if(!cancelTarget)return;
   const {type,id}=cancelTarget;
   const appUrl=(localStorage.getItem('appUrl')||window.location.origin+'/').replace(/[?#].*/,'').replace(/\/+$/,'');
-  let msg=`🚫 Event cancelled. Please check Bandapp for updates: ${appUrl}`;
+  let msg=`🚫 Event cancelled. Please check Ritovo for updates: ${appUrl}`;
   let saveOk=false;
   try{
     if(type==='concert'){
       const c=concerts.find(x=>x.id===id);
       if(c){
-        msg=`🚫 Concert on ${c.date} cancelled. Please check Bandapp for updates: ${appUrl}`;
+        msg=`🚫 Concert on ${c.date} cancelled. Please check Ritovo for updates: ${appUrl}`;
         const saved=await ConcertsDB.upsert({...c, cancelled:true});
         if(!saved){toast2('Could not cancel concert — please try again','w');return;}
         logCalChange('cancelled','concert',saved.id,`Concert "${c.title}"${c.date?' on '+c.date:''} cancelled`,true);
@@ -4683,7 +4686,7 @@ async function confirmCancel(notify){
     } else {
       const r=rehearsals.find(x=>x.id===id);
       if(r){
-        msg=`🚫 Rehearsal on ${r.date} cancelled. Please check Bandapp for updates: ${appUrl}`;
+        msg=`🚫 Rehearsal on ${r.date} cancelled. Please check Ritovo for updates: ${appUrl}`;
         const saved=await RehearsalsDB.upsert({...r, cancelled:true});
         if(!saved){toast2('Could not cancel rehearsal — please try again','w');return;}
         logCalChange('cancelled','rehearsal',saved.id,`Rehearsal "${r.title}"${r.date?' on '+r.date:''} cancelled`,true);
@@ -5679,7 +5682,7 @@ async function lookupInvitee(){
   const res=document.getElementById('invLookupResult');
   res.style.display='';
   if(error||!data||data.length===0){
-    res.innerHTML=`<div style="font-size:.75rem;color:var(--ink2);padding:7px 10px;background:var(--bg2);border-radius:var(--rad)">No Bandapp account found for this email. Use the invite form below to send them a signup link.</div>`;
+    res.innerHTML=`<div style="font-size:.75rem;color:var(--ink2);padding:7px 10px;background:var(--bg2);border-radius:var(--rad)">No Ritovo account found for this email. Use the invite form below to send them a signup link.</div>`;
     return;
   }
   const u=data[0];
@@ -5688,7 +5691,7 @@ async function lookupInvitee(){
     <div style="padding:10px 12px;background:var(--g2);border:1px solid var(--g);border-radius:var(--rad)">
       <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
         <span style="color:var(--g);font-size:1.1rem">✓</span>
-        <div style="flex:1"><div style="font-size:.82rem;font-weight:700">${name}</div><div style="font-size:.72rem;color:var(--ink2)">Bandapp account found</div></div>
+        <div style="flex:1"><div style="font-size:.82rem;font-weight:700">${name}</div><div style="font-size:.72rem;color:var(--ink2)">Ritovo account found</div></div>
       </div>
       <div class="fr" style="margin-bottom:8px">
         <div class="fg" style="margin:0"><label style="font-size:.69rem">Role</label>
@@ -5940,7 +5943,7 @@ async function submitFeedback(){
   const today=new Date().toISOString().split('T')[0];
   const catLabel={bug:'Bug',feedback:'Feedback',suggestion:'Suggestion'}[cat]||cat;
   const title=`[${catLabel}] ${desc.split('\n')[0].substring(0,60)}`;
-  const body=`**Category:** ${cat}\n**Page:** ${page}\n**Group:** ${bandName}\n**User:** ${userName} (${currentUser.email||''})\n\n**Description:**\n${desc}\n\n---\n_Submitted via Bandapp on ${today}_`;
+  const body=`**Category:** ${cat}\n**Page:** ${page}\n**Group:** ${bandName}\n**User:** ${userName} (${currentUser.email||''})\n\n**Description:**\n${desc}\n\n---\n_Submitted via Ritovo on ${today}_`;
   const btn=document.getElementById('fbSubmitBtn');
   btn.disabled=true;btn.textContent='Submitting…';
   try{
@@ -6781,7 +6784,7 @@ async function saveSettings(){
     </label>
     <span id="seLyricsUploadStatus" style="font-size:.72rem;color:var(--ink3)"></span>
   </div>
-  <div style="font-size:.69rem;color:var(--ink3);margin-bottom:4px">Accepted: PDF, PNG, JPG, GIF, MXL, XML &nbsp;·&nbsp; Max 10 MB &nbsp;·&nbsp; Stored in Bandapp</div>
+  <div style="font-size:.69rem;color:var(--ink3);margin-bottom:4px">Accepted: PDF, PNG, JPG, GIF, MXL, XML &nbsp;·&nbsp; Max 10 MB &nbsp;·&nbsp; Stored in Ritovo</div>
 
   <!-- Sheet Music -->
   <div style="font-size:.69rem;font-weight:700;color:var(--ink2);margin-bottom:6px;margin-top:14px;letter-spacing:.04em;text-transform:uppercase">🎵 Sheet Music <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--ink3)">(optional)</span></div>
