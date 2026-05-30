@@ -636,6 +636,10 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
             <div id="slConcertLink" style="margin-top:8px;display:flex;align-items:center;gap:7px;flex-wrap:wrap">
               <!-- populated by renderSlMeta() -->
             </div>
+            <!-- Linked rehearsal row -->
+            <div id="slRehLink" style="margin-top:6px;display:flex;align-items:center;gap:7px;flex-wrap:wrap">
+              <!-- populated by renderSlMeta() -->
+            </div>
           </div>
           <div style="display:flex;gap:5px;flex-wrap:wrap;align-items:center">
             <span class="pdfn"><svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 2h7l3 3v9H3V2z"/><path d="M10 2v4h4"/></svg>Links hidden in PDF</span>
@@ -1659,6 +1663,11 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
   <div class="fr"><div class="fg"><label>Start</label><input type="time" id="rmSt" value="19:00"></div><div class="fg"><label>End</label><input type="time" id="rmEn" value="22:00"></div></div>
   <div class="fg"><label>Location</label><input id="rmLoc" placeholder="Studio De Muziek, Brussels"></div>
   <div class="fg"><label>Notes (optional)</label><textarea id="rmNt" style="min-height:50px" placeholder="Focus on the Blue Note setlist…"></textarea></div>
+  <div class="fg"><label>Set List <span style="font-weight:400;color:var(--ink3)">(optional)</span></label>
+    <select id="rmSlSel" style="width:100%;padding:9px 13px;background:var(--bg);border:1.5px solid var(--bd);border-radius:var(--rad);color:var(--ink);font-family:var(--font);font-size:.83rem;outline:none">
+      <option value="">— No set list —</option>
+    </select>
+  </div>
 
   <!-- Notification channel -->
   <div style="height:1px;background:var(--bd);margin:4px 0 13px"></div>
@@ -1796,6 +1805,55 @@ function buildCalEv(){
 // instead of the now-empty sl.concertIds array.
 function concertsForSetlist(setlistId){
   return concerts.filter(c=>(c.setlistIds||[]).includes(setlistId));
+}
+
+// Returns rehearsals linked to this setlist (any status)
+function rehearsalsForSetlist(setlistId){
+  return rehearsals.filter(r=>r.setlistId===setlistId&&!r.cancelled);
+}
+
+async function linkSlToRehearsal(rehearsalId, unlinkId){
+  if(unlinkId){
+    const r=rehearsals.find(x=>x.id===unlinkId);
+    if(!r)return;
+    await RehearsalsDB.upsert({...r,setlistId:null});
+    await loadRehearsals();
+    renderSlMeta();renderRehearsals();
+    toast2('Rehearsal unlinked');
+    return;
+  }
+  if(!rehearsalId)return;
+  const r=rehearsals.find(x=>x.id===rehearsalId);
+  if(!r)return;
+  await RehearsalsDB.upsert({...r,setlistId:activeSetlistId});
+  await loadRehearsals();
+  renderSlMeta();renderRehearsals();
+  toast2('Rehearsal linked!');
+  closeMod('slRehLinkMod');
+}
+
+function openSlRehLinkModal(){
+  const sl=setlists.find(x=>x.id===activeSetlistId);
+  const nameEl=document.getElementById('slRehLinkName');
+  if(nameEl)nameEl.textContent=sl?.name||'this set list';
+  const future=rehearsals.filter(r=>!r.cancelled&&r.date>=TODAY_STR&&r.setlistId!==activeSetlistId)
+    .sort((a,b)=>a.date.localeCompare(b.date));
+  const listEl=document.getElementById('slRehLinkList');
+  if(!listEl)return;
+  if(!future.length){
+    listEl.innerHTML=`<div style="text-align:center;padding:14px;font-size:.78rem;color:var(--ink3)">No future rehearsals available to link.</div>`;
+  } else {
+    listEl.innerHTML=future.map(r=>`
+      <button class="btn btn-g btn-fw" style="justify-content:flex-start;gap:10px;font-size:.85rem;padding:11px 14px"
+        onclick="linkSlToRehearsal('${r.id}',null)">
+        <span style="font-size:1rem">🎸</span>
+        <div style="text-align:left">
+          <div style="font-weight:600">${r.title}</div>
+          <div style="font-size:.72rem;color:var(--ink3)">${r.date}${r.start?' · '+r.start:''}</div>
+        </div>
+      </button>`).join('');
+  }
+  showMod('slRehLinkMod');
 }
 
 // ── DATE HELPERS ──────────────────────────────────────────
@@ -1974,6 +2032,13 @@ async function deleteRehearsal(id){
   renderRehearsals();
   toast2('Rehearsal deleted','w');
 }
+function _populateSlSelect(elId, selectedId){
+  const sel=document.getElementById(elId);if(!sel)return;
+  const opts=setlists.map(sl=>`<option value="${sl.id}"${sl.id===selectedId?' selected':''}>${sl.name}</option>`).join('');
+  sel.innerHTML=`<option value="">— No set list —</option>${opts}`;
+  if(selectedId)sel.value=selectedId;
+}
+
 function openNewRehearsal(){
   editingRehId=null;
   document.getElementById('reModalTitle').textContent='New Rehearsal';
@@ -1982,6 +2047,7 @@ function openNewRehearsal(){
   document.getElementById('reStart').value='19:00';
   document.getElementById('reEnd').value='22:00';
   document.getElementById('rePhotoArea').innerHTML='';
+  _populateSlSelect('reSlSel', null);
   showMod('reMod');
 }
 function openRehEdit(id){
@@ -1994,6 +2060,7 @@ function openRehEdit(id){
   document.getElementById('reEnd').value=r.end||'22:00';
   document.getElementById('reNotes').value=r.notes||'';
   document.getElementById('reDate').value=r.date||'';
+  _populateSlSelect('reSlSel', r.setlistId||null);
   renderRehPhotoArea(id);
   showMod('reMod');
 }
@@ -2008,6 +2075,7 @@ async function saveRehEdit(){
     start: document.getElementById('reStart').value,
     end: document.getElementById('reEnd').value,
     notes: document.getElementById('reNotes').value.trim(),
+    setlistId: document.getElementById('reSlSel')?.value||null,
   };
   if(editingRehId) payload.id=editingRehId;
   const saved=await RehearsalsDB.upsert(payload);
@@ -2953,6 +3021,26 @@ function renderSlMeta(){
       ${sl.audience?`<span class="pill pgray">~${sl.audience} people</span>`:''}
       ${paidPill}
       ${totalPill}`;
+  }
+
+  // Linked rehearsal row
+  const rehRow=document.getElementById('slRehLink');
+  if(rehRow){
+    const linkedRehearsals=rehearsalsForSetlist(sl.id);
+    const futureLinked=linkedRehearsals.filter(r=>r.date>=TODAY_STR);
+    const pastLinked=linkedRehearsals.filter(r=>r.date<TODAY_STR);
+    const isAdmin=currentUser.role==='admin';
+    if(futureLinked.length||pastLinked.length){
+      const chips=[...futureLinked,...pastLinked].map(r=>
+        `<span style="display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:99px;background:var(--g2);border:1.5px solid #86EFAC;font-size:.75rem;font-weight:600;color:var(--g);cursor:pointer;${r.date<TODAY_STR?'opacity:.65':''}" onclick="nav('rehearsals')">🎸 ${r.title}${r.date?' · '+r.date:''}</span>
+         ${isAdmin?`<button class="btn btn-xs btn-g" onclick="linkSlToRehearsal(null,'${r.id}')" style="font-size:.66rem" title="Unlink">✕</button>`:''}`
+      ).join('');
+      rehRow.innerHTML=`<span style="font-size:.72rem;color:var(--ink3)">Linked rehearsals:</span>${chips}${isAdmin?`<button class="btn btn-xs btn-g" onclick="openSlRehLinkModal()" style="font-size:.7rem">+ Link more</button>`:''}`;
+    } else if(isAdmin){
+      rehRow.innerHTML=`<button class="btn btn-xs btn-g" onclick="openSlRehLinkModal()" style="font-size:.7rem">🔗 Link to Rehearsal</button>`;
+    } else {
+      rehRow.innerHTML='';
+    }
   }
 
   // Linked concert row
@@ -4308,6 +4396,7 @@ function openRehMod(d,key,isFull){
   const effectivePref=(pref==='whatsapp'||pref==='both')&&!waLinked?'email':pref;
   rehNotifSel=effectivePref;
   selNotif(effectivePref);
+  _populateSlSelect('rmSlSel', activeSetlistId||null);
   showMod('rehMod');
 }
 
@@ -4327,13 +4416,12 @@ async function confReh(){
   const end=document.getElementById('rmEn').value||null;
   const location=(document.getElementById('rmLoc').value||'').trim()||null;
   const notes=(document.getElementById('rmNt').value||'').trim()||null;
+  const slId=document.getElementById('rmSlSel')?.value||null;
+  const slName=slId?(setlists.find(x=>x.id===slId)?.name||null):null;
 
   // Build the WA message before clearing pendKey, but send AFTER the async saves.
-  // Opening WhatsApp (even as a deep link) backgrounds this tab on mobile and pauses
-  // any in-flight awaits — causing the rehearsal to never persist (#33) and the
-  // email notification to never fire (#25).  Save everything first, then open WA.
   const waMsg=(ch==='whatsapp'||ch==='both')&&waLinked
-    ?`🎸 ${title} confirmed!\n📅 ${pendKey}${start?' ⏰ '+start:''}${location?'\n📍 '+location:''}`
+    ?`🎸 ${title} confirmed!\n📅 ${pendKey}${start?' ⏰ '+start:''}${location?'\n📍 '+location:''}${slName?'\n♩ '+slName:''}`
     :null;
 
   closeMod('rehMod');
@@ -4341,7 +4429,7 @@ async function confReh(){
   pendKey=null;
 
   try {
-    const saved=await RehearsalsDB.upsert({title,date:confirmedKey,start,end,location,notes,band_id:activeBandId});
+    const saved=await RehearsalsDB.upsert({title,date:confirmedKey,start,end,location,notes,setlistId:slId||undefined,band_id:activeBandId});
     if(!saved){return;}
     logCalChange('created','rehearsal',saved.id,`Rehearsal "${title}" on ${confirmedKey}${location?' @ '+location:''} confirmed`,true);
     renderCalChangelog().catch(()=>{});  // refresh log immediately after save
@@ -4359,7 +4447,7 @@ async function confReh(){
 
     if((ch==='email'||ch==='both')&&saved?.id){
       supabase.functions.invoke('notify-rehearsal',{
-        body:{band_id:activeBandId,title,date:confirmedKey,start,end,location,notes},
+        body:{band_id:activeBandId,title,date:confirmedKey,start,end,location,notes,setlist:slName||undefined},
       }).then(r=>{if(r.error)console.error('[bandapp] notify-rehearsal:',r.error);})
         .catch(e=>console.error('[bandapp] notify-rehearsal:',e));
     }
@@ -6822,6 +6910,18 @@ async function saveSettings(){
 </div>
 </div>
 
+<!-- LINK REHEARSAL → SETLIST MODAL -->
+<div class="mov" id="slRehLinkMod" style="display:none" onclick="closeMB(event,'slRehLinkMod')">
+<div class="mod" style="max-width:440px">
+  <div class="mott">Link Set List to Rehearsal</div>
+  <div class="most">Choose a future rehearsal to associate with <strong id="slRehLinkName"></strong>.</div>
+  <div style="display:flex;flex-direction:column;gap:7px;max-height:340px;overflow-y:auto" id="slRehLinkList"></div>
+  <div class="moft">
+    <button class="btn btn-g" onclick="closeMod('slRehLinkMod')">Cancel</button>
+  </div>
+</div>
+</div>
+
 <!-- LINK CONCERT → SETLIST MODAL -->
 <div class="mov" id="concertLinkMod" style="display:none" onclick="closeMB(event,'concertLinkMod')">
 <div class="mod" style="max-width:440px">
@@ -6984,6 +7084,11 @@ async function saveSettings(){
     <div class="fg" data-i18n="Location"><label>Location</label><input id="reLocation" placeholder="Studio De Muziek, Brussels"></div>
     <div class="fg" data-i18n="Notes" data-i18n="(optional)"><label>Notes <span style="font-weight:400;color:var(--ink3)">(optional)</span></label>
       <textarea id="reNotes" style="min-height:60px" placeholder="Focus areas, what to bring…" data-i18n-placeholder="Focus areas, what to bring…"></textarea>
+    </div>
+    <div class="fg"><label>Set List <span style="font-weight:400;color:var(--ink3)">(optional)</span></label>
+      <select id="reSlSel" style="width:100%;padding:9px 13px;background:var(--bg);border:1.5px solid var(--bd);border-radius:var(--rad);color:var(--ink);font-family:var(--font);font-size:.83rem;outline:none">
+        <option value="">— No set list —</option>
+      </select>
     </div>
     <div style="height:1px;background:var(--bd);margin:4px 0 14px"></div>
     <div style="font-size:.69rem;font-weight:700;color:var(--ink2);margin-bottom:9px;letter-spacing:.04em;text-transform:uppercase" data-i18n="Rehearsal Photos">Rehearsal Photos</div>
