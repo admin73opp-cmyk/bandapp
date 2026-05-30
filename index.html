@@ -166,13 +166,12 @@ select option{background:var(--w)}
 .sh-cell{width:100%;padding:7px 8px;border:none;background:transparent;font-family:var(--font);font-size:.8rem;color:var(--ink);outline:none;min-width:80px;box-sizing:border-box}
 .sh-dur::-webkit-outer-spin-button,.sh-dur::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
 .sh-dur{-moz-appearance:textfield}
-/* Always-visible scrollbars on the spreadsheet so users can see they can scroll horizontally */
-#sheetScroll{scrollbar-width:thin;scrollbar-color:var(--bd) var(--bg2)}
-#sheetScroll::-webkit-scrollbar{width:8px;height:8px}
-#sheetScroll::-webkit-scrollbar-track{background:var(--bg2)}
-#sheetScroll::-webkit-scrollbar-thumb{background:var(--bd);border-radius:4px}
-#sheetScroll::-webkit-scrollbar-thumb:hover{background:var(--ink3)}
-#sheetScroll::-webkit-scrollbar-corner{background:var(--bg2)}
+/* Horizontal scrollbar on the outer wrapper — no clipping ancestor above it */
+#sheetScrollOuter{scrollbar-width:thin;scrollbar-color:var(--bd) var(--bg2)}
+#sheetScrollOuter::-webkit-scrollbar{height:8px}
+#sheetScrollOuter::-webkit-scrollbar-track{background:var(--bg2)}
+#sheetScrollOuter::-webkit-scrollbar-thumb{background:var(--a);border-radius:4px}
+#sheetScrollOuter::-webkit-scrollbar-thumb:hover{background:var(--ink)}
 .sh-cell:focus{background:var(--a2);outline:2px solid var(--a);outline-offset:-2px;border-radius:4px}
 .sh-cell-num{text-align:center;font-family:var(--mono);font-size:.72rem;color:var(--ink3);padding:7px 4px;width:32px}
 .sh-sel{width:100%;padding:6px 8px;border:none;background:transparent;font-family:var(--font);font-size:.8rem;color:var(--ink);outline:none;cursor:pointer}
@@ -704,9 +703,13 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
 
       <!-- Spreadsheet view -->
       <div id="libViewSheetArea" style="display:none">
-        <div style="background:var(--w);border:1px solid var(--bd);border-radius:var(--radl);box-shadow:var(--sh);clip-path:inset(0 round var(--radl))">
-          <!-- Sheet toolbar -->
-          <div style="padding:10px 14px;border-bottom:1px solid var(--bd);display:flex;gap:8px;align-items:center;flex-wrap:wrap;background:var(--bg)">
+        <!-- Outer wrapper: overflow-x:auto so the page-level scroll handles horizontal.
+             No overflow:hidden / clip-path on any ancestor — those suppress child
+             scrollbars in Chromium regardless of where the scrollbar lives. -->
+        <div style="overflow-x:auto;-webkit-overflow-scrolling:touch" id="sheetScrollOuter">
+        <div style="background:var(--w);border:1px solid var(--bd);border-radius:var(--radl);box-shadow:var(--sh);min-width:max-content">
+          <!-- Sheet toolbar (scrolls with the table so it stays aligned) -->
+          <div style="padding:10px 14px;border-bottom:1px solid var(--bd);display:flex;gap:8px;align-items:center;flex-wrap:wrap;background:var(--bg);min-width:max-content">
             <span style="font-size:.72rem;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.06em" data-i18n="Click any cell to edit">Click any cell to edit</span>
             <div style="margin-left:auto;display:flex;gap:6px;flex-wrap:wrap">
               <label class="btn btn-g btn-sm" style="cursor:pointer;font-size:.72rem" title="Upload Excel (.xlsx) to replace library" data-i18n-title="Upload Excel (.xlsx) to replace library">
@@ -717,17 +720,18 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
               <button class="btn btn-g btn-sm" onclick="addSheetRow()" style="font-size:.72rem" data-i18n="+ Row">+ Row</button>
             </div>
           </div>
-          <div id="sheetScroll" style="overflow-x:scroll;overflow-y:auto;max-height:calc(100vh - 280px);position:relative">
+          <div id="sheetScroll" style="position:relative">
             <table id="sheetTbl" style="border-collapse:collapse;font-size:.8rem;table-layout:fixed">
               <colgroup id="sheetCols"></colgroup>
               <thead id="sheetHead"></thead>
               <tbody id="sheetBody"></tbody>
             </table>
           </div>
-          <div style="padding:8px 14px;border-top:1px solid var(--bd);font-size:.71rem;color:var(--ink3);background:var(--bg)" data-i18n="Changes are auto-saved as you edit each cell.">
+          <div style="padding:8px 14px;border-top:1px solid var(--bd);font-size:.71rem;color:var(--ink3);background:var(--bg);min-width:max-content" data-i18n="Changes are auto-saved as you edit each cell.">
             <span data-i18n="Changes are auto-saved as you edit each cell.">Changes are auto-saved as you edit each cell.</span>
           </div>
-        </div>
+        </div><!-- /card -->
+        </div><!-- /sheetScrollOuter -->
       </div>
     </div>
 
@@ -3315,11 +3319,10 @@ function sheetColW(field){return _sheetColWidths[field]||SHEET_COL_DEFAULT_W[fie
 function sheetTblW(){return 32+SHEET_COLS.reduce((s,c)=>s+sheetColW(c.field),0)+36;}
 function setSheetTblWidth(){
   const tbl=document.getElementById('sheetTbl');if(!tbl)return;
-  // Reset to auto first so the scroll container shrinks to its natural CSS width
-  // (determined by its parent, not the table).  Without this reset, a wide table
-  // expands the container, clientWidth == tableWidth, and there's never overflow.
-  tbl.style.width='1px';
-  const cw=tbl.parentElement?.clientWidth||0;
+  // Measure the outer scroll wrapper (viewport-bounded) not the inner container.
+  // The outer wrapper has overflow-x:auto and is constrained by .mc / the sidebar.
+  const outer=document.getElementById('sheetScrollOuter');
+  const cw=(outer?.offsetWidth||tbl.parentElement?.clientWidth||0);
   tbl.style.width=Math.max(sheetTblW(),cw)+'px';
 }
 let _colResize=null;
