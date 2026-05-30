@@ -2744,7 +2744,13 @@ function renderSL(){
       <td class="sartist" style="color:var(--ink2);font-size:.75rem">${s.artist}</td>
       <td><span class="kp">${s.key}</span></td>
       <td style="font-family:var(--mono);font-size:.72rem;color:var(--ink2);white-space:nowrap">${s.dur?fmtDur(s.dur):'—'}</td>
-      <td class="lkcol" style="white-space:nowrap">${openSongMedia(s,i)}${s.lyrics?`<button class="lb2" style="color:var(--a)" data-url="${s.lyrics}" onclick="openMediaUrl(this)" title="Lyrics">📄</button>`:''}${s.sheet_music?`<button class="lb2" style="color:var(--a)" data-url="${s.sheet_music}" onclick="openMediaUrl(this)" title="Sheet Music">🎵</button>`:''}</td>
+      <td class="lkcol" style="white-space:nowrap">
+        <span style="display:inline-flex;align-items:center;gap:2px">
+          ${openSongMedia(s,i)}
+          ${s.lyrics?`<a class="lb2" href="${s.lyrics}" target="_blank" rel="noopener noreferrer" title="Lyrics" style="color:var(--a);text-decoration:none;font-size:.82rem">📄</a>`:''}
+          ${s.sheet_music?`<a class="lb2" href="${s.sheet_music}" target="_blank" rel="noopener noreferrer" title="Sheet Music" style="color:var(--a);text-decoration:none;font-size:.82rem">🎵</a>`:''}
+        </span>
+      </td>
       <td class="nc">${s.note}</td>
       <td><button class="btn btn-xs btn-g" onclick="removeSongFromSL('${id}')">✕</button></td>
     </tr>`;
@@ -2752,6 +2758,7 @@ function renderSL(){
 }
 
 function openSongMedia(s,rowIdx){
+  // streaming-only links (lyrics/sheet music rendered separately as icons)
   const links=[];
   if(s.spotify)links.push({label:'🎵 Spotify',url:s.spotify});
   if(s.youtube)links.push({label:'▶ YouTube',url:s.youtube});
@@ -2759,7 +2766,7 @@ function openSongMedia(s,rowIdx){
   if(s.amazon)links.push({label:'🎵 Amazon Music',url:s.amazon});
   if(!links.length)return'';
   if(links.length===1)return`<button class="lb2" title="${links[0].label}" data-url="${links[0].url}" onclick="openMediaUrl(this)">▶</button>`;
-  return`<button class="lb2" title="Open media" onclick="openMediaPicker(${rowIdx})">▶</button>`;
+  return`<button class="lb2" title="Open media links" onclick="openMediaPicker(${rowIdx})">▶</button>`;
 }
 function openMediaPicker(rowIdx){
   const id=slS[rowIdx];const s=songByAnyId(id);if(!s)return;
@@ -2768,6 +2775,8 @@ function openMediaPicker(rowIdx){
   if(s.youtube)links.push({label:'▶ YouTube',url:s.youtube});
   if(s.apple)links.push({label:'🍎 Apple Music',url:s.apple});
   if(s.amazon)links.push({label:'🎵 Amazon Music',url:s.amazon});
+  if(s.lyrics)links.push({label:'📄 Lyrics',url:s.lyrics});
+  if(s.sheet_music)links.push({label:'🎵 Sheet Music',url:s.sheet_music});
   const titleEl=document.getElementById('mediaPickerTitle');
   const listEl=document.getElementById('mediaPickerList');
   if(titleEl)titleEl.textContent=s.title;
