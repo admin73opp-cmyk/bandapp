@@ -3898,7 +3898,7 @@ async function handleSheetFileUpload(event, songId, field){
   s[field]=publicUrl;
   try{await SongsDB.upsert({...s,band_id:activeBandId});}catch(e){toast2('Failed to save','w');return;}
   event.target.value='';
-  await loadSongs();renderSheet();renderLib();
+  await loadSongs();renderSheet();renderLib();renderSL();
   const label=field==='sheet_music'?'Sheet music':'Lyrics';
   toast2(`${label} file uploaded and saved!`);
 }
