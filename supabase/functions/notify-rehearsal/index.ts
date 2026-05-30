@@ -65,19 +65,33 @@ serve(async (req) => {
     const { data: band } = await admin.from('bands').select('name').eq('id', band_id).single()
     const bandName = band?.name || 'Your Band'
 
-    // Fetch member user IDs + profile names in one query
+    // Fetch all band_members including guest fields so we can filter correctly
     const { data: memberRows } = await admin
       .from('band_members')
-      .select('user_id, profiles(first_name, last_name)')
+      .select('user_id, role, guest_start, guest_end, guest_status, profiles(first_name, last_name)')
       .eq('band_id', band_id)
 
     if (!memberRows?.length) return json(req, { success: true, sent: 0 })
+
+    // Mirror the client-side activeMembers() / isGuestActive() logic:
+    //   - Remove guests whose status is 'removed' (in Guest Directory, no longer active)
+    //   - Remove guests whose validity window has passed (guest_end < today)
+    //   - Always include admins and regular members
+    const today = new Date().toISOString().split('T')[0] // YYYY-MM-DD
+    const activeRows = memberRows.filter(row => {
+      if (row.guest_status === 'removed') return false          // in Guest Directory
+      if (row.role !== 'guest') return true                     // admin / member — always active
+      if (!row.guest_start || !row.guest_end) return false      // guest with no valid window
+      return today >= row.guest_start && today <= row.guest_end // within validity period
+    })
+
+    if (!activeRows.length) return json(req, { success: true, sent: 0 })
 
     // Resolve emails via auth.admin.getUserById — works regardless of whether the
     // profiles.email column exists (that migration may not have been run yet).
     // Bands are small (<20 members) so N parallel lookups is fast.
     const recipientsRaw = await Promise.all(
-      (memberRows as { user_id: string; profiles: { first_name?: string; last_name?: string } | null }[])
+      (activeRows as { user_id: string; profiles: { first_name?: string; last_name?: string } | null }[])
         .map(async row => {
           const { data } = await admin.auth.admin.getUserById(row.user_id)
           const email = data?.user?.email
