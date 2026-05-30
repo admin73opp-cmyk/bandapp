@@ -5899,46 +5899,26 @@ function renderDashboard(){
 }
 
 async function initApp(){
-  const _step=(s)=>console.log('[bandapp] initApp step:',s);
-  try{
-  _step('populateCountrySelects');
   populateCountrySelects();
-  _step('populateInstrumentSelects');
   populateInstrumentSelects();
   // Groups first — sets group metadata (name, color, WA links) needed for shell renders
-  _step('loadBands');
   await loadBands();
   // Paint the shell immediately with user identity and navigate to the right page.
   // Remaining data hasn't loaded yet so counts/lists show empty state briefly.
-  _step('syncCurrentUserToUI');
   syncCurrentUserToUI();
-  _step('renderBandList');
   renderBandList();
   const isNewUser = !currentUser._memberships?.length;
-  _step('nav');
   nav(isNewUser ? 'myprofile' : (localStorage.getItem('defaultView')||'dashboard'));
   const _initGroupId = activeBandId;
-  _step('Promise.all loads');
   await Promise.all([loadSongs(),loadSetlists(),loadConcerts(),loadRehearsals(),loadMembers(),loadBlackouts()]);
   if(activeBandId !== _initGroupId){const l=document.getElementById('appLoader');if(l)l.style.display='none';return;}
-  _step('renderSLDropdown+renderSL+renderLib');
+  // Full re-render now that all data is available
   renderSLDropdown();renderSL();renderSlMeta();renderLib();if(libView==='sheet')renderSheet();updateLibCount();updateSidebarCounts();
-  _step('setCalView+renderRehearsals+renderConcerts+renderMembers');
   setCalView(calView);renderRehearsals();renderConcerts();renderMembers();
-  _step('renderGuestDir+renderBP+renderBandList+renderDashboard');
   renderGuestDir();renderBP();renderAsList();renderBandList();
   syncCurrentUserToUI();renderDashboard();updateSidebarCounts();
-  _step('done — hiding loader');
   const loader=document.getElementById('appLoader');
   if(loader)loader.style.display='none';
-  }catch(_initErr){
-    console.error('[bandapp] initApp CRASHED at step above:', _initErr);
-    const loader=document.getElementById('appLoader');
-    if(loader){
-      loader.querySelector('.al-text').textContent='Load error: '+(_initErr?.message||_initErr)+' — check console';
-    }
-    throw _initErr;
-  }
 }
 
 // ── Bug / Feedback reporting ──────────────────────────────────
@@ -7288,7 +7268,7 @@ async function saveSettings(){
 <!-- xlsx — loaded here (end of body) so it doesn't block the auth screen / sign-in flow -->
 <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
 <!-- Supabase data layer — loaded after app script so they share global scope -->
-<script src="js/db/groups.js"></script>
+<script src="js/db/bands.js"></script>
 <script src="js/db/songs.js"></script>
 <script src="js/db/setlists.js"></script>
 <script src="js/db/concerts.js"></script>
