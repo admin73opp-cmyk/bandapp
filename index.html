@@ -4441,18 +4441,22 @@ async function confReh(){
     const saved=await RehearsalsDB.upsert({title,date:confirmedKey,start,end,location,notes,setlistId:slId||undefined,band_id:activeBandId});
     if(!saved){return;}
     logCalChange('created','rehearsal',saved.id,`Rehearsal "${title}" on ${confirmedKey}${location?' @ '+location:''} confirmed`,true);
-    renderCalChangelog().catch(()=>{});  // refresh log immediately after save
-    await loadRehearsals();
-    // If loadRehearsals was preempted by a concurrent load (gen mismatch), the new rehearsal
-    // may not yet be in the array. Add it optimistically so the calendar dot appears immediately.
+    renderCalChangelog().catch(()=>{});
+
+    // Optimistically add the new rehearsal to the local array so the calendar
+    // dot and list update instantly — don't block on the DB reload.
+    if(!saved._ts) saved._ts=rehearsalDate(saved).getTime();
+    if(!saved.photos) saved.photos=[];
     if(!rehearsals.find(r=>r.id===saved.id)){
-      if(!saved._ts) saved._ts=rehearsalDate(saved).getTime();
-      if(!saved.photos) saved.photos=[];
       rehearsals=[...rehearsals,saved];
       buildCalEv();
     }
     renderCal();
     renderRehearsals();
+
+    // Reload in the background so a second confirmation can start immediately
+    // without waiting for this network round-trip to complete.
+    loadRehearsals().then(()=>{renderCal();renderRehearsals();}).catch(()=>{});
 
     if((ch==='email'||ch==='both')&&saved?.id){
       supabase.functions.invoke('notify-rehearsal',{
