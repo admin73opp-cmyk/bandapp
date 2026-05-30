@@ -1929,12 +1929,12 @@ function rehearsalCard(r,style){
     <div>
       <div class="ctitle">${r.title}${badge}</div>
       <div class="cmeta">
-        <span class="cmi"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 2C5.8 2 4 3.8 4 6c0 3.5 4 8 4 8s4-4.5 4-8c0-2.2-1.8-4-4-4z"/><circle cx="8" cy="6" r="1.5"/></svg>${r.location}</span>
+        ${r.location?`<span class="cmi"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 2C5.8 2 4 3.8 4 6c0 3.5 4 8 4 8s4-4.5 4-8c0-2.2-1.8-4-4-4z"/><circle cx="8" cy="6" r="1.5"/></svg>${r.location}</span>`:''}
         <span class="cmi"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M8 4v4l3 2"/></svg>${r.start}–${r.end}</span>
       </div>
       <div class="cbadges">
         <span class="pill ${cancelStyle?'pr':'pg'}">${cancelStyle?t('🚫 Cancelled'):t('Rehearsal')}</span>
-        ${slLinked&&!cancelStyle?`<span class="pill pp" style="cursor:pointer" data-action="setlist" data-slid="${r.setlistId}">♩ ${slLinked.name}</span>`:''}
+        ${slLinked&&!cancelStyle?`<span class="pill pp" style="cursor:pointer;display:inline-flex;align-items:center;gap:4px" data-action="setlist" data-slid="${r.setlistId}" title="Open Set List">♩ ${slLinked.name} <svg width="9" height="9" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 8h8M9 5l3 3-3 3"/></svg></span>`:''}
       </div>
       ${photoHtml}
     </div>
@@ -1991,8 +1991,8 @@ function openRehView(id){
   const slRow=document.getElementById('rvSlRow');
   if(slLinked){
     slRow.style.display='';
-    document.getElementById('rvSlBadge').textContent=`♩ ${slLinked.name}`;
-    document.getElementById('rvSlBadge').onclick=()=>openSetlistFromConcert(r.setlistId);
+    document.getElementById('rvSlName').textContent=`♩ ${slLinked.name}`;
+    document.getElementById('rvSlBadge').onclick=()=>{closeMod('reViewMod');openSetlistFromConcert(r.setlistId);};
   } else {
     slRow.style.display='none';
   }
@@ -7063,7 +7063,13 @@ async function saveSettings(){
     <!-- Set list row -->
     <div id="rvSlRow" style="display:flex;align-items:center;gap:10px">
       <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" style="color:var(--ink3);flex-shrink:0"><path d="M2 4h12M2 8h8M2 12h10"/></svg>
-      <span id="rvSlBadge" class="pill pp" style="cursor:pointer"></span>
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+        <span style="font-size:.75rem;color:var(--ink3);font-weight:600;text-transform:uppercase;letter-spacing:.05em">Set List</span>
+        <button id="rvSlBadge" style="display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:99px;background:var(--a2);border:1.5px solid rgba(108,99,255,.25);font-size:.8rem;font-weight:600;color:var(--a);cursor:pointer;font-family:var(--font)">
+          <span id="rvSlName"></span>
+          <svg width="10" height="10" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 8h8M9 5l3 3-3 3"/></svg>
+        </button>
+      </div>
     </div>
   </div>
 
