@@ -704,7 +704,7 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
 
       <!-- Spreadsheet view -->
       <div id="libViewSheetArea" style="display:none">
-        <div style="background:var(--w);border:1px solid var(--bd);border-radius:var(--radl);box-shadow:var(--sh);overflow:hidden">
+        <div style="background:var(--w);border:1px solid var(--bd);border-radius:var(--radl);box-shadow:var(--sh);clip-path:inset(0 round var(--radl))">
           <!-- Sheet toolbar -->
           <div style="padding:10px 14px;border-bottom:1px solid var(--bd);display:flex;gap:8px;align-items:center;flex-wrap:wrap;background:var(--bg)">
             <span style="font-size:.72rem;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.06em" data-i18n="Click any cell to edit">Click any cell to edit</span>
@@ -4046,6 +4046,8 @@ window.addEventListener('resize',()=>{
   if(window.innerWidth<768&&calView==='full')setCalView('compact');
   else if(window.innerWidth>=768&&calView==='compact')setCalView('full');
   else checkLandscapeHint();
+  // Recalculate spreadsheet table width so scrollbar updates with window size
+  if(libView==='sheet')setSheetTblWidth();
 });
 window.addEventListener('orientationchange',()=>setTimeout(checkLandscapeHint,200));
 
