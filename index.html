@@ -2744,13 +2744,7 @@ function renderSL(){
       <td class="sartist" style="color:var(--ink2);font-size:.75rem">${s.artist}</td>
       <td><span class="kp">${s.key}</span></td>
       <td style="font-family:var(--mono);font-size:.72rem;color:var(--ink2);white-space:nowrap">${s.dur?fmtDur(s.dur):'—'}</td>
-      <td class="lkcol" style="white-space:nowrap">
-        <span style="display:inline-flex;align-items:center;gap:2px">
-          ${openSongMedia(s,i)}
-          ${s.lyrics?`<a class="lb2" href="${s.lyrics}" target="_blank" rel="noopener noreferrer" title="Lyrics" style="color:var(--a);text-decoration:none;font-size:.82rem">📄</a>`:''}
-          ${s.sheet_music?`<a class="lb2" href="${s.sheet_music}" target="_blank" rel="noopener noreferrer" title="Sheet Music" style="color:var(--a);text-decoration:none;font-size:.82rem">🎵</a>`:''}
-        </span>
-      </td>
+      <td class="lkcol" style="white-space:nowrap">${openSongMedia(s,i)}${s.lyrics?`<a class="lb2" href="${esc(s.lyrics)}" target="_blank" rel="noopener noreferrer" title="Lyrics" style="color:var(--a);text-decoration:none;font-size:.82rem">📄</a>`:''}${s.sheet_music?`<a class="lb2" href="${esc(s.sheet_music)}" target="_blank" rel="noopener noreferrer" title="Sheet Music" style="color:var(--a);text-decoration:none;font-size:.82rem">🎵</a>`:''}</td>
       <td class="nc">${s.note}</td>
       <td><button class="btn btn-xs btn-g" onclick="removeSongFromSL('${id}')">✕</button></td>
     </tr>`;
