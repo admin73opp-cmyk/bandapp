@@ -773,4 +773,9 @@ window.ES = {
   'Last 60 days': 'Últimos 60 días',
   'All members': 'Todos los miembros',
   'Entries kept for 60 days': 'Entradas guardadas durante 60 días',
+
+  /* ── SONG LIBRARY SPREADSHEET ──────────────────────────────── */
+  'Changes are auto-saved as you edit each cell.': 'Los cambios se guardan automáticamente al editar.',
+  'Sheet Music': 'Partitura',
+  'Click any cell to edit': 'Haz clic en una celda para editar',
 };

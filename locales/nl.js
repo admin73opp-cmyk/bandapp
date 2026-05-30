@@ -773,4 +773,9 @@ window.NL = {
   'Last 60 days': 'Laatste 60 dagen',
   'All members': 'Alle leden',
   'Entries kept for 60 days': 'Vermeldingen bewaard voor 60 dagen',
+
+  /* ── SONG LIBRARY SPREADSHEET ──────────────────────────────── */
+  'Changes are auto-saved as you edit each cell.': 'Wijzigingen worden automatisch opgeslagen terwijl je bewerkt.',
+  'Sheet Music': 'Bladmuziek',
+  'Click any cell to edit': 'Klik op een cel om te bewerken',
 };

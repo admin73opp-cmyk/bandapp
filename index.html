@@ -708,18 +708,17 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
               </label>
               <button class="btn btn-g btn-sm" onclick="exportExcel()" style="font-size:.72rem" title="Download library as Excel (.xlsx)" data-i18n="↓ Download" data-i18n-title="Download library as Excel (.xlsx)">↓ Download</button>
               <button class="btn btn-g btn-sm" onclick="addSheetRow()" style="font-size:.72rem" data-i18n="+ Row">+ Row</button>
-              <button class="btn btn-p btn-sm" onclick="saveSheetEdits()" style="font-size:.72rem" data-i18n="✓ Save All">✓ Save All</button>
             </div>
           </div>
-          <div style="overflow-x:auto">
+          <div id="sheetScroll" style="overflow:auto;max-height:calc(100vh - 280px);position:relative">
             <table id="sheetTbl" style="border-collapse:collapse;font-size:.8rem;table-layout:fixed">
               <colgroup id="sheetCols"></colgroup>
               <thead id="sheetHead"></thead>
               <tbody id="sheetBody"></tbody>
             </table>
           </div>
-          <div style="padding:8px 14px;border-top:1px solid var(--bd);font-size:.71rem;color:var(--ink3);background:var(--bg)">
-            <span data-i18n="Changes are saved to the library when you click">Changes are saved to the library when you click</span> <strong data-i18n="✓ Save All">Save All</strong> <span data-i18n="or edit another song's popup form.">or edit another song's popup form.</span>
+          <div style="padding:8px 14px;border-top:1px solid var(--bd);font-size:.71rem;color:var(--ink3);background:var(--bg)" data-i18n="Changes are auto-saved as you edit each cell.">
+            <span data-i18n="Changes are auto-saved as you edit each cell.">Changes are auto-saved as you edit each cell.</span>
           </div>
         </div>
       </div>
@@ -2738,7 +2737,7 @@ function renderSL(){
       <td class="sartist" style="color:var(--ink2);font-size:.75rem">${s.artist}</td>
       <td><span class="kp">${s.key}</span></td>
       <td style="font-family:var(--mono);font-size:.72rem;color:var(--ink2);white-space:nowrap">${s.dur?fmtDur(s.dur):'—'}</td>
-      <td class="lkcol" style="white-space:nowrap">${openSongMedia(s,i)}${s.lyrics?`<button class="lb2" style="color:var(--a)" data-url="${s.lyrics}" onclick="openMediaUrl(this)" title="📄 Lyrics / Sheet Music">📄</button>`:''}</td>
+      <td class="lkcol" style="white-space:nowrap">${openSongMedia(s,i)}${s.lyrics?`<button class="lb2" style="color:var(--a)" data-url="${s.lyrics}" onclick="openMediaUrl(this)" title="Lyrics">📄</button>`:''}${s.sheet_music?`<button class="lb2" style="color:var(--a)" data-url="${s.sheet_music}" onclick="openMediaUrl(this)" title="Sheet Music">🎵</button>`:''}</td>
       <td class="nc">${s.note}</td>
       <td><button class="btn btn-xs btn-g" onclick="removeSongFromSL('${id}')">✕</button></td>
     </tr>`;
@@ -3148,6 +3147,7 @@ function renderLib(){
       </div>
       <div class="sclinks">
         ${s.lyrics?`<button class="svb svb-ly" data-url="${s.lyrics}" onclick="event.stopPropagation();openMediaUrl(this)">📄 Lyrics</button>`:''}
+        ${s.sheet_music?`<button class="svb svb-ly" data-url="${s.sheet_music}" onclick="event.stopPropagation();openMediaUrl(this)">🎵 Sheet Music</button>`:''}
         ${s.spotify?`<button class="svb svb-sp" data-url="${s.spotify}" onclick="event.stopPropagation();openMediaUrl(this)">Spotify</button>`:''}
         ${s.youtube?`<button class="svb svb-yt" data-url="${s.youtube}" onclick="event.stopPropagation();openMediaUrl(this)">YouTube</button>`:''}
         ${s.apple?`<button class="svb" data-url="${s.apple}" onclick="event.stopPropagation();openMediaUrl(this)">Apple</button>`:''}
@@ -3236,8 +3236,9 @@ function setLibView(v){
   bs.style.background=v==='sheet'?'var(--a)':'transparent';bs.style.color=v==='sheet'?'#fff':'var(--ink2)';
   document.getElementById('libViewCardsArea').style.display=v==='cards'?'':'none';
   document.getElementById('libViewSheetArea').style.display=v==='sheet'?'':'none';
-  if(v==='sheet'&&songs.length)renderSheet();
+  if(v==='sheet'){if(songs.length)renderSheet();}
 }
+restoreColOrder(); // restore user's saved column order before first render
 setLibView(libView);
 
 function updateLibCount(){
@@ -3287,7 +3288,7 @@ function slTotalDur(){
   return getSlS().reduce((acc,id)=>{const s=songByAnyId(id);return acc+(s&&s.dur?s.dur:0);},0);
 }
 let sheetSortCol=null, sheetSortDir='asc';
-const SHEET_COL_DEFAULT_W={title:200,artist:150,genre:100,key:75,dur:135,note:170,lyrics:200,spotify:160,youtube:160,apple:160,amazon:160,hidden:60};
+const SHEET_COL_DEFAULT_W={title:200,artist:150,genre:100,key:75,dur:135,note:170,lyrics:200,sheet_music:200,spotify:160,youtube:160,apple:160,amazon:160,hidden:60};
 let _sheetColWidths={};
 function sheetColW(field){return _sheetColWidths[field]||SHEET_COL_DEFAULT_W[field]||120;}
 function sheetTblW(){return 32+SHEET_COLS.reduce((s,c)=>s+sheetColW(c.field),0)+36;}
@@ -3332,13 +3333,50 @@ const SHEET_COLS=[
   {label:'Key',     field:'key',     width:'80px'},
   {label:'Duration',field:'dur',     width:'100px'},
   {label:'Notes',   field:'note',    width:null},
-  {label:'Lyrics',  field:'lyrics',  width:'200px'},
+  {label:'Lyrics',      field:'lyrics',      width:'200px'},
+  {label:'Sheet Music', field:'sheet_music', width:'200px'},
   {label:'Spotify', field:'spotify', width:'180px'},
   {label:'YouTube', field:'youtube', width:'180px'},
   {label:'Apple',   field:'apple',   width:'180px'},
   {label:'Amazon',  field:'amazon',  width:'180px'},
   {label:'Hidden',  field:'hidden',  width:'60px'},
 ];
+
+// ── Column order persistence (IMP#4) ─────────────────────────
+const _COL_ORDER_KEY='bandapp_sheetColOrder';
+let _colDragIdx=null;
+
+function restoreColOrder(){
+  try{
+    const saved=JSON.parse(localStorage.getItem(_COL_ORDER_KEY)||'null');
+    if(!Array.isArray(saved))return;
+    const map=Object.fromEntries(SHEET_COLS.map(c=>[c.field,c]));
+    const valid=saved.filter(f=>map[f]);
+    const missing=SHEET_COLS.filter(c=>!valid.includes(c.field));
+    SHEET_COLS.splice(0,SHEET_COLS.length,...valid.map(f=>map[f]),...missing);
+  }catch(_){}
+}
+
+function saveColOrder(){
+  try{localStorage.setItem(_COL_ORDER_KEY,JSON.stringify(SHEET_COLS.map(c=>c.field)));}catch(_){}
+}
+
+function colDragStart(e,idx){
+  _colDragIdx=idx;
+  e.dataTransfer.effectAllowed='move';
+  e.currentTarget.style.opacity='.5';
+}
+function colDragEnd(e){e.currentTarget.style.opacity='';}
+function colDragOver(e){e.preventDefault();e.dataTransfer.dropEffect='move';}
+function colDrop(e,idx){
+  e.preventDefault();
+  if(_colDragIdx===null||_colDragIdx===idx){_colDragIdx=null;return;}
+  const moved=SHEET_COLS.splice(_colDragIdx,1)[0];
+  SHEET_COLS.splice(idx,0,moved);
+  _colDragIdx=null;
+  saveColOrder();
+  renderSheet();
+}
 
 function sortSheet(field){
   sheetSortDir=(sheetSortCol===field&&sheetSortDir==='asc')?'desc':'asc';
@@ -3365,11 +3403,14 @@ function renderSheetHead(){
   // Sync colgroup widths
   const cg=document.getElementById('sheetCols');
   if(cg)cg.innerHTML=`<col style="width:32px">`+SHEET_COLS.map(col=>`<col style="width:${sheetColW(col.field)}px">`).join('')+`<col style="width:36px">`;
-  const cols=SHEET_COLS.map(col=>{
+  const cols=SHEET_COLS.map((col,idx)=>{
     const isActive=sheetSortCol===col.field;
     const icon=isActive?(sheetSortDir==='asc'?'▲':'▼'):'⇅';
     const cls=`sh-hd${isActive?' sort-'+sheetSortDir:''}`;
-    return`<th class="${cls}" style="width:${sheetColW(col.field)}px" onclick="sortSheet('${col.field}')">${col.label}<span class="sh-sort-icon">${icon}</span><div class="sh-resize" onmousedown="startColResize(event,'${col.field}',this.parentElement)" onclick="event.stopPropagation()"></div></th>`;
+    return`<th class="${cls}" draggable="true" style="width:${sheetColW(col.field)}px;cursor:grab" title="Drag to reorder · Click to sort"
+      ondragstart="colDragStart(event,${idx})" ondragend="colDragEnd(event)"
+      ondragover="colDragOver(event)" ondrop="colDrop(event,${idx})"
+      onclick="sortSheet('${col.field}')">${col.label}<span class="sh-sort-icon">${icon}</span><div class="sh-resize" onmousedown="startColResize(event,'${col.field}',this.parentElement)" onclick="event.stopPropagation()"></div></th>`;
   }).join('');
   head.innerHTML=`<tr style="background:var(--bg);position:sticky;top:0;z-index:2">
     <th style="width:32px;padding:8px 6px;border-bottom:2px solid var(--bd);text-align:center;font-size:.68rem;font-weight:700;color:var(--ink3)">#</th>
@@ -3400,12 +3441,20 @@ function renderSheet(){
       <td><input class="sh-cell" style="min-width:140px" value="${esc(s.note||'')}" data-field="note" data-id="${s.id}" onchange="sheetEdit(this)" onkeydown="sheetKeyDown(event,this)"></td>
       <td style="white-space:nowrap;padding:4px 6px">
         <div style="display:flex;align-items:center;gap:4px">
-          <input class="sh-cell" style="flex:1;min-width:100px;font-size:.72rem" value="${esc(s.lyrics||'')}" placeholder="Paste link or upload →" data-field="lyrics" data-id="${s.id}" onchange="sheetEdit(this)" onkeydown="sheetKeyDown(event,this)" title="Lyrics / Sheet Music URL">
-          <label style="cursor:pointer;padding:3px 6px;border-radius:5px;border:1.5px solid var(--bd);background:var(--bg);font-size:.68rem;color:var(--ink2);flex-shrink:0;line-height:1.5" title="Upload lyrics / sheet music file">
-            ⬆
-            <input type="file" accept=".pdf,.png,.jpg,.jpeg,.gif,.mxl,.xml" style="display:none" onchange="handleSheetLyricsUpload(event,'${s.id}')">
+          <input class="sh-cell" style="flex:1;min-width:100px;font-size:.72rem" value="${esc(s.lyrics||'')}" placeholder="Paste link or upload →" data-field="lyrics" data-id="${s.id}" onchange="sheetEdit(this)" onkeydown="sheetKeyDown(event,this)" title="Lyrics URL">
+          <label style="cursor:pointer;padding:3px 6px;border-radius:5px;border:1.5px solid var(--bd);background:var(--bg);font-size:.68rem;color:var(--ink2);flex-shrink:0;line-height:1.5" title="Upload lyrics file">
+            ⬆<input type="file" accept=".pdf,.png,.jpg,.jpeg,.gif,.mxl,.xml" style="display:none" onchange="handleSheetFileUpload(event,'${s.id}','lyrics')">
           </label>
-          ${s.lyrics?`<a href="${esc(s.lyrics)}" target="_blank" rel="noopener noreferrer" style="font-size:.8rem;text-decoration:none;flex-shrink:0" title="View Lyrics / Sheet Music">📄</a>`:''}
+          ${s.lyrics?`<a href="${esc(s.lyrics)}" target="_blank" rel="noopener noreferrer" style="font-size:.8rem;text-decoration:none;flex-shrink:0" title="View Lyrics">📄</a>`:''}
+        </div>
+      </td>
+      <td style="white-space:nowrap;padding:4px 6px">
+        <div style="display:flex;align-items:center;gap:4px">
+          <input class="sh-cell" style="flex:1;min-width:100px;font-size:.72rem" value="${esc(s.sheet_music||'')}" placeholder="Paste link or upload →" data-field="sheet_music" data-id="${s.id}" onchange="sheetEdit(this)" onkeydown="sheetKeyDown(event,this)" title="Sheet Music URL">
+          <label style="cursor:pointer;padding:3px 6px;border-radius:5px;border:1.5px solid var(--bd);background:var(--bg);font-size:.68rem;color:var(--ink2);flex-shrink:0;line-height:1.5" title="Upload sheet music file">
+            ⬆<input type="file" accept=".pdf,.png,.jpg,.jpeg,.gif,.mxl,.xml" style="display:none" onchange="handleSheetFileUpload(event,'${s.id}','sheet_music')">
+          </label>
+          ${s.sheet_music?`<a href="${esc(s.sheet_music)}" target="_blank" rel="noopener noreferrer" style="font-size:.8rem;text-decoration:none;flex-shrink:0" title="View Sheet Music">🎵</a>`:''}
         </div>
       </td>
       <td><input class="sh-cell" style="min-width:150px;font-size:.72rem" value="${esc(s.spotify||'')}" placeholder="Spotify URL" data-field="spotify" data-id="${s.id}" onchange="sheetEdit(this)" onkeydown="sheetKeyDown(event,this)"></td>
@@ -3443,11 +3492,19 @@ function sheetEditDur(el){
 
 async function saveSheetRow(id){
   const s=songs.find(x=>x.id===id);if(!s)return;
-  const saved=await SongsDB.upsert(s);
-  if(saved){
-    if(s.id!==saved.id)s.id=saved.id;
-    const row=document.querySelector(`#sheetBody tr[data-id="${id}"]`);
-    if(row){row.style.outline='2px solid var(--g)';setTimeout(()=>{row.style.outline='';},700);}
+  const row=document.querySelector(`#sheetBody tr[data-id="${id}"]`);
+  try{
+    const saved=await SongsDB.upsert(s);
+    if(saved){
+      if(s.id!==saved.id){s.id=saved.id;}
+      if(row){row.style.outline='2px solid var(--g)';setTimeout(()=>{row.style.outline='';},700);}
+    }
+  }catch(e){
+    console.error('[bandapp] saveSheetRow failed:',e?.message);
+    if(row){row.style.outline='2px solid var(--r)';setTimeout(()=>{row.style.outline='';},2000);}
+    toast2((e?.message?.includes('column')||e?.message?.includes('does not exist'))
+      ?'Save failed — run the database migration in Supabase Dashboard'
+      :'Auto-save failed — please try again','w');
   }
 }
 
@@ -3592,6 +3649,11 @@ function openSongEdit(id){
   document.getElementById('seLyricsUploadStatus').textContent='';
   const lyricsViewBtn=document.getElementById('seLyricsViewBtn');
   if(lyricsViewBtn)lyricsViewBtn.style.display=lyricsVal?'':'none';
+  const smVal=s.sheet_music||'';
+  document.getElementById('seSheetMusic').value=smVal;
+  document.getElementById('seSheetMusicStatus').textContent='';
+  const smViewBtn=document.getElementById('seSheetMusicViewBtn');
+  if(smViewBtn)smViewBtn.style.display=smVal?'':'none';
   const repoHint=document.getElementById('seLyricsRepoHint');
   if(repoHint){
     const _repoHints={bandapp:'This band uses in-app file upload.',gdrive:'Paste a Google Drive sharing link.',dropbox:'Paste a Dropbox sharing link.',onedrive:'Paste a OneDrive sharing link.',icloud:'Paste an iCloud Drive sharing link.',box:'Paste a Box sharing link.',musescore:'Paste a MuseScore score link.',flat:'Paste a Flat.io score link.',other:'Paste any direct URL.'};
@@ -3629,6 +3691,7 @@ async function saveSongEdit(){
       apple:document.getElementById('seApple').value,
       amazon:document.getElementById('seAmazon').value,
       lyrics:document.getElementById('seLyrics').value,
+      sheet_music:document.getElementById('seSheetMusic').value,
       hidden:s.hidden,
     });
   }catch(e){
@@ -3663,8 +3726,29 @@ async function handleSongFileUpload(event){
   event.target.value='';
 }
 
-// Spreadsheet-row lyrics upload — uploads file, updates song, re-renders row
-async function handleSheetLyricsUpload(event, songId){
+// Modal sheet music upload (mirrors handleSongFileUpload for the seSheetMusic field)
+async function handleSongSheetMusicUpload(event){
+  const file=event.target.files[0];if(!file)return;
+  const statusEl=document.getElementById('seSheetMusicStatus');
+  const smInput=document.getElementById('seSheetMusic');
+  const viewBtn=document.getElementById('seSheetMusicViewBtn');
+  if(file.size>10*1024*1024){toast2('File too large — max 10 MB','w');event.target.value='';return;}
+  const allowedTypes=['application/pdf','image/png','image/jpeg','image/gif','application/octet-stream','text/xml','application/xml','application/vnd.recordare.musicxml+xml'];
+  if(!allowedTypes.includes(file.type)&&!file.name.match(/\.(pdf|png|jpe?g|gif|mxl|xml)$/i)){toast2('Unsupported file type','w');event.target.value='';return;}
+  if(statusEl)statusEl.textContent='Uploading…';
+  const safeName=file.name.replace(/[^a-zA-Z0-9._-]/g,'_').slice(0,80);
+  const path=`${activeBandId||'band'}/${Date.now()}_${safeName}`;
+  const{data,error}=await supabase.storage.from('song-attachments').upload(path,file,{upsert:false,contentType:file.type});
+  if(error){toast2('Upload failed: '+error.message,'w');if(statusEl)statusEl.textContent='';event.target.value='';return;}
+  const{data:{publicUrl}}=supabase.storage.from('song-attachments').getPublicUrl(path);
+  if(smInput)smInput.value=publicUrl;
+  if(viewBtn)viewBtn.style.display='';
+  if(statusEl)statusEl.textContent=`✓ ${file.name} uploaded`;
+  event.target.value='';
+}
+
+// Spreadsheet-row file upload — generic for 'lyrics' and 'sheet_music' fields
+async function handleSheetFileUpload(event, songId, field){
   const file=event.target.files[0];if(!file)return;
   if(file.size>10*1024*1024){toast2('File too large — max 10 MB','w');event.target.value='';return;}
   toast2('Uploading…');
@@ -3674,11 +3758,12 @@ async function handleSheetLyricsUpload(event, songId){
   if(error){toast2('Upload failed: '+error.message,'w');event.target.value='';return;}
   const{data:{publicUrl}}=supabase.storage.from('song-attachments').getPublicUrl(path);
   const s=songByAnyId(songId);if(!s)return;
-  s.lyrics=publicUrl;
+  s[field]=publicUrl;
   try{await SongsDB.upsert({...s,band_id:activeBandId});}catch(e){toast2('Failed to save','w');return;}
   event.target.value='';
   await loadSongs();renderSheet();renderLib();
-  toast2('Lyrics file uploaded and saved!');
+  const label=field==='sheet_music'?'Sheet music':'Lyrics';
+  toast2(`${label} file uploaded and saved!`);
 }
 
 // Band setting — save lyrics repository preference
@@ -6547,6 +6632,20 @@ async function saveSettings(){
     <span id="seLyricsUploadStatus" style="font-size:.72rem;color:var(--ink3)"></span>
   </div>
   <div style="font-size:.69rem;color:var(--ink3);margin-bottom:4px">Accepted: PDF, PNG, JPG, GIF, MXL, XML &nbsp;·&nbsp; Max 10 MB &nbsp;·&nbsp; Stored in Bandapp</div>
+
+  <!-- Sheet Music -->
+  <div style="font-size:.69rem;font-weight:700;color:var(--ink2);margin-bottom:6px;margin-top:14px;letter-spacing:.04em;text-transform:uppercase">🎵 Sheet Music <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--ink3)">(optional)</span></div>
+  <div style="display:flex;gap:7px;align-items:center;margin-bottom:8px">
+    <input id="seSheetMusic" style="flex:1;padding:9px 13px;background:var(--bg);border:1.5px solid var(--bd);border-radius:var(--rad);color:var(--ink);font-family:var(--font);font-size:.83rem;outline:none;transition:border-color .13s" placeholder="Paste link or upload →" onfocus="this.style.borderColor='var(--a)'" onblur="this.style.borderColor='var(--bd)'" oninput="document.getElementById('seSheetMusicViewBtn').style.display=this.value?'':'none'">
+    <button id="seSheetMusicViewBtn" onclick="openMediaUrl(document.getElementById('seSheetMusic'))" style="display:none;padding:8px 12px;border-radius:var(--rad);border:1.5px solid var(--a);background:var(--a2);color:var(--a);font-family:var(--font);font-size:.8rem;font-weight:600;cursor:pointer;white-space:nowrap">🎵 View</button>
+  </div>
+  <div style="display:flex;align-items:center;gap:9px;margin-bottom:4px">
+    <label class="btn btn-g btn-sm" style="cursor:pointer;font-size:.75rem;padding:6px 12px">
+      ⬆ Upload file
+      <input type="file" id="seSheetMusicUpload" accept=".pdf,.png,.jpg,.jpeg,.gif,.mxl,.xml" style="display:none" onchange="handleSongSheetMusicUpload(event)">
+    </label>
+    <span id="seSheetMusicStatus" style="font-size:.72rem;color:var(--ink3)"></span>
+  </div>
 
   <!-- Streaming links -->
   <div style="height:1px;background:var(--bd);margin:4px 0 14px"></div>

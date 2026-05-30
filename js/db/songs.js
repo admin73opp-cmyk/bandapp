@@ -1,7 +1,8 @@
 // ── Songs data layer — SongsDB namespace ─────────────────────
 // Translates between DB column names and the UI field names used
 // throughout index.html (duration↔dur, notes↔note,
-// spotify_url↔spotify, youtube_url↔youtube, apple_url↔apple).
+// spotify_url↔spotify, youtube_url↔youtube, apple_url↔apple,
+// lyrics_url↔lyrics, sheet_music_url↔sheet_music).
 
 const SongsDB = {
 
@@ -14,13 +15,14 @@ const SongsDB = {
     if (error) { handleDbError(error); return []; }
     return (data || []).map(s => ({
       ...s,
-      dur:     s.duration,
-      note:    s.notes,
-      spotify: s.spotify_url || '',
-      youtube: s.youtube_url || '',
-      apple:   s.apple_url   || '',
-      amazon:  s.amazon_url  || '',
-      lyrics:  s.lyrics_url  || '',
+      dur:         s.duration,
+      note:        s.notes,
+      spotify:     s.spotify_url      || '',
+      youtube:     s.youtube_url      || '',
+      apple:       s.apple_url        || '',
+      amazon:      s.amazon_url       || '',
+      lyrics:      s.lyrics_url       || '',
+      sheet_music: s.sheet_music_url  || '',
     }));
   },
 
@@ -37,34 +39,56 @@ const SongsDB = {
 
   async upsert(song) {
     // Strip UI aliases and derived fields; map back to DB column names
-    const { dur, note, spotify, youtube, apple, amazon, lyrics, legacy_id, band_members, ...rest } = song;
+    const {
+      dur, note, spotify, youtube, apple, amazon,
+      lyrics, sheet_music,
+      legacy_id, band_members, ...rest
+    } = song;
     const payload = {
       ...rest,
-      duration:    dur,
-      notes:       note,
-      spotify_url: spotify || null,
-      youtube_url: youtube || null,
-      apple_url:   apple   || null,
-      amazon_url:  amazon  || null,
-      lyrics_url:  lyrics  || null,
+      duration:        dur,
+      notes:           note,
+      spotify_url:     spotify      || null,
+      youtube_url:     youtube      || null,
+      apple_url:       apple        || null,
+      amazon_url:      amazon       || null,
+      lyrics_url:      lyrics       || null,
+      sheet_music_url: sheet_music  || null,
     };
     if (!payload.band_id) payload.band_id = activeBandId;
 
-    const { data, error } = await supabase
-      .from('songs')
-      .upsert(payload)
-      .select()
-      .single();
+    // Remove columns that may not yet exist in the live DB so a missing
+    // migration doesn't silently block ALL saves.  The retry without those
+    // columns is a fallback; running the SQL migration is the proper fix.
+    const tryUpsert = async (p) => {
+      const { data, error } = await supabase
+        .from('songs')
+        .upsert(p)
+        .select()
+        .single();
+      return { data, error };
+    };
+
+    let { data, error } = await tryUpsert(payload);
+
+    // If the error is a missing column (42703), retry without the new columns
+    if (error && (error.code === '42703' || error.message?.includes('column') || error.message?.includes('does not exist'))) {
+      console.warn('[bandapp] songs.upsert — column missing, retrying without new fields:', error.message);
+      const { lyrics_url, sheet_music_url, amazon_url, ...fallback } = payload;
+      ({ data, error } = await tryUpsert(fallback));
+    }
+
     if (error) { console.error('[bandapp] songs.upsert error:', error); throw error; }
     return {
       ...data,
-      dur:     data.duration,
-      note:    data.notes,
-      spotify: data.spotify_url || '',
-      youtube: data.youtube_url || '',
-      apple:   data.apple_url   || '',
-      amazon:  data.amazon_url  || '',
-      lyrics:  data.lyrics_url  || '',
+      dur:         data.duration,
+      note:        data.notes,
+      spotify:     data.spotify_url      || '',
+      youtube:     data.youtube_url      || '',
+      apple:       data.apple_url        || '',
+      amazon:      data.amazon_url       || '',
+      lyrics:      data.lyrics_url       || '',
+      sheet_music: data.sheet_music_url  || '',
     };
   },
 
