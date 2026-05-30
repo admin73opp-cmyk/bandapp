@@ -3259,7 +3259,22 @@ function updateSidebarCounts(){
 
 // ── SPREADSHEET ───────────────────────────────────────────
 const GENRES_LIST=['Jazz','Funk','Soul','Blues','Pop','Rock','Hard-Rock','Country','Folk','Latin','R&B','Reggae','Classical','Samba','Bossa Nova','MPB','Pagode','Forró','Choro','Sertanejo','Brazilian Funk','Other'];
-const KEYS_LIST=['','C','C♯','D♭','D','E♭','E','F','F♯','G♭','G','A♭','A','B♭','B','C♭','Am','A♯m','B♭m','Bm','Cm','C♯m','Dm','D♯m','E♭m','Em','Fm','F♯m','Gm','G♯m','A♭m'];
+// Chromatic from A — major then minor at each pitch, enharmonics grouped together
+const KEYS_LIST=[
+  '',
+  'A','Am',
+  'A♯','A♯m','B♭','B♭m',
+  'B','Bm','C♭',
+  'C','Cm',
+  'C♯','C♯m','D♭',
+  'D','Dm',
+  'D♯','D♯m','E♭','E♭m',
+  'E','Em',
+  'F','Fm',
+  'F♯','F♯m','G♭',
+  'G','Gm',
+  'G♯','G♯m','A♭','A♭m',
+];
 const KEY_NORMALIZE={'Bb':'B♭','Eb':'E♭','Ab':'A♭','Db':'D♭','Gb':'G♭','Cb':'C♭','C#':'C♯','F#':'F♯','G#':'G♯','A#':'A♯','D#':'D♯','B#':'B♯','Bbm':'B♭m','Ebm':'E♭m','Abm':'A♭m','Dbm':'D♭m','Gbm':'G♭m','C#m':'C♯m','F#m':'F♯m','G#m':'G♯m','A#m':'A♯m','D#m':'D♯m'};
 function normalizeKey(k){return KEY_NORMALIZE[String(k||'').trim()]||String(k||'').trim();}
 // Populate seKey select options from KEYS_LIST (single source of truth)
