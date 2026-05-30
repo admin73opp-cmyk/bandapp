@@ -3319,10 +3319,17 @@ function sheetColW(field){return _sheetColWidths[field]||SHEET_COL_DEFAULT_W[fie
 function sheetTblW(){return 32+SHEET_COLS.reduce((s,c)=>s+sheetColW(c.field),0)+36;}
 function setSheetTblWidth(){
   const tbl=document.getElementById('sheetTbl');if(!tbl)return;
-  const outer=document.getElementById('sheetScrollOuter');
-  // clientWidth of the scroll container is its inner visible width (viewport-bounded)
-  const cw=outer?.clientWidth||tbl.parentElement?.clientWidth||0;
-  tbl.style.width=Math.max(sheetTblW(),cw)+'px';
+  const outer=document.getElementById('sheetScrollOuter');if(!outer)return;
+  // .mc is a flex column — flex items can expand cross-axis to fit wider content,
+  // making outer.clientWidth equal the table width (no overflow, no scrollbar).
+  // Fix: pin the outer container's width explicitly to the true available page width
+  // so it cannot expand, forcing the wider table to actually overflow it.
+  const sb=document.getElementById('sb');
+  const sbW=sb?sb.offsetWidth:226;
+  const pad=44; // pg-area left+right padding (22px each)
+  const availW=Math.max(window.innerWidth-sbW-pad,200);
+  outer.style.width=availW+'px';
+  tbl.style.width=Math.max(sheetTblW(),availW)+'px';
 }
 let _colResize=null;
 function startColResize(e,field,thEl){
