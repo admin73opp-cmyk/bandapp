@@ -4662,41 +4662,40 @@ async function confirmCancel(notify){
   const {type,id}=cancelTarget;
   const appUrl=(localStorage.getItem('appUrl')||window.location.origin+'/').replace(/[?#].*/,'').replace(/\/+$/,'');
   let msg=`🚫 Event cancelled. Please check Bandapp for updates: ${appUrl}`;
+  let saveOk=false;
   try{
     if(type==='concert'){
       const c=concerts.find(x=>x.id===id);
       if(c){
         msg=`🚫 Concert on ${c.date} cancelled. Please check Bandapp for updates: ${appUrl}`;
         const saved=await ConcertsDB.upsert({...c, cancelled:true});
-        if(!saved){
-          toast2('Could not cancel concert — please try again','w');
-          closeMod('cancelMod');cancelTarget=null;return;
-        }
+        if(!saved){toast2('Could not cancel concert — please try again','w');return;}
         logCalChange('cancelled','concert',saved.id,`Concert "${c.title}"${c.date?' on '+c.date:''} cancelled`,true);
         syncCrossBandBlackouts(saved);
-        await loadConcerts();
-        renderConcerts();renderCal();updateSidebarCounts();
+        saveOk=true;
+        // Reload after closing so the modal never hangs waiting for the DB
+        loadConcerts().then(()=>{renderConcerts();renderCal();updateSidebarCounts();}).catch(()=>{});
       }
     } else {
       const r=rehearsals.find(x=>x.id===id);
       if(r){
         msg=`🚫 Rehearsal on ${r.date} cancelled. Please check Bandapp for updates: ${appUrl}`;
         const saved=await RehearsalsDB.upsert({...r, cancelled:true});
-        if(!saved){
-          toast2('Could not cancel rehearsal — please try again','w');
-          closeMod('cancelMod');cancelTarget=null;return;
-        }
+        if(!saved){toast2('Could not cancel rehearsal — please try again','w');return;}
         logCalChange('cancelled','rehearsal',saved.id,`Rehearsal "${r.title}"${r.date?' on '+r.date:''} cancelled`,true);
-        await loadRehearsals();
-        renderRehearsals();renderCal();updateSidebarCounts();
+        saveOk=true;
+        // Reload after closing — don't block the modal close on a slow/stale reload
+        loadRehearsals().then(()=>{renderRehearsals();renderCal();updateSidebarCounts();}).catch(()=>{});
       }
     }
   } catch(e){
     console.error('[bandapp] confirmCancel error:',e);
     toast2('Something went wrong cancelling the event — check console for details','w');
-    closeMod('cancelMod');cancelTarget=null;return;
+  } finally {
+    // ALWAYS close the modal and clear cancelTarget, regardless of what happened above
+    closeMod('cancelMod');closeMod('cvMod');closeMod('reViewMod');cancelTarget=null;
   }
-  closeMod('cancelMod');closeMod('cvMod');closeMod('reViewMod');cancelTarget=null;
+  if(!saveOk)return;
   const ch=getBandNotifPref();const waLinked=!!bandWaLinks[activeBandId];
   if(notify){
     if(ch==='email')toast2('Cancellation sent by email ✉️');
