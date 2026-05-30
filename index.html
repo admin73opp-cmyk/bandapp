@@ -2775,8 +2775,6 @@ function openMediaPicker(rowIdx){
   if(s.youtube)links.push({label:'▶ YouTube',url:s.youtube});
   if(s.apple)links.push({label:'🍎 Apple Music',url:s.apple});
   if(s.amazon)links.push({label:'🎵 Amazon Music',url:s.amazon});
-  if(s.lyrics)links.push({label:'📄 Lyrics',url:s.lyrics});
-  if(s.sheet_music)links.push({label:'🎵 Sheet Music',url:s.sheet_music});
   const titleEl=document.getElementById('mediaPickerTitle');
   const listEl=document.getElementById('mediaPickerList');
   if(titleEl)titleEl.textContent=s.title;
@@ -3162,8 +3160,6 @@ function renderLib(){
         <span class="kp">${s.key}</span>
       </div>
       <div class="sclinks">
-        ${s.lyrics?`<button class="svb svb-ly" data-url="${s.lyrics}" onclick="event.stopPropagation();openMediaUrl(this)">📄 Lyrics</button>`:''}
-        ${s.sheet_music?`<button class="svb svb-ly" data-url="${s.sheet_music}" onclick="event.stopPropagation();openMediaUrl(this)">🎵 Sheet Music</button>`:''}
         ${s.spotify?`<button class="svb svb-sp" data-url="${s.spotify}" onclick="event.stopPropagation();openMediaUrl(this)">Spotify</button>`:''}
         ${s.youtube?`<button class="svb svb-yt" data-url="${s.youtube}" onclick="event.stopPropagation();openMediaUrl(this)">YouTube</button>`:''}
         ${s.apple?`<button class="svb" data-url="${s.apple}" onclick="event.stopPropagation();openMediaUrl(this)">Apple</button>`:''}
