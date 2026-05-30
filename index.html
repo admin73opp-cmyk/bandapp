@@ -46,7 +46,7 @@
   input:-webkit-autofill,input:-webkit-autofill:focus{-webkit-box-shadow:0 0 0 100px var(--bg) inset;-webkit-text-fill-color:var(--ink)}
   .toast{background:var(--bd);color:var(--ink)}
   .sb.minimized .ni:hover::after{background:var(--bd);color:var(--ink)}
-  .sb-band-name{color:var(--ink)!important}
+  .sb-group-name{color:var(--ink)!important}
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 body{font-family:var(--font);background:var(--bg);color:var(--ink);min-height:100vh;overflow-x:hidden;-webkit-font-smoothing:antialiased}
@@ -101,7 +101,7 @@ select option{background:var(--w)}
 .sb.minimized .sb-label{display:none}
 .sb.minimized .sb-logo-text{display:none}
 .sb.minimized .sb-logo{justify-content:center;padding:17px 0 13px}
-.sb.minimized .sb-band{display:none}
+.sb.minimized .sb-group{display:none}
 .sb.minimized .sbar-foot-text{display:none}
 .sb.minimized .nb{display:none}
 .sb.minimized .sb-foot{justify-content:center;padding:10px 0}
@@ -123,7 +123,7 @@ select option{background:var(--w)}
 /* sidebar pieces */
 .sb-logo{padding:17px 15px 13px;font-size:1.03rem;font-weight:700;letter-spacing:-.03em;display:flex;align-items:center;gap:7px;border-bottom:1px solid var(--bd)}
 .ld{width:7px;height:7px;border-radius:50%;background:var(--a);flex-shrink:0}
-.sb-band{padding:9px;border-bottom:1px solid var(--bd)}
+.sb-group{padding:9px;border-bottom:1px solid var(--bd)}
 .bb{width:100%;display:flex;align-items:center;gap:9px;padding:9px 10px;background:var(--bg);border:none;border-radius:var(--rad);cursor:pointer;transition:background .13s;text-align:left;color:var(--ink)}.bb:hover{background:var(--bg2)}
 .bav{width:29px;height:29px;border-radius:8px;background:var(--a);display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:700;color:#fff;flex-shrink:0}
 .sb-nav{flex:1;padding:8px;overflow-y:auto}
@@ -281,8 +281,8 @@ select option{background:var(--w)}
 .at th{font-size:.61rem;font-weight:700;color:var(--ink3);text-align:center;padding:3px 2px;min-width:21px}
 .at th.cfl{background:var(--g2);color:var(--g)}.at th.cbl{background:var(--r2);color:var(--r)}
 .at td{padding:2px}.nc2{white-space:nowrap;padding:5px 9px!important;text-align:left;position:sticky;left:0;background:var(--w);z-index:1}
-.cd.cd-xband{background:rgba(217,119,6,.1);border-color:rgba(217,119,6,.35);cursor:not-allowed}
-.cd.cd-xband .cdn{color:var(--amb)}
+.cd.cd-xgroup{background:rgba(217,119,6,.1);border-color:rgba(217,119,6,.35);cursor:not-allowed}
+.cd.cd-xgroup .cdn{color:var(--amb)}
 .cd.cd-past{opacity:.38;cursor:default}.cd.cd-past:hover{border-color:transparent!important;background:var(--bg)!important}
 .cd-xblabel{font-size:.42rem;color:var(--amb);text-align:center;line-height:1.1;margin-top:1px;max-height:15px;overflow:hidden}
 .ac{width:16px;height:16px;border-radius:3px;margin:auto}
@@ -322,7 +322,7 @@ select option{background:var(--w)}
 .mcd.y{background:var(--g2);color:var(--g)}.mcd.n{background:var(--bg);color:var(--ink3);border:1px solid var(--bd)}
 .mcfoot{display:flex;gap:5px;margin-top:11px;padding-top:10px;border-top:1px solid var(--bd);flex-wrap:wrap}
 .mcfoot .btn{flex:1 1 auto;min-width:0;text-align:center;justify-content:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:.75rem;padding:6px 8px}
-/* band profile */
+/* group profile */
 .bphdr{background:var(--w);border:1px solid var(--bd);border-radius:var(--radl);padding:21px;margin-bottom:13px;display:flex;gap:17px;align-items:flex-start;box-shadow:var(--sh)}
 .bpphoto{width:74px;height:74px;border-radius:14px;background:var(--a);display:flex;align-items:center;justify-content:center;font-size:1.75rem;font-weight:700;color:#fff;flex-shrink:0}
 .bpname{font-size:1.35rem;font-weight:700;letter-spacing:-.04em;margin-bottom:4px}
@@ -416,7 +416,7 @@ html[data-theme="dark"] input:-webkit-autofill,html[data-theme="dark"] input:-we
 html[data-theme="dark"] .toast{background:#2A2A38;color:#F0F0F8}
 html[data-theme="light"] .toast{background:#111118;color:#fff}
 html[data-theme="dark"] .sb.minimized .ni:hover::after{background:var(--bd);color:var(--ink)}
-html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
+html[data-theme="dark"] .sb-group-name{color:var(--ink)!important}
 .auth-err{background:var(--r2);border:1.5px solid var(--r);border-radius:var(--rad);padding:12px 14px;margin-bottom:14px;font-size:.85rem;color:var(--r);line-height:1.45;display:flex;align-items:flex-start;gap:10px}
 .auth-err-msg{flex:1;font-weight:500;word-break:break-word}
 .auth-err-x{background:none;border:none;color:var(--r);cursor:pointer;font-size:1.1rem;line-height:1;padding:0;flex-shrink:0;opacity:.65}
@@ -430,10 +430,10 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
 <div id="authScreen">
   <div style="width:min(380px,95vw)">
     <div style="font-size:1.45rem;font-weight:700;letter-spacing:-.04em;display:flex;align-items:center;gap:8px;margin-bottom:4px"><div class="ld"></div>Bandapp</div>
-    <p style="font-size:.84rem;color:var(--ink2);margin-bottom:27px" data-i18n="Manage your band, rehearsals & setlists">Manage your band, rehearsals &amp; setlists</p>
+    <p style="font-size:.84rem;color:var(--ink2);margin-bottom:27px" data-i18n="Manage your music group, rehearsals & setlists">Manage your music group, rehearsals &amp; setlists</p>
     <div id="authLoading" style="display:none;text-align:center;padding:32px 0">
       <div class="ld" style="width:36px;height:36px;margin:0 auto 14px"></div>
-      <div style="font-size:.84rem;color:var(--ink2)" data-i18n="Loading your band…">Loading your band…</div>
+      <div style="font-size:.84rem;color:var(--ink2)" data-i18n="Loading your group…">Loading your group…</div>
     </div>
     <div id="auth-tabs" style="display:flex;background:var(--bg);border-radius:var(--rad);padding:4px;gap:3px;margin-bottom:21px">
       <button class="stb on" style="flex:1;border-radius:7px" onclick="switchTab('login')" data-i18n="Sign in">Sign in</button>
@@ -452,12 +452,12 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
       <div id="sf-invite-banner" style="display:none;padding:10px 14px;background:var(--a2);border:1px solid rgba(108,99,255,.3);border-radius:var(--rad);margin-bottom:14px;font-size:.85rem;text-align:center">
         <div style="font-size:1.4rem;margin-bottom:4px">🎸</div>
         <div style="font-weight:700;color:var(--a);margin-bottom:2px" data-i18n="You've been invited!">You've been invited!</div>
-        <div style="color:var(--ink2)"><span data-i18n="Sign up to join">Sign up to join</span> <strong id="sf-invite-band">the band</strong></div>
+        <div style="color:var(--ink2)"><span data-i18n="Sign up to join">Sign up to join</span> <strong id="sf-invite-group">the group</strong></div>
       </div>
       <div class="fr" data-i18n="First name" data-i18n="Last name"><div class="fg"><label>First name</label><input id="signupFirst" placeholder="Marco" autocomplete="given-name"></div><div class="fg"><label>Last name</label><input id="signupLast" placeholder="Rossi" autocomplete="family-name"></div></div>
       <div class="fg" data-i18n="Email"><label>Email</label><input id="signupEmail" type="email" placeholder="you@email.com" autocomplete="email"></div>
       <div class="fg" data-i18n="Password" data-i18n="(min. 8 chars)"><label>Password <span style="font-weight:400;color:var(--ink3)">(min. 8 chars)</span></label><input id="signupPassword" type="password" placeholder="••••••••" autocomplete="new-password"></div>
-      <div class="fg" id="sfBandField" data-i18n="Band name (optional)"><label>Band name (optional)</label><input id="signupBand" placeholder="The Jazz Cats"></div>
+      <div class="fg" id="sfGroupField" data-i18n="Group name (optional)"><label>Group name (optional)</label><input id="signupGroup" placeholder="The Jazz Cats"></div>
       <div id="signupErr" class="auth-err" style="display:none"><span class="auth-err-msg"></span><button class="auth-err-x" onclick="clearAuthErr('signupErr')" aria-label="Dismiss">✕</button></div>
       <button class="btn btn-p btn-fw" onclick="doSignUp()" data-i18n="Create account">Create account</button>
     </div>
@@ -500,7 +500,7 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
 
 <!-- APP -->
 <div id="app">
-  <div id="appLoader"><div class="al-spinner"></div><div class="al-text">Loading your band data…</div></div>
+  <div id="appLoader"><div class="al-spinner"></div><div class="al-text">Loading your group data…</div></div>
   <button id="feedbackFab" onclick="openFeedbackModal()">🐛 Bug / Feedback</button>
   <div class="sb-ov" id="sbOv" onclick="toggleSb()"></div>
   <nav class="sb" id="sb">
@@ -509,10 +509,10 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
       <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 12L6 8l4-4"/></svg>
     </div>
     <div class="sb-logo"><div class="ld"></div><span class="sb-logo-text">Bandapp</span></div>
-    <div class="sb-band">
+    <div class="sb-group">
       <button class="bb" onclick="renderBandList();showMod('bswMod')">
         <div class="bav">JC</div>
-        <div class="sb-label"><div class="sb-band-name" style="font-size:.81rem;font-weight:600;color:var(--ink)">The Jazz Cats</div><div style="font-size:.67rem;color:var(--ink3)">Admin</div></div>
+        <div class="sb-label"><div class="sb-group-name" style="font-size:.81rem;font-weight:600;color:var(--ink)">The Jazz Cats</div><div style="font-size:.67rem;color:var(--ink3)">Admin</div></div>
         <svg class="sb-label" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" style="width:12px;margin-left:auto;color:var(--ink3)"><path d="M4 6l4 4 4-4"/></svg>
       </button>
     </div>
@@ -530,10 +530,10 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
         <div class="ni" onclick="nav('library')" data-label="Song Library" data-i18n="Song Library"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="5" cy="12" r="2"/><circle cx="13" cy="11" r="2"/><path d="M7 12V4l8-2v8"/></svg><span class="sb-label">Song Library</span><span class="nb" id="sbLibCount" style="background:var(--bl)">0</span></div>
       </div>
       <div class="ns">
-        <div class="nsl" data-i18n="Band">Band</div>
+        <div class="nsl" data-i18n="Group">Group</div>
         <div class="ni" onclick="nav('members')" data-label="Members" data-i18n="Members"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="6" cy="5" r="2.5"/><path d="M1 14c0-3 2.2-5 5-5s5 2 5 5"/><circle cx="12" cy="5" r="2"/><path d="M14 13c0-2.4-1.5-4-4-4"/></svg><span class="sb-label">Members</span><span class="nb" id="sbMemCount" style="display:none">0</span></div>
         <div class="ni" onclick="nav('guestdir')" data-label="Guest Directory" data-i18n="Guest Directory"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="5" r="3"/><path d="M2 14c0-3.3 2.7-5 6-5s6 1.7 6 5"/><path d="M12 8l2 2-2 2" stroke-linecap="round"/></svg><span class="sb-label">Guest Directory</span><span class="nb" id="sbGuestCount" style="display:none">0</span></div>
-        <div class="ni" onclick="nav('bandprofile')" data-label="Band Profile" data-i18n="Band Profile"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="6" r="4"/><path d="M1 14c0-4 3-6 7-6s7 2 7 6"/></svg><span class="sb-label">Band Profile</span></div>
+        <div class="ni" onclick="nav('bandprofile')" data-label="Group Profile" data-i18n="Group Profile"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="6" r="4"/><path d="M1 14c0-4 3-6 7-6s7 2 7 6"/></svg><span class="sb-label">Group Profile</span></div>
       </div>
       <div class="ns">
         <div class="nsl" data-i18n="Account">Account</div>
@@ -586,7 +586,7 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
           <div id="dshUpcoming"></div>
         </div>
         <div class="card">
-          <div class="ch" data-i18n="Band Members"><div class="ct">Band Members</div><div class="cl" onclick="nav('members')" data-i18n="Manage →">Manage →</div></div>
+          <div class="ch" data-i18n="Group Members"><div class="ct">Group Members</div><div class="cl" onclick="nav('members')" data-i18n="Manage →">Manage →</div></div>
           <div id="dshMembers"></div>
         </div>
       </div>
@@ -657,7 +657,7 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
             <div id="pvHeader" style="font-size:.77rem;font-weight:600;color:var(--a);margin-bottom:2px">✦ Personal view</div>
             <div style="font-size:.71rem;color:var(--ink2)" data-i18n="Your notes are private. Stays in sync with the main list.">Your notes are private. Stays in sync with the main list.</div>
           </div>
-          <div style="overflow-x:auto" data-i18n="Title" data-i18n="Artist" data-i18n="Key" data-i18n="Band Notes"><table class="slt"><thead><tr><th>#</th><th>Title</th><th>Artist</th><th>Key</th><th>Band Notes</th><th>My Notes</th></tr></thead><tbody id="myBody"></tbody></table></div>
+          <div style="overflow-x:auto" data-i18n="Title" data-i18n="Artist" data-i18n="Key" data-i18n="Group Notes"><table class="slt"><thead><tr><th>#</th><th>Title</th><th>Artist</th><th>Key</th><th>Group Notes</th><th>My Notes</th></tr></thead><tbody id="myBody"></tbody></table></div>
         </div>
         <div style="padding-top:10px;border-top:1px solid var(--bd);margin-top:6px;display:flex;justify-content:space-between">
           <span style="font-size:.72rem;color:var(--ink2)">12 songs · ~84 min</span>
@@ -742,15 +742,15 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
     <!-- CALENDAR -->
     <div class="pg-area" id="pg-calendar">
 
-      <!-- Empty state: no band yet -->
-      <div id="calNoBand" style="display:none;text-align:center;padding:60px 20px">
+      <!-- Empty state: no group yet -->
+      <div id="calNoGroup" style="display:none;text-align:center;padding:60px 20px">
         <div style="font-size:2.5rem;margin-bottom:12px">🎸</div>
-        <div style="font-size:1.1rem;font-weight:700;margin-bottom:8px" data-i18n="No Band Yet">No Band Yet</div>
-        <p style="font-size:.84rem;color:var(--ink2);margin-bottom:20px" data-i18n="Start by creating a band.">Start by creating a band.</p>
-        <button class="btn btn-p btn-sm" onclick="openNewBand()" data-i18n="+ Create a Band">+ Create a Band</button>
+        <div style="font-size:1.1rem;font-weight:700;margin-bottom:8px" data-i18n="No Group Yet">No Group Yet</div>
+        <p style="font-size:.84rem;color:var(--ink2);margin-bottom:20px" data-i18n="Start by creating a group.">Start by creating a group.</p>
+        <button class="btn btn-p btn-sm" onclick="openNewBand()" data-i18n="+ Create a Group">+ Create a Group</button>
       </div>
 
-      <!-- Content (hidden when no band) -->
+      <!-- Content (hidden when no group) -->
       <div id="calContent">
 
       <!-- HEADER ROW -->
@@ -774,7 +774,7 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
         </div>
 
         <div style="margin-left:auto;display:flex;gap:7px;flex-wrap:wrap;align-items:center">
-          <div id="boPill" onclick="nav('bandprofile')" style="display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:99px;background:var(--w);border:1.5px solid var(--bd);font-size:.71rem;font-weight:500;color:var(--ink2);cursor:pointer" title="Manage in Band Profile">
+          <div id="boPill" onclick="nav('bandprofile')" style="display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:99px;background:var(--w);border:1.5px solid var(--bd);font-size:.71rem;font-weight:500;color:var(--ink2);cursor:pointer" title="Manage in Group Profile">
             <span id="boIco">🚫</span><span id="boLbl">4 blackout periods</span>
             <svg width="9" height="9" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6l4 4 4-4"/></svg>
           </div>
@@ -798,8 +798,8 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
             <div class="li"><div class="ld2" style="background:var(--amb);border:2px solid #92400E"></div>Rehearsal — member conflict ⚠</div>
             <div class="li" data-i18n="Birthday"><div class="ld2" style="background:var(--amb)"></div>Birthday</div>
             <div class="li" data-i18n="Blackout"><div class="ld2" style="background:var(--r)"></div>Blackout</div>
-            <div class="li" data-i18n="Cross-band conflict ⊘"><div class="ld2" style="background:var(--amb);opacity:.7;border:1.5px solid var(--amb)"></div>Cross-band conflict ⊘</div>
-            <div class="li" data-i18n="Full band ⚡"><div class="ld2" style="background:var(--g);box-shadow:0 0 0 2px #86EFAC"></div>Full band ⚡</div>
+            <div class="li" data-i18n="Cross-group conflict ⊘"><div class="ld2" style="background:var(--amb);opacity:.7;border:1.5px solid var(--amb)"></div>Cross-group conflict ⊘</div>
+            <div class="li" data-i18n="Full group ⚡"><div class="ld2" style="background:var(--g);box-shadow:0 0 0 2px #86EFAC"></div>Full group ⚡</div>
           </div>
         </div>
       <!-- ══ CALENDAR CHANGE LOG ══ -->
@@ -833,14 +833,14 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
           <div class="ch">
             <div class="ct" data-i18n="Availability">Availability — <span id="calMS">May 2026</span></div>
             <div style="display:flex;gap:8px;font-size:.69rem;color:var(--ink2)">
-              <span style="display:inline-flex;align-items:center;gap:3px" data-i18n="Full band"><span style="width:9px;height:9px;border-radius:2px;background:var(--g2);border:1.5px solid #86EFAC;display:inline-block"></span>Full band</span>
+              <span style="display:inline-flex;align-items:center;gap:3px" data-i18n="Full group"><span style="width:9px;height:9px;border-radius:2px;background:var(--g2);border:1.5px solid #86EFAC;display:inline-block"></span>Full group</span>
               <span style="display:inline-flex;align-items:center;gap:3px" data-i18n="Available"><span style="width:9px;height:9px;border-radius:2px;background:var(--g2);border:1px solid #86EFAC;display:inline-block"></span>Available</span>
               <span style="display:inline-flex;align-items:center;gap:3px" data-i18n="Blackout"><span style="width:9px;height:9px;border-radius:2px;background:var(--r2);border:1px solid #FECACA;display:inline-block"></span>Blackout</span>
             </div>
           </div>
           <div style="overflow-x:auto"><table class="at"><thead><tr id="avHdr"></tr></thead><tbody id="avBody"></tbody></table></div>
           <div class="fbchips">
-            <div class="t1" style="align-self:center;white-space:nowrap" data-i18n="⚡ Full band:">⚡ Full band:</div>
+            <div class="t1" style="align-self:center;white-space:nowrap" data-i18n="⚡ Full group:">⚡ Full group:</div>
             <div id="fbChips" style="display:flex;gap:5px;flex-wrap:wrap"></div>
           </div>
         </div>
@@ -852,14 +852,14 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
 
     <!-- REHEARSALS -->
     <div class="pg-area" id="pg-rehearsals">
-      <!-- Empty state: no band yet -->
-      <div id="rehearsalsNoBand" style="display:none;text-align:center;padding:60px 20px">
+      <!-- Empty state: no group yet -->
+      <div id="rehearsalsNoGroup" style="display:none;text-align:center;padding:60px 20px">
         <div style="font-size:2.5rem;margin-bottom:12px">🎸</div>
-        <div style="font-size:1.1rem;font-weight:700;margin-bottom:8px" data-i18n="No Band Yet">No Band Yet</div>
-        <p style="font-size:.84rem;color:var(--ink2);margin-bottom:20px" data-i18n="Start by creating a band.">Start by creating a band.</p>
-        <button class="btn btn-p btn-sm" onclick="openNewBand()" data-i18n="+ Create a Band">+ Create a Band</button>
+        <div style="font-size:1.1rem;font-weight:700;margin-bottom:8px" data-i18n="No Group Yet">No Group Yet</div>
+        <p style="font-size:.84rem;color:var(--ink2);margin-bottom:20px" data-i18n="Start by creating a group.">Start by creating a group.</p>
+        <button class="btn btn-p btn-sm" onclick="openNewBand()" data-i18n="+ Create a Group">+ Create a Group</button>
       </div>
-      <!-- Content (hidden when no band) -->
+      <!-- Content (hidden when no group) -->
       <div id="rehearsalsContent">
         <div style="display:flex;gap:9px;align-items:center;margin-bottom:15px;flex-wrap:wrap">
           <div style="flex:1" data-i18n="Rehearsals"><div style="font-size:1.12rem;font-weight:700;letter-spacing:-.03em">Rehearsals</div><div style="font-size:.74rem;color:var(--ink2);margin-top:2px" id="rehearsalCount"></div></div>
@@ -882,14 +882,14 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
       </div>
     </div>
     <div class="pg-area" id="pg-concerts">
-      <!-- Empty state: no band yet -->
-      <div id="concertsNoBand" style="display:none;text-align:center;padding:60px 20px">
+      <!-- Empty state: no group yet -->
+      <div id="concertsNoGroup" style="display:none;text-align:center;padding:60px 20px">
         <div style="font-size:2.5rem;margin-bottom:12px">🎸</div>
-        <div style="font-size:1.1rem;font-weight:700;margin-bottom:8px">No Band Yet</div>
-        <p style="font-size:.84rem;color:var(--ink2);margin-bottom:20px">Start by creating a band.</p>
-        <button class="btn btn-p btn-sm" onclick="openNewBand()">+ Create a Band</button>
+        <div style="font-size:1.1rem;font-weight:700;margin-bottom:8px">No Group Yet</div>
+        <p style="font-size:.84rem;color:var(--ink2);margin-bottom:20px">Start by creating a group.</p>
+        <button class="btn btn-p btn-sm" onclick="openNewBand()">+ Create a Group</button>
       </div>
-      <!-- Content (hidden when no band) -->
+      <!-- Content (hidden when no group) -->
       <div id="concertsContent">
         <div style="display:flex;gap:9px;align-items:center;margin-bottom:15px;flex-wrap:wrap">
           <div style="flex:1"><div style="font-size:1.12rem;font-weight:700;letter-spacing:-.03em" data-i18n="Concerts">Concerts</div><div style="font-size:.74rem;color:var(--ink2);margin-top:2px" id="concertCount"></div></div>
@@ -914,14 +914,14 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
 
     <!-- MEMBERS -->
     <div class="pg-area" id="pg-members">
-      <!-- Empty state: no band yet -->
-      <div id="membersNoBand" style="display:none;text-align:center;padding:60px 20px">
+      <!-- Empty state: no group yet -->
+      <div id="membersNoGroup" style="display:none;text-align:center;padding:60px 20px">
         <div style="font-size:2.5rem;margin-bottom:12px">🎸</div>
-        <div style="font-size:1.1rem;font-weight:700;margin-bottom:8px">No Band Yet</div>
-        <p style="font-size:.84rem;color:var(--ink2);margin-bottom:20px">Start by creating your first band to manage members.</p>
-        <button class="btn btn-p btn-sm" onclick="openNewBand()">+ Create a Band</button>
+        <div style="font-size:1.1rem;font-weight:700;margin-bottom:8px">No Group Yet</div>
+        <p style="font-size:.84rem;color:var(--ink2);margin-bottom:20px">Start by creating your first group to manage members.</p>
+        <button class="btn btn-p btn-sm" onclick="openNewBand()">+ Create a Group</button>
       </div>
-      <!-- Content (hidden when no band) -->
+      <!-- Content (hidden when no group) -->
       <div id="membersContent">
         <div style="display:flex;gap:9px;align-items:center;margin-bottom:15px;flex-wrap:wrap">
           <div style="flex:1"><div style="font-size:1.12rem;font-weight:700;letter-spacing:-.03em" data-i18n="Members">Members</div><div style="font-size:.74rem;color:var(--ink2);margin-top:2px" id="memberCount"></div></div>
@@ -933,14 +933,14 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
 
     <!-- GUEST DIRECTORY -->
     <div class="pg-area" id="pg-guestdir">
-      <!-- Empty state: no band yet -->
-      <div id="guestDirNoBand" style="display:none;text-align:center;padding:60px 20px">
+      <!-- Empty state: no group yet -->
+      <div id="guestDirNoGroup" style="display:none;text-align:center;padding:60px 20px">
         <div style="font-size:2.5rem;margin-bottom:12px">🎸</div>
-        <div style="font-size:1.1rem;font-weight:700;margin-bottom:8px">No Band Yet</div>
-        <p style="font-size:.84rem;color:var(--ink2);margin-bottom:20px">Start by creating your first band to manage guest musicians.</p>
-        <button class="btn btn-p btn-sm" onclick="openNewBand()">+ Create a Band</button>
+        <div style="font-size:1.1rem;font-weight:700;margin-bottom:8px">No Group Yet</div>
+        <p style="font-size:.84rem;color:var(--ink2);margin-bottom:20px">Start by creating your first group to manage guest musicians.</p>
+        <button class="btn btn-p btn-sm" onclick="openNewBand()">+ Create a Group</button>
       </div>
-      <!-- Content (hidden when no band) -->
+      <!-- Content (hidden when no group) -->
       <div id="guestDirContent">
         <div style="display:flex;gap:9px;align-items:center;margin-bottom:6px;flex-wrap:wrap">
           <div style="flex:1">
@@ -961,18 +961,18 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
       </div>
     </div>
 
-    <!-- BAND PROFILE -->
+    <!-- GROUP PROFILE -->
     <div class="pg-area" id="pg-bandprofile">
 
-      <!-- Empty state: no band yet -->
+      <!-- Empty state: no group yet -->
       <div id="bpEmpty" style="display:none;text-align:center;padding:60px 20px">
         <div style="font-size:2.5rem;margin-bottom:12px">🎸</div>
-        <div style="font-size:1.1rem;font-weight:700;margin-bottom:8px">No Band Yet</div>
-        <p style="font-size:.84rem;color:var(--ink2);margin-bottom:20px">You're not part of any band. Create one to get started.</p>
-        <button class="btn btn-p btn-sm" onclick="openNewBand()">+ Create a Band</button>
+        <div style="font-size:1.1rem;font-weight:700;margin-bottom:8px">No Group Yet</div>
+        <p style="font-size:.84rem;color:var(--ink2);margin-bottom:20px">You're not part of any group. Create one to get started.</p>
+        <button class="btn btn-p btn-sm" onclick="openNewBand()">+ Create a Group</button>
       </div>
 
-      <!-- Band content (hidden when no band) -->
+      <!-- Group content (hidden when no group) -->
       <div id="bpContent">
 
       <!-- ── HERO HEADER ── -->
@@ -1008,7 +1008,7 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
               <div class="bpplat" id="bpplat" style="margin-top:10px"></div>
               <!-- Inline edit fields — hidden by default -->
               <div id="bpEditFields" style="display:none;margin-top:8px;max-width:560px">
-                <div class="fg" style="margin-bottom:7px"><input id="beNameInline" placeholder="Band name" style="font-size:1.1rem;font-weight:700"></div>
+                <div class="fg" style="margin-bottom:7px"><input id="beNameInline" placeholder="Group name" style="font-size:1.1rem;font-weight:700"></div>
                 <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:7px">
                   <div class="fg" style="flex:1;min-width:110px"><label style="font-size:.69rem">Genre</label>
                     <select id="beGenreInline" style="font-size:.83rem">
@@ -1023,7 +1023,7 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
                   <div class="fg" style="flex:1;min-width:100px"><label style="font-size:.69rem">City</label><input id="beCityInline" placeholder="Brussels"></div>
                   <div class="fg" style="flex:1;min-width:100px"><label style="font-size:.69rem">Country</label><input id="beCountryInline" placeholder="Belgium"></div>
                 </div>
-                <div class="fg" style="margin-bottom:7px"><label style="font-size:.69rem">Bio</label><textarea id="beBioInline" style="min-height:60px" placeholder="A few words about the band…"></textarea></div>
+                <div class="fg" style="margin-bottom:7px"><label style="font-size:.69rem">Bio</label><textarea id="beBioInline" style="min-height:60px" placeholder="A few words about the group…"></textarea></div>
                 <div style="font-size:.69rem;font-weight:700;color:var(--ink2);margin-bottom:8px;text-transform:uppercase;letter-spacing:.04em">Platform Links <span style="font-weight:400;color:var(--ink3);text-transform:none">(leave blank to hide)</span></div>
                 <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
                   <div class="fg"><label style="font-size:.69rem">🎵 Spotify</label><input id="bePlat_spotify" placeholder="https://open.spotify.com/artist/…" style="font-size:.75rem"></div>
@@ -1036,39 +1036,39 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
               </div>
             </div>
             <div style="display:flex;gap:6px;flex-shrink:0;flex-wrap:wrap" id="bpAdminActions" style="display:none">
-              <button class="btn btn-g btn-sm" id="bpEditBtn" onclick="toggleBandEdit(true)" data-i18n="Edit Profile">Edit Profile</button>
+              <button class="btn btn-g btn-sm" id="bpEditBtn" onclick="toggleGroupEdit(true)" data-i18n="Edit Profile">Edit Profile</button>
               <button class="btn btn-p btn-sm" id="bpSaveBtn" onclick="saveBandEditInline()" style="display:none" data-i18n="Save Changes">Save Changes</button>
-              <button class="btn btn-g btn-sm" id="bpCancelBtn" onclick="toggleBandEdit(false)" style="display:none" data-i18n="Cancel">Cancel</button>
-              <button class="btn btn-g btn-sm" style="color:var(--r);border-color:var(--r2)" onclick="promptDeleteBand()" data-i18n="Delete Band">Delete Band</button>
+              <button class="btn btn-g btn-sm" id="bpCancelBtn" onclick="toggleGroupEdit(false)" style="display:none" data-i18n="Cancel">Cancel</button>
+              <button class="btn btn-g btn-sm" style="color:var(--r);border-color:var(--r2)" onclick="promptDeleteGroup()" data-i18n="Delete Group">Delete Group</button>
             </div>
           </div>
         </div>
         <div class="bp-code-row" style="display:none;margin-top:10px;padding:8px 12px;background:var(--bg2);border:1px solid var(--bd);border-radius:var(--rad);display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-          <span style="font-size:.7rem;font-weight:700;color:var(--ink2);letter-spacing:.04em;text-transform:uppercase;white-space:nowrap" data-i18n="Band Code">Band Code</span>
+          <span style="font-size:.7rem;font-weight:700;color:var(--ink2);letter-spacing:.04em;text-transform:uppercase;white-space:nowrap" data-i18n="Group Code">Group Code</span>
           <input id="bpJoinCode" readonly onclick="this.select()" style="font-size:.72rem;color:var(--ink);flex:1;min-width:0;background:transparent;border:none;outline:none;cursor:text;font-family:monospace">
-          <button class="btn btn-g btn-sm" style="flex-shrink:0;font-size:.72rem" onclick="copyBandInviteLink()" data-i18n="Copy">Copy</button>
+          <button class="btn btn-g btn-sm" style="flex-shrink:0;font-size:.72rem" onclick="copyGroupInviteLink()" data-i18n="Copy">Copy</button>
         </div>
       </div>
 
       <div class="settg">
         <div class="card">
           <div class="ch" data-i18n="Rehearsal Days"><div class="ct">Rehearsal Days</div></div>
-          <div style="font-size:.74rem;color:var(--ink2);margin-bottom:10px" data-i18n="Days available for the whole band">Days available for the whole band</div>
+          <div style="font-size:.74rem;color:var(--ink2);margin-bottom:10px" data-i18n="Days available for the whole group">Days available for the whole group</div>
           <div class="dtogs" id="dtogs"></div>
         </div>
         <div class="card" style="grid-column:1/-1">
           <div class="ch" data-i18n="Blackout Periods & Closures" data-i18n="+ Add Period"><div class="ct">Blackout Periods &amp; Closures</div><button class="btn btn-p btn-sm" onclick="openAddBO()">+ Add Period</button></div>
           <div style="font-size:.75rem;color:var(--ink2);margin-bottom:12px;line-height:1.6" data-i18n="Block any date range — holidays, festivals, school breaks, or individual absences. Excluded from rehearsal suggestions.">Block any date range — holidays, festivals, school breaks, or individual absences. Excluded from rehearsal suggestions.</div>
           <div style="display:flex;gap:13px;margin-bottom:12px;flex-wrap:wrap">
-            <div style="display:flex;align-items:center;gap:5px;font-size:.71rem;color:var(--ink2)" data-i18n="Whole band" data-i18n="blocks everyone"><div style="width:3px;height:12px;border-radius:2px;background:var(--r)"></div><strong>Whole band</strong> — blocks everyone</div>
+            <div style="display:flex;align-items:center;gap:5px;font-size:.71rem;color:var(--ink2)" data-i18n="Whole group" data-i18n="blocks everyone"><div style="width:3px;height:12px;border-radius:2px;background:var(--r)"></div><strong>Whole group</strong> — blocks everyone</div>
             <div style="display:flex;align-items:center;gap:5px;font-size:.71rem;color:var(--ink2)" data-i18n="Specific members" data-i18n="selected people only"><div style="width:3px;height:12px;border-radius:2px;background:var(--bl)"></div><strong>Specific members</strong> — selected people only</div>
           </div>
           <div id="boList" style="display:flex;flex-direction:column;gap:7px"></div>
         </div>
         <div class="card">
-          <div class="ch" data-i18n="Band Photos" data-i18n="+ Add Photo"><div class="ct">Band Photos</div><div id="bpPhotosAdminBtn" style="display:none"><label class="btn btn-p btn-sm" style="cursor:pointer"><input type="file" accept="image/*" style="display:none" onchange="addBandPhoto(event)">+ Add Photo</label></div></div>
+          <div class="ch" data-i18n="Group Photos" data-i18n="+ Add Photo"><div class="ct">Group Photos</div><div id="bpPhotosAdminBtn" style="display:none"><label class="btn btn-p btn-sm" style="cursor:pointer"><input type="file" accept="image/*" style="display:none" onchange="addGroupPhoto(event)">+ Add Photo</label></div></div>
           <div id="bpPhotosGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(90px,1fr));gap:8px"></div>
-          <div id="bpPhotosEmpty" style="font-size:.78rem;color:var(--ink3);padding:8px 0" data-i18n="No band photos yet.">No band photos yet.</div>
+          <div id="bpPhotosEmpty" style="font-size:.78rem;color:var(--ink3);padding:8px 0" data-i18n="No group photos yet.">No group photos yet.</div>
         </div>
 
         <!-- WhatsApp Group card -->
@@ -1076,7 +1076,7 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
           <div class="ch">
             <div class="ct" style="display:flex;align-items:center;gap:7px"><span style="font-size:1.05rem">💬</span> WhatsApp Group</div>
           </div>
-          <div style="font-size:.75rem;color:var(--ink2);margin-bottom:12px" data-i18n="Paste your band's WhatsApp group invite link. Members can join with one tap from any device.">Paste your band's WhatsApp group invite link. Members can join with one tap from any device.</div>
+          <div style="font-size:.75rem;color:var(--ink2);margin-bottom:12px" data-i18n="Paste your group's WhatsApp group invite link. Members can join with one tap from any device.">Paste your group's WhatsApp group invite link. Members can join with one tap from any device.</div>
           <!-- Connected state -->
           <div id="waLinkDisplay" style="display:none;margin-bottom:10px">
             <div style="background:var(--g2);border:1.5px solid #86EFAC;border-radius:8px;padding:10px 13px;display:flex;align-items:center;gap:10px">
@@ -1326,7 +1326,7 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
             <select id="settDefaultView">
               <option value="dashboard" data-i18n="Dashboard">Dashboard</option>
               <option value="calendar" data-i18n="Calendar">Calendar</option>
-              <option value="bandprofile" data-i18n="Band Profile">Band Profile</option>
+              <option value="bandprofile" data-i18n="Group Profile">Group Profile</option>
               <option value="myprofile" data-i18n="My Profile">My Profile</option>
             </select>
           </div>
@@ -1479,7 +1479,7 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
       <span id="nsDurPreview" style="font-family:var(--mono);font-size:.78rem;color:var(--ink3);min-width:36px"></span>
     </div>
   </div>
-  <div class="fg" data-i18n="Band Notes (optional)"><label>Band Notes <span style="font-weight:400;color:var(--ink3)">(optional)</span></label>
+  <div class="fg" data-i18n="Group Notes (optional)"><label>Group Notes <span style="font-weight:400;color:var(--ink3)">(optional)</span></label>
     <textarea id="nsnote" style="min-height:60px" placeholder="e.g. Antoine's feature, watch the tempo change at bar 16…"></textarea>
   </div>
 
@@ -1523,7 +1523,7 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
 
   <!-- Option B: new user — invite via Supabase email -->
   <div style="font-size:.75rem;color:var(--ink2);padding:8px 11px;background:var(--a2);border:1px solid rgba(108,99,255,.2);border-radius:var(--rad);margin-bottom:12px">
-    📧 An invite email will be sent. The musician clicks the link, sets a password, and lands straight in the band — no sign-up form needed.
+    📧 An invite email will be sent. The musician clicks the link, sets a password, and lands straight in the group — no sign-up form needed.
   </div>
   <div class="fr"><div class="fg"><label>First Name</label><input id="invFirstName" placeholder="Sophie"></div><div class="fg"><label>Last Name</label><input id="invLastName" placeholder="Vandenberghe"></div></div>
   <div class="fg"><label>Email</label><input type="email" id="invEmail" placeholder="sophie@email.com"></div>
@@ -1539,16 +1539,16 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
 </div>
 </div>
 
-<!-- JOIN BAND -->
-<div class="mov" id="joinBandMod" style="display:none" onclick="closeMB(event,'joinBandMod')">
+<!-- JOIN GROUP -->
+<div class="mov" id="joinGroupMod" style="display:none" onclick="closeMB(event,'joinGroupMod')">
 <div class="mod" style="max-width:420px">
-  <div class="mott">Join a Band</div>
-  <div class="most">Paste the band code shared by your admin to join as a member.</div>
-  <div class="fg"><label>Band Code</label><input id="joinBandCode" placeholder="Paste code here…" style="font-family:monospace;font-size:.85rem" onkeydown="if(event.key==='Enter')joinBandByCode()"></div>
-  <div id="joinBandResult" style="display:none;margin-bottom:8px"></div>
+  <div class="mott">Join a Group</div>
+  <div class="most">Paste the group code shared by your admin to join as a member.</div>
+  <div class="fg"><label>Group Code</label><input id="joinGroupCode" placeholder="Paste code here…" style="font-family:monospace;font-size:.85rem" onkeydown="if(event.key==='Enter')joinGroupByCode()"></div>
+  <div id="joinGroupResult" style="display:none;margin-bottom:8px"></div>
   <div class="moft">
-    <button class="btn btn-g" onclick="closeMod('joinBandMod')">Cancel</button>
-    <button class="btn btn-p" id="joinBandBtn" onclick="joinBandByCode()">Join Band</button>
+    <button class="btn btn-g" onclick="closeMod('joinGroupMod')">Cancel</button>
+    <button class="btn btn-p" id="joinGroupBtn" onclick="joinGroupByCode()">Join Group</button>
   </div>
 </div>
 </div>
@@ -1558,8 +1558,8 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
 <div class="mod" style="max-width:420px">
   <div style="text-align:center;margin-bottom:18px">
     <div style="font-size:2.2rem;margin-bottom:8px">🎸</div>
-    <div class="mott" style="margin-bottom:6px">Welcome to the band!</div>
-    <div class="most" id="onboardingBandMsg">You've been added to the band. Set a password to secure your account, then complete your profile.</div>
+    <div class="mott" style="margin-bottom:6px">Welcome to the group!</div>
+    <div class="most" id="onboardingGroupMsg">You've been added to the group. Set a password to secure your account, then complete your profile.</div>
   </div>
   <div class="fg"><label>New Password</label><input type="password" id="onboardingPw" placeholder="At least 8 characters" autocomplete="new-password"></div>
   <div class="fg"><label>Confirm Password</label><input type="password" id="onboardingPwConfirm" placeholder="Repeat password" autocomplete="new-password"></div>
@@ -1586,25 +1586,25 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
 </div>
 </div>
 
-<!-- BAND SWITCH -->
+<!-- GROUP SWITCH -->
 <div class="mov" id="bswMod" style="display:none" onclick="closeMB(event,'bswMod')">
 <div class="mod" style="max-width:360px">
-  <div class="mott" data-i18n="Your Bands">Your Bands</div>
-  <div style="font-size:.75rem;color:var(--ink2);margin-bottom:12px">Switch between bands or create a new one.</div>
-  <div style="display:flex;flex-direction:column;gap:7px;margin-bottom:14px" id="bandList"></div>
+  <div class="mott" data-i18n="Your Groups">Your Groups</div>
+  <div style="font-size:.75rem;color:var(--ink2);margin-bottom:12px">Switch between groups or create a new one.</div>
+  <div style="display:flex;flex-direction:column;gap:7px;margin-bottom:14px" id="groupList"></div>
   <div style="display:flex;gap:7px">
-    <button class="btn btn-g" style="flex:1" onclick="closeMod('bswMod');openNewBand()" data-i18n="+ Create New Band">+ Create New Band</button>
-    <button class="btn btn-g" style="flex:1" onclick="closeMod('bswMod');openJoinBandMod()" data-i18n="Join a Band">Join a Band</button>
+    <button class="btn btn-g" style="flex:1" onclick="closeMod('bswMod');openNewBand()" data-i18n="+ Create New Group">+ Create New Group</button>
+    <button class="btn btn-g" style="flex:1" onclick="closeMod('bswMod');openJoinGroupMod()" data-i18n="Join a Group">Join a Group</button>
   </div>
 </div>
 </div>
 
-<!-- CREATE NEW BAND MODAL -->
-<div class="mov" id="newBandMod" style="display:none" onclick="closeMB(event,'newBandMod')">
+<!-- CREATE NEW GROUP MODAL -->
+<div class="mov" id="newGroupMod" style="display:none" onclick="closeMB(event,'newGroupMod')">
 <div class="mod" style="max-width:460px">
-  <div class="mott" data-i18n="Create New Band">Create New Band</div>
-  <div class="most">Set up your new band. You'll be the admin and can invite members after.</div>
-  <div class="fg" data-i18n="Band name"><label>Band Name</label><input id="nbName" placeholder="e.g. Brussels Funk Collective"></div>
+  <div class="mott" data-i18n="Create New Group">Create New Group</div>
+  <div class="most">Set up your new group. You'll be the admin and can invite members after.</div>
+  <div class="fg" data-i18n="Group name"><label>Group Name</label><input id="nbName" placeholder="e.g. Brussels Funk Collective"></div>
   <div class="fr">
     <div class="fg" data-i18n="City"><label>City</label><input id="nbCity" placeholder="Brussels"></div>
     <div class="fg" data-i18n="Country"><label>Country</label>
@@ -1621,11 +1621,11 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
     </select>
   </div>
   <div class="fg" data-i18n="Short Bio"><label>Short Bio <span style="font-weight:400;color:var(--ink3)">(optional)</span></label>
-    <textarea id="nbBio" style="min-height:60px" placeholder="A few words about the band…"></textarea>
+    <textarea id="nbBio" style="min-height:60px" placeholder="A few words about the group…"></textarea>
   </div>
   <div class="modal-footer" style="display:flex;gap:7px;justify-content:flex-end;margin-top:14px;padding-top:13px;border-top:1px solid var(--bd)">
-    <button class="btn btn-g" onclick="closeMod('newBandMod')" data-i18n="Cancel">Cancel</button>
-    <button class="btn btn-p" onclick="createNewBand()" data-i18n="Create Band">Create Band</button>
+    <button class="btn btn-g" onclick="closeMod('newGroupMod')" data-i18n="Cancel">Cancel</button>
+    <button class="btn btn-p" onclick="createNewGroup()" data-i18n="Create Group">Create Group</button>
   </div>
 </div>
 </div>
@@ -1637,11 +1637,11 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
   <div style="padding:25px 25px 0;overflow-y:auto;flex:1">
     <input type="hidden" id="boId">
     <div class="mott" data-i18n="Blackout Period">Blackout Period</div>
-    <div class="most">Block a date range for the whole band or specific members. Excluded from rehearsal suggestions.</div>
+    <div class="most">Block a date range for the whole group or specific members. Excluded from rehearsal suggestions.</div>
     <div class="fg" data-i18n="Label"><label>Label</label><input id="boLab" placeholder="Carnival, School Holiday, Antoine on tour…"></div>
     <div class="fg" data-i18n="From"><label>From</label><input type="date" id="boFr"></div>
     <div class="fg" data-i18n="To (leave blank for single day)"><label>To <span style="font-weight:400;color:var(--ink3)">(leave blank for single day)</span></label><input type="date" id="boTo"></div>
-    <div class="fg" data-i18n="Who does this affect?" data-i18n="Whole band" data-i18n="Specific members only"><label>Who does this affect?</label><select id="boSc" onchange="togBOM()"><option value="band">Whole band</option><option value="members">Specific members only</option></select></div>
+    <div class="fg" data-i18n="Who does this affect?" data-i18n="Whole group" data-i18n="Specific members only"><label>Who does this affect?</label><select id="boSc" onchange="togBOM()"><option value="group">Whole group</option><option value="members">Specific members only</option></select></div>
     <div id="boMR" style="display:none;margin-bottom:12px" data-i18n="Select affected members"><div style="font-size:.71rem;color:var(--ink2);margin-bottom:7px">Select affected members</div><div style="display:flex;flex-wrap:wrap;gap:6px" id="boMC"></div></div>
   </div>
   <!-- sticky footer — Save always visible -->
@@ -1659,7 +1659,7 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
   <div class="mott" id="rmTt">Schedule Rehearsal</div>
   <div class="most" id="rmSub">All 5 members are available.</div>
   <div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:13px" id="rmMem"></div>
-  <div class="fg"><label>Rehearsal Name</label><input id="rmNm" value="Full Band Rehearsal"></div>
+  <div class="fg"><label>Rehearsal Name</label><input id="rmNm" value="Full Group Rehearsal"></div>
   <div class="fr"><div class="fg"><label>Start</label><input type="time" id="rmSt" value="19:00"></div><div class="fg"><label>End</label><input type="time" id="rmEn" value="22:00"></div></div>
   <div class="fg"><label>Location</label><input id="rmLoc" placeholder="Studio De Muziek, Brussels"></div>
   <div class="fg"><label>Notes (optional)</label><textarea id="rmNt" style="min-height:50px" placeholder="Focus on the Blue Note setlist…"></textarea></div>
@@ -1686,7 +1686,7 @@ html[data-theme="dark"] .sb-band-name{color:var(--ink)!important}
 
   <!-- Error shown when WhatsApp is selected but not configured -->
   <div id="rmWaErr" style="display:none;padding:9px 12px;background:var(--r2);border:1px solid #FECACA;border-radius:var(--rad);font-size:.76rem;color:var(--r);margin-bottom:10px">
-    ⚠ No WhatsApp group linked. Go to <strong>Band Profile → WhatsApp Group</strong> to add your group invite link first.
+    ⚠ No WhatsApp group linked. Go to <strong>Group Profile → WhatsApp Group</strong> to add your group invite link first.
   </div>
 
   <!-- Confirmation note — updates based on selection -->
@@ -1799,7 +1799,7 @@ function buildCalEv(){
     if(!calEv[r.date])calEv[r.date]=[];
     if(!calEv[r.date].includes('rehearsal'))calEv[r.date].push('rehearsal');
   });
-  BAND_CAL_EVENTS[activeBandId]=calEv;
+  GROUP_CAL_EVENTS[activeBandId]=calEv;
 }
 // Returns all concerts that have this setlist linked — used by renderSlMeta
 // instead of the now-empty sl.concertIds array.
@@ -1882,14 +1882,14 @@ function rehearsalDate(r){
 function isRehPast(r){return (r._ts||rehearsalDate(r).getTime())<TODAY.getTime();}
 
 function renderRehearsals(){
-  const noBand=document.getElementById('rehearsalsNoBand');
+  const noGroup=document.getElementById('rehearsalsNoGroup');
   const content=document.getElementById('rehearsalsContent');
   if(!activeBandId){
-    if(noBand)noBand.style.display='';
+    if(noGroup)noGroup.style.display='';
     if(content)content.style.display='none';
     return;
   }
-  if(noBand)noBand.style.display='none';
+  if(noGroup)noGroup.style.display='none';
   if(content)content.style.display='';
   const cancelled=rehearsals.filter(r=>r.cancelled);
   const active   =rehearsals.filter(r=>!r.cancelled);
@@ -1960,7 +1960,7 @@ function shareRehearsal(id){
   const pref=getBandNotifPref();
   const waLinked=!!bandWaLinks[activeBandId];
   if((pref==='whatsapp'||pref==='both')&&!waLinked){
-    toast2('No WhatsApp group linked. Go to Band Profile → WhatsApp Group first.','w');return;
+    toast2('No WhatsApp group linked. Go to Group Profile → WhatsApp Group first.','w');return;
   }
   const msg=`🎵 Rehearsal: ${r.title}\n📅 ${r.day} ${r.month} ${r.year} · ${r.start}–${r.end}\n📍 ${r.location}${r.notes?'\n📝 '+r.notes:''}`;
   if(pref==='email'){toast2('Rehearsal shared by email ✉️');}
@@ -2240,7 +2240,7 @@ function parsePhoneIntoParts(fullPhone){
   if(sp>0)return{dial:fullPhone.slice(0,sp),num:fullPhone.slice(sp+1)};
   return{dial:'+32',num:fullPhone};
 }
-const bandNotifPref = {}; // keyed by band id, values: 'email'|'whatsapp'|'both'
+const bandNotifPref = {}; // keyed by group id, values: 'email'|'whatsapp'|'both'
 
 function getBandNotifPref(){
   return bandNotifPref[activeBandId] || 'both';
@@ -2279,7 +2279,7 @@ function refreshNotifSettUI(){
 }
 
 // ── REHEARSAL NOTIFICATION CHANNEL ───────────────────────
-let rehNotifSel = null; // overrides band default for this rehearsal
+let rehNotifSel = null; // overrides group default for this rehearsal
 
 function selNotif(ch){
   rehNotifSel=ch;
@@ -2306,7 +2306,7 @@ function selNotif(ch){
     if(noteEl)noteEl.textContent=msgs[ch];
   }
 }
-const bandWaLinks = {}; // keyed by band id
+const bandWaLinks = {}; // keyed by group id
 
 function validateWaLink(input){
   const v = input.value.trim();
@@ -2322,8 +2322,8 @@ async function saveWaLink(){
   }
   bandWaLinks[activeBandId]=val||null;
   const _wb=getActiveBand();if(_wb)_wb.wa_link=val||null;
-  if(val) localStorage.setItem(`bandWaLink_${activeBandId}`,val);
-  else localStorage.removeItem(`bandWaLink_${activeBandId}`);
+  if(val) localStorage.setItem(`groupWaLink_${activeBandId}`,val);
+  else localStorage.removeItem(`groupWaLink_${activeBandId}`);
   await BandsDB.upsert({id:activeBandId,wa_link:val||null});
   refreshWaUI();refreshNotifSettUI();
   toast2(val?'WhatsApp group link saved!':'Link removed');
@@ -2332,7 +2332,7 @@ async function saveWaLink(){
 async function removeWaLink(){
   bandWaLinks[activeBandId]=null;
   const _wb=getActiveBand();if(_wb)_wb.wa_link=null;
-  localStorage.removeItem(`bandWaLink_${activeBandId}`);
+  localStorage.removeItem(`groupWaLink_${activeBandId}`);
   await BandsDB.upsert({id:activeBandId,wa_link:null});
   document.getElementById('waLinkInput').value='';
   refreshWaUI();refreshNotifSettUI();
@@ -2365,22 +2365,22 @@ function copyWaLink(){
     toast2('Link copied!');
   });
 }
-let BANDS=[];
+let GROUPS=[];
 let activeBandId=null;
 
 async function loadBands(){
-  BANDS=await BandsDB.fetch();
-  BANDS.forEach(b=>{
-    bandWaLinks[b.id]   = b.wa_link    || localStorage.getItem(`bandWaLink_${b.id}`)    || null;
+  GROUPS=await BandsDB.fetch();
+  GROUPS.forEach(b=>{
+    bandWaLinks[b.id]   = b.wa_link    || localStorage.getItem(`groupWaLink_${b.id}`)    || null;
     bandNotifPref[b.id] = b.notif_pref || localStorage.getItem(`bandNotifPref_${b.id}`) || null;
   });
-  // Hydrate band gallery photos from DB
-  await Promise.all(BANDS.map(async b=>{
+  // Hydrate group gallery photos from DB
+  await Promise.all(GROUPS.map(async b=>{
     b.photos = await BandsDB.fetchPhotos(b.id);
   }));
 }
 
-function getActiveBand(){return BANDS.find(b=>b.id===activeBandId);}
+function getActiveBand(){return GROUPS.find(b=>b.id===activeBandId);}
 
 async function switchBand(id){
   if(id===activeBandId){closeMod('bswMod');return;}
@@ -2388,7 +2388,7 @@ async function switchBand(id){
   localStorage.setItem('activeBandId', id);
   const b=getActiveBand();
   closeMod('bswMod');
-  toast2(`Switching to ${b?.name||'band'}…`);
+  toast2(`Switching to ${b?.name||'group'}…`);
   await Promise.all([loadSongs(),loadSetlists(),loadConcerts(),loadRehearsals(),loadMembers(),loadBlackouts()]);
   renderSLDropdown();renderSL();renderSlMeta();renderLib();if(libView==='sheet')renderSheet();updateLibCount();updateSidebarCounts();
   setCalView(calView);renderRehearsals();renderConcerts();renderMembers();
@@ -2398,24 +2398,24 @@ async function switchBand(id){
 }
 
 function renderBandList(){
-  const el=document.getElementById('bandList');if(!el)return;
-  el.innerHTML=BANDS.map(b=>{
+  const el=document.getElementById('groupList');if(!el)return;
+  el.innerHTML=GROUPS.map(b=>{
     const active=b.id===activeBandId;
     return`<div style="display:flex;align-items:center;gap:10px;padding:11px;background:${active?'var(--a2)':'var(--bg)'};border:1.5px solid ${active?'var(--a)':'var(--bd)'};border-radius:var(--rad);cursor:pointer;transition:all .13s" onclick="switchBand('${b.id}')" ${!active?'onmouseover="this.style.borderColor=\'var(--a)\'" onmouseout="this.style.borderColor=\'var(--bd)\'"':''}><div class="bav" style="background:${b.color}">${b.initials}</div><div style="flex:1"><div style="font-weight:600;font-size:.84rem">${b.name}</div><div style="font-size:.69rem;color:var(--ink2)">${b.role} · ${b.memberCount} members · ${b.genre}</div></div>${active?'<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;flex-shrink:0;color:var(--a)"><path d="M3 8l4 4 6-8"/></svg>':''}</div>`;
   }).join('');
 }
 
-async function createNewBand(){
+async function createNewGroup(){
   const name=document.getElementById('nbName').value.trim();
-  if(!name){toast2('Please enter a band name','w');return;}
-  const btn=document.querySelector('#newBandMod .btn-p');
+  if(!name){toast2('Please enter a group name','w');return;}
+  const btn=document.querySelector('#newGroupMod .btn-p');
   if(btn){btn.disabled=true;btn.textContent='Creating…';}
   try{
     const countryCode=document.getElementById('nbCountry').value;
     const countryName=countryCode?(ISO_COUNTRIES.find(x=>x.c===countryCode)?.n||countryCode):'';
     const initials=name.split(' ').filter(Boolean).map(w=>w[0]).join('').toUpperCase().slice(0,2)||name.slice(0,2).toUpperCase();
     const colors=['#16A34A','#DC2626','#9333EA','#D97706','#0891B2'];
-    const color=colors[BANDS.length%colors.length];
+    const color=colors[GROUPS.length%colors.length];
     const saved=await BandsDB.upsert({
       name,initials,color,
       city:document.getElementById('nbCity').value.trim(),
@@ -2423,30 +2423,30 @@ async function createNewBand(){
       genre:document.getElementById('nbGenre').value,
       bio:document.getElementById('nbBio').value.trim(),
     });
-    if(!saved){if(btn){btn.disabled=false;btn.textContent='Create Band';}return;}
+    if(!saved){if(btn){btn.disabled=false;btn.textContent='Create Group';}return;}
     await BandsDB.addMember(saved.id,currentUser.id,'admin');
     await loadBands();
-    closeMod('newBandMod');
+    closeMod('newGroupMod');
     ['nbName','nbCity','nbBio'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
     const nbC=document.getElementById('nbCountry');if(nbC)nbC.value='';
     toast2(`"${name}" created!`);
     await switchBand(saved.id);
   }catch(e){
-    console.error('[bandapp] createNewBand error:',e);
-    toast2('Something went wrong creating the band','w');
+    console.error('[bandapp] createNewGroup error:',e);
+    toast2('Something went wrong creating the group','w');
   }finally{
-    if(btn){btn.disabled=false;btn.textContent='Create Band';}
+    if(btn){btn.disabled=false;btn.textContent='Create Group';}
   }
 }
 let calEv={"2026-05-15":["birthday"]}; // rebuilt by buildCalEv() after data loads
 
-// ── SEED BAND DATA ────────────────────────────────────────
-// Link the demo globals to Band 1's data store
+// ── SEED GROUP DATA ────────────────────────────────────────
+// Link the demo globals to Group 1's data store
 
-// ── PER-BAND CALENDAR EVENTS ──────────────────────────────
-// In production these would come from the database per band.
-// For the prototype, Band 2 (BFC) has its own events.
-const BAND_CAL_EVENTS = {
+// ── PER-GROUP CALENDAR EVENTS ──────────────────────────────
+// In production these would come from the database per group.
+// For the prototype, Group 2 (BFC) has its own events.
+const GROUP_CAL_EVENTS = {
   1: calEv, // Jazz Cats — use the live calEv object
   2: {
     "2026-06-14":["concert"],  // BFC concert — Ancienne Belgique
@@ -2455,12 +2455,12 @@ const BAND_CAL_EVENTS = {
   },
 };
 
-// ── CROSS-BAND MEMBERSHIP MAP ─────────────────────────────
-// Which members (by index in the current band's members array)
-// are also in other bands — and which dates those bands have events on.
+// ── CROSS-GROUP MEMBERSHIP MAP ─────────────────────────────
+// Which members (by index in the current group's members array)
+// are also in other groups — and which dates those groups have events on.
 // Key: member name (prototype uses name-matching; DB will use user ID)
-// For prototype: Marco (idx 0) is in both bands.
-const CROSS_BAND_MEMBERS = {
+// For prototype: Marco (idx 0) is in both groups.
+const CROSS_GROUP_MEMBERS = {
   'Marco Rossi': [
     { bandId: 2, bandName: 'Brussels Funk Collective' },
   ],
@@ -2470,13 +2470,13 @@ const CROSS_BAND_MEMBERS = {
 };
 
 // Returns a set of date strings that are blocked for a given member
-// due to events in their OTHER bands
-function getCrossBandBlocks(memberName){
-  const otherBands = CROSS_BAND_MEMBERS[memberName] || [];
+// due to events in their OTHER groups
+function getCrossGroupBlocks(memberName){
+  const otherGroups = CROSS_GROUP_MEMBERS[memberName] || [];
   const blocked = new Set();
-  otherBands.forEach(ob => {
-    if(ob.bandId === activeBandId) return; // same band, skip
-    const evs = BAND_CAL_EVENTS[ob.bandId] || {};
+  otherGroups.forEach(ob => {
+    if(ob.bandId === activeBandId) return; // same group, skip
+    const evs = GROUP_CAL_EVENTS[ob.bandId] || {};
     Object.entries(evs).forEach(([date, types]) => {
       if(types.includes('concert') || types.includes('rehearsal')){
         blocked.add(date);
@@ -2486,12 +2486,12 @@ function getCrossBandBlocks(memberName){
   return blocked;
 }
 
-// Returns cross-band block label for a date + member
-function getCrossBandLabel(memberName, key){
-  const otherBands = CROSS_BAND_MEMBERS[memberName] || [];
-  for(const ob of otherBands){
+// Returns cross-group block label for a date + member
+function getCrossGroupLabel(memberName, key){
+  const otherGroups = CROSS_GROUP_MEMBERS[memberName] || [];
+  for(const ob of otherGroups){
     if(ob.bandId === activeBandId) continue;
-    const evs = BAND_CAL_EVENTS[ob.bandId] || {};
+    const evs = GROUP_CAL_EVENTS[ob.bandId] || {};
     if(evs[key]){
       const type = evs[key].includes('concert') ? 'concert' : 'rehearsal';
       return `${ob.bandName} ${type}`;
@@ -2500,12 +2500,12 @@ function getCrossBandLabel(memberName, key){
   return null;
 }
 
-// Check if ANY cross-band member is blocked on a given date
-// (used by best days / full-band detection)
-function hasCrossBandConflict(memberIdx, key){
+// Check if ANY cross-group member is blocked on a given date
+// (used by best days / full-group detection)
+function hasCrossGroupConflict(memberIdx, key){
   const m = members[memberIdx];
   if(!m) return false;
-  const blocks = getCrossBandBlocks(m.name);
+  const blocks = getCrossGroupBlocks(m.name);
   return blocks.has(key);
 }
 let curMonth=new Date(2026,4,1);
@@ -2526,7 +2526,7 @@ async function loadBlackouts(){
 // Mirrors members[0] + extraData[0] for the prototype.
 // In production this comes from the auth/session layer.
 const currentUser = {
-  memberIdx: 0,          // index into members[] — links back to band membership
+  memberIdx: 0,          // index into members[] — links back to group membership
   firstName: '',
   lastName: '',
   get name(){ return `${this.firstName} ${this.lastName}`.trim(); },
@@ -2540,7 +2540,7 @@ const currentUser = {
 // Pushes currentUser data to every UI surface that shows the logged-in user.
 function syncCurrentUserToUI(){
   const u = currentUser;
-  const band = getActiveBand();
+  const group = getActiveBand();
 
   // Sidebar footer (user)
   const uav = document.querySelector('.uav');
@@ -2566,20 +2566,20 @@ function syncCurrentUserToUI(){
     footRole.textContent = inst ? `${t(inst)} · ${role}` : role;
   }
 
-  // Sidebar band button
+  // Sidebar group button
   const bandAv = document.querySelector('.bb .bav');
   if(bandAv){
-    bandAv.textContent = band?.initials || '?';
-    bandAv.style.background = band?.color || 'var(--ink3)';
+    bandAv.textContent = group?.initials || '?';
+    bandAv.style.background = group?.color || 'var(--ink3)';
   }
-  const bandNameEl = document.querySelector('.bb .sb-band-name');
-  if(bandNameEl) bandNameEl.textContent = band?.name || 'No band';
-  const bandRoleEl = document.querySelector('.bb .sb-label div:last-child');
-  if(bandRoleEl) bandRoleEl.textContent = band ? t(u.role === 'admin' ? 'Admin' : 'Member') : t('Join or create');
+  const bandNameEl = document.querySelector('.bb .sb-group-name');
+  if(bandNameEl) bandNameEl.textContent = group?.name || 'No group';
+  const groupRoleEl = document.querySelector('.bb .sb-label div:last-child');
+  if(groupRoleEl) groupRoleEl.textContent = group ? t(u.role === 'admin' ? 'Admin' : 'Member') : t('Join or create');
 
   // Page subtitle
   const pgS = document.getElementById('pgS');
-  if(pgS) pgS.textContent = band ? `${band.name} · ${members.length} ${t(members.length !== 1 ? 'members' : 'member')}` : '';
+  if(pgS) pgS.textContent = group ? `${group.name} · ${members.length} ${t(members.length !== 1 ? 'members' : 'member')}` : '';
 
   // Dashboard greeting
   const greet = document.getElementById('dshG');
@@ -2661,7 +2661,7 @@ function nav(p){
   document.querySelectorAll('.ni').forEach(n=>n.classList.remove('on'));
   const f=[...document.querySelectorAll('.ni')].find(n=>n.getAttribute('onclick')?.includes(p));
   if(f)f.classList.add('on');
-  const T={dashboard:'Dashboard',setlists:'Set Lists',library:'Song Library',calendar:'Calendar',rehearsals:'Rehearsals',concerts:'Concerts',members:'Members',guestdir:'Guest Directory',bandprofile:'Band Profile',myprofile:'My Profile',settings:'Settings'};
+  const T={dashboard:'Dashboard',setlists:'Set Lists',library:'Song Library',calendar:'Calendar',rehearsals:'Rehearsals',concerts:'Concerts',members:'Members',guestdir:'Guest Directory',bandprofile:'Group Profile',myprofile:'My Profile',settings:'Settings'};
   document.getElementById('pgT').textContent=t(T[p]||p);
   if(p==='myprofile') populateMpPage().catch(console.error);
   if(p==='settings') populateSettingsPage();
@@ -2685,7 +2685,7 @@ function changeLang(lang){
   const active=document.querySelector('.pg-area.on');
   if(active){
     const pageId=active.id.replace('pg-','');
-    const T={dashboard:'Dashboard',setlists:'Set Lists',library:'Song Library',calendar:'Calendar',rehearsals:'Rehearsals',concerts:'Concerts',members:'Members',guestdir:'Guest Directory',bandprofile:'Band Profile',myprofile:'My Profile',settings:'Settings'};
+    const T={dashboard:'Dashboard',setlists:'Set Lists',library:'Song Library',calendar:'Calendar',rehearsals:'Rehearsals',concerts:'Concerts',members:'Members',guestdir:'Guest Directory',bandprofile:'Group Profile',myprofile:'My Profile',settings:'Settings'};
     document.getElementById('pgT').textContent=t(T[pageId]||pageId);
   }
   syncCurrentUserToUI();
@@ -2726,14 +2726,14 @@ function toggleInvGuestDates(sel){
 function selInv(el){document.querySelectorAll('.invopt').forEach(o=>o.classList.remove('on'));el.classList.add('on');}
 
 function openInviteMessage(){
-  const band=getActiveBand();
+  const group=getActiveBand();
   const adminName=currentUser.name; // always the logged-in user
   // Read name from form
   const firstName=(document.getElementById('invFirstName')?.value||'Musician').trim();
   const lastName=(document.getElementById('invLastName')?.value||'').trim();
   const fullName=[firstName,lastName].filter(Boolean).join(' ');
 
-  const defaultMsg=`Dear ${fullName},\n\nI am very happy to invite you to join band "${band?band.name:'our band'}" on Bandapp.\n\nCheers,\n${adminName}`;
+  const defaultMsg=`Dear ${fullName},\n\nI am very happy to invite you to join group "${group?group.name:'our group'}" on Bandapp.\n\nCheers,\n${adminName}`;
 
   document.getElementById('invMsgText').value=defaultMsg;
 
@@ -3070,7 +3070,7 @@ async function linkSlToConcert(concertId, unlinkId){
   try{
     await ConcertsDB.linkSetlist(concertId, activeSetlistId);
   }catch(e){
-    toast2(e?.code==='42501'?t('Permission denied — only band admins can link concerts'):e.message||t('Failed to link concert'),'w');
+    toast2(e?.code==='42501'?t('Permission denied — only group admins can link concerts'):e.message||t('Failed to link concert'),'w');
     return;
   }
   await loadConcerts();
@@ -3100,7 +3100,7 @@ function renderSlLinkList(){
     +(past.length?`<div class="t1" style="margin-top:12px;margin-bottom:7px">Past</div>${past.map(makeItem).join('')}`:'');
 }
 function openSlMod(){
-  if(!activeBandId){toast2('Create a band first before adding set lists','w');return;}
+  if(!activeBandId){toast2('Create a group first before adding set lists','w');return;}
   // Populate concert dropdown with upcoming concerts
   const sel=document.getElementById('slNewConcert');
   const upcoming=concerts.filter(c=>!isPast(c)&&!c.cancelled).sort((a,b)=>concertDate(a)-concertDate(b));
@@ -3136,7 +3136,7 @@ function selSlMode(mode){
 async function createNewSetList(){
   const title=document.getElementById('slNewTitle').value.trim();
   if(!title){toast2('Please enter a set list title','w');return;}
-  if(!activeBandId){toast2('No active band — please select a band first','w');return;}
+  if(!activeBandId){toast2('No active group — please select a group first','w');return;}
   const cid=document.getElementById('slNewConcert').value||null;
   const c=cid?concerts.find(x=>x.id===cid):null;
   let newSL;
@@ -3271,13 +3271,13 @@ function renderLib(){
 function filtG(g){aG=g;applyLibFilters();}
 function filterLib(v){applyLibFilters();}
 function openAddSong(){
-  if(!activeBandId){toast2('Create a band first before adding songs','w');return;}
+  if(!activeBandId){toast2('Create a group first before adding songs','w');return;}
   _addSongDupConfirmed=false;
   showMod('alsMod');
 }
 let _addSongDupConfirmed=false;
 async function addSong(){
-  if(!activeBandId){toast2('No band selected — please create or join a band first','w');return;}
+  if(!activeBandId){toast2('No group selected — please create or join a group first','w');return;}
   const title=document.getElementById('nst').value.trim();
   if(!title){toast2('Please enter a song title','w');return;}
   const artist=document.getElementById('nsa').value.trim();
@@ -3309,7 +3309,7 @@ async function addSong(){
       hidden:false,
     });
   }catch(e){
-    const msg=e?.code==='42501'?t('Permission denied — only band admins can add songs'):e.message||t('Failed to add song');
+    const msg=e?.code==='42501'?t('Permission denied — only group admins can add songs'):e.message||t('Failed to add song');
     toast2(msg,'w');
     console.error('[bandapp] addSong error:',e);
     return;
@@ -3750,7 +3750,7 @@ function importExcel(event){
       const rows=XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]],{defval:''});
       const imported=rows.map((r,i)=>{
         const k=Object.fromEntries(Object.entries(r).map(([key,val])=>[key.toLowerCase().trim(),val]));
-        return{id:i+1,title:String(k.title||k['song title']||k.song||'Untitled').trim(),artist:String(k.artist||'').trim(),genre:String(k.genre||'Jazz').trim(),key:normalizeKey(String(k.key).trim()),note:String(k.notes||k['band notes']||k.note||'').trim(),spotify:String(k.spotify||k['spotify url']||'').trim(),youtube:String(k.youtube||k['youtube url']||'').trim(),apple:String(k['apple music']||k.apple||'').trim(),hidden:(String(k.hidden||'').toLowerCase()==='yes')};
+        return{id:i+1,title:String(k.title||k['song title']||k.song||'Untitled').trim(),artist:String(k.artist||'').trim(),genre:String(k.genre||'Jazz').trim(),key:normalizeKey(String(k.key).trim()),note:String(k.notes||k['group notes']||k.note||'').trim(),spotify:String(k.spotify||k['spotify url']||'').trim(),youtube:String(k.youtube||k['youtube url']||'').trim(),apple:String(k['apple music']||k.apple||'').trim(),hidden:(String(k.hidden||'').toLowerCase()==='yes')};
       });
       if(!imported.length){toast2('No songs found in file','w');return;}
       const existing=songs.length;
@@ -3802,7 +3802,7 @@ function openSongEdit(id){
   if(smViewBtn)smViewBtn.style.display=smVal?'':'none';
   const repoHint=document.getElementById('seLyricsRepoHint');
   if(repoHint){
-    const _repoHints={bandapp:'This band uses in-app file upload.',gdrive:'Paste a Google Drive sharing link.',dropbox:'Paste a Dropbox sharing link.',onedrive:'Paste a OneDrive sharing link.',icloud:'Paste an iCloud Drive sharing link.',box:'Paste a Box sharing link.',musescore:'Paste a MuseScore score link.',flat:'Paste a Flat.io score link.',other:'Paste any direct URL.'};
+    const _repoHints={bandapp:'This group uses in-app file upload.',gdrive:'Paste a Google Drive sharing link.',dropbox:'Paste a Dropbox sharing link.',onedrive:'Paste a OneDrive sharing link.',icloud:'Paste an iCloud Drive sharing link.',box:'Paste a Box sharing link.',musescore:'Paste a MuseScore score link.',flat:'Paste a Flat.io score link.',other:'Paste any direct URL.'};
     const _repo=getActiveBand()?.lyrics_repo||'any';
     repoHint.textContent=_repoHints[_repo]||'';
     repoHint.style.display=_repoHints[_repo]?'':'none';
@@ -3841,7 +3841,7 @@ async function saveSongEdit(){
       hidden:s.hidden,
     });
   }catch(e){
-    const msg=e?.code==='42501'?t('Permission denied — you are not a member of this band'):e.message||t('Failed to save song');
+    const msg=e?.code==='42501'?t('Permission denied — you are not a member of this group'):e.message||t('Failed to save song');
     toast2(msg,'w');
     console.error('[bandapp] saveSongEdit error:',e);
     return;
@@ -3862,7 +3862,7 @@ async function handleSongFileUpload(event){
   if(statusEl)statusEl.textContent='Uploading…';
   const ext=file.name.split('.').pop().toLowerCase();
   const safeName=file.name.replace(/[^a-zA-Z0-9._-]/g,'_').slice(0,80);
-  const path=`${activeBandId||'band'}/${Date.now()}_${safeName}`;
+  const path=`${activeBandId||'group'}/${Date.now()}_${safeName}`;
   const{data,error}=await supabase.storage.from('song-attachments').upload(path,file,{upsert:false,contentType:file.type});
   if(error){toast2('Upload failed: '+error.message,'w');if(statusEl)statusEl.textContent='';event.target.value='';return;}
   const{data:{publicUrl}}=supabase.storage.from('song-attachments').getPublicUrl(path);
@@ -3883,7 +3883,7 @@ async function handleSongSheetMusicUpload(event){
   if(!allowedTypes.includes(file.type)&&!file.name.match(/\.(pdf|png|jpe?g|gif|mxl|xml)$/i)){toast2('Unsupported file type','w');event.target.value='';return;}
   if(statusEl)statusEl.textContent='Uploading…';
   const safeName=file.name.replace(/[^a-zA-Z0-9._-]/g,'_').slice(0,80);
-  const path=`${activeBandId||'band'}/${Date.now()}_${safeName}`;
+  const path=`${activeBandId||'group'}/${Date.now()}_${safeName}`;
   const{data,error}=await supabase.storage.from('song-attachments').upload(path,file,{upsert:false,contentType:file.type});
   if(error){toast2('Upload failed: '+error.message,'w');if(statusEl)statusEl.textContent='';event.target.value='';return;}
   const{data:{publicUrl}}=supabase.storage.from('song-attachments').getPublicUrl(path);
@@ -3899,7 +3899,7 @@ async function handleSheetFileUpload(event, songId, field){
   if(file.size>10*1024*1024){toast2('File too large — max 10 MB','w');event.target.value='';return;}
   toast2('Uploading…');
   const safeName=file.name.replace(/[^a-zA-Z0-9._-]/g,'_').slice(0,80);
-  const path=`${activeBandId||'band'}/${Date.now()}_${safeName}`;
+  const path=`${activeBandId||'group'}/${Date.now()}_${safeName}`;
   const{data,error}=await supabase.storage.from('song-attachments').upload(path,file,{upsert:false,contentType:file.type});
   if(error){toast2('Upload failed: '+error.message,'w');event.target.value='';return;}
   const{data:{publicUrl}}=supabase.storage.from('song-attachments').getPublicUrl(path);
@@ -3912,7 +3912,7 @@ async function handleSheetFileUpload(event, songId, field){
   toast2(`${label} file uploaded and saved!`);
 }
 
-// Band setting — save lyrics repository preference
+// Group setting — save lyrics repository preference
 async function saveLyricsRepo(){
   const val=document.getElementById('bpLyricsRepo')?.value||'any';
   const b=getActiveBand();if(!b)return;
@@ -4011,13 +4011,13 @@ async function addSelectedSongs(){
 }
 
 // BLACKOUTS
-function isBO(key){return blackouts.some(b=>b.scope==='band'&&key>=b.from&&key<=b.to);}
-function getBOLbl(key){const b=blackouts.find(b=>b.scope==='band'&&key>=b.from&&key<=b.to);return b?b.label:null;}
+function isBO(key){return blackouts.some(b=>b.scope==='group'&&key>=b.from&&key<=b.to);}
+function getBOLbl(key){const b=blackouts.find(b=>b.scope==='group'&&key>=b.from&&key<=b.to);return b?b.label:null;}
 function isMBO(mi,key){const uid=members[mi]?.id;return !!uid&&blackouts.some(b=>b.scope==='members'&&b.mids.includes(uid)&&key>=b.from&&key<=b.to);}
 function getBOMap(){
   if(_boMapCache&&_boMapCacheVer===_boMapVer)return _boMapCache;
   const m={};
-  blackouts.filter(b=>b.scope==='band').forEach(b=>{
+  blackouts.filter(b=>b.scope==='group').forEach(b=>{
     for(let d=new Date(b.from+'T00:00:00');d<=new Date(b.to+'T00:00:00');d.setDate(d.getDate()+1)){
       const k=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
       m[k]=b.label;
@@ -4028,7 +4028,7 @@ function getBOMap(){
 }
 function fmtD(iso){return new Date(iso+'T00:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});}
 function openAddBO(){clrBOF();showMod('boMod');}
-function clrBOF(){['boId','boLab','boFr','boTo'].forEach(id=>document.getElementById(id).value='');document.getElementById('boSc').value='band';togBOM();document.querySelectorAll('.bomc').forEach(c=>c.classList.remove('on'));}
+function clrBOF(){['boId','boLab','boFr','boTo'].forEach(id=>document.getElementById(id).value='');document.getElementById('boSc').value='group';togBOM();document.querySelectorAll('.bomc').forEach(c=>c.classList.remove('on'));}
 function editBO(id){const b=blackouts.find(x=>x.id===id);if(!b)return;document.getElementById('boId').value=b.id;document.getElementById('boLab').value=b.label;document.getElementById('boFr').value=b.from;document.getElementById('boTo').value=b.to;document.getElementById('boSc').value=b.scope;togBOM();document.querySelectorAll('.bomc').forEach(c=>c.classList.toggle('on',b.mids.includes(c.dataset.mid)));showMod('boMod');}
 async function savBO(){
   const id=document.getElementById('boId').value||null;
@@ -4113,14 +4113,14 @@ async function saveBlockDays(){
   toast2('Days blocked!');
 }
 function togBOMc(el){el.classList.toggle('on');}
-function syncBOPill(){const n=blackouts.filter(b=>b.scope==='band').length;document.getElementById('boLbl').textContent=n===0?t('No blackouts'):`${n} ${t(n>1?'blackout periods':'blackout period')}`;document.getElementById('boIco').textContent=n>0?'🚫':'📅';}
+function syncBOPill(){const n=blackouts.filter(b=>b.scope==='group').length;document.getElementById('boLbl').textContent=n===0?t('No blackouts'):`${n} ${t(n>1?'blackout periods':'blackout period')}`;document.getElementById('boIco').textContent=n>0?'🚫':'📅';}
 function renderBOList(){
   const el=document.getElementById('boList');if(!el)return;
   if(!blackouts.length){el.innerHTML=`<div class="es" style="padding:20px"><div class="es-ico" style="font-size:1.6rem">📅</div><h3>No blackout periods</h3><p>Add holidays, closures, or absences.</p></div>`;return;}
   el.innerHTML=[...blackouts].sort((a,b)=>a.from.localeCompare(b.from)).map(b=>{
     const ff=fmtD(b.from),tf=b.to!==b.from?` → ${fmtD(b.to)}`:'';
     const nm=b.scope==='members'?`<div style="font-size:.67rem;color:var(--ink3);margin-top:2px">${b.mids.map(uid=>members.find(x=>x.id===uid)?.name.split(' ')[0]).filter(Boolean).join(', ')}</div>`:'';
-    return`<div class="boit"><div class="bost" style="background:${b.scope==='band'?'var(--r)':'var(--bl)'}"></div><div class="bobd"><div class="bola">${b.label}</div><div class="boda">${ff}${tf}</div>${nm}</div><div style="display:flex;align-items:center;gap:5px;flex-shrink:0"><span class="pill ${b.scope==='band'?'pr':'pbl'}">${b.scope==='band'?'Whole band':`${b.mids.length} member${b.mids.length!==1?'s':''}`}</span><button class="btn-ic btn" onclick="editBO('${b.id}')" style="width:27px;height:27px"><svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M11 2l3 3-8 8H3v-3L11 2z"/></svg></button><button class="btn-ic btn" onclick="delBO('${b.id}')" style="width:27px;height:27px;color:var(--r);border-color:var(--r2)"><svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 4h12M5 4V2h6v2M6 7v5M10 7v5M3 4l1 10h8l1-10"/></svg></button></div></div>`;
+    return`<div class="boit"><div class="bost" style="background:${b.scope==='group'?'var(--r)':'var(--bl)'}"></div><div class="bobd"><div class="bola">${b.label}</div><div class="boda">${ff}${tf}</div>${nm}</div><div style="display:flex;align-items:center;gap:5px;flex-shrink:0"><span class="pill ${b.scope==='group'?'pr':'pbl'}">${b.scope==='group'?'Whole group':`${b.mids.length} member${b.mids.length!==1?'s':''}`}</span><button class="btn-ic btn" onclick="editBO('${b.id}')" style="width:27px;height:27px"><svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M11 2l3 3-8 8H3v-3L11 2z"/></svg></button><button class="btn-ic btn" onclick="delBO('${b.id}')" style="width:27px;height:27px;color:var(--r);border-color:var(--r2)"><svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 4h12M5 4V2h6v2M6 7v5M10 7v5M3 4l1 10h8l1-10"/></svg></button></div></div>`;
   }).join('');
 }
 
@@ -4128,7 +4128,7 @@ function renderBOList(){
 const DN=['Su','Mo','Tu','We','Th','Fr','Sa'];
 const MN=['January','February','March','April','May','June','July','August','September','October','November','December'];const MAb=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 
-function getMAvail(yr,mo,d){const dow=new Date(yr,mo,d).getDay();const key=`${yr}-${String(mo+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;if(isBO(key))return members.map(()=>false);const ev=calEv[key]||[];if(ev.includes('concert'))return members.map(()=>true);return members.map((m,i)=>!!m.avail[dow]&&!isMBO(i,key)&&!hasCrossBandConflict(i,key));}
+function getMAvail(yr,mo,d){const dow=new Date(yr,mo,d).getDay();const key=`${yr}-${String(mo+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;if(isBO(key))return members.map(()=>false);const ev=calEv[key]||[];if(ev.includes('concert'))return members.map(()=>true);return members.map((m,i)=>!!m.avail[dow]&&!isMBO(i,key)&&!hasCrossGroupConflict(i,key));}
 function cntAv(yr,mo,d){return getMAvail(yr,mo,d).filter(Boolean).length;}
 function isFB(yr,mo,d){return cntAv(yr,mo,d)===members.length;}
 
@@ -4160,14 +4160,14 @@ window.addEventListener('orientationchange',()=>setTimeout(checkLandscapeHint,20
 
 // ── CALENDAR RENDER ──────────────────────────────────────
 function renderCal(){
-  const noBand=document.getElementById('calNoBand');
+  const noGroup=document.getElementById('calNoGroup');
   const content=document.getElementById('calContent');
   if(!activeBandId){
-    if(noBand)noBand.style.display='';
+    if(noGroup)noGroup.style.display='';
     if(content)content.style.display='none';
     return;
   }
-  if(noBand)noBand.style.display='none';
+  if(noGroup)noGroup.style.display='none';
   if(content)content.style.display='';
   const yr=curMonth.getFullYear(),mo=curMonth.getMonth();
   const lbl=`${t(MN[mo])} ${yr}`;
@@ -4177,8 +4177,8 @@ function renderCal(){
   if(calView==='full'){
     const boMap=getBOMap();
     const fd=new Date(yr,mo,1).getDay(),dim=new Date(yr,mo+1,0).getDate();
-    // Pre-compute cross-band blocked-day Sets once per member (not per day cell)
-    const memberBlocks=members.map(m=>getCrossBandBlocks(m.name));
+    // Pre-compute cross-group blocked-day Sets once per member (not per day cell)
+    const memberBlocks=members.map(m=>getCrossGroupBlocks(m.name));
     let h=DN.map(d=>`<div class="cdl">${d}</div>`).join('');
     for(let i=0;i<fd;i++)h+=`<div class="cd ce"></div>`;
     for(let d=1;d<=dim;d++){
@@ -4202,7 +4202,7 @@ function renderCal(){
       else if(ev.includes('concert'))cls+=' ccon';
       else if(isReh)cls+=rehConflictNames.length?' creh-warn':' creh';
       else if(full)cls+=' cfb';
-      else if(hasXB)cls+=' cd-xband';
+      else if(hasXB)cls+=' cd-xgroup';
       let inn=`<div class="cdn">${d}</div>`;
       if(full)inn+=`<div class="cltn">⚡</div>`;
       if(bol)inn+=`<div class="cbol">${bol}</div>`;
@@ -4211,7 +4211,7 @@ function renderCal(){
         inn+=`<div class="creh-warn-lbl">⚠ ${names}</div>`;
       }
       if(hasXB&&!full){
-        const xbLabel=members.reduce((acc,m)=>{const lbl=getCrossBandLabel(m.name,key);return lbl||acc;},'');
+        const xbLabel=members.reduce((acc,m)=>{const lbl=getCrossGroupLabel(m.name,key);return lbl||acc;},'');
         if(xbLabel)inn+=`<div class="cd-xblabel">${xbLabel}</div>`;
       }
       ev.forEach(e=>{if(e==='concert')inn+=`<div class="cdot cdot-c"></div>`;if(e==='rehearsal')inn+=`<div class="cdot cdot-r"></div>`;if(e==='birthday')inn+=`<div class="cdot cdot-b"></div>`;});
@@ -4285,7 +4285,7 @@ async function renderCalChangelog(){
   const days=parseInt(document.getElementById('clDaysFilter')?.value||'10');
   const userId=document.getElementById('clOwnerFilter')?.value||'';
 
-  // Populate owner filter if not yet done for this band
+  // Populate owner filter if not yet done for this group
   const ownerSel=document.getElementById('clOwnerFilter');
   if(ownerSel&&(ownerSel.dataset.band!==activeBandId)){
     ownerSel.dataset.band=activeBandId;
@@ -4350,26 +4350,26 @@ function renderAvail(){
       const ev=calEv[key]||[];
       const av=getMAvail(yr,mo,d)[mi];
       const isFull=fullC.has(d);const isB=boC.has(d);
-      const xbLabel=getCrossBandLabel(m.name,key);
+      const xbLabel=getCrossGroupLabel(m.name,key);
       const isMemberBO=isMBO(mi,key);
       let inn='',cls='ac ac-no';
       if(ev.includes('concert')){cls='ac ac-co';inn='★';}
       else if(ev.includes('rehearsal')){cls='ac ac-re';inn='♩';}
       else if(isB||isMemberBO)cls='ac ac-bo';
-      else if(xbLabel){cls='ac ac-xband';inn='⊘';} // cross-band conflict
+      else if(xbLabel){cls='ac ac-xgroup';inn='⊘';} // cross-group conflict
       else if(av&&isFull)cls='ac ac-fl';
       else if(av)cls='ac ac-av';
       const tip=xbLabel?` title="Busy: ${xbLabel}"`:'';
       return`<td><div class="${cls}"${tip}>${inn}</div></td>`;
     }).join('');
-    // Show a small cross-band indicator next to name if member is in multiple bands
-    const isMultiBand=!!CROSS_BAND_MEMBERS[m.name];
-    const multiBadge=isMultiBand?`<span title="Member of multiple bands" style="font-size:.55rem;color:var(--amb);font-weight:700;margin-left:3px">⊘</span>`:'';
+    // Show a small cross-group indicator next to name if member is in multiple groups
+    const isMultiGroup=!!CROSS_GROUP_MEMBERS[m.name];
+    const multiBadge=isMultiGroup?`<span title="Member of multiple groups" style="font-size:.55rem;color:var(--amb);font-weight:700;margin-left:3px">⊘</span>`:'';
     return`<tr><td class="nc2" style="position:sticky;left:0;background:var(--w);z-index:1"><div style="display:flex;align-items:center;gap:7px"><div class="mav2" style="width:21px;height:21px;font-size:.55rem;background:${m.color}">${m.init}</div><span style="font-size:.77rem;font-weight:500">${m.name.split(' ')[0]}</span>${multiBadge}</div></td>${cells}</tr>`;
   }).join('');
   const chips=document.getElementById('fbChips');
   const fd=[...fullC].sort((a,b)=>a-b).filter(d=>{const key=`${yr}-${String(mo+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;const ev=calEv[key]||[];return key>=TODAY_STR&&!ev.includes('rehearsal')&&!ev.includes('concert');});
-  chips.innerHTML=fd.length?fd.map(d=>{const dow=t(DN[new Date(yr,mo,d).getDay()]);return`<div class="fbc" onclick="openRehMod(${d},'${yr}-${String(mo+1).padStart(2,'0')}-${String(d).padStart(2,'0')}',true)">⚡ ${dow} ${d} ${t(MAb[mo])}</div>`;}).join(''):`<span style="font-size:.74rem;color:var(--ink3)">${t('No full-band days this month')}</span>`;
+  chips.innerHTML=fd.length?fd.map(d=>{const dow=t(DN[new Date(yr,mo,d).getDay()]);return`<div class="fbc" onclick="openRehMod(${d},'${yr}-${String(mo+1).padStart(2,'0')}-${String(d).padStart(2,'0')}',true)">⚡ ${dow} ${d} ${t(MAb[mo])}</div>`;}).join(''):`<span style="font-size:.74rem;color:var(--ink3)">${t('No full-group days this month')}</span>`;
 }
 
 function renderBest(){
@@ -4378,7 +4378,7 @@ function renderBest(){
   for(let d=1;d<=dim;d++){const key=`${yr}-${String(mo+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;const ev=calEv[key]||[];if(ev.includes('concert')||ev.includes('rehearsal'))continue;if(isBO(key))continue;if(key<TODAY_STR)continue;const cnt=cntAv(yr,mo,d);if(cnt<2)continue;res.push({d,key,cnt,avs:getMAvail(yr,mo,d),full:cnt===members.length});}
   res.sort((a,b)=>b.cnt-a.cnt||a.d-b.d);const best=res.slice(0,3);
   const fn=best.filter(b=>b.full).length;
-  document.getElementById('bestSub').textContent=fn>0?`${fn} day${fn>1?'s':''} where all ${members.length} members are free this month.`:t('Showing best partial availability — no full-band days found.');
+  document.getElementById('bestSub').textContent=fn>0?`${fn} day${fn>1?'s':''} where all ${members.length} members are free this month.`:t('Showing best partial availability — no full-group days found.');
   const dn2=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];const rl=['bc1','',''];const rlbl=[t('⚡ Best day'),t('2nd choice'),t('3rd choice')];
   document.getElementById('bestList').innerHTML=best.map((b,i)=>{
     const dow=dn2[new Date(yr,mo,b.d).getDay()];
@@ -4399,7 +4399,7 @@ function openRehMod(d,key,isFull){
   // Always reset the WA error state so it never bleeds in from a prior open
   const errEl=document.getElementById('rmWaErr');
   if(errEl)errEl.style.display='none';
-  // apply band default notification preference; fall back to email if WA not configured
+  // apply group default notification preference; fall back to email if WA not configured
   const pref=getBandNotifPref();
   const waLinked=!!bandWaLinks[activeBandId];
   const effectivePref=(pref==='whatsapp'||pref==='both')&&!waLinked?'email':pref;
@@ -4417,7 +4417,7 @@ async function confReh(){
   if((ch==='whatsapp'||ch==='both')&&!waLinked){
     document.getElementById('rmWaErr').style.display='';
     document.getElementById('rmNotifNote').style.display='none';
-    toast2('Add a WhatsApp group link in Band Profile first','w');
+    toast2('Add a WhatsApp group link in Group Profile first','w');
     return;
   }
   const title=(document.getElementById('rmNm').value||'').trim()||'Rehearsal';
@@ -4466,15 +4466,15 @@ async function confReh(){
     }
 
     const msgs={
-      email:'Rehearsal confirmed! Band notified by email ✓',
-      whatsapp:'Rehearsal confirmed! WhatsApp opening — select your band group to send 💬',
+      email:'Rehearsal confirmed! Group notified by email ✓',
+      whatsapp:'Rehearsal confirmed! WhatsApp opening — select your group group to send 💬',
       both:'Rehearsal confirmed! Email sent + WhatsApp opening 📣',
     };
     toast2(msgs[ch]||'Rehearsal scheduled!');
 
     // Open WhatsApp with the pre-filled message AFTER all data is saved.
     // wa.me/?text= pre-fills the message in the share sheet so the user just taps
-    // the band group to send it.  On mobile this is an app deep-link (not a browser
+    // the group group to send it.  On mobile this is an app deep-link (not a browser
     // popup), so it works reliably even after the awaits above.
     if(waMsg){
       navigator.clipboard.writeText(waMsg).catch(()=>{});
@@ -4577,14 +4577,14 @@ function concertDate(c){
 function isPast(c){ return concertDate(c) < TODAY; }
 
 function renderConcerts(){
-  const noBand=document.getElementById('concertsNoBand');
+  const noGroup=document.getElementById('concertsNoGroup');
   const content=document.getElementById('concertsContent');
   if(!activeBandId){
-    if(noBand)noBand.style.display='';
+    if(noGroup)noGroup.style.display='';
     if(content)content.style.display='none';
     return;
   }
-  if(noBand)noBand.style.display='none';
+  if(noGroup)noGroup.style.display='none';
   if(content)content.style.display='';
   const cancelled= concerts.filter(c=>c.cancelled);
   const active   = concerts.filter(c=>!c.cancelled);
@@ -4675,7 +4675,7 @@ async function confirmCancel(notify){
         const saved=await ConcertsDB.upsert({...c, cancelled:true});
         if(!saved){toast2('Could not cancel concert — please try again','w');return;}
         logCalChange('cancelled','concert',saved.id,`Concert "${c.title}"${c.date?' on '+c.date:''} cancelled`,true);
-        syncCrossBandBlackouts(saved);
+        syncCrossGroupBlackouts(saved);
         saveOk=true;
         // Reload after closing so the modal never hangs waiting for the DB
         loadConcerts().then(()=>{renderConcerts();renderCal();updateSidebarCounts();}).catch(()=>{});
@@ -4759,26 +4759,26 @@ async function deleteConcert(id){
   if(!confirm(`Delete "${c.title}"? This cannot be undone.`))return;
   await ConcertsDB.delete(id);
   logCalChange('deleted','concert',id,`Concert "${c.title}"${c.date?' on '+c.date:''} deleted`,true);
-  // Cross-band blackouts removed automatically by ON DELETE CASCADE on source_concert_id
+  // Cross-group blackouts removed automatically by ON DELETE CASCADE on source_concert_id
   closeMod('cvMod');
   toast2('Concert deleted','w');
   loadConcerts().then(()=>{renderConcerts();renderCal();updateSidebarCounts();}).catch(()=>{});
 }
 
-// Creates / refreshes / removes blackout blocks in every other band the current user
-// belongs to whenever a concert in the active band is saved or cancelled.
-async function syncCrossBandBlackouts(concert){
-  const otherBandIds=(currentUser._memberships||[])
+// Creates / refreshes / removes blackout blocks in every other group the current user
+// belongs to whenever a concert in the active group is saved or cancelled.
+async function syncCrossGroupBlackouts(concert){
+  const otherGroupIds=(currentUser._memberships||[])
     .map(m=>m.band_id)
     .filter(id=>id!==activeBandId);
-  if(!otherBandIds.length)return;
+  if(!otherGroupIds.length)return;
   // Always wipe stale blocks first (handles date/title changes and cancellation)
   if(concert.id)await BlackoutsDB.deleteByConcertId(concert.id);
   // Don't recreate for cancelled concerts or dateless concerts
   if(concert.cancelled||!concert.date)return;
-  const bandName=getActiveBand()?.name||'Other band';
+  const bandName=getActiveBand()?.name||'Other group';
   const label=`${bandName}: ${concert.title}`;
-  await Promise.all(otherBandIds.map(bandId=>
+  await Promise.all(otherGroupIds.map(bandId=>
     BlackoutsDB.upsert({
       band_id:           bandId,
       label,
@@ -4819,7 +4819,7 @@ function populateCeSetlistSelect(linkedIds){
 }
 
 function openNewConcert(){
-  if(!activeBandId){toast2('Create a band first before adding concerts','w');return;}
+  if(!activeBandId){toast2('Create a group first before adding concerts','w');return;}
   editingConcertId = null;
   document.getElementById('ceModalTitle').textContent = 'New Concert';
   ['ceTitle','ceVenue','ceAddress','ceTime','ceDuration','ceAudience','ceNotes'].forEach(id=>{
@@ -4904,7 +4904,7 @@ async function saveConcertEdit(){
   // Close modal immediately — don't block on the DB reload
   closeMod('ceMod');
   toast2(editingConcertId?'Concert updated!':'Concert added!');
-  syncCrossBandBlackouts(saved);
+  syncCrossGroupBlackouts(saved);
   loadConcerts().then(()=>{renderConcerts();renderCal();renderSlMeta();updateSidebarCounts();}).catch(()=>{});
 }
 
@@ -4968,7 +4968,7 @@ function cePaidSel(t){
 
 // MEMBERS
 
-// BAND PROFILE
+// GROUP PROFILE
 // ── ISO COUNTRIES ────────────────────────────────────────
 // ISO 3166-1 alpha-2 codes, flag emoji, and display name
 const ISO_COUNTRIES=[
@@ -5095,7 +5095,7 @@ function populateCountrySelects(){
 
 function openNewBand(){
   populateCountrySelects();
-  showMod('newBandMod');
+  showMod('newGroupMod');
 }
 
 // Update the nationality flag preview inside the profile modal header
@@ -5164,15 +5164,15 @@ function renderPfInstIcons(){
 }
 
 function renderMembers(){
-  const noBand=document.getElementById('membersNoBand');
+  const noGroup=document.getElementById('membersNoGroup');
   const content=document.getElementById('membersContent');
   if(!activeBandId){
-    if(noBand)noBand.style.display='';
+    if(noGroup)noGroup.style.display='';
     if(content)content.style.display='none';
     renderGuestDir();
     return;
   }
-  if(noBand)noBand.style.display='none';
+  if(noGroup)noGroup.style.display='none';
   if(content)content.style.display='';
   const days=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].map(d=>t(d));
   const active=activeMembers();
@@ -5232,14 +5232,14 @@ function renderMembers(){
 }
 
 function renderGuestDir(){
-  const noBand=document.getElementById('guestDirNoBand');
+  const noGroup=document.getElementById('guestDirNoGroup');
   const gContent=document.getElementById('guestDirContent');
   if(!activeBandId){
-    if(noBand)noBand.style.display='';
+    if(noGroup)noGroup.style.display='';
     if(gContent)gContent.style.display='none';
     return;
   }
-  if(noBand)noBand.style.display='none';
+  if(noGroup)noGroup.style.display='none';
   if(gContent)gContent.style.display='';
   const allExpired=[...expiredGuests(),...guestDirectory];
   const list=document.getElementById('guestDirList');
@@ -5286,7 +5286,7 @@ function openGuestDetail(idx){
   document.getElementById('gdName').textContent=g.name;
   document.getElementById('gdFlag').innerHTML=flag;
   document.getElementById('gdInstrument').textContent=`${instIcon(g.instrument)} ${g.instrument}${g.inst2?' · '+instIcon(g.inst2)+' '+g.inst2:''}`;
-  document.getElementById('gdBand').textContent=g.band||'The Jazz Cats';
+  document.getElementById('gdGroup').textContent=g.band||'The Jazz Cats';
   document.getElementById('gdDates').textContent=`${g.guestStart} → ${g.guestEnd} (${daysActive} days)`;
   document.getElementById('gdBio').textContent=ex.bio||'No bio available.';
   document.getElementById('gdGear').textContent=ex.gear||'—';
@@ -5311,14 +5311,14 @@ async function removeMember(idx){
   const m=members[idx];if(!m)return;
   const isGuest=m.role==='guest';
   const msg=isGuest
-    ?`Remove guest "${m.name}" from the band? They will be moved to the Guest Directory.`
-    :`Remove "${m.name}" from the band? This cannot be undone.`;
+    ?`Remove guest "${m.name}" from the group? They will be moved to the Guest Directory.`
+    :`Remove "${m.name}" from the group? This cannot be undone.`;
   if(!confirm(msg))return;
-  await MembersDB.removeBandMember(activeBandId, m.id, isGuest);
+  await MembersDB.removeGroupMember(activeBandId, m.id, isGuest);
   await loadMembers();
   renderMembers();
   renderGuestDir();
-  toast2(`${m.name.split(' ')[0]} removed from band`,'w');
+  toast2(`${m.name.split(' ')[0]} removed from group`,'w');
 }
 
 function openReactivateAsGuest(idx, name){
@@ -5335,7 +5335,7 @@ async function openChangeRoleModal(idx){
   const m=members[idx];if(!m)return;
   if(m.role==='guest'){
     if(!confirm(`Convert ${m.name} from Guest to full Member? Their guest expiry dates will be removed.`))return;
-    await MembersDB.upsertBandMember(activeBandId, m.id, {role:'member', guest_start:null, guest_end:null});
+    await MembersDB.upsertGroupMember(activeBandId, m.id, {role:'member', guest_start:null, guest_end:null});
     await loadMembers();
     renderMembers();toast2(`${m.name.split(' ')[0]} is now a Member!`);
   } else {
@@ -5351,8 +5351,8 @@ async function openChangeRoleModal(idx){
 async function makeAdmin(idx){
   const m=members[idx];if(!m||m.role==='admin')return;
   const b=getActiveBand();if(!b||b.role!=='Admin')return;
-  if(!confirm(`Make ${m.name} an admin of ${b.name}? Admins can manage members, songs, and all band settings.`))return;
-  await MembersDB.upsertBandMember(activeBandId, m.id, {role:'admin'});
+  if(!confirm(`Make ${m.name} an admin of ${b.name}? Admins can manage members, songs, and all group settings.`))return;
+  await MembersDB.upsertGroupMember(activeBandId, m.id, {role:'admin'});
   await loadMembers();
   renderMembers();
   toast2(`⭐ ${m.name.split(' ')[0]} is now an Admin!`);
@@ -5367,7 +5367,7 @@ async function confirmGuestConvert(){
   const start=document.getElementById('gcStart').value;
   const end=document.getElementById('gcEnd').value;
   if(!end){toast2('Please set an end date','w');return;}
-  await MembersDB.upsertBandMember(activeBandId, m.id, {
+  await MembersDB.upsertGroupMember(activeBandId, m.id, {
     role:'guest', guest_start:start, guest_end:end, guest_status:null,
   });
   await loadMembers();
@@ -5378,14 +5378,14 @@ async function promoteGuestToMember(idx,name){
   if(idx>=0){
     const m=members[idx];
     if(!confirm(`Promote ${m.name} to full Member?`))return;
-    await MembersDB.upsertBandMember(activeBandId, m.id, {role:'member', guest_start:null, guest_end:null, guest_status:null});
+    await MembersDB.upsertGroupMember(activeBandId, m.id, {role:'member', guest_start:null, guest_end:null, guest_status:null});
     await loadMembers();
     renderMembers();toast2(`${m.name.split(' ')[0]} is now a Member!`);
   } else {
     const g=guestDirectory.find(x=>x.name===name);
     if(!g){toast2(`${name} is not in the archive — invite them again`,'w');return;}
     if(!confirm(`Promote ${g.name} to full Member?`))return;
-    await MembersDB.upsertBandMember(activeBandId, g.id, {role:'member', guest_start:null, guest_end:null, guest_status:null});
+    await MembersDB.upsertGroupMember(activeBandId, g.id, {role:'member', guest_start:null, guest_end:null, guest_status:null});
     await loadMembers();
     renderMembers();renderGuestDir();updateSidebarCounts();toast2(`${g.name.split(' ')[0]} is now a Member!`);
   }
@@ -5394,7 +5394,7 @@ async function promoteGuestToMember(idx,name){
 function renderBP(){
   const b=getActiveBand();
   const isAdmin=b&&b.role==='Admin';
-  // Show empty state when no band
+  // Show empty state when no group
   const bpEmpty=document.getElementById('bpEmpty');
   const bpContent=document.getElementById('bpContent');
   if(bpEmpty) bpEmpty.style.display=b?'none':'block';
@@ -5425,7 +5425,7 @@ function renderBP(){
     if(lyricsRepo&&b) lyricsRepo.value=b.lyrics_repo||'any';
   }
 
-  // Band invite link (admin only) — full URL so recipients can just click/paste
+  // Group invite link (admin only) — full URL so recipients can just click/paste
   const codeEl=document.getElementById('bpJoinCode');
   if(codeEl){
     codeEl.value=b?b.id:'';
@@ -5466,7 +5466,7 @@ function renderBP(){
   const logoCam=document.getElementById('bpLogoCamBadge');
   if(logoCam)logoCam.style.display=isAdmin?'flex':'none';
 
-  // Band photos
+  // Group photos
   const photosAdminBtn=document.getElementById('bpPhotosAdminBtn');
   if(photosAdminBtn)photosAdminBtn.style.display=isAdmin?'':'none';
   renderBandPhotos();
@@ -5489,7 +5489,7 @@ function toggleAndSaveRehDay(el){
   BandsDB.upsert({id:activeBandId,rehearsal_days:rehDays});
 }
 
-// ── BAND PROFILE INLINE EDIT ─────────────────────────────
+// ── GROUP PROFILE INLINE EDIT ─────────────────────────────
 const PLATFORM_DEFS=[
   {key:'spotify',  icon:'🎵', label:'Spotify'},
   {key:'apple',    icon:'🍎', label:'Apple Music'},
@@ -5498,7 +5498,7 @@ const PLATFORM_DEFS=[
   {key:'facebook', icon:'📘', label:'Facebook'},
   {key:'website',  icon:'🌐', label:'Website'},
 ];
-function toggleBandEdit(editing){
+function toggleGroupEdit(editing){
   const b=getActiveBand();if(!b)return;
   document.getElementById('bpEditFields').style.display=editing?'':'none';
   document.getElementById('bpNameDisplay').style.display=editing?'none':'';
@@ -5525,7 +5525,7 @@ function toggleBandEdit(editing){
 async function saveBandEditInline(){
   const b=getActiveBand();if(!b)return;
   const name=document.getElementById('beNameInline').value.trim();
-  if(!name){toast2('Band name is required','w');return;}
+  if(!name){toast2('Group name is required','w');return;}
   const platforms=PLATFORM_DEFS
     .map(d=>({label:d.label,icon:d.icon,url:(document.getElementById('bePlat_'+d.key)?.value||'').trim()}))
     .filter(p=>p.url);
@@ -5543,44 +5543,44 @@ async function saveBandEditInline(){
   });
   if(!saved)return;
   await loadBands();
-  toggleBandEdit(false);
+  toggleGroupEdit(false);
   renderBP();
-  const bbL=document.querySelectorAll('.sb-band .sb-label div');
+  const bbL=document.querySelectorAll('.sb-group .sb-label div');
   if(bbL[0])bbL[0].textContent=saved.name;
   const bav=document.querySelector('.bav');if(bav)bav.textContent=saved.initials;
   const bpLogo=document.getElementById('bpLogo');if(bpLogo&&!bpLogo.style.backgroundImage)bpLogo.textContent=saved.initials;
   renderBandList();
-  toast2('Band profile saved!');
+  toast2('Group profile saved!');
 }
 
-// ── DELETE BAND ───────────────────────────────────────────
-function promptDeleteBand(){
+// ── DELETE GROUP ───────────────────────────────────────────
+function promptDeleteGroup(){
   const b=getActiveBand();if(!b||b.role!=='Admin')return;
   document.getElementById('deleteBandName').textContent=b.name;
   document.getElementById('deleteBandConfirmInput').value='';
   showMod('deleteBandMod');
 }
 
-async function confirmDeleteBand(){
+async function confirmDeleteGroup(){
   const b=getActiveBand();if(!b)return;
   const input=document.getElementById('deleteBandConfirmInput').value.trim();
-  if(input!==b.name){toast2('Band name does not match','w');return;}
+  if(input!==b.name){toast2('Group name does not match','w');return;}
   await BandsDB.delete(activeBandId);
   closeMod('deleteBandMod');
   await loadBands();
-  if(BANDS.length){
-    activeBandId=BANDS[0].id;
+  if(GROUPS.length){
+    activeBandId=GROUPS[0].id;
     await switchBand(activeBandId);
   } else {
     activeBandId=null;
     renderBandList();
-    toast2('Band deleted. No more bands.','w');
+    toast2('Group deleted. No more groups.','w');
     nav('dashboard');
   }
-  toast2('Band deleted','w');
+  toast2('Group deleted','w');
 }
 
-// Band Photos
+// Group Photos
 function renderBandPhotos(){
   const b=getActiveBand();
   const photos=b?b.photos||[]:[];
@@ -5592,11 +5592,11 @@ function renderBandPhotos(){
   if(empty)empty.style.display='none';
   grid.innerHTML=photos.map((p,i)=>`
     <div style="position:relative;aspect-ratio:1">
-      <img src="${p.url}" style="width:100%;height:100%;object-fit:cover;border-radius:8px;cursor:pointer;border:1.5px solid var(--bd)" onclick="openBandPhotoLightbox(${i})">
+      <img src="${p.url}" style="width:100%;height:100%;object-fit:cover;border-radius:8px;cursor:pointer;border:1.5px solid var(--bd)" onclick="openGroupPhotoLightbox(${i})">
       ${isAdmin?`<button onclick="removeBandPhoto(${i})" style="position:absolute;top:-5px;right:-5px;width:18px;height:18px;border-radius:50%;background:var(--r);border:2px solid var(--w);color:#fff;font-size:.5rem;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1">✕</button>`:''}
     </div>`).join('');
 }
-function addBandPhoto(event){
+function addGroupPhoto(event){
   const file=event.target.files[0];if(!file)return;
   const b=getActiveBand();if(!b)return;
   event.target.value='';
@@ -5609,7 +5609,7 @@ function addBandPhoto(event){
       b.photos.push(photo);
       renderBandPhotos();
       toast2('Photo added!');
-    }catch(err){toast2('Failed to save photo','w');console.error('[bandapp] addBandPhoto:',err);}
+    }catch(err){toast2('Failed to save photo','w');console.error('[bandapp] addGroupPhoto:',err);}
   };
   reader.readAsDataURL(file);
 }
@@ -5619,7 +5619,7 @@ async function removeBandPhoto(idx){
   if(photo?.id)await BandsDB.removePhoto(photo.id);
   b.photos.splice(idx,1);renderBandPhotos();toast2('Photo removed','w');
 }
-function openBandPhotoLightbox(idx){
+function openGroupPhotoLightbox(idx){
   const b=getActiveBand();if(!b||!b.photos||!b.photos[idx])return;
   const o=document.createElement('div');
   o.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:9000;display:flex;align-items:center;justify-content:center;cursor:pointer';
@@ -5640,21 +5640,21 @@ function openInvMod(){
   showMod('invMod');
 }
 
-function openJoinBandMod(){
-  document.getElementById('joinBandCode').value='';
-  const r=document.getElementById('joinBandResult');
+function openJoinGroupMod(){
+  document.getElementById('joinGroupCode').value='';
+  const r=document.getElementById('joinGroupResult');
   if(r){r.style.display='none';r.innerHTML='';}
-  showMod('joinBandMod');
+  showMod('joinGroupMod');
 }
 
-async function joinBandByCode(){
-  const code=document.getElementById('joinBandCode').value.trim();
-  if(!code){toast2('Paste a band code first','w');return;}
-  const btn=document.getElementById('joinBandBtn');
+async function joinGroupByCode(){
+  const code=document.getElementById('joinGroupCode').value.trim();
+  if(!code){toast2('Paste a group code first','w');return;}
+  const btn=document.getElementById('joinGroupBtn');
   if(btn){btn.disabled=true;btn.textContent='Joining…';}
-  const {data,error}=await supabase.rpc('join_band_by_code',{p_code:code});
-  if(btn){btn.disabled=false;btn.textContent='Join Band';}
-  const res=document.getElementById('joinBandResult');
+  const {data,error}=await supabase.rpc('join_group_by_code',{p_code:code});
+  if(btn){btn.disabled=false;btn.textContent='Join Group';}
+  const res=document.getElementById('joinGroupResult');
   if(error||!data){
     if(res){res.style.display='';res.innerHTML=`<div style="font-size:.78rem;color:var(--r);padding:8px 10px;background:var(--r2);border-radius:var(--rad)">${error?.message||'Something went wrong'}</div>`;}
     return;
@@ -5663,7 +5663,7 @@ async function joinBandByCode(){
     if(res){res.style.display='';res.innerHTML=`<div style="font-size:.78rem;color:var(--r);padding:8px 10px;background:var(--r2);border-radius:var(--rad)">${data.message||data.error}</div>`;}
     return;
   }
-  closeMod('joinBandMod');
+  closeMod('joinGroupMod');
   await loadBands();
   await switchBand(data.band_id);
   toast2(`Welcome to ${data.band_name}! 🎉`);
@@ -5705,9 +5705,9 @@ async function lookupInvitee(){
           <div class="fg" style="margin:0"><label style="font-size:.69rem">Guest Start</label><input type="date" id="invFoundGuestStart"></div>
           <div class="fg" style="margin:0"><label style="font-size:.69rem">Guest End</label><input type="date" id="invFoundGuestEnd"></div>
         </div>
-        <div class="fg" style="margin:0"><label style="font-size:.69rem">Home Band (optional)</label><input id="invFoundGuestBand" placeholder="e.g. Brussels Big Band"></div>
+        <div class="fg" style="margin:0"><label style="font-size:.69rem">Home Group (optional)</label><input id="invFoundGuestGroup" placeholder="e.g. Brussels Big Group"></div>
       </div>
-      <button class="btn btn-p btn-sm" onclick="addFoundMember('${u.id}')">+ Add to Band</button>
+      <button class="btn btn-p btn-sm" onclick="addFoundMember('${u.id}')">+ Add to Group</button>
     </div>`;
 }
 
@@ -5720,31 +5720,31 @@ async function addFoundMember(userId){
   const role=document.getElementById('invFoundRole')?.value||'member';
   const guestStart=document.getElementById('invFoundGuestStart')?.value||null;
   const guestEnd=document.getElementById('invFoundGuestEnd')?.value||null;
-  const guestBand=document.getElementById('invFoundGuestBand')?.value.trim()||null;
+  const guestGroup=document.getElementById('invFoundGuestGroup')?.value.trim()||null;
   const btn=document.querySelector(`#invMod button[onclick*="addFoundMember"]`);
   if(btn){btn.disabled=true;btn.textContent='Adding…';}
   // Check locally first to give a fast friendly error
   if(members.some(m=>m.id===userId)){
-    if(btn){btn.disabled=false;btn.textContent='+ Add to Band';}
-    toast2('This person is already in the band','w');return;
+    if(btn){btn.disabled=false;btn.textContent='+ Add to Group';}
+    toast2('This person is already in the group','w');return;
   }
   const fields={band_id:activeBandId,user_id:userId,role};
   if(guestStart)fields.guest_start=guestStart;
   if(guestEnd)fields.guest_end=guestEnd;
-  if(guestBand)fields.guest_band=guestBand;
+  if(guestGroup)fields.guest_group=guestGroup;
   const {error}=await supabase.from('band_members').insert(fields);
-  if(btn){btn.disabled=false;btn.textContent='+ Add to Band';}
+  if(btn){btn.disabled=false;btn.textContent='+ Add to Group';}
   if(error){handleDbError(error);return;}
   await loadMembers();
   closeMod('invMod');
   renderMembers();
   updateSidebarCounts();
   const added=members.find(m=>m.id===userId);
-  toast2(`${added?.name||'Member'} added to the band! 🎉`);
+  toast2(`${added?.name||'Member'} added to the group! 🎉`);
 }
 
 async function sendInviteViaEdgeFunction(){
-  if(!activeBandId){toast2('Select a band first','w');return;}
+  if(!activeBandId){toast2('Select a group first','w');return;}
   const email=(document.getElementById('invEmail')?.value||'').trim();
   const firstName=(document.getElementById('invFirstName')?.value||'').trim();
   const lastName=(document.getElementById('invLastName')?.value||'').trim();
@@ -5773,7 +5773,7 @@ async function sendInviteViaEdgeFunction(){
     renderMembers();
     updateSidebarCounts();
     closeMod('invMod');
-    toast2(`Invite sent to ${email}! They'll receive an email to join the band. 🎉`);
+    toast2(`Invite sent to ${email}! They'll receive an email to join the group. 🎉`);
   }catch(e){
     clearTimeout(timer);
     if(e?.name==='AbortError'){
@@ -5789,9 +5789,9 @@ async function sendInviteViaEdgeFunction(){
 }
 
 function showOnboarding(){
-  const band=getActiveBand();
-  const msg=document.getElementById('onboardingBandMsg');
-  if(msg&&band){msg.textContent=`You've been added to "${band.name}". Set a password to secure your account, then complete your profile.`;}
+  const group=getActiveBand();
+  const msg=document.getElementById('onboardingGroupMsg');
+  if(msg&&group){msg.textContent=`You've been added to "${group.name}". Set a password to secure your account, then complete your profile.`;}
   document.getElementById('onboardingMod').style.display='flex';
 }
 
@@ -5810,23 +5810,23 @@ async function saveOnboardingPassword(){
   toast2('Password set! Please complete your profile.');
 }
 
-function copyBandInviteLink(){
+function copyGroupInviteLink(){
   const inp=document.getElementById('bpJoinCode');
   const text=inp?.value||'';
   if(!text)return;
   inp.select();
   if(navigator.clipboard&&window.isSecureContext){
     navigator.clipboard.writeText(text)
-      .then(()=>toast2('Band code copied!'))
-      .catch(()=>{document.execCommand('copy');toast2('Band code copied!');});
+      .then(()=>toast2('Group code copied!'))
+      .catch(()=>{document.execCommand('copy');toast2('Group code copied!');});
   }else{
     document.execCommand('copy');
-    toast2('Band code copied!');
+    toast2('Group code copied!');
   }
 }
 
 function renderDashboard(){
-  const band = getActiveBand();
+  const group = getActiveBand();
   const todayStr = new Date().toISOString().split('T')[0];
   const thisMonth = todayStr.slice(0,7);
   const dshS = document.getElementById('dshS');
@@ -5835,11 +5835,11 @@ function renderDashboard(){
   const dshMembers = document.getElementById('dshMembers');
   const empty = txt => `<div style="color:var(--ink3);font-size:.82rem;padding:4px 0">${txt}</div>`;
 
-  if(!activeBandId || !band){
-    if(dshS) dshS.textContent = t('Create or join a band to get started.');
+  if(!activeBandId || !group){
+    if(dshS) dshS.textContent = t('Create or join a group to get started.');
     if(dshStats) dshStats.innerHTML = '';
-    if(dshUpcoming) dshUpcoming.innerHTML = empty(t('No band selected.'));
-    if(dshMembers) dshMembers.innerHTML = empty(t('No band selected.'));
+    if(dshUpcoming) dshUpcoming.innerHTML = empty(t('No group selected.'));
+    if(dshMembers) dshMembers.innerHTML = empty(t('No group selected.'));
     return;
   }
 
@@ -5870,7 +5870,7 @@ function renderDashboard(){
   const _ngd=nextGig?new Date(nextGig.date+'T00:00:00'):null;
   const _ngLabel=_ngd?`${t(MAb[_ngd.getMonth()])} ${_ngd.getDate()}`:'—';
   if(dshStats) dshStats.innerHTML =
-    `<div class="sc" onclick="nav('members')"><div class="t1">${t('Members')}</div><div class="sv">${members.length}</div><div class="ss">${members.length===1?t('1 member'):t('Active band')}</div></div>`+
+    `<div class="sc" onclick="nav('members')"><div class="t1">${t('Members')}</div><div class="sv">${members.length}</div><div class="ss">${members.length===1?t('1 member'):t('Active group')}</div></div>`+
     `<div class="sc" onclick="nav('library')"><div class="t1">${t('Songs')}</div><div class="sv">${songs.length}</div><div class="ss">${t('In library')}</div></div>`+
     `<div class="sc" onclick="nav('setlists')"><div class="t1">${t('Set Lists')}</div><div class="sv">${setlists.length}</div><div class="ss">${setlists.length?t('Ready to play'):t('None yet')}</div></div>`+
     `<div class="sc" onclick="nav('concerts')"><div class="t1">${t('Next Gig')}</div><div class="sv">${_ngLabel}</div><div class="ss">${nextGig?.venue||t('None scheduled')}</div></div>`;
@@ -5885,7 +5885,7 @@ function renderDashboard(){
     }).join('') : empty(t('No upcoming events.'));
   }
 
-  // Band members list
+  // Group members list
   if(dshMembers){
     const active = activeMembers();
     dshMembers.innerHTML = active.length ? active.slice(0,6).map(m=>{
@@ -5901,7 +5901,7 @@ function renderDashboard(){
 async function initApp(){
   populateCountrySelects();
   populateInstrumentSelects();
-  // Bands first — sets band metadata (name, color, WA links) needed for shell renders
+  // Groups first — sets group metadata (name, color, WA links) needed for shell renders
   await loadBands();
   // Paint the shell immediately with user identity and navigate to the right page.
   // Remaining data hasn't loaded yet so counts/lists show empty state briefly.
@@ -5910,11 +5910,11 @@ async function initApp(){
   const isNewUser = !currentUser._memberships?.length;
   nav(isNewUser ? 'myprofile' : (localStorage.getItem('defaultView')||'dashboard'));
   // All remaining fetches are independent — run concurrently.
-  // Snapshot activeBandId so we can detect a mid-flight band switch (e.g. createNewBand)
+  // Snapshot activeBandId so we can detect a mid-flight group switch (e.g. createNewGroup)
   // and skip the stale re-render; switchBand() will have already rendered the correct state.
-  const _initBandId = activeBandId;
+  const _initGroupId = activeBandId;
   await Promise.all([loadSongs(),loadSetlists(),loadConcerts(),loadRehearsals(),loadMembers(),loadBlackouts()]);
-  if(activeBandId !== _initBandId){const l=document.getElementById('appLoader');if(l)l.style.display='none';return;} // band changed while loading — don't overwrite
+  if(activeBandId !== _initGroupId){const l=document.getElementById('appLoader');if(l)l.style.display='none';return;} // group changed while loading — don't overwrite
   // Full re-render now that all data is available
   renderSLDropdown();renderSL();renderSlMeta();renderLib();if(libView==='sheet')renderSheet();updateLibCount();updateSidebarCounts();
   setCalView(calView);renderRehearsals();renderConcerts();renderMembers();
@@ -5937,13 +5937,13 @@ async function submitFeedback(){
   const desc=document.getElementById('fbDesc').value.trim();
   if(!desc){toast2('Please describe the issue or feedback','w');return;}
   const page=document.getElementById('pgT')?.textContent||'Unknown';
-  const band=getActiveBand();
-  const bandName=band?.name||'No band';
+  const group=getActiveBand();
+  const bandName=group?.name||'No group';
   const userName=[currentUser.firstName,currentUser.lastName].filter(Boolean).join(' ')||'Unknown';
   const today=new Date().toISOString().split('T')[0];
   const catLabel={bug:'Bug',feedback:'Feedback',suggestion:'Suggestion'}[cat]||cat;
   const title=`[${catLabel}] ${desc.split('\n')[0].substring(0,60)}`;
-  const body=`**Category:** ${cat}\n**Page:** ${page}\n**Band:** ${bandName}\n**User:** ${userName} (${currentUser.email||''})\n\n**Description:**\n${desc}\n\n---\n_Submitted via Bandapp on ${today}_`;
+  const body=`**Category:** ${cat}\n**Page:** ${page}\n**Group:** ${bandName}\n**User:** ${userName} (${currentUser.email||''})\n\n**Description:**\n${desc}\n\n---\n_Submitted via Bandapp on ${today}_`;
   const btn=document.getElementById('fbSubmitBtn');
   btn.disabled=true;btn.textContent='Submitting…';
   try{
@@ -6249,9 +6249,9 @@ function handleBpLogo(event) {
         if (sav) { sav.style.backgroundImage = ''; sav.textContent = getActiveBand()?.initials || ''; }
         return;
       }
-      toast2('Band logo updated!');
+      toast2('Group logo updated!');
     } catch(err) {
-      toast2('Failed to update band logo','w');
+      toast2('Failed to update group logo','w');
       console.error('[bandapp] handleBpLogo:', err);
     }
   };
@@ -6418,7 +6418,7 @@ async function populateMpPage(){
   const m=members[idx];
   const ex=extraData[idx]||{};
   const cp=currentUser._profile||{}; // full profile row loaded at login
-  // New users with no band membership won't have an m — fall back to currentUser/cp
+  // New users with no group membership won't have an m — fall back to currentUser/cp
   const fn=m?.firstName||currentUser.firstName||'';
   const ln=m?.lastName||currentUser.lastName||'';
 
@@ -6500,7 +6500,7 @@ function mpCancel(sec){
 }
 async function mpSave(sec){
   // Always write to the current user's own profile — never rely on memberIdx
-  // which may be stale or point to a different member after a band switch.
+  // which may be stale or point to a different member after a group switch.
   const profileId=currentUser.id;
   if(!profileId){toast2('Profile not loaded','w');return;}
   if(sec==='personal'){
@@ -6566,7 +6566,7 @@ function renderMpReadViews(){
   const m=members[idx];
   const ex=extraData[idx]||{};
 
-  // Personal — fall back to form inputs for no-band users where m/ex are empty
+  // Personal — fall back to form inputs for no-group users where m/ex are empty
   document.getElementById('mpv-first').textContent=m?.firstName||currentUser.firstName||'—';
   document.getElementById('mpv-last').textContent=m?.lastName||currentUser.lastName||'—';
   const bday=ex.bday||m?.bday||document.getElementById('mpBday')?.value||'';
@@ -6586,7 +6586,7 @@ function renderMpReadViews(){
   const bioEl=document.getElementById('mpv-bio');
   bioEl.textContent=bio; bioEl.style.display=bio?'':'none';
 
-  // Music — fall back to form inputs for no-band users where m is undefined
+  // Music — fall back to form inputs for no-group users where m is undefined
   const inst1=m?.instrument||document.getElementById('mpInst1')?.value||'';
   const inst2=m?.inst2||document.getElementById('mpInst2')?.value||'';
   const instEl=document.getElementById('mpv-inst');
@@ -6758,7 +6758,7 @@ async function saveSettings(){
       <select id="seKey"></select>
     </div>
   </div>
-  <div class="fg" data-i18n="Band Notes"><label>Band Notes</label><textarea id="seNote" style="min-height:60px" placeholder="e.g. Antoine's feature, watch tempo…"></textarea></div>
+  <div class="fg" data-i18n="Group Notes"><label>Group Notes</label><textarea id="seNote" style="min-height:60px" placeholder="e.g. Antoine's feature, watch tempo…"></textarea></div>
   <div class="fg">
     <label><span data-i18n-html="Duration (optional)">Duration <span style="font-weight:400;color:var(--ink3)">(optional)</span></span></label>
     <div style="display:flex;gap:8px;align-items:center">
@@ -7022,7 +7022,7 @@ async function saveSettings(){
   <div class="most" style="text-align:center">Are you sure you want to cancel <strong id="cancelItemName"></strong>? The event will move to the Cancelled section.</div>
   <div style="background:var(--amb2);border:1px solid rgba(217,119,6,.3);border-radius:var(--rad);padding:11px 14px;margin-bottom:16px">
     <div style="font-size:.82rem;font-weight:600;color:var(--amb);margin-bottom:6px" data-i18n="Notify members?">Notify members?</div>
-    <div style="font-size:.76rem;color:var(--ink2)">Members will be notified using the band's default channel (<strong id="cancelChannelLabel"></strong>).</div>
+    <div style="font-size:.76rem;color:var(--ink2)">Members will be notified using the group's default channel (<strong id="cancelChannelLabel"></strong>).</div>
   </div>
   <div style="display:flex;flex-direction:column;gap:8px">
     <button class="btn btn-p btn-fw" style="background:var(--amb);box-shadow:0 2px 8px rgba(217,119,6,.3)" onclick="confirmCancel(true)">Yes — Cancel &amp; Notify Members</button>
@@ -7094,8 +7094,8 @@ async function saveSettings(){
 <div class="mod" style="max-width:480px;display:flex;flex-direction:column;max-height:91vh;padding:0;overflow:hidden">
   <div style="padding:25px 25px 0;overflow-y:auto;flex:1">
     <div class="mott" id="reModalTitle" data-i18n="Edit Rehearsal">Edit Rehearsal</div>
-    <div class="most" data-i18n="Update rehearsal details. All band members will be informed when you share.">Update rehearsal details. All band members will be informed when you share.</div>
-    <div class="fg" data-i18n="Rehearsal Name"><label>Rehearsal Name</label><input id="reTitle" placeholder="Full Band Rehearsal"></div>
+    <div class="most" data-i18n="Update rehearsal details. All group members will be informed when you share.">Update rehearsal details. All group members will be informed when you share.</div>
+    <div class="fg" data-i18n="Rehearsal Name"><label>Rehearsal Name</label><input id="reTitle" placeholder="Full Group Rehearsal"></div>
     <div class="fg" data-i18n="Date"><label>Date</label><input type="date" id="reDate"></div>
     <div class="fr">
       <div class="fg" data-i18n="Start Time"><label>Start Time</label><input type="time" id="reStart" value="19:00"></div>
@@ -7145,20 +7145,20 @@ async function saveSettings(){
 </div>
 </div>
 
-<!-- BAND PROFILE EDIT MODAL -->
-<!-- DELETE BAND MODAL -->
+<!-- GROUP PROFILE EDIT MODAL -->
+<!-- DELETE GROUP MODAL -->
 <div class="mov" id="deleteBandMod" style="display:none" onclick="closeMB(event,'deleteBandMod')">
 <div class="mod" style="max-width:420px">
   <div style="font-size:2.5rem;text-align:center;margin-bottom:8px">⚠️</div>
-  <div class="mott" style="text-align:center;color:var(--r)" data-i18n="Delete Band">Delete Band</div>
+  <div class="mott" style="text-align:center;color:var(--r)" data-i18n="Delete Group">Delete Group</div>
   <div class="most" style="text-align:center"><span data-i18n="This will permanently delete">This will permanently delete</span> <strong id="deleteBandName"></strong> <span data-i18n="and all its data — concerts, rehearsals, set lists, and member assignments.">and all its data — concerts, rehearsals, set lists, and member assignments.</span> <strong data-i18n="This cannot be undone.">This cannot be undone.</strong></div>
   <div style="background:var(--r2);border:1px solid #FECACA;border-radius:var(--rad);padding:11px 14px;margin-bottom:16px;font-size:.8rem;color:var(--r)">
-    <span data-i18n="To confirm, type the band name exactly as it appears above.">To confirm, type the band name exactly as it appears above.</span>
+    <span data-i18n="To confirm, type the group name exactly as it appears above.">To confirm, type the group name exactly as it appears above.</span>
   </div>
-  <div class="fg"><label data-i18n="Confirm band name">Confirm band name</label><input id="deleteBandConfirmInput" data-i18n-placeholder="Type band name here…" placeholder="Type band name here…"></div>
+  <div class="fg"><label data-i18n="Confirm group name">Confirm group name</label><input id="deleteBandConfirmInput" data-i18n-placeholder="Type group name here…" placeholder="Type group name here…"></div>
   <div style="display:flex;flex-direction:column;gap:8px;margin-top:4px">
-    <button class="btn btn-fw" style="background:var(--r);color:#fff;border:none;padding:11px;border-radius:var(--rad);font-family:var(--font);font-weight:600;font-size:.9rem;cursor:pointer" onclick="confirmDeleteBand()" data-i18n="Yes, permanently delete this band">Yes, permanently delete this band</button>
-    <button class="btn btn-g btn-fw" onclick="closeMod('deleteBandMod')" data-i18n="Cancel — keep the band">Cancel — keep the band</button>
+    <button class="btn btn-fw" style="background:var(--r);color:#fff;border:none;padding:11px;border-radius:var(--rad);font-family:var(--font);font-weight:600;font-size:.9rem;cursor:pointer" onclick="confirmDeleteGroup()" data-i18n="Yes, permanently delete this group">Yes, permanently delete this group</button>
+    <button class="btn btn-g btn-fw" onclick="closeMod('deleteBandMod')" data-i18n="Cancel — keep the group">Cancel — keep the group</button>
   </div>
 </div>
 </div>
@@ -7194,7 +7194,7 @@ async function saveSettings(){
     </div>
     <div style="display:flex;gap:10px;align-items:center">
       <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" style="color:var(--ink3);flex-shrink:0"><path d="M8 1l2.4 4.9 5.4.8-3.9 3.8.9 5.3L8 13.3l-4.8 2.5.9-5.3L.2 6.7l5.4-.8L8 1z"/></svg>
-      <span id="gdBand" style="font-size:.87rem"></span>
+      <span id="gdGroup" style="font-size:.87rem"></span>
     </div>
   </div>
 
@@ -7271,7 +7271,7 @@ async function saveSettings(){
 <!-- xlsx — loaded here (end of body) so it doesn't block the auth screen / sign-in flow -->
 <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
 <!-- Supabase data layer — loaded after app script so they share global scope -->
-<script src="js/db/bands.js"></script>
+<script src="js/db/groups.js"></script>
 <script src="js/db/songs.js"></script>
 <script src="js/db/setlists.js"></script>
 <script src="js/db/concerts.js"></script>
