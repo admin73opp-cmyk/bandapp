@@ -4565,9 +4565,9 @@ function renderConcertLinkList(concertId){
 
 async function linkConcertToSetlist(concertId, slId){
   await ConcertsDB.linkSetlist(concertId, slId);
-  await loadConcerts();
-  closeMod('concertLinkMod');renderConcerts();renderSlMeta();
+  closeMod('concertLinkMod');
   toast2('Concert linked to set list!');
+  loadConcerts().then(()=>{renderConcerts();renderSlMeta();}).catch(()=>{});
 }
 function concertDate(c){
   if(c.date) return new Date(c.date+'T12:00:00');
@@ -4759,9 +4759,10 @@ async function deleteConcert(id){
   if(!confirm(`Delete "${c.title}"? This cannot be undone.`))return;
   await ConcertsDB.delete(id);
   logCalChange('deleted','concert',id,`Concert "${c.title}"${c.date?' on '+c.date:''} deleted`,true);
-  // Cross-band blackouts are removed automatically by ON DELETE CASCADE on source_concert_id
-  await loadConcerts();
-  closeMod('cvMod');renderConcerts();toast2('Concert deleted','w');
+  // Cross-band blackouts removed automatically by ON DELETE CASCADE on source_concert_id
+  closeMod('cvMod');
+  toast2('Concert deleted','w');
+  loadConcerts().then(()=>{renderConcerts();renderCal();updateSidebarCounts();}).catch(()=>{});
 }
 
 // Creates / refreshes / removes blackout blocks in every other band the current user
@@ -4900,10 +4901,11 @@ async function saveConcertEdit(){
   const _conAction=editingConcertId?'updated':'created';
   const _conDesc=`Concert "${title}"${dateVal?' on '+dateVal:''} ${_conAction}${payload.venue?' @ '+payload.venue:''}`;
   logCalChange(_conAction,'concert',saved.id,_conDesc,true);
-  await loadConcerts();
-  closeMod('ceMod');renderConcerts();renderCal();renderSlMeta();updateSidebarCounts();
+  // Close modal immediately — don't block on the DB reload
+  closeMod('ceMod');
   toast2(editingConcertId?'Concert updated!':'Concert added!');
   syncCrossBandBlackouts(saved);
+  loadConcerts().then(()=>{renderConcerts();renderCal();renderSlMeta();updateSidebarCounts();}).catch(()=>{});
 }
 
 // ── CONCERT PHOTOS ────────────────────────────────────────
