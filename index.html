@@ -5899,29 +5899,46 @@ function renderDashboard(){
 }
 
 async function initApp(){
+  const _step=(s)=>console.log('[bandapp] initApp step:',s);
+  try{
+  _step('populateCountrySelects');
   populateCountrySelects();
+  _step('populateInstrumentSelects');
   populateInstrumentSelects();
   // Groups first — sets group metadata (name, color, WA links) needed for shell renders
+  _step('loadBands');
   await loadBands();
   // Paint the shell immediately with user identity and navigate to the right page.
   // Remaining data hasn't loaded yet so counts/lists show empty state briefly.
+  _step('syncCurrentUserToUI');
   syncCurrentUserToUI();
+  _step('renderBandList');
   renderBandList();
   const isNewUser = !currentUser._memberships?.length;
+  _step('nav');
   nav(isNewUser ? 'myprofile' : (localStorage.getItem('defaultView')||'dashboard'));
-  // All remaining fetches are independent — run concurrently.
-  // Snapshot activeBandId so we can detect a mid-flight group switch (e.g. createNewGroup)
-  // and skip the stale re-render; switchBand() will have already rendered the correct state.
   const _initGroupId = activeBandId;
+  _step('Promise.all loads');
   await Promise.all([loadSongs(),loadSetlists(),loadConcerts(),loadRehearsals(),loadMembers(),loadBlackouts()]);
-  if(activeBandId !== _initGroupId){const l=document.getElementById('appLoader');if(l)l.style.display='none';return;} // group changed while loading — don't overwrite
-  // Full re-render now that all data is available
+  if(activeBandId !== _initGroupId){const l=document.getElementById('appLoader');if(l)l.style.display='none';return;}
+  _step('renderSLDropdown+renderSL+renderLib');
   renderSLDropdown();renderSL();renderSlMeta();renderLib();if(libView==='sheet')renderSheet();updateLibCount();updateSidebarCounts();
+  _step('setCalView+renderRehearsals+renderConcerts+renderMembers');
   setCalView(calView);renderRehearsals();renderConcerts();renderMembers();
+  _step('renderGuestDir+renderBP+renderBandList+renderDashboard');
   renderGuestDir();renderBP();renderAsList();renderBandList();
   syncCurrentUserToUI();renderDashboard();updateSidebarCounts();
+  _step('done — hiding loader');
   const loader=document.getElementById('appLoader');
   if(loader)loader.style.display='none';
+  }catch(_initErr){
+    console.error('[bandapp] initApp CRASHED at step above:', _initErr);
+    const loader=document.getElementById('appLoader');
+    if(loader){
+      loader.querySelector('.al-text').textContent='Load error: '+(_initErr?.message||_initErr)+' — check console';
+    }
+    throw _initErr;
+  }
 }
 
 // ── Bug / Feedback reporting ──────────────────────────────────
