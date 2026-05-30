@@ -1799,7 +1799,7 @@ function buildCalEv(){
     if(!calEv[r.date])calEv[r.date]=[];
     if(!calEv[r.date].includes('rehearsal'))calEv[r.date].push('rehearsal');
   });
-  GROUP_CAL_EVENTS[activeBandId]=calEv;
+  BAND_CAL_EVENTS[activeBandId]=calEv;
 }
 // Returns all concerts that have this setlist linked — used by renderSlMeta
 // instead of the now-empty sl.concertIds array.
@@ -2322,8 +2322,8 @@ async function saveWaLink(){
   }
   bandWaLinks[activeBandId]=val||null;
   const _wb=getActiveBand();if(_wb)_wb.wa_link=val||null;
-  if(val) localStorage.setItem(`groupWaLink_${activeBandId}`,val);
-  else localStorage.removeItem(`groupWaLink_${activeBandId}`);
+  if(val) localStorage.setItem(`bandWaLink_${activeBandId}`,val);
+  else localStorage.removeItem(`bandWaLink_${activeBandId}`);
   await BandsDB.upsert({id:activeBandId,wa_link:val||null});
   refreshWaUI();refreshNotifSettUI();
   toast2(val?'WhatsApp group link saved!':'Link removed');
@@ -2332,7 +2332,7 @@ async function saveWaLink(){
 async function removeWaLink(){
   bandWaLinks[activeBandId]=null;
   const _wb=getActiveBand();if(_wb)_wb.wa_link=null;
-  localStorage.removeItem(`groupWaLink_${activeBandId}`);
+  localStorage.removeItem(`bandWaLink_${activeBandId}`);
   await BandsDB.upsert({id:activeBandId,wa_link:null});
   document.getElementById('waLinkInput').value='';
   refreshWaUI();refreshNotifSettUI();
@@ -2365,22 +2365,22 @@ function copyWaLink(){
     toast2('Link copied!');
   });
 }
-let GROUPS=[];
+let BANDS=[];
 let activeBandId=null;
 
 async function loadBands(){
-  GROUPS=await BandsDB.fetch();
-  GROUPS.forEach(b=>{
-    bandWaLinks[b.id]   = b.wa_link    || localStorage.getItem(`groupWaLink_${b.id}`)    || null;
+  BANDS=await BandsDB.fetch();
+  BANDS.forEach(b=>{
+    bandWaLinks[b.id]   = b.wa_link    || localStorage.getItem(`bandWaLink_${b.id}`)    || null;
     bandNotifPref[b.id] = b.notif_pref || localStorage.getItem(`bandNotifPref_${b.id}`) || null;
   });
   // Hydrate group gallery photos from DB
-  await Promise.all(GROUPS.map(async b=>{
+  await Promise.all(BANDS.map(async b=>{
     b.photos = await BandsDB.fetchPhotos(b.id);
   }));
 }
 
-function getActiveBand(){return GROUPS.find(b=>b.id===activeBandId);}
+function getActiveBand(){return BANDS.find(b=>b.id===activeBandId);}
 
 async function switchBand(id){
   if(id===activeBandId){closeMod('bswMod');return;}
@@ -2399,7 +2399,7 @@ async function switchBand(id){
 
 function renderBandList(){
   const el=document.getElementById('groupList');if(!el)return;
-  el.innerHTML=GROUPS.map(b=>{
+  el.innerHTML=BANDS.map(b=>{
     const active=b.id===activeBandId;
     return`<div style="display:flex;align-items:center;gap:10px;padding:11px;background:${active?'var(--a2)':'var(--bg)'};border:1.5px solid ${active?'var(--a)':'var(--bd)'};border-radius:var(--rad);cursor:pointer;transition:all .13s" onclick="switchBand('${b.id}')" ${!active?'onmouseover="this.style.borderColor=\'var(--a)\'" onmouseout="this.style.borderColor=\'var(--bd)\'"':''}><div class="bav" style="background:${b.color}">${b.initials}</div><div style="flex:1"><div style="font-weight:600;font-size:.84rem">${b.name}</div><div style="font-size:.69rem;color:var(--ink2)">${b.role} · ${b.memberCount} members · ${b.genre}</div></div>${active?'<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;flex-shrink:0;color:var(--a)"><path d="M3 8l4 4 6-8"/></svg>':''}</div>`;
   }).join('');
@@ -2415,7 +2415,7 @@ async function createNewGroup(){
     const countryName=countryCode?(ISO_COUNTRIES.find(x=>x.c===countryCode)?.n||countryCode):'';
     const initials=name.split(' ').filter(Boolean).map(w=>w[0]).join('').toUpperCase().slice(0,2)||name.slice(0,2).toUpperCase();
     const colors=['#16A34A','#DC2626','#9333EA','#D97706','#0891B2'];
-    const color=colors[GROUPS.length%colors.length];
+    const color=colors[BANDS.length%colors.length];
     const saved=await BandsDB.upsert({
       name,initials,color,
       city:document.getElementById('nbCity').value.trim(),
@@ -2446,7 +2446,7 @@ let calEv={"2026-05-15":["birthday"]}; // rebuilt by buildCalEv() after data loa
 // ── PER-GROUP CALENDAR EVENTS ──────────────────────────────
 // In production these would come from the database per group.
 // For the prototype, Group 2 (BFC) has its own events.
-const GROUP_CAL_EVENTS = {
+const BAND_CAL_EVENTS = {
   1: calEv, // Jazz Cats — use the live calEv object
   2: {
     "2026-06-14":["concert"],  // BFC concert — Ancienne Belgique
@@ -2476,7 +2476,7 @@ function getCrossGroupBlocks(memberName){
   const blocked = new Set();
   otherGroups.forEach(ob => {
     if(ob.bandId === activeBandId) return; // same group, skip
-    const evs = GROUP_CAL_EVENTS[ob.bandId] || {};
+    const evs = BAND_CAL_EVENTS[ob.bandId] || {};
     Object.entries(evs).forEach(([date, types]) => {
       if(types.includes('concert') || types.includes('rehearsal')){
         blocked.add(date);
@@ -2491,7 +2491,7 @@ function getCrossGroupLabel(memberName, key){
   const otherGroups = CROSS_GROUP_MEMBERS[memberName] || [];
   for(const ob of otherGroups){
     if(ob.bandId === activeBandId) continue;
-    const evs = GROUP_CAL_EVENTS[ob.bandId] || {};
+    const evs = BAND_CAL_EVENTS[ob.bandId] || {};
     if(evs[key]){
       const type = evs[key].includes('concert') ? 'concert' : 'rehearsal';
       return `${ob.bandName} ${type}`;
@@ -5568,8 +5568,8 @@ async function confirmDeleteGroup(){
   await BandsDB.delete(activeBandId);
   closeMod('deleteBandMod');
   await loadBands();
-  if(GROUPS.length){
-    activeBandId=GROUPS[0].id;
+  if(BANDS.length){
+    activeBandId=BANDS[0].id;
     await switchBand(activeBandId);
   } else {
     activeBandId=null;
