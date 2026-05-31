@@ -70,4 +70,16 @@ if (fs.existsSync('locales')) {
   console.log('  locales/ → dist/locales/');
 }
 
+// ── Copy .well-known/ for Universal Links (iOS) and App Links (Android) ──
+if (fs.existsSync('.well-known')) {
+  copyDir('.well-known', path.join(OUT, '.well-known'));
+  console.log('  .well-known/ → dist/.well-known/');
+}
+
+// ── Copy logo/ so edge functions can reference hosted SVG assets ──
+if (fs.existsSync('logo')) {
+  copyDir('logo', path.join(OUT, 'logo'));
+  console.log('  logo/ → dist/logo/');
+}
+
 console.log(`\n✓ Build complete → ${OUT}/`);

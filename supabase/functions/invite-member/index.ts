@@ -5,6 +5,7 @@
 
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+import { emailLayout, btn, h } from '../_shared/email.ts'
 
 function corsHeaders(req: Request) {
   return {
@@ -28,85 +29,31 @@ function buildInviteEmail(opts: {
   appUrl: string
 }): { subject: string; html: string } {
   const { firstName, bandName, invitedByName, inviteUrl, appUrl } = opts
-  const greeting = firstName ? `Hi ${firstName},` : 'Hi,'
-
+  const greeting = firstName ? `Hi ${h(firstName)},` : 'Hi,'
   const subject = `You've been invited to join ${bandName} on Ritovo`
 
-  const html = `<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>${subject}</title>
-</head>
-<body style="margin:0;padding:0;background:#f4f4f8;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif">
-  <table width="100%" cellpadding="0" cellspacing="0" style="background:#f4f4f8;padding:40px 20px">
-    <tr>
-      <td align="center">
-        <table width="100%" cellpadding="0" cellspacing="0" style="max-width:520px">
+  const body = `
+    <p style="margin:0 0 20px;font-size:16px;color:#1a1a2e;font-weight:600">${greeting}</p>
+    <p style="margin:0 0 16px;font-size:15px;color:#444;line-height:1.6">
+      <strong>${h(invitedByName)}</strong> has invited you to join
+      <strong>${h(bandName)}</strong> on Ritovo — the band management app
+      for rehearsals, setlists, and staying in sync.
+    </p>
+    <p style="margin:0 0 4px;font-size:15px;color:#444;line-height:1.6">
+      Click the button below to accept your invitation and set up your account.
+      The link is valid for <strong>24 hours</strong>.
+    </p>
+    ${btn('Accept Invitation →', inviteUrl)}
+    <p style="margin:0;font-size:12px;color:#999;line-height:1.6">
+      If the button doesn't work, copy and paste this link into your browser:<br>
+      <a href="${inviteUrl}" style="color:#6C63FF;word-break:break-all">${inviteUrl}</a>
+    </p>`
 
-          <!-- Logo / header -->
-          <tr>
-            <td align="center" style="padding-bottom:24px">
-              <span style="font-size:28px;font-weight:800;color:#6C63FF;letter-spacing:-0.5px">Ritovo</span>
-            </td>
-          </tr>
-
-          <!-- Card -->
-          <tr>
-            <td style="background:#ffffff;border-radius:12px;padding:36px 40px;box-shadow:0 2px 8px rgba(0,0,0,0.07)">
-
-              <p style="margin:0 0 20px;font-size:16px;color:#1a1a2e;font-weight:600">${greeting}</p>
-
-              <p style="margin:0 0 16px;font-size:15px;color:#444;line-height:1.6">
-                <strong>${invitedByName}</strong> has invited you to join
-                <strong>${bandName}</strong> on Ritovo — the band management app
-                for rehearsals, setlists, and staying in sync.
-              </p>
-
-              <p style="margin:0 0 28px;font-size:15px;color:#444;line-height:1.6">
-                Click the button below to accept your invitation and set up your account.
-                The link is valid for <strong>24 hours</strong>.
-              </p>
-
-              <!-- CTA button -->
-              <table cellpadding="0" cellspacing="0" style="margin:0 0 28px">
-                <tr>
-                  <td style="background:#6C63FF;border-radius:8px">
-                    <a href="${inviteUrl}"
-                       style="display:inline-block;padding:14px 32px;font-size:15px;font-weight:600;color:#ffffff;text-decoration:none;border-radius:8px">
-                      Accept Invitation →
-                    </a>
-                  </td>
-                </tr>
-              </table>
-
-              <p style="margin:0;font-size:12px;color:#999;line-height:1.6">
-                If the button doesn't work, copy and paste this link into your browser:<br>
-                <a href="${inviteUrl}" style="color:#6C63FF;word-break:break-all">${inviteUrl}</a>
-              </p>
-
-            </td>
-          </tr>
-
-          <!-- Footer -->
-          <tr>
-            <td align="center" style="padding-top:24px">
-              <p style="margin:0;font-size:12px;color:#aaa">
-                © Ritovo · <a href="${appUrl}" style="color:#aaa;text-decoration:none">ritovo.app</a>
-              </p>
-              <p style="margin:4px 0 0;font-size:11px;color:#bbb">
-                You received this because an admin of ${bandName} invited you.
-              </p>
-            </td>
-          </tr>
-
-        </table>
-      </td>
-    </tr>
-  </table>
-</body>
-</html>`
+  const html = emailLayout({
+    appUrl,
+    body,
+    footer: `You received this because an admin of ${h(bandName)} invited you.`,
+  })
 
   return { subject, html }
 }

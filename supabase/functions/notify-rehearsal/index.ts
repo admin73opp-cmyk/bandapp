@@ -1,13 +1,10 @@
 // Edge Function: notify-rehearsal
 // Sends email notifications to all band members when a rehearsal is confirmed.
-// Requires RESEND_API_KEY set as a Supabase secret (supabase secrets set RESEND_API_KEY=...).
-// Requires FROM_EMAIL set as a Supabase secret (e.g. noreply@yourdomain.com).
 
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+import { emailLayout, btn, h } from '../_shared/email.ts'
 
-// Security for this endpoint comes from the JWT check below, not CORS.
-// Reflect the requesting origin so the function works from any Bandapp deployment.
 function corsHeaders(req: Request) {
   return {
     'Access-Control-Allow-Origin': req.headers.get('origin') || '*',
@@ -27,7 +24,8 @@ serve(async (req) => {
 
   try {
     const resendKey = Deno.env.get('RESEND_API_KEY')
-    const fromEmail = Deno.env.get('FROM_EMAIL') || 'noreply@bandapp.app'
+    const fromEmail = Deno.env.get('FROM_EMAIL') || 'noreply@ritovo.app'
+    const appUrl    = Deno.env.get('APP_URL') || ''
 
     if (!resendKey) return json(req, { error: 'Email service not configured' }, 503)
 
@@ -61,11 +59,10 @@ serve(async (req) => {
 
     if (mem?.role !== 'admin') return json(req, { error: 'Only band admins can send rehearsal notifications' }, 403)
 
-    // Get band name
     const { data: band } = await admin.from('bands').select('name').eq('id', band_id).single()
     const bandName = band?.name || 'Your Band'
 
-    // Fetch all band_members including guest fields so we can filter correctly
+    // Fetch all band members including guest fields for active-member filtering
     const { data: memberRows } = await admin
       .from('band_members')
       .select('user_id, role, guest_start, guest_end, guest_status, profiles(first_name, last_name)')
@@ -73,23 +70,17 @@ serve(async (req) => {
 
     if (!memberRows?.length) return json(req, { success: true, sent: 0 })
 
-    // Mirror the client-side activeMembers() / isGuestActive() logic:
-    //   - Remove guests whose status is 'removed' (in Guest Directory, no longer active)
-    //   - Remove guests whose validity window has passed (guest_end < today)
-    //   - Always include admins and regular members
-    const today = new Date().toISOString().split('T')[0] // YYYY-MM-DD
+    // Mirror client-side activeMembers() / isGuestActive() logic
+    const today = new Date().toISOString().split('T')[0]
     const activeRows = memberRows.filter(row => {
-      if (row.guest_status === 'removed') return false          // in Guest Directory
-      if (row.role !== 'guest') return true                     // admin / member — always active
-      if (!row.guest_start || !row.guest_end) return false      // guest with no valid window
-      return today >= row.guest_start && today <= row.guest_end // within validity period
+      if (row.guest_status === 'removed') return false
+      if (row.role !== 'guest') return true
+      if (!row.guest_start || !row.guest_end) return false
+      return today >= row.guest_start && today <= row.guest_end
     })
 
     if (!activeRows.length) return json(req, { success: true, sent: 0 })
 
-    // Resolve emails via auth.admin.getUserById — works regardless of whether the
-    // profiles.email column exists (that migration may not have been run yet).
-    // Bands are small (<20 members) so N parallel lookups is fast.
     const recipientsRaw = await Promise.all(
       (activeRows as { user_id: string; profiles: { first_name?: string; last_name?: string } | null }[])
         .map(async row => {
@@ -108,37 +99,47 @@ serve(async (req) => {
 
     if (!recipients.length) return json(req, { success: true, sent: 0 })
 
-    // Build email content
-    const h = (s: string) => s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')
-    const timeStr = start ? ` at ${h(start)}${end ? `–${h(end)}` : ''}` : ''
-    const locationStr = location ? `<p><strong>Location:</strong> ${h(location)}</p>` : ''
-    const notesStr = notes ? `<p><strong>Notes:</strong> ${h(notes)}</p>` : ''
+    // Build email
+    const timeStr    = start ? ` at ${h(start)}${end ? `–${h(end)}` : ''}` : ''
+    const locationHtml = location ? `<p style="margin:0 0 10px;font-size:15px;color:#444"><strong>📍 Location:</strong> ${h(location)}</p>` : ''
+    const notesHtml    = notes    ? `<p style="margin:0 0 10px;font-size:15px;color:#444"><strong>📝 Notes:</strong> ${h(notes)}</p>`    : ''
 
-    const htmlBody = `
-<div style="font-family:sans-serif;max-width:480px;margin:0 auto;padding:24px">
-  <h2 style="color:#6C63FF;margin-bottom:4px">🎸 Rehearsal Confirmed</h2>
-  <p style="color:#666;margin-top:0">${h(bandName)}</p>
-  <hr style="border:none;border-top:1px solid #eee;margin:16px 0">
-  <p><strong>📅 Date:</strong> ${h(date)}${timeStr}</p>
-  ${locationStr}
-  ${notesStr}
-  <hr style="border:none;border-top:1px solid #eee;margin:16px 0">
-  <p style="font-size:.8rem;color:#999">You're receiving this because you're a member of ${h(bandName)} on Bandapp.</p>
-</div>`
+    const subject = `🎸 Rehearsal confirmed: ${title} — ${date}`
 
-    const textBody = `Rehearsal Confirmed — ${bandName}\n\nDate: ${date}${timeStr}${location ? `\nLocation: ${location}` : ''}${notes ? `\nNotes: ${notes}` : ''}\n\nYou're receiving this because you're a member of ${bandName} on Bandapp.`
+    const makeBody = (recipientName: string) => `
+      <p style="margin:0 0 20px;font-size:16px;color:#1a1a2e;font-weight:600">Hi ${h(recipientName.split(' ')[0] || recipientName)},</p>
+      <p style="margin:0 0 20px;font-size:15px;color:#444;line-height:1.6">
+        A rehearsal has been confirmed for <strong>${h(bandName)}</strong>. See you there!
+      </p>
+      <table width="100%" cellpadding="0" cellspacing="0" style="background:#f8f7ff;border-radius:8px;padding:20px;margin:0 0 20px">
+        <tr><td>
+          <p style="margin:0 0 10px;font-size:15px;color:#1a1a2e"><strong>🎸 ${h(title)}</strong></p>
+          <p style="margin:0 0 10px;font-size:15px;color:#444"><strong>📅 Date:</strong> ${h(date)}${timeStr}</p>
+          ${locationHtml}
+          ${notesHtml}
+        </td></tr>
+      </table>
+      ${btn('Open in Ritovo', appUrl)}
+      <p style="margin:0;font-size:12px;color:#999;line-height:1.6">
+        If the button doesn't work, visit <a href="${appUrl}" style="color:#6C63FF">${appUrl.replace(/\/$/, '')}</a>
+      </p>`
 
-    // Send all emails in parallel via Resend
+    // Send all emails in parallel
     const results = await Promise.all(recipients.map(async (recipient) => {
+      const html = emailLayout({
+        appUrl,
+        body: makeBody(recipient.name),
+        footer: `You're receiving this because you're a member of ${h(bandName)} on Ritovo.`,
+      })
+
       const res = await fetch('https://api.resend.com/emails', {
         method: 'POST',
         headers: { Authorization: `Bearer ${resendKey}`, 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          from: `Bandapp <${fromEmail}>`,
+          from: `Ritovo <${fromEmail}>`,
           to: [recipient.email],
-          subject: `🎸 Rehearsal confirmed: ${title} — ${date}`,
-          html: htmlBody,
-          text: textBody,
+          subject,
+          html,
         }),
       })
       if (res.ok) return null
