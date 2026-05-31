@@ -5419,7 +5419,7 @@ async function removeMember(idx){
     ?`Remove guest "${m.name}" from the group? They will be moved to the Guest Directory.`
     :`Remove "${m.name}" from the group? This cannot be undone.`;
   if(!confirm(msg))return;
-  await MembersDB.removeGroupMember(activeBandId, m.id, isGuest);
+  await MembersDB.removeBandMember(activeBandId, m.id, isGuest);
   await loadMembers();
   renderMembers();
   renderGuestDir();

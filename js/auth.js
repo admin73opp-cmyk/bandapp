@@ -380,16 +380,20 @@ supabase.auth.onAuthStateChange(async (event, session) => {
 });
 
 // On first load, restore an existing session without waiting for the event
+// Capture URL params synchronously here — getSession() may trigger a PKCE code exchange
+// which calls history.replaceState to remove ?code= before we get to check it below.
+const _initUrlParams = new URLSearchParams(window.location.search);
+const _initHash = window.location.hash;
 (async () => {
   const { data: { session } } = await supabase.auth.getSession();
   if (!session) {
-    const p = new URLSearchParams(window.location.search);
+    const p = _initUrlParams;
 
-    // If the URL contains a Supabase auth token (PKCE ?code= or implicit #access_token),
+    // If the URL contained a Supabase auth token (PKCE ?code= or implicit #access_token),
     // the client is in the middle of exchanging an invite/magic-link.
     // Show the loading spinner and bail — onAuthStateChange will handle sign-in and
     // the onboarding modal once the exchange completes.
-    const _hash = window.location.hash;
+    const _hash = _initHash;
     if (p.get('code') || _hash.includes('access_token')) {
       // A token exchange is in progress — show only the loading spinner.
       // Hide everything else so no Sign In form bleeds through while we wait.
