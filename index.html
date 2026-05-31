@@ -5258,8 +5258,10 @@ function renderGuestDir(){
   window._guestDirData=allExpired;
   list.innerHTML=allExpired.map((g,idx)=>{
     const daysActive=Math.round((new Date(g.guestEnd)-new Date(g.guestStart))/(1000*60*60*24));
+    const gMemberIdx=members.indexOf(g);
+    const gPhoto=(gMemberIdx>=0?memberPhotos[gMemberIdx]:null)||g.photo||null;
     return`<div onclick="openGuestDetail(${idx})" style="display:flex;align-items:center;gap:12px;padding:14px 16px;background:var(--w);border:1px solid var(--bd);border-radius:var(--radl);box-shadow:var(--sh);cursor:pointer;transition:border-color .13s,transform .13s" onmouseover="this.style.borderColor='var(--a)';this.style.transform='translateY(-1px)'" onmouseout="this.style.borderColor='var(--bd)';this.style.transform='none'">
-      <div style="width:42px;height:42px;border-radius:50%;background:${g.color||'#9A9AB0'};display:flex;align-items:center;justify-content:center;font-size:.78rem;font-weight:700;color:#fff;flex-shrink:0">${g.init||g.name.slice(0,2).toUpperCase()}</div>
+      <div style="width:42px;height:42px;border-radius:50%;background:${g.color||'#9A9AB0'};display:flex;align-items:center;justify-content:center;font-size:.78rem;font-weight:700;color:#fff;flex-shrink:0;${gPhoto?`background-image:url(${gPhoto});background-size:cover;background-position:center`:''}">${gPhoto?'':g.init||g.name.slice(0,2).toUpperCase()}</div>
       <div style="flex:1;min-width:0">
         <div style="font-weight:700;font-size:.88rem">${g.name}</div>
         <div style="font-size:.74rem;color:var(--ink2);margin-top:2px;display:flex;gap:10px;flex-wrap:wrap">
@@ -5285,8 +5287,11 @@ function openGuestDetail(idx){
   const daysActive=Math.round((new Date(g.guestEnd)-new Date(g.guestStart))/(1000*60*60*24));
   const flag=ex.nat?isoFlag(ex.nat):'';
 
-  document.getElementById('gdAv').style.background=g.color||'#9A9AB0';
-  document.getElementById('gdAv').textContent=g.init||g.name.slice(0,2).toUpperCase();
+  const gdPhoto=(memberIdx>=0?memberPhotos[memberIdx]:null)||g.photo||null;
+  const gdAvEl=document.getElementById('gdAv');
+  gdAvEl.style.background=g.color||'#9A9AB0';
+  if(gdPhoto){gdAvEl.style.backgroundImage=`url(${gdPhoto})`;gdAvEl.style.backgroundSize='cover';gdAvEl.style.backgroundPosition='center';gdAvEl.textContent='';}
+  else{gdAvEl.style.backgroundImage='';gdAvEl.textContent=g.init||g.name.slice(0,2).toUpperCase();}
   document.getElementById('gdName').textContent=g.name;
   document.getElementById('gdFlag').innerHTML=flag;
   document.getElementById('gdInstrument').textContent=`${instIcon(g.instrument)} ${g.instrument}${g.inst2?' · '+instIcon(g.inst2)+' '+g.inst2:''}`;
