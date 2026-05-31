@@ -1763,6 +1763,7 @@ html[data-theme="dark"] .sb-group-name{color:var(--ink)!important}
 (function(){
   let _pop = null;
   window.showHelp = function(btn, html) {
+    html = (typeof t === 'function') ? t(html) : html;
     if (_pop) { _pop.remove(); _pop = null; if (_pop === btn._pop) return; }
     const pop = document.createElement('div');
     pop.className = 'help-pop';
