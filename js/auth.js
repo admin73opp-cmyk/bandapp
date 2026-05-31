@@ -126,7 +126,7 @@ async function doSignUp() {
   const pendingInstrument = sessionStorage.getItem('inviteInstrument') || '';
   const baseUrl = (window.Capacitor && window.Capacitor.isNativePlatform())
     ? 'https://bandapp.app'
-    : (localStorage.getItem('appUrl') || (window.location.origin + window.location.pathname));
+    : (window.location.origin + window.location.pathname);
   // Only embed the band UUID in the confirmation redirect — no PII in URLs.
   // Phone and instrument are stored in sessionStorage and survive across tabs without URL exposure.
   const redirectTo = pendingBandId ? `${baseUrl}?band=${pendingBandId}` : baseUrl;
