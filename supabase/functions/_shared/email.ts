@@ -7,7 +7,6 @@ export function emailLayout(opts: {
   footer?: string    // optional extra line below the standard footer
 }): string {
   const base = opts.appUrl.replace(/\/$/, '')
-  const logoUrl = `${base}/logo/files/ritovo-wordmark-light.svg`
 
   return `<!DOCTYPE html>
 <html lang="en">
@@ -21,18 +20,21 @@ export function emailLayout(opts: {
     <td align="center">
       <table width="100%" cellpadding="0" cellspacing="0" style="max-width:520px">
 
-        <!-- Logo -->
+        <!-- Logo — pure HTML/CSS so it renders in all email clients without external image requests -->
         <tr>
-          <td align="center" style="padding-bottom:24px">
-            <!--[if !mso]><!-->
-            <img src="${logoUrl}"
-                 alt="Ritovo"
-                 width="200" height="46"
-                 style="display:block;border:0;height:auto;max-width:200px">
-            <!--<![endif]-->
-            <!--[if mso]>
-            <span style="font-family:Georgia,'Times New Roman',serif;font-size:28px;font-weight:300;letter-spacing:8px;color:#1a1a18">ritovo</span>
-            <![endif]-->
+          <td align="center" style="padding-bottom:28px">
+            <table cellpadding="0" cellspacing="0" align="center">
+              <tr>
+                <!-- Vertical bar + wordmark -->
+                <td valign="bottom" style="border-left:1.5px solid #1a1a18;padding:10px 0 8px 14px;font-family:Georgia,'Times New Roman',serif;font-size:28px;font-weight:300;letter-spacing:9px;color:#1a1a18;line-height:1;white-space:nowrap">
+                  ritovo
+                </td>
+                <!-- Dot above the final o -->
+                <td valign="top" style="padding:8px 0 0 2px;line-height:1;font-size:0">
+                  <span style="display:inline-block;width:5px;height:5px;background:#1a1a18;border-radius:50%;font-size:0;line-height:0"> </span>
+                </td>
+              </tr>
+            </table>
           </td>
         </tr>
 
