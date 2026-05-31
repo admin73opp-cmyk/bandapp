@@ -34,6 +34,7 @@ serve(async (req) => {
 
   try {
     const authHeader = req.headers.get('Authorization') ?? ''
+    const token = authHeader.replace(/^Bearer\s+/i, '')
 
     const admin = createClient(
       Deno.env.get('SUPABASE_URL')!,
@@ -41,11 +42,8 @@ serve(async (req) => {
       { auth: { autoRefreshToken: false, persistSession: false } }
     )
 
-    const userClient = createClient(
-      Deno.env.get('SUPABASE_URL')!,
-      Deno.env.get('SUPABASE_ANON_KEY')!,
-      { global: { headers: { Authorization: authHeader } } }
-    )
+    // Verify the caller's JWT using the admin client — more reliable than userClient.auth.getUser()
+    const { data: { user }, error: authErr } = await admin.auth.getUser(token)
 
     const { data: { user } } = await userClient.auth.getUser()
     if (!user) return json({ error: 'Unauthorized' }, 401)
