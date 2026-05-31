@@ -109,20 +109,21 @@ serve(async (req) => {
     if (!recipients.length) return json(req, { success: true, sent: 0 })
 
     // Build email content
-    const timeStr = start ? ` at ${start}${end ? `–${end}` : ''}` : ''
-    const locationStr = location ? `<p><strong>Location:</strong> ${location}</p>` : ''
-    const notesStr = notes ? `<p><strong>Notes:</strong> ${notes}</p>` : ''
+    const h = (s: string) => s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')
+    const timeStr = start ? ` at ${h(start)}${end ? `–${h(end)}` : ''}` : ''
+    const locationStr = location ? `<p><strong>Location:</strong> ${h(location)}</p>` : ''
+    const notesStr = notes ? `<p><strong>Notes:</strong> ${h(notes)}</p>` : ''
 
     const htmlBody = `
 <div style="font-family:sans-serif;max-width:480px;margin:0 auto;padding:24px">
   <h2 style="color:#6C63FF;margin-bottom:4px">🎸 Rehearsal Confirmed</h2>
-  <p style="color:#666;margin-top:0">${bandName}</p>
+  <p style="color:#666;margin-top:0">${h(bandName)}</p>
   <hr style="border:none;border-top:1px solid #eee;margin:16px 0">
-  <p><strong>📅 Date:</strong> ${date}${timeStr}</p>
+  <p><strong>📅 Date:</strong> ${h(date)}${timeStr}</p>
   ${locationStr}
   ${notesStr}
   <hr style="border:none;border-top:1px solid #eee;margin:16px 0">
-  <p style="font-size:.8rem;color:#999">You're receiving this because you're a member of ${bandName} on Bandapp.</p>
+  <p style="font-size:.8rem;color:#999">You're receiving this because you're a member of ${h(bandName)} on Bandapp.</p>
 </div>`
 
     const textBody = `Rehearsal Confirmed — ${bandName}\n\nDate: ${date}${timeStr}${location ? `\nLocation: ${location}` : ''}${notes ? `\nNotes: ${notes}` : ''}\n\nYou're receiving this because you're a member of ${bandName} on Bandapp.`

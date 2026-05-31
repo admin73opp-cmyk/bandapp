@@ -148,7 +148,7 @@ select option{background:var(--w)}
 @keyframes fu{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
 @keyframes spin{to{transform:rotate(360deg)}}
 #appLoader{position:fixed;inset:0;background:var(--bg);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px}
-#appLoader .al-logo{width:44px;height:44px;color:var(--ink);animation:rit-pulse 2.4s ease-in-out infinite}
+#appLoader .al-logo{width:66px;height:66px;color:var(--ink);animation:rit-pulse 2.4s ease-in-out infinite}
 @keyframes rit-pulse{0%,100%{opacity:.9}50%{opacity:.35}}
 #appLoader .al-text{font-size:.82rem;color:var(--ink2)}
 /* stats */
@@ -511,7 +511,7 @@ html[data-theme="dark"] .sb-group-name{color:var(--ink)!important}
     <div class="sb-toggle" id="sbToggle" onclick="toggleSbMinimize()" title="Collapse sidebar" data-i18n-title="Collapse sidebar">
       <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 12L6 8l4-4"/></svg>
     </div>
-    <div class="sb-logo"><svg class="rit-mark sb-logo-mark" width="22" height="22" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><line x1="34" y1="32" x2="34" y2="88" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><text x="44" y="86" font-family="'Garamond','Georgia','Times New Roman',serif" font-size="56" font-weight="300" fill="currentColor">r</text><circle cx="88" cy="32" r="4.5" fill="currentColor"/></svg><svg class="rit-word sb-logo-word sb-logo-text" width="113" height="26" viewBox="0 0 520 120" xmlns="http://www.w3.org/2000/svg" aria-label="Ritovo"><line x1="40" y1="28" x2="40" y2="92" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><text x="58" y="88" font-family="'Garamond','Georgia','Times New Roman',serif" font-size="58" font-weight="300" letter-spacing="12" fill="currentColor">ritovo</text><circle cx="468" cy="28" r="4" fill="currentColor"/></svg></div>
+    <div class="sb-logo"><svg class="rit-mark sb-logo-mark" width="29" height="29" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><line x1="34" y1="32" x2="34" y2="88" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><text x="44" y="86" font-family="'Garamond','Georgia','Times New Roman',serif" font-size="56" font-weight="300" fill="currentColor">r</text><circle cx="88" cy="32" r="4.5" fill="currentColor"/></svg><svg class="rit-word sb-logo-word sb-logo-text" width="147" height="34" viewBox="0 0 520 120" xmlns="http://www.w3.org/2000/svg" aria-label="Ritovo"><line x1="40" y1="28" x2="40" y2="92" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><text x="58" y="88" font-family="'Garamond','Georgia','Times New Roman',serif" font-size="58" font-weight="300" letter-spacing="12" fill="currentColor">ritovo</text><circle cx="468" cy="28" r="4" fill="currentColor"/></svg></div>
     <div class="sb-group">
       <button class="bb" onclick="renderBandList();showMod('bswMod')">
         <div class="bav">JC</div>
@@ -1930,14 +1930,14 @@ function rehearsalCard(r,style){
       <div class="cdyr">${r.year}</div>
     </div>
     <div>
-      <div class="ctitle">${r.title}${badge}</div>
+      <div class="ctitle">${esc(r.title)}${badge}</div>
       <div class="cmeta">
-        ${r.location?`<span class="cmi"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 2C5.8 2 4 3.8 4 6c0 3.5 4 8 4 8s4-4.5 4-8c0-2.2-1.8-4-4-4z"/><circle cx="8" cy="6" r="1.5"/></svg>${r.location}</span>`:''}
+        ${r.location?`<span class="cmi"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 2C5.8 2 4 3.8 4 6c0 3.5 4 8 4 8s4-4.5 4-8c0-2.2-1.8-4-4-4z"/><circle cx="8" cy="6" r="1.5"/></svg>${esc(r.location)}</span>`:''}
         <span class="cmi"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M8 4v4l3 2"/></svg>${r.start}–${r.end}</span>
       </div>
       <div class="cbadges">
         <span class="pill ${cancelStyle?'pr':'pg'}">${cancelStyle?t('🚫 Cancelled'):t('Rehearsal')}</span>
-        ${slLinked&&!cancelStyle?`<span class="pill pp" style="cursor:pointer;display:inline-flex;align-items:center;gap:4px" data-action="setlist" data-slid="${r.setlistId}" title="Open Set List">♩ ${slLinked.name} <svg width="9" height="9" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 8h8M9 5l3 3-3 3"/></svg></span>`:''}
+        ${slLinked&&!cancelStyle?`<span class="pill pp" style="cursor:pointer;display:inline-flex;align-items:center;gap:4px" data-action="setlist" data-slid="${r.setlistId}" title="Open Set List">♩ ${esc(slLinked.name)} <svg width="9" height="9" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 8h8M9 5l3 3-3 3"/></svg></span>`:''}
       </div>
       ${photoHtml}
     </div>
@@ -2404,7 +2404,7 @@ function renderBandList(){
   const el=document.getElementById('groupList');if(!el)return;
   el.innerHTML=BANDS.map(b=>{
     const active=b.id===activeBandId;
-    return`<div style="display:flex;align-items:center;gap:10px;padding:11px;background:${active?'var(--a2)':'var(--bg)'};border:1.5px solid ${active?'var(--a)':'var(--bd)'};border-radius:var(--rad);cursor:pointer;transition:all .13s" onclick="switchBand('${b.id}')" ${!active?'onmouseover="this.style.borderColor=\'var(--a)\'" onmouseout="this.style.borderColor=\'var(--bd)\'"':''}><div class="bav" style="background:${b.color}">${b.initials}</div><div style="flex:1"><div style="font-weight:600;font-size:.84rem">${b.name}</div><div style="font-size:.69rem;color:var(--ink2)">${b.role} · ${b.memberCount} members · ${b.genre}</div></div>${active?'<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;flex-shrink:0;color:var(--a)"><path d="M3 8l4 4 6-8"/></svg>':''}</div>`;
+    return`<div style="display:flex;align-items:center;gap:10px;padding:11px;background:${active?'var(--a2)':'var(--bg)'};border:1.5px solid ${active?'var(--a)':'var(--bd)'};border-radius:var(--rad);cursor:pointer;transition:all .13s" onclick="switchBand('${b.id}')" ${!active?'onmouseover="this.style.borderColor=\'var(--a)\'" onmouseout="this.style.borderColor=\'var(--bd)\'"':''}><div class="bav" style="background:${b.color}">${esc(b.initials)}</div><div style="flex:1"><div style="font-weight:600;font-size:.84rem">${esc(b.name)}</div><div style="font-size:.69rem;color:var(--ink2)">${esc(b.role)} · ${b.memberCount} members · ${esc(b.genre)}</div></div>${active?'<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;flex-shrink:0;color:var(--a)"><path d="M3 8l4 4 6-8"/></svg>':''}</div>`;
   }).join('');
 }
 
@@ -2815,12 +2815,12 @@ function renderSL(){
     return`<tr draggable="${!isMob}" data-id="${id}" ondragover="dov(event)" ondrop="ddrop(event)" ondragleave="this.classList.remove('dov')">
       ${moveBtn}
       <td class="snum">${String(i+1).padStart(2,'0')}</td>
-      <td class="stitle">${s.title}</td>
-      <td class="sartist" style="color:var(--ink2);font-size:.75rem">${s.artist}</td>
-      <td><span class="kp">${s.key}</span></td>
+      <td class="stitle">${esc(s.title)}</td>
+      <td class="sartist" style="color:var(--ink2);font-size:.75rem">${esc(s.artist)}</td>
+      <td><span class="kp">${esc(s.key)}</span></td>
       <td style="font-family:var(--mono);font-size:.72rem;color:var(--ink2);white-space:nowrap">${s.dur?fmtDur(s.dur):'—'}</td>
       <td class="lkcol" style="white-space:nowrap">${openSongMedia(s,i)}${s.lyrics?`<a class="lb2" href="${esc(s.lyrics)}" target="_blank" rel="noopener noreferrer" title="Lyrics" style="color:var(--a);text-decoration:none;font-size:.82rem">📄</a>`:''}${s.sheet_music?`<a class="lb2" href="${esc(s.sheet_music)}" target="_blank" rel="noopener noreferrer" title="Sheet Music" style="color:var(--a);text-decoration:none;font-size:.82rem">🎵</a>`:''}</td>
-      <td class="nc">${s.note}</td>
+      <td class="nc">${esc(s.note)}</td>
       <td><button class="btn btn-xs btn-g" onclick="removeSongFromSL('${id}')">✕</button></td>
     </tr>`;
   }).join('');
@@ -2847,12 +2847,13 @@ function openMediaPicker(rowIdx){
   const titleEl=document.getElementById('mediaPickerTitle');
   const listEl=document.getElementById('mediaPickerList');
   if(titleEl)titleEl.textContent=s.title;
-  if(listEl)listEl.innerHTML=links.map(l=>`<button class="btn btn-g btn-fw" style="justify-content:flex-start;gap:10px;font-size:.88rem;padding:12px 16px" data-url="${l.url}" onclick="openMediaUrl(this);closeMod('mediaPicker')">${l.label}</button>`).join('');
+  if(listEl)listEl.innerHTML=links.map(l=>`<button class="btn btn-g btn-fw" style="justify-content:flex-start;gap:10px;font-size:.88rem;padding:12px 16px" data-url="${l.url}" onclick="openMediaUrl(this);closeMod('mediaPicker')">${esc(l.label)}</button>`).join('');
   showMod('mediaPicker');
 }
 function openMediaUrl(btn){
   const url=btn&&btn.dataset&&btn.dataset.url;
   if(!url)return;
+  try{const p=new URL(url);if(!['https:','http:'].includes(p.protocol))return;}catch(e){return;}
   window.open(url,'_blank','noopener,noreferrer');
 }
 async function removeSongFromSL(id){
@@ -2936,7 +2937,7 @@ function renderSLDropdown(){
   if(noLists) noLists.style.display=(songs.length&&!setlists.length)?'block':'none';
   if(slContent) slContent.style.display=showEmpty?'none':'';
   const dd=document.getElementById('slDropdown');if(!dd)return;
-  dd.innerHTML=setlists.map(sl=>`<option value="${sl.id}"${sl.id===activeSetlistId?' selected':''}>${sl.name}</option>`).join('');
+  dd.innerHTML=setlists.map(sl=>`<option value="${sl.id}"${sl.id===activeSetlistId?' selected':''}>${esc(sl.name)}</option>`).join('');
   // Keep the visible name heading in sync with whichever setlist is active
   const activeSl=setlists.find(x=>x.id===activeSetlistId);
   const slNameEl=document.getElementById('slName');
@@ -2978,7 +2979,7 @@ async function deleteActiveSetlist(){
 function switchV(v,el){document.querySelectorAll('#pg-setlists .stabs .stb').forEach(s=>s.classList.remove('on'));el.classList.add('on');document.getElementById('vMain').style.display=v==='main'?'':'none';document.getElementById('vMy').style.display=v==='my'?'':'none';if(v==='my')renderMyBody();}
 function renderMyBody(){
   const el=document.getElementById('myBody');if(!el)return;
-  el.innerHTML=getSlS().map((id,i)=>{const s=songByAnyId(id);if(!s)return'';return`<tr><td class="snum">${String(i+1).padStart(2,'0')}</td><td class="stitle">${s.title}</td><td class="sartist" style="color:var(--ink2);font-size:.75rem">${s.artist}</td><td><span class="kp">${s.key}</span></td><td class="nc">${s.note}</td><td><input style="background:transparent;border:none;border-bottom:1.5px solid var(--bd);font-family:var(--font);font-size:.75rem;width:100%;outline:none;padding:2px 4px;color:var(--ink)" value="${myC[s.id]||''}" placeholder="Add note…" onchange="saveSongNote('${s.id}',this.value)"></td></tr>`;}).join('');
+  el.innerHTML=getSlS().map((id,i)=>{const s=songByAnyId(id);if(!s)return'';return`<tr><td class="snum">${String(i+1).padStart(2,'0')}</td><td class="stitle">${esc(s.title)}</td><td class="sartist" style="color:var(--ink2);font-size:.75rem">${esc(s.artist)}</td><td><span class="kp">${esc(s.key)}</span></td><td class="nc">${esc(s.note)}</td><td><input style="background:transparent;border:none;border-bottom:1.5px solid var(--bd);font-family:var(--font);font-size:.75rem;width:100%;outline:none;padding:2px 4px;color:var(--ink)" value="${myC[s.id]||''}" placeholder="Add note…" onchange="saveSongNote('${s.id}',this.value)"></td></tr>`;}).join('');
 }
 async function saveSongNote(songId,note){
   myC[songId]=note;
@@ -3035,7 +3036,7 @@ function renderSlMeta(){
     const isAdmin=currentUser.role==='admin';
     if(futureLinked.length||pastLinked.length){
       const chips=[...futureLinked,...pastLinked].map(r=>
-        `<span style="display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:99px;background:var(--g2);border:1.5px solid #86EFAC;font-size:.75rem;font-weight:600;color:var(--g);cursor:pointer;${r.date<TODAY_STR?'opacity:.65':''}" onclick="nav('rehearsals')">🎸 ${r.title}${r.date?' · '+r.date:''}</span>
+        `<span style="display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:99px;background:var(--g2);border:1.5px solid #86EFAC;font-size:.75rem;font-weight:600;color:var(--g);cursor:pointer;${r.date<TODAY_STR?'opacity:.65':''}" onclick="nav('rehearsals')">🎸 ${esc(r.title)}${r.date?' · '+esc(r.date):''}</span>
          ${isAdmin?`<button class="btn btn-xs btn-g" onclick="linkSlToRehearsal(null,'${r.id}')" style="font-size:.66rem" title="Unlink">✕</button>`:''}`
       ).join('');
       rehRow.innerHTML=`<span style="font-size:.72rem;color:var(--ink3)" data-i18n="Linked rehearsals:">${t('Linked rehearsals:')||'Linked rehearsals:'}</span>${chips}${isAdmin?`<button class="btn btn-xs btn-g" onclick="openSlRehLinkModal()" style="font-size:.7rem">+ Link more</button>`:''}`;
@@ -3108,7 +3109,7 @@ function openSlMod(){
   const sel=document.getElementById('slNewConcert');
   const upcoming=concerts.filter(c=>!isPast(c)&&!c.cancelled).sort((a,b)=>concertDate(a)-concertDate(b));
   sel.innerHTML=`<option value="">— No concert yet —</option>`
-    +upcoming.map(c=>`<option value="${c.id}">${c.title}${c.date?' — '+c.date:''}</option>`).join('');
+    +upcoming.map(c=>`<option value="${c.id}">${esc(c.title)}${c.date?' — '+esc(c.date):''}</option>`).join('');
   document.getElementById('slNewTitle').value='';
   document.getElementById('slConcertPreview').style.display='none';
   slCreateMode='manual';
@@ -4368,7 +4369,7 @@ function renderAvail(){
     // Show a small cross-group indicator next to name if member is in multiple groups
     const isMultiGroup=!!CROSS_GROUP_MEMBERS[m.name];
     const multiBadge=isMultiGroup?`<span title="Member of multiple groups" style="font-size:.55rem;color:var(--amb);font-weight:700;margin-left:3px">⊘</span>`:'';
-    return`<tr><td class="nc2" style="position:sticky;left:0;background:var(--w);z-index:1"><div style="display:flex;align-items:center;gap:7px"><div class="mav2" style="width:21px;height:21px;font-size:.55rem;background:${m.color}">${m.init}</div><span style="font-size:.77rem;font-weight:500">${m.name.split(' ')[0]}</span>${multiBadge}</div></td>${cells}</tr>`;
+    return`<tr><td class="nc2" style="position:sticky;left:0;background:var(--w);z-index:1"><div style="display:flex;align-items:center;gap:7px"><div class="mav2" style="width:21px;height:21px;font-size:.55rem;background:${m.color}">${esc(m.init)}</div><span style="font-size:.77rem;font-weight:500">${esc(m.name.split(' ')[0])}</span>${multiBadge}</div></td>${cells}</tr>`;
   }).join('');
   const chips=document.getElementById('fbChips');
   const fd=[...fullC].sort((a,b)=>a-b).filter(d=>{const key=`${yr}-${String(mo+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;const ev=calEv[key]||[];return key>=TODAY_STR&&!ev.includes('rehearsal')&&!ev.includes('concert');});
@@ -4398,7 +4399,7 @@ function openRehMod(d,key,isFull){
   document.getElementById('rmTt').textContent=`${t('Rehearsal')} — ${t(dows[new Date(yr,mo,d).getDay()])}, ${t(MN[mo])} ${d}`;
   document.getElementById('rmSub').textContent=isFull?`All ${members.length} members are available 🎉`:`${cntAv(yr,mo,d)} of ${members.length} members available.`;
   const avs=getMAvail(yr,mo,d);
-  document.getElementById('rmMem').innerHTML=members.map((m,i)=>`<div style="display:flex;align-items:center;gap:5px;padding:5px 10px;border-radius:8px;background:${avs[i]?'var(--g2)':'var(--r2)'};border:1px solid ${avs[i]?'#86EFAC':'#FECACA'}"><div class="mav2" style="width:19px;height:19px;font-size:.52rem;background:${m.color}">${m.init}</div><span style="font-size:.74rem;font-weight:500;color:${avs[i]?'var(--g)':'var(--r)'}">${m.name.split(' ')[0]}</span></div>`).join('');
+  document.getElementById('rmMem').innerHTML=members.map((m,i)=>`<div style="display:flex;align-items:center;gap:5px;padding:5px 10px;border-radius:8px;background:${avs[i]?'var(--g2)':'var(--r2)'};border:1px solid ${avs[i]?'#86EFAC':'#FECACA'}"><div class="mav2" style="width:19px;height:19px;font-size:.52rem;background:${m.color}">${esc(m.init)}</div><span style="font-size:.74rem;font-weight:500;color:${avs[i]?'var(--g)':'var(--r)'}">${esc(m.name.split(' ')[0])}</span></div>`).join('');
   // Always reset the WA error state so it never bleeds in from a prior open
   const errEl=document.getElementById('rmWaErr');
   if(errEl)errEl.style.display='none';
@@ -4624,16 +4625,16 @@ function concertCard(c,style){
       <div class="cdyr">${c.year}</div>
     </div>
     <div>
-      <div class="ctitle">${c.title}${badge}</div>
+      <div class="ctitle">${esc(c.title)}${badge}</div>
       <div class="cmeta">
-        <span class="cmi"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 2C5.8 2 4 3.8 4 6c0 3.5 4 8 4 8s4-4.5 4-8c0-2.2-1.8-4-4-4z"/><circle cx="8" cy="6" r="1.5"/></svg>${c.venue}</span>
-        <span class="cmi"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M8 4v4l3 2"/></svg>${c.time} · ${c.duration}min</span>
-        <span class="cmi"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 14s1-3 6-3 6 3 6 3M8 8a3 3 0 100-6 3 3 0 000 6z"/></svg>~${c.audience}</span>
+        <span class="cmi"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 2C5.8 2 4 3.8 4 6c0 3.5 4 8 4 8s4-4.5 4-8c0-2.2-1.8-4-4-4z"/><circle cx="8" cy="6" r="1.5"/></svg>${esc(c.venue)}</span>
+        <span class="cmi"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M8 4v4l3 2"/></svg>${esc(c.time)} · ${esc(c.duration)}min</span>
+        <span class="cmi"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 14s1-3 6-3 6 3 6 3M8 8a3 3 0 100-6 3 3 0 000 6z"/></svg>~${esc(c.audience)}</span>
       </div>
       <div class="cbadges">
         <span class="pill ${cancelStyle?'pr':'pp'}">${cancelStyle?t('🚫 Cancelled'):t('Concert')}</span>
         ${!cancelStyle&&c.paid?`<span class="pill pg">€ ${c.total}</span><span class="pill pgray">${c.price}</span>`:!cancelStyle?`<span class="pill pgray">${t('Free')}</span>`:''}
-        ${(c.setlistIds||[]).map(sid=>{const sl=_setlistMap[sid];return sl?`<span class="pill pp" style="cursor:pointer" data-action="setlist" data-slid="${sid}">♩ ${sl.name}</span>`:''}).join('')}
+        ${(c.setlistIds||[]).map(sid=>{const sl=_setlistMap[sid];return sl?`<span class="pill pp" style="cursor:pointer" data-action="setlist" data-slid="${sid}">♩ ${esc(sl.name)}</span>`:''}).join('')}
 
       </div>
       ${photoHtml}
@@ -4733,7 +4734,7 @@ function openConcertView(id){
   const cvSlRow=document.getElementById('cvSlRow');
   if(slsLinked.length){
     cvSlRow.style.display='';
-    document.getElementById('cvSlBadge').innerHTML=slsLinked.map(sl=>`<span class="pill pp" style="cursor:pointer;margin-right:4px" onclick="openSetlistFromConcert('${sl.id}')">♩ ${sl.name}</span>`).join('');
+    document.getElementById('cvSlBadge').innerHTML=slsLinked.map(sl=>`<span class="pill pp" style="cursor:pointer;margin-right:4px" onclick="openSetlistFromConcert('${sl.id}')">♩ ${esc(sl.name)}</span>`).join('');
   } else cvSlRow.style.display='none';
   const photos=c.photos||[];
   document.getElementById('cvPhotos').innerHTML=photos.length
@@ -4747,7 +4748,7 @@ function openConcertView(id){
   } else if(past){
     actions.innerHTML=`<button class="btn btn-g" onclick="closeMod('cvMod')">${t('Close')}</button>`;
   } else {
-    const slBtns=(c.setlistIds||[]).map(sid=>{const sl=setlists.find(x=>x.id===sid);return sl?`<button class="btn btn-p btn-sm" onclick="openSetlistFromConcert('${sid}')">♩ ${sl.name}</button>`:''}).join('');
+    const slBtns=(c.setlistIds||[]).map(sid=>{const sl=setlists.find(x=>x.id===sid);return sl?`<button class="btn btn-p btn-sm" onclick="openSetlistFromConcert('${sid}')">♩ ${esc(sl.name)}</button>`:''}).join('');
     actions.innerHTML=`
       <button class="btn btn-g" onclick="closeMod('cvMod')">${t('Close')}</button>
       <button class="btn btn-g btn-sm" style="color:var(--amb);border-color:var(--amb2)" onclick="closeMod('cvMod');promptCancel('concert','${c.id}')">${t('🚫 Cancel')}</button>
@@ -4802,7 +4803,7 @@ function populateCeSetlistSelect(linkedIds){
   const sel=document.getElementById('ceSetlistSelect');
   if(!sel)return;
   sel.innerHTML=`<option value="">— No set list —</option>`
-    +setlists.map(sl=>`<option value="${sl.id}">${sl.name}${sl.type?' · '+sl.type:''}</option>`).join('');
+    +setlists.map(sl=>`<option value="${sl.id}">${esc(sl.name)}${sl.type?' · '+esc(sl.type):''}</option>`).join('');
   // if exactly one linked, pre-select it; otherwise leave blank
   const ids=linkedIds||[];
   sel.value=ids.length===1?String(ids[0]):'';
@@ -4813,7 +4814,7 @@ function populateCeSetlistSelect(linkedIds){
       chips.style.display='';
       chips.innerHTML=ids.map(id=>{
         const sl=setlists.find(x=>x.id===id);
-        return sl?`<span class="pill pp" style="margin-right:4px">♩ ${sl.name}</span>`:'';
+        return sl?`<span class="pill pp" style="margin-right:4px">♩ ${esc(sl.name)}</span>`:'';
       }).join('');
     } else {
       chips.style.display='none';chips.innerHTML='';
@@ -5209,11 +5210,11 @@ function renderMembers(){
         <div class="mcav" style="background:${m.color};cursor:pointer;${memberPhotos[idx]?`background-image:url(${memberPhotos[idx]});background-size:cover;background-position:center`:''}" onclick="openProfile(${idx})">${memberPhotos[idx]?'':m.init}</div>
         <div style="flex:1">
           <div class="mcn" style="display:flex;align-items:center;gap:6px">
-            ${m.name}${flag?`<span title="${isoName(ex.nat)}" style="font-size:.95rem;line-height:1">${flag}</span>`:''}
+            ${esc(m.name)}${flag?`<span title="${esc(isoName(ex.nat))}" style="font-size:.95rem;line-height:1">${flag}</span>`:''}
           </div>
           <div class="mci" style="display:flex;align-items:center;gap:5px;flex-wrap:wrap;margin-top:3px">
-            <span style="display:inline-flex;align-items:center;gap:3px">${icon1} ${t(m.instrument)}</span>
-            ${m.inst2?`<span style="color:var(--bd)">·</span><span style="display:inline-flex;align-items:center;gap:3px;color:var(--ink3)">${icon2} ${t(m.inst2)}</span>`:''}
+            <span style="display:inline-flex;align-items:center;gap:3px">${icon1} ${esc(t(m.instrument))}</span>
+            ${m.inst2?`<span style="color:var(--bd)">·</span><span style="display:inline-flex;align-items:center;gap:3px;color:var(--ink3)">${icon2} ${esc(t(m.inst2))}</span>`:''}
           </div>
           <div style="margin-top:4px;display:flex;align-items:center;gap:5px;flex-wrap:wrap">${rolePill}</div>
         </div>
@@ -5302,7 +5303,7 @@ function openGuestDetail(idx){
   if(ex.website)links.push({label:'🌐 Website',url:ex.website});
   const linksRow=document.getElementById('gdLinksRow');
   const linksEl=document.getElementById('gdLinks');
-  if(links.length){linksRow.style.display='';linksEl.innerHTML=links.map(l=>`<a class="platl" data-url="${l.url}" onclick="openMediaUrl(this)">${l.label}</a>`).join('');}
+  if(links.length){linksRow.style.display='';linksEl.innerHTML=links.map(l=>`<a class="platl" data-url="${l.url}" onclick="openMediaUrl(this)">${esc(l.label)}</a>`).join('');}
   else linksRow.style.display='none';
 
   document.getElementById('gdPromoteBtn').onclick=()=>{closeMod('guestDetailMod');promoteGuestToMember(memberIdx,g.name);};
@@ -6276,7 +6277,7 @@ function openProfile(idx){
   document.getElementById('profAv').textContent=memberPhotos[idx]?'':m.init;
   document.getElementById('profName').textContent=m.name;
   const guestSuffix=m.role==='guest'?` <span class="pill pamb" style="font-size:.66rem">Guest until ${m.guestEnd}</span>`:'';
-  document.getElementById('profRole').innerHTML=`<span class="pill ${m.role==='admin'?'pp':m.role==='guest'?'pamb':'pgray'}">${m.role==='admin'?'Admin':m.role==='guest'?'Guest':'Member'}</span>&nbsp;<span style="font-size:.72rem;color:var(--ink2)">${m.instrument}</span>${guestSuffix}`;
+  document.getElementById('profRole').innerHTML=`<span class="pill ${m.role==='admin'?'pp':m.role==='guest'?'pamb':'pgray'}">${m.role==='admin'?'Admin':m.role==='guest'?'Guest':'Member'}</span>&nbsp;<span style="font-size:.72rem;color:var(--ink2)">${esc(m.instrument)}</span>${guestSuffix}`;
   document.getElementById('profOwnBadge').style.display=isOwn?'':'none';
 
   // show/hide edit controls, make fields read-only for others
