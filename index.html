@@ -5868,8 +5868,8 @@ async function sendInviteViaEdgeFunction(){
       body:JSON.stringify({band_id:activeBandId,email,first_name:firstName,last_name:lastName,instrument,role}),
       signal:ctrl.signal,
     });
-    clearTimeout(timer);
     const result=await res.json();
+    clearTimeout(timer);
     if(!res.ok){
       toast2(result.message||result.error||'Failed to send invite','w');
       return;
