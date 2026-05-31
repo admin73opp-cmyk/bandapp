@@ -165,16 +165,31 @@ Logos are embedded **directly in `index.html`** as inline `<svg>` elements:
 ### CSS classes & logo locations
 | Class | Description | Used in |
 |---|---|---|
-| `.rit-mark` | Logomark SVG (22×22 or 40–44px) | Sidebar minimized, auth loading, app loader |
+| `.rit-mark` | Logomark SVG | Sidebar minimized, auth loading, app loader |
 | `.rit-word` | Wordmark SVG | Sidebar expanded, auth header |
 | `.sb-logo-mark` | Hidden when sidebar is **expanded** (`.sb:not(.minimized)`) | Sidebar |
 | `.sb-logo-word` + `.sb-logo-text` | Hidden when sidebar is **minimized** | Sidebar |
-| `.al-logo` | App loader logo — 44×44, animated | `#appLoader` |
+| `.al-logo` | App loader logo — 198×198px, animated | `#appLoader` |
 | `@keyframes rit-pulse` | Opacity breathing: 0.9 → 0.35 → 0.9 over 2.4s | Auth loading, app loader |
 
-### Auth screen sizing
-Wordmark at `width="195" height="45"` with `margin-left:-15px` on its wrapper `<div>`.
-The `-15px` offset = `195 × (40/520)` — aligns the bar's left edge with the "M" of the tagline below.
+### Current logo sizes
+| Location | Element | Size |
+|---|---|---|
+| Auth screen header | Wordmark | `width="100%"` — fills container, responsive |
+| Auth loading state | Logomark | 40×40, pulse animation |
+| App loader (`#appLoader`) | Logomark | 198×198 (CSS), pulse animation |
+| Sidebar expanded | Wordmark | 147×34 |
+| Sidebar minimized | Logomark | 29×29 |
+
+### Auth screen sizing approach
+The auth wordmark uses `width="100%"` with a **trimmed viewBox `"38 0 482 120"`** — this crops the
+38px of empty space before the bar, so the bar appears flush with the container's left edge without
+any `margin-left` offset. The logo scales to fill the full card width on any screen size (~94px tall
+on a 380px card). The dot (cx=468 in original coords → cx=430 in trimmed coords) remains visible at
+~339px from the left edge.
+
+**Do not revert to fixed pixel dimensions for the auth wordmark** — `width="100%"` is intentional
+and gives the best result across mobile and desktop.
 
 ### Removed
 `.ld` class (purple animated circle placeholder) has been **deleted** from the CSS and all HTML.
