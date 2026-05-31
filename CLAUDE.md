@@ -1,7 +1,9 @@
-# Bandapp — CLAUDE.md
+# Ritovo — CLAUDE.md
 
 ## Project Overview
 Music group management web app. Members share set lists, rehearsals, concerts, song library, availability, and group profile. Multi-group, multi-role (Admin / Member / Guest per group). Deployed at **bandapp-six.vercel.app**.
+
+**Brand / product name: Ritovo.** All user-visible text says "Ritovo". The internal codebase, repo, and Supabase project still use `bandapp`/`band` identifiers — see Naming Conventions below.
 
 ## Tech Stack
 - **Frontend**: Vanilla JS, HTML, CSS — no framework, no bundler
@@ -146,12 +148,52 @@ closeMB(e, 'id')     // closes only if click is on backdrop (e.target === e.curr
 - **Key utility classes**: `.btn .btn-p .btn-g .btn-sm`, `.pill .pp .pg .pamb .pgray`, `.mod .mov`, `.fg .fr`, `.card`, `.ccrd`, `.svb`
 - **`unsafe-inline`** is required for `<style>` — CSP already allows it
 
-## Naming Convention — Band vs Group
-**Intentional split** (do not "fix"):
+## Logo & Branding
+
+### SVG source files
+Stored in `logo/files/` (not deployed — not in `dist/`):
+- `ritovo-logomark-{dark,light}.svg` — 120×120 square icon (bar + serif "r" + dot)
+- `ritovo-wordmark-{dark,light}.svg` — 520×120 horizontal wordmark ("ritovo" + bar + dot)
+
+### Inline SVG approach
+Logos are embedded **directly in `index.html`** as inline `<svg>` elements:
+- Background `<rect>` is **omitted** — no opaque background
+- All fills/strokes use **`currentColor`** — inherit `color: var(--ink)` from their container
+- This means dark/light switching is **automatic via CSS** — no JS, no duplicate image elements needed
+- SVG font: `'Garamond','Georgia','Times New Roman',serif` at `font-weight:300`
+
+### CSS classes & logo locations
+| Class | Description | Used in |
+|---|---|---|
+| `.rit-mark` | Logomark SVG (22×22 or 40–44px) | Sidebar minimized, auth loading, app loader |
+| `.rit-word` | Wordmark SVG | Sidebar expanded, auth header |
+| `.sb-logo-mark` | Hidden when sidebar is **expanded** (`.sb:not(.minimized)`) | Sidebar |
+| `.sb-logo-word` + `.sb-logo-text` | Hidden when sidebar is **minimized** | Sidebar |
+| `.al-logo` | App loader logo — 44×44, animated | `#appLoader` |
+| `@keyframes rit-pulse` | Opacity breathing: 0.9 → 0.35 → 0.9 over 2.4s | Auth loading, app loader |
+
+### Auth screen sizing
+Wordmark at `width="195" height="45"` with `margin-left:-15px` on its wrapper `<div>`.
+The `-15px` offset = `195 × (40/520)` — aligns the bar's left edge with the "M" of the tagline below.
+
+### Removed
+`.ld` class (purple animated circle placeholder) has been **deleted** from the CSS and all HTML.
+
+## Naming Conventions — Three-layer split (do not collapse)
+
+### Band → Group (UI only)
 - **User-facing UI text**: "Group", "Music Group", "Group Profile", etc.
 - **Internal code**: `band`, `bandId`, `BandsDB`, `band_members`, `activeBandId`, `band_id`, etc.
 - **Reason**: mass-rename broke the app (JS file `bands.js` got renamed to `groups.js` in script tags)
 - **Rule**: only change visible UI strings, never JS identifiers, CSS class names, DB columns, or file names
+
+### Bandapp → Ritovo (UI + copy only)
+- **User-facing text** says "Ritovo" everywhere (page title, invite emails, SMS messages, member lookup, bug reports, file downloads)
+- The following **internal** `bandapp` identifiers must stay as-is — do NOT rename:
+  - `localStorage` key `bandapp_sheetColOrder`
+  - `console.error('[bandapp] ...')` log prefixes throughout index.html
+  - `<option value="bandapp">` in the lyrics-repo `<select>` (data value, not label)
+  - `_repoHints.bandapp` hint object key in JS
 
 ## i18n
 - `t('English string')` → translated string for `currentUser.lang`
