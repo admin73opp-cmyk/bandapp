@@ -360,15 +360,15 @@ supabase.auth.onAuthStateChange(async (event, session) => {
     initSbState();
     document.getElementById('app').classList.add('vis');
 
+    // Show the password-setup modal BEFORE initApp for invited users —
+    // initApp may take a moment to load data and the user must set their
+    // password first regardless. The app data loads in the background.
+    if (_meta.needs_onboarding && typeof showOnboarding === 'function') showOnboarding();
+
     try {
       await initApp();
     } catch (e) {
       console.error('[bandapp] initApp error:', e);
-    }
-
-    // Invited users land with needs_onboarding=true — show password-setup overlay
-    if (_meta.needs_onboarding) {
-      if (typeof showOnboarding === 'function') showOnboarding();
     }
   } catch (e) {
     console.error('[bandapp] sign-in error:', e);
