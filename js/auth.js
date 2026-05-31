@@ -36,7 +36,8 @@ async function loadCurrentUser(uid, email) {
     console.error('[bandapp] profiles query failed — code:', error?.code, 'message:', error?.message);
     // Profile row missing (common for new users if RLS blocked the insert at signup).
     // Fall back to auth metadata and create the row now that the user is authenticated.
-    const { data: { user: authUser } } = await supabase.auth.getUser();
+    const { data: _authData } = await supabase.auth.getUser();
+    const authUser = _authData?.user;
     const meta = authUser?.user_metadata || {};
     const fn = meta.first_name || '';
     const ln = meta.last_name || '';
@@ -305,11 +306,14 @@ supabase.auth.onAuthStateChange(async (event, session) => {
   // The timer only guards the auth round-trip; DB queries below are not its concern.
   _clearLoginTimer();
 
-  if (!session) {
+  if (!session || !session.user) {
     document.getElementById('app').classList.remove('vis');
     document.getElementById('authScreen').style.display = 'flex';
     return;
   }
+
+  // Snapshot metadata before the try block so the catch can use it for invited-user recovery
+  const _sessionMeta = session.user.user_metadata || {};
 
   try {
     await loadCurrentUser(session.user.id, session.user.email);
@@ -370,9 +374,19 @@ supabase.auth.onAuthStateChange(async (event, session) => {
     console.error('[bandapp] sign-in error:', e);
     _clearLoginTimer();
     _resetLoginBtn();
+
+    // Invited users must set a password before anything else works.
+    // If init threw for any reason, still show the onboarding modal rather than
+    // dumping them on the sign-in screen with no way to proceed.
+    if (_sessionMeta.needs_onboarding) {
+      document.getElementById('authScreen').style.display = 'none';
+      document.getElementById('app').classList.add('vis');
+      if (typeof showOnboarding === 'function') showOnboarding();
+      return;
+    }
+
     document.getElementById('app').classList.remove('vis');
     document.getElementById('authScreen').style.display = 'flex';
-    // switchTab resets authLoading and shows the login form (handles invite-loading state too)
     if (typeof switchTab === 'function') switchTab('login');
     if (typeof showAuthErr === 'function') showAuthErr('loginErr', 'Sign-in error — please try again');
     else if (typeof toast2 === 'function') toast2('Sign-in error — please try again', 'w');
