@@ -4668,7 +4668,7 @@ function promptCancel(type,id){
 async function confirmCancel(notify){
   if(!cancelTarget)return;
   const {type,id}=cancelTarget;
-  const appUrl=(localStorage.getItem('appUrl')||window.location.origin+'/').replace(/[?#].*/,'').replace(/\/+$/,'');
+  const appUrl=(window.location.origin+'/').replace(/[?#].*/,'').replace(/\/+$/,'');
   let msg=`🚫 Event cancelled. Please check Ritovo for updates: ${appUrl}`;
   let saveOk=false;
   try{
