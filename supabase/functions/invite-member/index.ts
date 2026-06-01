@@ -116,13 +116,24 @@ serve(async (req) => {
 
     // Pre-check: if the email already belongs to a confirmed Supabase user,
     // generateLink() behaves unpredictably (may silently reuse the existing account
-    // or create a ghost record). Detect it upfront and return the friendly error.
-    const { data: existingUserData } = await admin.auth.admin.getUserByEmail(email)
-    if (existingUserData?.user?.email_confirmed_at) {
-      return json(req, {
-        error: 'already_registered',
-        message: 'This email already has a Ritovo account. Use "Already on Ritovo?" above to find and add them.',
-      }, 409)
+    // or create a ghost record). Use the GoTrue admin REST API to detect it upfront.
+    const supabaseUrl = Deno.env.get('SUPABASE_URL')!
+    const serviceKey  = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
+    const checkRes = await fetch(
+      `${supabaseUrl}/auth/v1/admin/users?email=${encodeURIComponent(email)}&page=1&per_page=5`,
+      { headers: { 'Authorization': `Bearer ${serviceKey}`, 'apikey': serviceKey } }
+    )
+    if (checkRes.ok) {
+      const { users: existingUsers } = await checkRes.json()
+      const confirmed = (existingUsers ?? []).find((u: { email: string; email_confirmed_at: string | null }) =>
+        u.email?.toLowerCase() === email.toLowerCase() && u.email_confirmed_at
+      )
+      if (confirmed) {
+        return json(req, {
+          error: 'already_registered',
+          message: 'This email already has a Ritovo account. Use "Already on Ritovo?" above to find and add them.',
+        }, 409)
+      }
     }
 
     // Generate the invite link — this creates the user account without sending any email.
