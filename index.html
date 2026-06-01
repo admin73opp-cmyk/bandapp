@@ -665,8 +665,8 @@ html[data-theme="dark"] .sb-group-name{color:var(--ink)!important}
           </div>
           <div style="display:flex;gap:5px;flex-wrap:wrap;align-items:center">
             <span class="pdfn"><svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 2h7l3 3v9H3V2z"/><path d="M10 2v4h4"/></svg>Links hidden in PDF</span>
-            <button class="btn btn-g btn-sm" onclick="toast2('Printing… links removed')">🖨 Print</button>
-            <button class="btn btn-g btn-sm" onclick="toast2('PDF downloaded!')">↓ PDF</button>
+            <button class="btn btn-g btn-sm" onclick="printSL()">🖨 Print</button>
+            <button class="btn btn-g btn-sm" onclick="printSL()">↓ PDF</button>
           </div>
         </div>
         <div style="display:flex;gap:5px;margin-bottom:12px">
@@ -2932,6 +2932,40 @@ function renderSL(){
       <td><button class="btn btn-xs btn-g" onclick="removeSongFromSL('${id}')">✕</button></td>
     </tr>`;
   }).join('');
+}
+
+function printSL(){
+  const sl=setlists.find(s=>s.id===activeSetlistId);
+  if(!sl){toast2('No set list selected','w');return;}
+  const group=getActiveBand();
+  const rows=getSlS().map((id,i)=>{
+    const s=songByAnyId(id);if(!s)return'';
+    return`<tr><td class="num">${String(i+1).padStart(2,'0')}</td><td>${esc(s.title)}</td><td>${esc(s.artist)}</td><td>${esc(s.key)}</td><td class="dur">${s.dur?fmtDur(s.dur):'—'}</td><td>${esc(s.note)}</td></tr>`;
+  }).join('');
+  const songCount=getSlS().filter(id=>songByAnyId(id)).length;
+  const html=`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>${esc(sl.name)}</title><style>
+    body{font-family:system-ui,sans-serif;margin:32px;font-size:13px;color:#111}
+    h1{font-size:20px;font-weight:700;margin:0 0 4px}
+    .sub{color:#666;font-size:12px;margin-bottom:24px}
+    table{width:100%;border-collapse:collapse}
+    th{text-align:left;font-size:10px;text-transform:uppercase;color:#888;border-bottom:2px solid #ddd;padding:6px 8px;font-weight:600}
+    td{padding:8px 8px;border-bottom:1px solid #eee;vertical-align:top}
+    tr:last-child td{border-bottom:none}
+    .num{width:32px;font-family:monospace;color:#aaa;font-size:11px}
+    .dur{width:55px;font-family:monospace;font-size:11px;color:#666}
+    @media print{body{margin:20px}}
+  </style></head><body>
+    <h1>${esc(sl.name)}</h1>
+    <div class="sub">${esc(group?.name||'')}${songCount?' &middot; '+songCount+' songs':''}</div>
+    <table><thead><tr><th class="num">#</th><th>Title</th><th>Artist</th><th>Key</th><th class="dur">Time</th><th>Notes</th></tr></thead>
+    <tbody>${rows}</tbody></table>
+  </body></html>`;
+  const w=window.open('','_blank');
+  if(!w){toast2('Allow pop-ups to print / save PDF','w');return;}
+  w.document.write(html);
+  w.document.close();
+  w.focus();
+  setTimeout(()=>w.print(),300);
 }
 
 function openSongMedia(s,rowIdx){
