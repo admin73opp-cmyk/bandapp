@@ -378,6 +378,8 @@ supabase.auth.onAuthStateChange(async (event, session) => {
       await initApp();
     } catch (e) {
       console.error('[bandapp] initApp error:', e);
+      const _el = document.getElementById('appLoader');
+      if (_el) _el.style.display = 'none';
     }
   } catch (e) {
     console.error('[bandapp] sign-in error:', e);
