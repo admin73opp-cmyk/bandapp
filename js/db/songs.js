@@ -71,10 +71,23 @@ const SongsDB = {
 
     let { data, error } = await tryUpsert(payload);
 
-    // If the error is a missing column (42703), retry without the new columns
+    // If the error is a missing column (42703), retry dropping only the
+    // specific column that caused the failure — never drop lyrics_url or
+    // sheet_music_url unless they are explicitly the missing column.
     if (error && (error.code === '42703' || error.message?.includes('column') || error.message?.includes('does not exist'))) {
       console.warn('[bandapp] songs.upsert — column missing, retrying without new fields:', error.message);
-      const { lyrics_url, sheet_music_url, amazon_url, ...fallback } = payload;
+      const msg = error.message || '';
+      // Build a fallback payload by removing only the offending columns.
+      // Priority: amazon_url is the most recently added field and the most
+      // likely culprit; remove it first.  Only strip lyrics_url /
+      // sheet_music_url if they are explicitly named in the error.
+      let fallback = { ...payload };
+      // Only drop a column if it is explicitly named in the error message.
+      // amazon_url is removed on any column error because it is the newest
+      // field and the most likely culprit when the exact column isn't named.
+      if (msg.includes('lyrics_url'))      delete fallback.lyrics_url;
+      if (msg.includes('sheet_music_url')) delete fallback.sheet_music_url;
+      delete fallback.amazon_url;
       ({ data, error } = await tryUpsert(fallback));
     }
 
