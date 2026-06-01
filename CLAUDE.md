@@ -1,5 +1,14 @@
 # Ritovo — CLAUDE.md
 
+## Coding Guidelines (always active)
+Apply **`/karpathy-guidelines`** on every coding task in this project — writing, reviewing, or refactoring.
+Key principles:
+- Make surgical, minimal changes. Don't refactor unrelated code in the same pass.
+- Surface assumptions explicitly before acting.
+- Prefer simple, direct solutions over clever abstractions.
+- Define verifiable success criteria before writing code.
+- Avoid overcomplication: if a fix touches more than ~3 files, pause and confirm scope.
+
 ## Project Overview
 Music group management web app. Members share set lists, rehearsals, concerts, song library, availability, and group profile. Multi-group, multi-role (Admin / Member / Guest per group). Deployed at **bandapp-six.vercel.app**.
 
@@ -10,7 +19,7 @@ Music group management web app. Members share set lists, rehearsals, concerts, s
 - **Backend/Auth/DB**: Supabase (Postgres + Auth + RLS + Edge Functions + Storage)
 - **Hosting**: Vercel (auto-deploys on `git push` to `main`)
 - **Mobile**: Capacitor (iOS/Android shell around the PWA)
-- **Email**: Resend (via `notify-rehearsal` edge function)
+- **Email**: Resend (via `invite-member` and `notify-rehearsal` edge functions)
 - **CDN scripts** (loaded in `<head>`):
   - `https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2`
   - `https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js` (end of body)
@@ -49,7 +58,10 @@ bandapp/
 │   ├── schema.sql      # Full DB schema (run once)
 │   ├── rls.sql         # All RLS policies (idempotent — safe to re-run)
 │   ├── *.sql           # Individual migration files
+│   ├── config.toml     # Auth email templates + redirect URL config (push via `supabase config push`)
+│   ├── templates/      # Ritovo-branded HTML email templates for Supabase system emails
 │   └── functions/      # Deno edge functions (invite-member, notify-rehearsal, create-github-issue)
+│       └── _shared/email.ts  # Shared emailLayout(), btn(), h() helpers for all transactional emails
 ├── logo/files/         # Brand SVGs: ritovo-logomark-{dark,light}.svg, ritovo-wordmark-{dark,light}.svg
 └── dist/               # Build output (gitignored) — served by Vercel
 ```
@@ -231,6 +243,9 @@ and gives the best result across mobile and desktop.
 - **Storage bucket**: `song-attachments` (public, 10MB limit) — must exist before lyrics/sheet-music upload works
 - **Edge function secrets**: `APP_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `SUPABASE_ANON_KEY`, `RESEND_API_KEY`, `FROM_EMAIL`, `GITHUB_FEEDBACK_TOKEN`
 - **Upsert pattern**: always use `{ onConflict: 'column' }` explicitly to avoid silent INSERT-only behaviour
+- **Auth email templates**: managed via `supabase/config.toml` + `supabase/templates/*.html`. Push with `supabase config push --project-ref yhnoxgoibtbwcavzwddj`. The sender display name ("Ritovo") must be set manually in Supabase Dashboard → Authentication → SMTP Settings.
+- **Allowed redirect URLs**: `supabase/config.toml` lists both slash and no-slash variants of the app URLs. `APP_URL` secret must NOT have a trailing slash (the edge function strips it, but keep it consistent).
+- **Supabase JS v2 quirk**: `supabase.rpc(...).catch()` does NOT exist — the query builder is `PromiseLike` (has `.then()`) but not a full Promise. Use `.then(null, () => {})` to swallow errors from fire-and-forget RPCs.
 
 ## Pending SQL Migrations (not yet applied to live DB)
 These files exist in `supabase/` but may not be in the live DB — verify before using the features:
@@ -238,6 +253,24 @@ These files exist in `supabase/` but may not be in the live DB — verify before
 - `sheet_music_setup.sql` — adds `songs.sheet_music_url`
 - `calendar_changelog.sql` — adds `calendar_changelog` table + RLS
 - `blackouts_member_rls.sql` — allows non-admin members to block their own days
+
+## Invite Flow
+- **Edge function**: `invite-member` uses `generateLink({ type: 'invite' })` (NOT `inviteUserByEmail`) to create the auth user + get the invite URL, then sends a branded email via Resend. This gives full control over email content.
+- **Pre-check**: Before `generateLink`, the function calls the GoTrue REST API (`/auth/v1/admin/users?email=...`) to detect already-confirmed users. If confirmed, returns 409 `already_registered` — admin should use the "Already on Ritovo?" lookup flow instead.
+- **Do NOT invite already-confirmed emails** via the new-user form — use the lookup flow to add existing Ritovo members directly to a band.
+- **`needs_onboarding: true`** in `user_metadata` triggers `showOnboarding()` modal on first sign-in. After `updateUserById`, this flag is explicitly set (not just from `generateLink`) to handle re-invites of existing users.
+- **PKCE timing fix**: `_initUrlParams` and `_initHash` are captured synchronously (module-level in `auth.js`) BEFORE the async `getSession()` call — Supabase JS clears `?code=` from the URL during `getSession()`, so reading the URL after the `await` would always miss it.
+- **`#appLoader` z-index**: `z-index: 9999` — always hide it before calling `showOnboarding()` (which is `z-index: 500`).
+- **`already_member` branch** in `onAuthStateChange`: sets `activeBandId = _pendingBandId` so the user lands in the invited band, not whichever band is first in their memberships.
+- **`mark_invite_used` RPC** is fire-and-forget: `supabase.rpc('mark_invite_used', {...}).then(null, () => {})` — NOT `.catch()`.
+- **`invited_band_id` in metadata** persists across sessions; `join_band_by_code` is called on every sign-in for users who have it set. This is intentional and safe.
+- **`APP_URL` trailing slash**: `invite-member` strips it with `.replace(/\/$/, '')` before passing to `redirectTo`. The `config.toml` lists both slash/no-slash URL variants in `additional_redirect_urls`.
+
+## Email System
+- All transactional emails use `supabase/functions/_shared/email.ts` — `emailLayout()`, `btn()`, `h()`.
+- The Ritovo logo in emails is **pure HTML/CSS** (vertical bar + serif "ritovo" + dot span) — NOT an `<img>` tag. Gmail blocks external images and doesn't render SVG via `<img>`.
+- Supabase system emails (password reset, change, magic link, etc.) are managed via `supabase/config.toml` + HTML templates in `supabase/templates/`. Re-push with `supabase config push --project-ref yhnoxgoibtbwcavzwddj` after any template changes.
+- **Sender display name** ("Ritovo") is set in Supabase Dashboard → Authentication → SMTP Settings — cannot be changed via `config.toml`.
 
 ## Key Gotchas & Constraints
 1. **`js/db/bands.js` must keep that filename** — the build script hashes it; renaming = 404 = app breaks
@@ -251,3 +284,7 @@ These files exist in `supabase/` but may not be in the live DB — verify before
 9. **Locale files use `window.XX = {...}`** — valid browser JS, not Node modules
 10. **WhatsApp "group"** in strings = WhatsApp feature, NOT the music group concept — never rename these
 11. **`setSheetTblWidth()`** must call `outer.style.width = availW + 'px'` explicitly to prevent flex-column expansion overriding the scroll container
+12. **`loadBands()` must be called** after any operation that changes the user's band memberships — it reconciles `activeBandId` (resets stale/deleted band IDs, picks first band if `activeBandId` is null).
+13. **`supabase.rpc().catch()` doesn't exist** — use `.then(null, () => {})` for fire-and-forget RPCs.
+14. **`MembersDB` method names**: `removeBandMember` (not `removeGroupMember`), `upsertBandMember`, `upsertProfile`, `fetchAll`.
+15. **`#appLoader` covers everything** at `z-index: 9999` — hide it explicitly before showing any modal (`z-index: 500`) during early auth flow.
