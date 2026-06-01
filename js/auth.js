@@ -326,7 +326,7 @@ supabase.auth.onAuthStateChange(async (event, session) => {
     // mark it as used. Token can also come from the URL (?invite=) for manual share links.
     const _inviteToken = _meta.invite_token || _urlParams.get('invite') || sessionStorage.getItem('inviteToken') || '';
     if (_inviteToken) {
-      supabase.rpc('mark_invite_used', { p_token: _inviteToken }).catch(() => {});
+      supabase.rpc('mark_invite_used', { p_token: _inviteToken }).then(null, () => {});
       sessionStorage.removeItem('inviteToken');
     }
 
