@@ -213,6 +213,14 @@ select option{background:var(--w)}
 .sb2:focus{border-color:var(--a);box-shadow:0 0 0 3px var(--a2)}
 .lg2{display:grid;grid-template-columns:repeat(auto-fill,minmax(265px,1fr));gap:10px}
 .songcard{background:var(--w);border:1px solid var(--bd);border-radius:var(--radl);padding:14px;transition:border-color .13s,box-shadow .13s,opacity .2s;cursor:pointer;position:relative}
+.slcard{background:var(--w);border:1px solid var(--bd);border-radius:var(--rad);padding:12px 13px;display:flex;gap:11px;align-items:flex-start}
+.slcard-num{font-family:var(--mono);font-size:.75rem;color:var(--ink3);min-width:22px;padding-top:2px;flex-shrink:0}
+.slcard-body{flex:1;min-width:0}
+.slcard-title{font-weight:700;font-size:.9rem;letter-spacing:-.01em;margin-bottom:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.slcard-artist{font-size:.75rem;color:var(--ink2);margin-bottom:7px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.slcard-meta{display:flex;gap:5px;flex-wrap:wrap;align-items:center;margin-bottom:5px}
+.slcard-note{font-size:.71rem;color:var(--ink3);margin-top:4px;font-style:italic}
+.slcard-actions{display:flex;flex-direction:column;gap:4px;flex-shrink:0}
 .songcard:hover{border-color:var(--a);box-shadow:0 4px 14px rgba(108,99,255,.1)}
 .songcard.hidden-song{background:var(--bg2);border-color:var(--bd);opacity:.55;filter:grayscale(1)}
 .songcard.hidden-song:hover{border-color:var(--ink3);box-shadow:none;filter:grayscale(.8)}
@@ -673,7 +681,7 @@ html[data-theme="dark"] .sb-group-name{color:var(--ink)!important}
           <button class="stb on" onclick="switchV('main',this)" data-i18n="Main_tab">Main</button>
           <button class="stb" id="myViewBtn" onclick="switchV('my',this)">My View</button>
         </div>
-        <div id="vMain" data-i18n="Title" data-i18n="Artist" data-i18n="Key" data-i18n="Time" data-i18n="Links" data-i18n="Notes"><div style="overflow-x:auto"><table class="slt" id="slTbl"><thead><tr><th style="width:28px"></th><th style="width:32px">#</th><th>Title</th><th>Artist</th><th style="width:60px">Key</th><th style="width:60px">Time</th><th class="lkcol">Links</th><th>Notes</th><th style="width:60px"></th></tr></thead><tbody id="slBody"></tbody></table></div></div>
+        <div id="vMain" data-i18n="Title" data-i18n="Artist" data-i18n="Key" data-i18n="Time" data-i18n="Links" data-i18n="Notes"><div style="overflow-x:auto"><table class="slt" id="slTbl"><thead><tr><th style="width:28px"></th><th style="width:32px">#</th><th>Title</th><th>Artist</th><th style="width:60px">Key</th><th style="width:60px">Time</th><th class="lkcol">Links</th><th>Notes</th><th style="width:60px"></th></tr></thead><tbody id="slBody"></tbody></table></div><div id="slCards" style="display:none"></div></div>
         <div id="vMy" style="display:none">
           <div style="padding:10px 12px;background:var(--a2);border-radius:var(--rad);margin-bottom:12px;border:1px solid rgba(108,99,255,.2)">
             <div id="pvHeader" style="font-size:.77rem;font-weight:600;color:var(--a);margin-bottom:2px">✦ Personal view</div>
@@ -2907,31 +2915,64 @@ function toast2(msg,type='ok'){const el=document.getElementById('toast');documen
 // SETLIST
 function renderSL(){
   const isMob=window.innerWidth<768;
-  document.getElementById('slBody').innerHTML=getSlS().map((id,i)=>{
-    const s=songByAnyId(id);if(!s)return'';
-    const moveBtn=isMob
-      ?`<td style="white-space:nowrap;padding:4px 6px">
-          <button class="btn-ic btn" style="width:22px;height:22px;padding:0" onclick="slMoveUp(${i})" title="Move up" ${i===0?'disabled':''}>▲</button>
-          <button class="btn-ic btn" style="width:22px;height:22px;padding:0" onclick="slMoveDown(${i})" title="Move down" ${i===getSlS().length-1?'disabled':''}>▼</button>
-        </td>`
-      :`<td class="dh" style="cursor:grab;touch-action:none" 
-          draggable="true" 
-          ondragstart="ds(event)" 
-          ontouchstart="tStart(event)" 
-          ontouchmove="tMove(event)" 
-          ontouchend="tEnd(event)">⠿</td>`;
-    return`<tr draggable="${!isMob}" data-id="${id}" ondragover="dov(event)" ondrop="ddrop(event)" ondragleave="this.classList.remove('dov')">
-      ${moveBtn}
-      <td class="snum">${String(i+1).padStart(2,'0')}</td>
-      <td class="stitle">${esc(s.title)}</td>
-      <td class="sartist" style="color:var(--ink2);font-size:.75rem">${esc(s.artist)}</td>
-      <td><span class="kp">${esc(s.key)}</span></td>
-      <td style="font-family:var(--mono);font-size:.72rem;color:var(--ink2);white-space:nowrap">${s.dur?fmtDur(s.dur):'—'}</td>
-      <td class="lkcol" style="white-space:nowrap">${openSongMedia(s,i)}${s.lyrics?`<a class="lb2" href="${esc(s.lyrics)}" target="_blank" rel="noopener noreferrer" title="Lyrics" style="color:var(--a);text-decoration:none;font-size:.82rem">📄</a>`:''}${s.sheet_music?`<a class="lb2" href="${esc(s.sheet_music)}" target="_blank" rel="noopener noreferrer" title="Sheet Music" style="color:var(--a);text-decoration:none;font-size:.82rem">🎵</a>`:''}</td>
-      <td class="nc">${esc(s.note)}</td>
-      <td><button class="btn btn-xs btn-g" onclick="removeSongFromSL('${id}')">✕</button></td>
-    </tr>`;
-  }).join('');
+  const slTblWrap=document.getElementById('slTbl')?.parentElement;
+  const slCards=document.getElementById('slCards');
+
+  if(isMob){
+    // Mobile: card view
+    if(slTblWrap) slTblWrap.style.display='none';
+    if(slCards){
+      slCards.style.display='flex';
+      slCards.style.flexDirection='column';
+      slCards.style.gap='8px';
+      const total=getSlS().length;
+      slCards.innerHTML=getSlS().map((id,i)=>{
+        const s=songByAnyId(id);if(!s)return'';
+        const links=[];
+        if(s.lyrics) links.push(`<a class="svb svb-ly" href="${esc(s.lyrics)}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">📄 Lyrics</a>`);
+        if(s.sheet_music) links.push(`<a class="svb svb-ly" href="${esc(s.sheet_music)}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">🎵 Sheet</a>`);
+        if(s.spotify) links.push(`<button class="svb svb-sp" data-url="${esc(s.spotify)}" onclick="event.stopPropagation();openMediaUrl(this)">Spotify</button>`);
+        if(s.youtube) links.push(`<button class="svb svb-yt" data-url="${esc(s.youtube)}" onclick="event.stopPropagation();openMediaUrl(this)">YouTube</button>`);
+        if(s.apple) links.push(`<button class="svb" data-url="${esc(s.apple)}" onclick="event.stopPropagation();openMediaUrl(this)">Apple</button>`);
+        return`<div class="slcard">
+          <div class="slcard-num">${String(i+1).padStart(2,'0')}</div>
+          <div class="slcard-body">
+            <div class="slcard-title">${esc(s.title)}</div>
+            <div class="slcard-artist">${esc(s.artist)}</div>
+            <div class="slcard-meta">
+              ${s.key?`<span class="kp">${esc(s.key)}</span>`:''}
+              ${s.dur?`<span style="font-family:var(--mono);font-size:.71rem;color:var(--ink2)">${fmtDur(s.dur)}</span>`:''}
+            </div>
+            ${links.length?`<div class="sclinks" style="margin-top:5px">${links.join('')}</div>`:''}
+            ${s.note?`<div class="slcard-note">${esc(s.note)}</div>`:''}
+          </div>
+          <div class="slcard-actions">
+            <button class="btn-ic btn" style="width:26px;height:26px;padding:0" onclick="slMoveUp(${i})" title="Move up" ${i===0?'disabled':''}>▲</button>
+            <button class="btn-ic btn" style="width:26px;height:26px;padding:0" onclick="slMoveDown(${i})" title="Move down" ${i===total-1?'disabled':''}>▼</button>
+            <button class="btn-ic btn" style="width:26px;height:26px;padding:0;color:var(--r);border-color:var(--r)" onclick="removeSongFromSL('${id}')" title="Remove">✕</button>
+          </div>
+        </div>`;
+      }).join('');
+    }
+  } else {
+    // Desktop: table view
+    if(slTblWrap) slTblWrap.style.display='';
+    if(slCards) slCards.style.display='none';
+    document.getElementById('slBody').innerHTML=getSlS().map((id,i)=>{
+      const s=songByAnyId(id);if(!s)return'';
+      return`<tr draggable="true" data-id="${id}" ondragover="dov(event)" ondrop="ddrop(event)" ondragleave="this.classList.remove('dov')">
+        <td class="dh" style="cursor:grab;touch-action:none" draggable="true" ondragstart="ds(event)" ontouchstart="tStart(event)" ontouchmove="tMove(event)" ontouchend="tEnd(event)">⠿</td>
+        <td class="snum">${String(i+1).padStart(2,'0')}</td>
+        <td class="stitle">${esc(s.title)}</td>
+        <td class="sartist" style="color:var(--ink2);font-size:.75rem">${esc(s.artist)}</td>
+        <td><span class="kp">${esc(s.key)}</span></td>
+        <td style="font-family:var(--mono);font-size:.72rem;color:var(--ink2);white-space:nowrap">${s.dur?fmtDur(s.dur):'—'}</td>
+        <td class="lkcol" style="white-space:nowrap">${openSongMedia(s,i)}${s.lyrics?`<a class="lb2" href="${esc(s.lyrics)}" target="_blank" rel="noopener noreferrer" title="Lyrics" style="color:var(--a);text-decoration:none;font-size:.82rem">📄</a>`:''}${s.sheet_music?`<a class="lb2" href="${esc(s.sheet_music)}" target="_blank" rel="noopener noreferrer" title="Sheet Music" style="color:var(--a);text-decoration:none;font-size:.82rem">🎵</a>`:''}</td>
+        <td class="nc">${esc(s.note)}</td>
+        <td><button class="btn btn-xs btn-g" onclick="removeSongFromSL('${id}')">✕</button></td>
+      </tr>`;
+    }).join('');
+  }
 }
 
 function printSL(){
