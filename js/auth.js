@@ -399,8 +399,9 @@ supabase.auth.onAuthStateChange(async (event, session) => {
     document.getElementById('app').classList.remove('vis');
     document.getElementById('authScreen').style.display = 'flex';
     if (typeof switchTab === 'function') switchTab('login');
-    if (typeof showAuthErr === 'function') showAuthErr('loginErr', 'Sign-in error — please try again');
-    else if (typeof toast2 === 'function') toast2('Sign-in error — please try again', 'w');
+    const _errMsg = e?.message ? `Sign-in error: ${e.message}` : 'Sign-in error — please try again';
+    if (typeof showAuthErr === 'function') showAuthErr('loginErr', _errMsg);
+    else if (typeof toast2 === 'function') toast2(_errMsg, 'w');
   }
 });
 
