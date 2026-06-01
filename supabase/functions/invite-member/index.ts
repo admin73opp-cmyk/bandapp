@@ -91,7 +91,10 @@ serve(async (req) => {
 
     if (mem?.role !== 'admin') return json(req, { error: 'Only band admins can invite members' }, 403)
 
-    const appUrl = Deno.env.get('APP_URL') || ''
+    // Strip trailing slash — Supabase strict-matches redirectTo against the allowed
+    // redirect URLs list; a mismatch (e.g. trailing slash present in APP_URL but not
+    // in the Dashboard allowlist) causes the redirect to arrive without auth tokens.
+    const appUrl = (Deno.env.get('APP_URL') || '').replace(/\/$/, '')
     const resendKey = Deno.env.get('RESEND_API_KEY') || ''
     const fromEmail = Deno.env.get('FROM_EMAIL') || 'noreply@ritovo.app'
 

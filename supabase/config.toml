@@ -3,7 +3,7 @@
 
 [auth]
 site_url = "https://bandapp-six.vercel.app"
-additional_redirect_urls = ["https://bandapp-six.vercel.app"]
+additional_redirect_urls = ["https://bandapp-six.vercel.app", "https://bandapp-six.vercel.app/", "https://bandapp.app", "https://bandapp.app/"]
 
 [auth.email]
 enable_signup = true
