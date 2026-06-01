@@ -1820,10 +1820,13 @@ let slS=getSlS();
 
 let _setlistMap = {}; // id → setlist, rebuilt after every fetch
 async function loadSetlists(){
-  if(!activeBandId){ setlists=[]; slSongs={}; slS={}; _setlistMap={}; return; }
+  if(!activeBandId){ setlists=[]; slSongs={}; slS={}; _setlistMap={}; activeSetlistId=null; return; }
   setlists = await SetlistsDB.fetch(activeBandId);
   _setlistMap = Object.fromEntries(setlists.map(s=>[s.id,s]));
-  if(!activeSetlistId && setlists.length) activeSetlistId=setlists[0].id;
+  // If the current activeSetlistId doesn't belong to this band, reset to the first set list
+  if(!setlists.find(s=>s.id===activeSetlistId)){
+    activeSetlistId = setlists.length ? setlists[0].id : null;
+  }
   if(activeSetlistId) await loadSetlistSongs(activeSetlistId);
   slS=getSlS();
 }
