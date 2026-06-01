@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='16' fill='%236C63FF'/><text x='16' y='22' text-anchor='middle' font-size='18' fill='white'>♪</text></svg>">
 <title>Ritovo</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -140,7 +140,7 @@ select option{background:var(--w)}
 /* topbar icon buttons — show label on desktop, icon on mobile */
 .tb-icon-btn .tb-btn-icon{display:none;align-items:center;gap:3px}
 .tb-icon-btn .tb-btn-label{display:inline}
-.tb{padding:12px 21px;border-bottom:1px solid var(--bd);background:var(--w);display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:50}
+.tb{padding:12px 21px;padding-top:calc(12px + env(safe-area-inset-top));border-bottom:1px solid var(--bd);background:var(--w);display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:50}
 .hbg{display:none;background:none;border:none;color:var(--ink);cursor:pointer;padding:4px}
 .pt{font-size:.98rem;font-weight:700;letter-spacing:-.02em}.ps{font-size:.71rem;color:var(--ink3);margin-top:1px}.ta{margin-left:auto;display:flex;gap:7px;align-items:center}
 /* pages */
