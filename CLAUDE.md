@@ -18,7 +18,7 @@ Music group management web app. Members share set lists, rehearsals, concerts, s
 - **Frontend**: Vanilla JS, HTML, CSS — no framework, no bundler
 - **Backend/Auth/DB**: Supabase (Postgres + Auth + RLS + Edge Functions + Storage)
 - **Hosting**: Vercel (auto-deploys on `git push` to `main`)
-- **Mobile**: Capacitor (iOS/Android shell around the PWA)
+- **Mobile**: Capacitor 8 (iOS/Android shell around the PWA) — iOS build live on TestFlight
 - **Email**: Resend (via `invite-member` and `notify-rehearsal` edge functions)
 - **CDN scripts** (loaded in `<head>`):
   - `https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2`
@@ -29,7 +29,7 @@ Music group management web app. Members share set lists, rehearsals, concerts, s
 - **Local path**: `~/bandapp`
 - **Supabase project ref**: `yhnoxgoibtbwcavzwddj`
 - **Supabase URL**: `https://yhnoxgoibtbwcavzwddj.supabase.co`
-- **App bundle ID**: `com.bandapp.app`
+- **App bundle ID**: `com.ritovo.app` (was `com.bandapp.app` — updated for App Store)
 - **Supabase CLI**: `/Users/73opp/.hermes/node/bin/supabase`
 
 ## Folder Structure
@@ -246,6 +246,22 @@ and gives the best result across mobile and desktop.
 - **Auth email templates**: managed via `supabase/config.toml` + `supabase/templates/*.html`. Push with `supabase config push --project-ref yhnoxgoibtbwcavzwddj`. The sender display name ("Ritovo") must be set manually in Supabase Dashboard → Authentication → SMTP Settings.
 - **Allowed redirect URLs**: `supabase/config.toml` lists both slash and no-slash variants of the app URLs. `APP_URL` secret must NOT have a trailing slash (the edge function strips it, but keep it consistent).
 - **Supabase JS v2 quirk**: `supabase.rpc(...).catch()` does NOT exist — the query builder is `PromiseLike` (has `.then()`) but not a full Promise. Use `.then(null, () => {})` to swallow errors from fire-and-forget RPCs.
+
+## iOS / TestFlight
+
+- **Bundle ID**: `com.ritovo.app`
+- **App name**: Ritovo (CFBundleDisplayName in `ios/App/App/Info.plist`)
+- **Version**: 1.0 / build 1 — first TestFlight build submitted 2026-06-01
+- **Xcode project**: `ios/App/App.xcodeproj` — requires **Xcode 15+** (Capacitor 8 generates objectVersion incompatible with Xcode 14)
+- **iOS build workflow** (run in VM with Xcode 15+):
+  ```bash
+  git pull && npm run build && npx cap sync ios
+  # Then in Xcode: Product → Archive → Distribute App → TestFlight & App Store
+  ```
+- **App icon**: 1024×1024 PNG at `ios/App/App/Assets.xcassets/AppIcon.appiconset/AppIcon-512@2x.png` — rendered from `logo/files/ritovo-logomark-dark.svg` using sharp with `flatten({ background: { r:26, g:26, b:24 } })` to remove alpha channel (Apple rejects transparent icons)
+- **Export compliance**: `ITSAppUsesNonExemptEncryption = false` set in `Info.plist` — app uses HTTPS via Apple's OS TLS, no custom encryption
+- **Signing**: Automatic signing in Xcode, team `3Q3866YUS2` (shentschel@gmail.com)
+- **`dist/` is gitignored** — must run `npm run build` in the VM before `cap sync ios`
 
 ## Pending SQL Migrations (not yet applied to live DB)
 These files exist in `supabase/` but may not be in the live DB — verify before using the features:
