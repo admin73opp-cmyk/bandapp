@@ -2473,11 +2473,16 @@ async function loadBands(){
     bandWaLinks[b.id]   = b.wa_link    || localStorage.getItem(`bandWaLink_${b.id}`)    || null;
     bandNotifPref[b.id] = b.notif_pref || localStorage.getItem(`bandNotifPref_${b.id}`) || null;
   });
-  // If the cached activeBandId no longer exists (band was deleted), reset to first available
+  // Reconcile activeBandId with available bands:
+  // 1. Stale/deleted band: cached ID exists but isn't in BANDS → reset to first
+  // 2. No active band set but BANDS has data (e.g. band_members was empty on init) → pick first
   if(activeBandId && !BANDS.find(b=>b.id===activeBandId)){
     activeBandId = BANDS[0]?.id || null;
     if(activeBandId) localStorage.setItem('activeBandId', activeBandId);
     else localStorage.removeItem('activeBandId');
+  } else if(!activeBandId && BANDS.length){
+    activeBandId = BANDS[0].id;
+    localStorage.setItem('activeBandId', activeBandId);
   }
   // Hydrate group gallery photos from DB
   await Promise.all(BANDS.map(async b=>{
