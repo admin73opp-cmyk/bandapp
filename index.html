@@ -2473,6 +2473,12 @@ async function loadBands(){
     bandWaLinks[b.id]   = b.wa_link    || localStorage.getItem(`bandWaLink_${b.id}`)    || null;
     bandNotifPref[b.id] = b.notif_pref || localStorage.getItem(`bandNotifPref_${b.id}`) || null;
   });
+  // If the cached activeBandId no longer exists (band was deleted), reset to first available
+  if(activeBandId && !BANDS.find(b=>b.id===activeBandId)){
+    activeBandId = BANDS[0]?.id || null;
+    if(activeBandId) localStorage.setItem('activeBandId', activeBandId);
+    else localStorage.removeItem('activeBandId');
+  }
   // Hydrate group gallery photos from DB
   await Promise.all(BANDS.map(async b=>{
     b.photos = await BandsDB.fetchPhotos(b.id);
