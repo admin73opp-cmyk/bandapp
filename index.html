@@ -5922,8 +5922,24 @@ async function saveOnboardingPassword(){
   if(btn){btn.disabled=false;btn.textContent='Set Password & Continue →';}
   if(error){toast2(error.message,'w');return;}
   document.getElementById('onboardingMod').style.display='none';
-  nav('myprofile');
   toast2('Password set! Please complete your profile.');
+
+  // After the password change a fresh session is issued. Reload bands so the
+  // sidebar populates correctly even if the initial load during the invite
+  // session returned empty results (JWT timing). Use invited_band_id from
+  // metadata as a reliable fallback for activeBandId before loadBands runs.
+  try{
+    const {data:{session:_sess}}=await supabase.auth.getSession();
+    const _invBand=_sess?.user?.user_metadata?.invited_band_id||'';
+    if(_invBand&&!activeBandId){
+      activeBandId=_invBand;
+      localStorage.setItem('activeBandId',_invBand);
+    }
+    await loadBands();
+    syncCurrentUserToUI();
+    renderBandList();
+  }catch(_e){console.warn('[bandapp] post-onboarding reload failed',_e);}
+  nav('myprofile');
 }
 
 function copyGroupInviteLink(){
