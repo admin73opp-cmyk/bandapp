@@ -2505,15 +2505,23 @@ async function switchBand(id){
   if(id===activeBandId){closeMod('bswMod');return;}
   activeBandId=id;
   localStorage.setItem('activeBandId', id);
+  // Update role to reflect the new band before any renders
+  const _newMem=(currentUser._memberships||[]).find(m=>m.band_id===id);
+  currentUser.role=_newMem?.role||'member';
   const b=getActiveBand();
   closeMod('bswMod');
   toast2(`Switching to ${b?.name||'group'}…`);
-  await Promise.all([loadSongs(),loadSetlists(),loadConcerts(),loadRehearsals(),loadMembers(),loadBlackouts()]);
-  renderSLDropdown();renderSL();renderSlMeta();renderLib();if(libView==='sheet')renderSheet();updateLibCount();updateSidebarCounts();
-  setCalView(calView);renderRehearsals();renderConcerts();renderMembers();
-  renderGuestDir();renderBP();renderAsList();renderBandList();
-  syncCurrentUserToUI();renderDashboard();updateSidebarCounts();refreshWaUI();
-  nav(localStorage.getItem('defaultView')||'dashboard');
+  try{
+    await Promise.all([loadSongs(),loadSetlists(),loadConcerts(),loadRehearsals(),loadMembers(),loadBlackouts()]);
+    renderSLDropdown();renderSL();renderSlMeta();renderLib();if(libView==='sheet')renderSheet();updateLibCount();updateSidebarCounts();
+    setCalView(calView);renderRehearsals();renderConcerts();renderMembers();
+    renderGuestDir();renderBP();renderAsList();renderBandList();
+    syncCurrentUserToUI();renderDashboard();updateSidebarCounts();refreshWaUI();
+    nav(localStorage.getItem('defaultView')||'dashboard');
+  }catch(e){
+    console.error('[bandapp] switchBand error:',e);
+    toast2('Error loading group data — please try again','w');
+  }
 }
 
 function renderBandList(){
