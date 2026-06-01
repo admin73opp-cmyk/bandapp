@@ -1,0 +1,37 @@
+# Auth config for Ritovo (bandapp) — email template overrides
+# Production values preserved from the linked project
+
+[auth]
+site_url = "https://bandapp-six.vercel.app"
+additional_redirect_urls = ["https://bandapp-six.vercel.app"]
+
+[auth.email]
+enable_signup = true
+double_confirm_changes = true
+enable_confirmations = true
+max_frequency = "25s"
+otp_length = 8
+
+[auth.mfa.totp]
+enroll_enabled = true
+verify_enabled = true
+
+[auth.email.template.confirmation]
+subject = "Confirm your Ritovo account"
+content_path = "./supabase/templates/confirmation.html"
+
+[auth.email.template.email_change]
+subject = "Confirm your new Ritovo email"
+content_path = "./supabase/templates/email-change.html"
+
+[auth.email.template.magic_link]
+subject = "Your Ritovo sign-in link"
+content_path = "./supabase/templates/magic-link.html"
+
+[auth.email.template.recovery]
+subject = "Reset your Ritovo password"
+content_path = "./supabase/templates/recovery.html"
+
+[auth.email.template.reauthentication]
+subject = "Your Ritovo password was changed"
+content_path = "./supabase/templates/password-changed.html"
