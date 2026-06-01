@@ -114,6 +114,17 @@ serve(async (req) => {
 
     const inviteToken = invRecord.id
 
+    // Pre-check: if the email already belongs to a confirmed Supabase user,
+    // generateLink() behaves unpredictably (may silently reuse the existing account
+    // or create a ghost record). Detect it upfront and return the friendly error.
+    const { data: existingUserData } = await admin.auth.admin.getUserByEmail(email)
+    if (existingUserData?.user?.email_confirmed_at) {
+      return json(req, {
+        error: 'already_registered',
+        message: 'This email already has a Ritovo account. Use "Already on Ritovo?" above to find and add them.',
+      }, 409)
+    }
+
     // Generate the invite link — this creates the user account without sending any email.
     // user_metadata is accessible on the client as session.user.user_metadata after sign-in.
     const { data: linkData, error: linkErr } = await admin.auth.admin.generateLink({
