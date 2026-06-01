@@ -341,6 +341,9 @@ supabase.auth.onAuthStateChange(async (event, session) => {
         sessionStorage.removeItem('pendingBandId');
         window.history.replaceState({}, '', window.location.pathname);
       } else if (joinData?.error === 'already_member') {
+        // User was pre-enrolled by the invite edge function — still navigate to the invited band
+        activeBandId = _pendingBandId;
+        localStorage.setItem('activeBandId', _pendingBandId);
         sessionStorage.removeItem('pendingBandId');
         sessionStorage.removeItem('inviteToken');
         window.history.replaceState({}, '', window.location.pathname);
