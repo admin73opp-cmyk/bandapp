@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="120" height="120">
+
+  <!-- Dark mode app icon — matches uploaded logo exactly -->
+  <!-- Background: #1A1A18 warm near-black, rounded square -->
+  <rect width="120" height="120" fill="#1A1A18" rx="26"/>
+
+  <!-- Bar line — thin vertical, left of r -->
+  <line x1="34" y1="32" x2="34" y2="88" stroke="#FFFFFF" stroke-width="1.8" stroke-linecap="round"/>
+
+  <!-- Serif r — elegant, lightweight -->
+  <text
+    x="44"
+    y="86"
+    font-family="'Garamond', 'Georgia', 'Times New Roman', serif"
+    font-size="56"
+    font-weight="300"
+    fill="#FFFFFF"
+  >r</text>
+
+  <!-- Dot — small, precise, top right -->
+  <circle cx="88" cy="32" r="4.5" fill="#FFFFFF"/>
+
+</svg>

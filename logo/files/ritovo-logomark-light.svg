@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="120" height="120">
+
+  <!-- Light mode app icon — inverted palette -->
+  <!-- Background: #FFFFFF clean white -->
+  <rect width="120" height="120" fill="#FFFFFF" rx="26"/>
+
+  <!-- Subtle border to define the icon on white canvas -->
+  <rect width="120" height="120" fill="none" rx="26" stroke="#E8E8E4" stroke-width="1"/>
+
+  <!-- Bar line -->
+  <line x1="34" y1="32" x2="34" y2="88" stroke="#1A1A18" stroke-width="1.8" stroke-linecap="round"/>
+
+  <!-- Serif r -->
+  <text
+    x="44"
+    y="86"
+    font-family="'Garamond', 'Georgia', 'Times New Roman', serif"
+    font-size="56"
+    font-weight="300"
+    fill="#1A1A18"
+  >r</text>
+
+  <!-- Dot -->
+  <circle cx="88" cy="32" r="4.5" fill="#1A1A18"/>
+
+</svg>

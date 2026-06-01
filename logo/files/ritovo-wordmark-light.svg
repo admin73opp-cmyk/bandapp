@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 120" width="520" height="120">
+
+  <!-- Light mode wordmark — #FFFFFF background -->
+  <rect width="520" height="120" fill="#FFFFFF" rx="0"/>
+
+  <!-- Bar line -->
+  <line x1="40" y1="28" x2="40" y2="92" stroke="#1A1A18" stroke-width="1.6" stroke-linecap="round"/>
+
+  <!-- Wordmark -->
+  <text
+    x="58"
+    y="88"
+    font-family="'Garamond', 'Georgia', 'Times New Roman', serif"
+    font-size="58"
+    font-weight="300"
+    letter-spacing="12"
+    fill="#1A1A18"
+  >ritovo</text>
+
+  <!-- Dot above final o -->
+  <circle cx="468" cy="28" r="4" fill="#1A1A18"/>
+
+</svg>

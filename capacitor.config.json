@@ -1,0 +1,15 @@
+{
+  "appId": "com.ritovo.app",
+  "appName": "Ritovo",
+  "webDir": "dist",
+  "server": {
+    "androidScheme": "https"
+  },
+  "plugins": {
+    "SplashScreen": {
+      "launchShowDuration": 1500,
+      "backgroundColor": "#6C63FF",
+      "showSpinner": false
+    }
+  }
+}
