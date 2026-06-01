@@ -146,6 +146,20 @@ serve(async (req) => {
     const uid = linkData.user.id
     const inviteUrl = linkData.properties.action_link
 
+    // Explicitly set user_metadata via updateUserById — generateLink may not
+    // update metadata for users who already exist (e.g. from a previous invite
+    // attempt), so we force-write the onboarding flag and band context here.
+    await admin.auth.admin.updateUser(uid, {
+      user_metadata: {
+        needs_onboarding: true,
+        invited_band_id:  band_id,
+        invite_token:     inviteToken,
+        first_name:       first_name || null,
+        last_name:        last_name  || null,
+        instrument:       instrument || null,
+      },
+    })
+
     // Pre-create profile row so the member appears in the roster immediately
     await admin.from('profiles').upsert({
       id:         uid,

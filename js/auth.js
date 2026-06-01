@@ -363,7 +363,13 @@ supabase.auth.onAuthStateChange(async (event, session) => {
     // Show the password-setup modal BEFORE initApp for invited users —
     // initApp may take a moment to load data and the user must set their
     // password first regardless. The app data loads in the background.
-    if (_meta.needs_onboarding && typeof showOnboarding === 'function') showOnboarding();
+    // IMPORTANT: hide the appLoader first — it sits at z-index 9999 which
+    // would completely cover the onboarding modal (z-index 500).
+    if (_meta.needs_onboarding) {
+      const _loader = document.getElementById('appLoader');
+      if (_loader) _loader.style.display = 'none';
+      if (typeof showOnboarding === 'function') showOnboarding();
+    }
 
     try {
       await initApp();
@@ -381,6 +387,8 @@ supabase.auth.onAuthStateChange(async (event, session) => {
     if (_sessionMeta.needs_onboarding) {
       document.getElementById('authScreen').style.display = 'none';
       document.getElementById('app').classList.add('vis');
+      const _loader = document.getElementById('appLoader');
+      if (_loader) _loader.style.display = 'none';
       if (typeof showOnboarding === 'function') showOnboarding();
       return;
     }
