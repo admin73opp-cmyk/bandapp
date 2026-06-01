@@ -149,7 +149,7 @@ serve(async (req) => {
     // Explicitly set user_metadata via updateUserById — generateLink may not
     // update metadata for users who already exist (e.g. from a previous invite
     // attempt), so we force-write the onboarding flag and band context here.
-    await admin.auth.admin.updateUser(uid, {
+    await admin.auth.admin.updateUserById(uid, {
       user_metadata: {
         needs_onboarding: true,
         invited_band_id:  band_id,
