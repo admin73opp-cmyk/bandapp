@@ -4307,7 +4307,7 @@ async function saveBlockDays(){
   toast2('Days blocked!');
 }
 function togBOMc(el){el.classList.toggle('on');}
-function syncBOPill(){const n=blackouts.filter(b=>b.scope==='group').length;document.getElementById('boLbl').textContent=n===0?t('No blackouts'):`${n} ${t(n>1?'blackout periods':'blackout period')}`;document.getElementById('boIco').textContent=n>0?'🚫':'📅';}
+function syncBOPill(){/* pill removed */}
 function renderBOList(){
   const el=document.getElementById('boList');if(!el)return;
   if(!blackouts.length){el.innerHTML=`<div class="es" style="padding:20px"><div class="es-ico" style="font-size:1.6rem">📅</div><h3>No blackout periods</h3><p>Add holidays, closures, or absences.</p></div>`;return;}
