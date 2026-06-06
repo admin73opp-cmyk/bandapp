@@ -424,7 +424,11 @@ select option{background:var(--w)}
   .ccrd .cactions{grid-column:1/-1;display:flex;flex-direction:row;gap:6px;padding-top:10px;border-top:1px solid var(--bd);margin-top:6px;flex-wrap:wrap}
   .cactions .btn{flex:1;min-width:0;justify-content:center;padding:7px 6px;font-size:.75rem;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .bphdr{flex-direction:column}.lg2{grid-template-columns:1fr}.memgrid{grid-template-columns:1fr}
+  /* Song edit modal → bottom sheet on mobile */
+  #seMod{align-items:flex-end}
+  #seMod .mod{width:100%;max-width:100%;height:90vh;max-height:90vh;border-radius:18px 18px 0 0;animation:sheetUp .25s ease}
 }
+@keyframes sheetUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
 .phone-row{display:flex;gap:6px}
 .phone-cc-wrap{position:relative;width:80px;flex-shrink:0}
 .phone-cc-wrap select{position:absolute;inset:0;width:100%;height:100%;opacity:0;border:none;-webkit-appearance:none;appearance:none;cursor:pointer;z-index:2}
@@ -771,6 +775,7 @@ html[data-theme="dark"] .sb-group-name{color:var(--ink)!important}
 
       <!-- Spreadsheet view -->
       <div id="libViewSheetArea" style="display:none">
+        <div id="sheetSizeBanner" style="display:none;background:var(--amb2);color:var(--amb);border:1px solid var(--amb);border-radius:var(--rad);padding:8px 12px;font-size:.78rem;font-weight:600;margin-bottom:10px" data-i18n="Spreadsheet mode works best on larger screens">⚠ Spreadsheet mode works best on larger screens</div>
         <div style="background:var(--w);border:1px solid var(--bd);border-radius:var(--radl);box-shadow:var(--sh)">
           <!-- Toolbar: outside the scroll area so it never moves -->
           <div style="padding:10px 14px;border-bottom:1px solid var(--bd);display:flex;gap:8px;align-items:center;flex-wrap:wrap;background:var(--bg)">
@@ -3838,6 +3843,7 @@ function setLibView(v){
   document.getElementById('libViewSheetArea').style.display=v==='sheet'?'':'none';
   if(!isMobile())localStorage.setItem('songLibraryView',v); // persist desktop preference only
   if(v==='sheet'){if(songs.length)renderSheet();}
+  updateSheetSizeBanner();
 }
 // Re-evaluate when the viewport crosses the mobile/desktop boundary (resize / rotate).
 let _libWasMobile=isMobile();
@@ -4109,13 +4115,53 @@ function renderSheet(){
       ${SHEET_COLS.map(col=>renderSheetCell(s,col.field)).join('')}
       ${currentUser.role==='admin'?`<td style="text-align:center;padding:4px"><button class="btn-ic btn" onclick="deleteSheetRow('${s.id}')" style="width:24px;height:24px;color:var(--r);border-color:var(--r2)" title="Delete"><svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 4h12M5 4V2h6v2M6 7v5M10 7v5M3 4l1 10h8l1-10"/></svg></button></td>`:'<td></td>'}
     </tr>`).join('');
+  wireSheetUndo();
+  updateSheetSizeBanner();
 }
 
 function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 
+// ── Spreadsheet safety: single-level undo of the last cell edit (Ctrl/Cmd+Z) ──
+let _sheetUndo=null,_sheetUndoing=false;
+function wireSheetUndo(){
+  const body=document.getElementById('sheetBody');if(!body||body._undoWired)return;body._undoWired=true;
+  // Capture each cell's value on focus, so we know the "before" value when it changes
+  body.addEventListener('focusin',e=>{
+    const el=e.target;
+    if(el&&el.dataset&&el.dataset.id&&el.dataset.field)
+      el._prevVal=el.type==='checkbox'?el.checked:el.value;
+  });
+}
+function undoLastSheetEdit(){
+  const u=_sheetUndo;
+  if(!u||!u.el||!document.body.contains(u.el)){toast2('Nothing to undo','w');return;}
+  _sheetUndoing=true;
+  if(u.el.type==='checkbox')u.el.checked=u.prev;else u.el.value=(u.prev==null?'':u.prev);
+  if(u.kind==='dur')sheetEditDur(u.el);else sheetEdit(u.el);
+  _sheetUndoing=false;_sheetUndo=null;
+  toast2('Edit undone');
+}
+window.addEventListener('keydown',e=>{
+  if(!(e.ctrlKey||e.metaKey)||e.shiftKey||(e.key!=='z'&&e.key!=='Z'))return;
+  if(libView!=='sheet')return;
+  const lib=document.getElementById('pg-library');
+  if(!lib||lib.style.display==='none')return;
+  // If the focused cell has uncommitted typing, defer to the browser's native text-undo
+  const ae=document.activeElement;
+  if(ae&&ae.dataset&&ae.dataset.field&&ae.type!=='checkbox'&&ae._prevVal!==undefined&&ae.value!==ae._prevVal)return;
+  e.preventDefault();
+  undoLastSheetEdit();
+});
+// Tablet-range advisory banner for spreadsheet view (768–1024px)
+function updateSheetSizeBanner(){
+  const b=document.getElementById('sheetSizeBanner');if(!b)return;
+  b.style.display=(libView==='sheet'&&window.innerWidth>=768&&window.innerWidth<=1024)?'':'none';
+}
+
 function sheetEdit(el){
   const id=el.dataset.id,field=el.dataset.field;
   const s=songs.find(x=>x.id===id);if(!s)return;
+  if(!_sheetUndoing)_sheetUndo={el,kind:'cell',prev:el._prevVal};
   s[field]=field==='hidden'?el.checked:field==='dur'?parseInt(el.value)||0:el.value;
   if(field==='hidden'){const row=el.closest('tr');if(row)row.className='sh-row'+(s.hidden?' hidden-row':'');}
   // Refresh Set List and update view-link visibility in the spreadsheet cell
@@ -4136,6 +4182,7 @@ function sheetEdit(el){
 function sheetEditDur(el){
   const id=el.dataset.id;
   const s=songs.find(x=>x.id===id);if(!s)return;
+  if(!_sheetUndoing)_sheetUndo={el,kind:'dur',prev:el._prevVal};
   const row=el.closest('tr');
   const minEl=row.querySelector('[data-field="durMin"]');
   const secEl=row.querySelector('[data-field="durSec"]');
@@ -4154,6 +4201,7 @@ async function saveSheetRow(id){
     if(saved){
       if(s.id!==saved.id){s.id=saved.id;}
       if(row){row.style.outline='2px solid var(--g)';setTimeout(()=>{row.style.outline='';},700);}
+      if(!_sheetUndoing)toast2('Changes saved');
     }
   }catch(e){
     console.error('[bandapp] saveSheetRow failed:',e?.message);
@@ -4325,7 +4373,37 @@ function openSongEdit(id){
   hBtn.style.color=s.hidden?'var(--g)':'var(--ink2)';
   const delBtn=document.getElementById('seDeleteBtn');
   if(delBtn)delBtn.style.display=currentUser.role==='admin'?'':'none';
+  // Streaming links: collapsed-behind-toggle on mobile, always shown on desktop
+  const strWrap=document.getElementById('seStreamingWrap');
+  const strTg=document.getElementById('seStreamingToggle');
+  if(strWrap&&strTg){
+    if(isMobile()){strWrap.style.display='none';strTg.style.display='';strTg.textContent='Show streaming links ▾';}
+    else{strWrap.style.display='';strTg.style.display='none';}
+  }
   showMod('seMod');
+  _seSnapshot=seCurrentValues(); // baseline for unsaved-changes detection
+}
+
+// ── Edit-modal helpers: streaming collapse + unsaved-changes guard ──
+function toggleStreamingLinks(){
+  const w=document.getElementById('seStreamingWrap');
+  const tg=document.getElementById('seStreamingToggle');
+  if(!w||!tg)return;
+  const open=w.style.display==='none';
+  w.style.display=open?'':'none';
+  tg.textContent=open?'Hide streaming links ▴':'Show streaming links ▾';
+}
+let _seSnapshot=null;
+function seCurrentValues(){
+  return ['seName','seArtist','seGenre','seKey','seNote','seDurMin','seDurSec','seSpotify','seYoutube','seApple','seAmazon','seLyrics','seSheetMusic']
+    .map(id=>document.getElementById(id)?.value||'').join('');
+}
+function cancelSongEdit(){
+  if(_seSnapshot!==null&&seCurrentValues()!==_seSnapshot){
+    if(!confirm(t('You have unsaved changes. Discard them?')))return;
+  }
+  _seSnapshot=null;
+  closeMod('seMod');
 }
 
 async function saveSongEdit(){
@@ -4667,6 +4745,7 @@ window.addEventListener('resize',()=>{
   if(libView==='sheet')setSheetTblWidth();
   // Library view: only re-sync when crossing the 768px mobile/desktop boundary
   if(isMobile()!==_libWasMobile){_libWasMobile=isMobile();syncLibViewForViewport();}
+  updateSheetSizeBanner();
 });
 window.addEventListener('orientationchange',()=>setTimeout(checkLandscapeHint,200));
 
@@ -7294,7 +7373,7 @@ async function saveSettings(){
 </script>
 
 <!-- SONG EDIT MODAL -->
-<div class="mov" id="seMod" style="display:none" onclick="closeMB(event,'seMod')">
+<div class="mov" id="seMod" style="display:none" onclick="if(event.target===event.currentTarget)cancelSongEdit()">
 <div class="mod" style="max-width:500px">
   <div class="mott" data-i18n="Edit Song">Edit Song</div>
   <div class="most" data-i18n="Update the song details. Changes apply across all setlists.">Update the song details. Changes apply across all setlists.</div>
@@ -7361,11 +7440,15 @@ async function saveSettings(){
 
   <!-- Streaming links -->
   <div style="height:1px;background:var(--bd);margin:4px 0 14px"></div>
+  <!-- Mobile-only collapse toggle (hidden on desktop via openSongEdit) -->
+  <button id="seStreamingToggle" onclick="toggleStreamingLinks()" style="display:none;width:100%;text-align:left;padding:9px 12px;border-radius:var(--rad);border:1.5px solid var(--bd);background:var(--bg2);color:var(--ink2);font-family:var(--font);font-size:.78rem;font-weight:600;cursor:pointer;margin-bottom:8px" data-i18n="Show streaming links">Show streaming links ▾</button>
+  <div id="seStreamingWrap">
   <div style="font-size:.69rem;font-weight:700;color:var(--ink2);margin-bottom:9px;letter-spacing:.04em;text-transform:uppercase" data-i18n="Streaming Links (optional)">Streaming Links <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--ink3)">(optional)</span></div>
   <div class="fg" data-i18n="Spotify URL"><label>Spotify URL</label><input id="seSpotify" placeholder="https://open.spotify.com/track/…"></div>
   <div class="fg" data-i18n="YouTube URL"><label>YouTube URL</label><input id="seYoutube" placeholder="https://youtube.com/watch?v=…"></div>
   <div class="fg" data-i18n="Apple Music URL"><label>Apple Music URL</label><input id="seApple" placeholder="https://music.apple.com/…"></div>
   <div class="fg" data-i18n="Amazon Music URL"><label>Amazon Music URL</label><input id="seAmazon" placeholder="https://music.amazon.com/…"></div>
+  </div>
 
   <!-- Actions row -->
   <div style="height:1px;background:var(--bd);margin:4px 0 14px"></div>
@@ -7385,7 +7468,7 @@ async function saveSettings(){
   <div style="font-size:.72rem;color:var(--ink3);margin-bottom:4px" data-i18n="Hidden songs are greyed out in the library and excluded from AI setlist suggestions.">Hidden songs are greyed out in the library and excluded from AI setlist suggestions.</div>
 
   <div class="moft">
-    <button class="btn btn-g" onclick="closeMod('seMod')" data-i18n="Cancel">Cancel</button>
+    <button class="btn btn-g" onclick="cancelSongEdit()" data-i18n="Cancel">Cancel</button>
     <button class="btn btn-p" onclick="saveSongEdit()" data-i18n="Save">Save Changes</button>
   </div>
 </div>
