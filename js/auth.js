@@ -262,6 +262,10 @@ let _inPasswordRecovery = (function () {
 }());
 
 supabase.auth.onAuthStateChange(async (event, session) => {
+  // The one-click RSVP page (/rsvp?token=…) is fully self-contained and must
+  // never be replaced by the app shell or sign-in screen, logged in or not.
+  if (window.RSVP_ONECLICK) return;
+
   if (event === 'PASSWORD_RECOVERY') {
     _inPasswordRecovery = true;
     // User clicked the reset-password link in their email — show the reset form
@@ -413,6 +417,8 @@ supabase.auth.onAuthStateChange(async (event, session) => {
 const _initUrlParams = new URLSearchParams(window.location.search);
 const _initHash = window.location.hash;
 (async () => {
+  // Skip session restore entirely on the one-click RSVP page.
+  if (window.RSVP_ONECLICK) return;
   const { data: { session } } = await supabase.auth.getSession();
   if (!session) {
     const p = _initUrlParams;

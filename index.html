@@ -234,6 +234,21 @@ select option{background:var(--w)}
 .sclinks{display:flex;gap:5px;margin-top:9px}
 .svb{padding:4px 9px;border-radius:6px;font-size:.69rem;font-weight:600;border:1.5px solid var(--bd);background:transparent;color:var(--ink2);cursor:pointer;transition:all .11s;font-family:var(--font)}
 .svb:hover{border-color:var(--a);color:var(--a)}.svb-sp{border-color:rgba(29,185,84,.4);color:#1DB954}.svb-yt{border-color:rgba(220,38,38,.3);color:var(--r)}.svb-am{border-color:rgba(255,153,0,.4);color:#FF9900}.svb-ly{border-color:rgba(108,99,255,.35);color:var(--a)}
+/* mobile song cards + swipe-to-reveal */
+.swipe-wrap{position:relative;overflow:hidden;border-radius:var(--radl)}
+.swipe-actions{position:absolute;inset:0 0 0 auto;display:flex;align-items:stretch}
+.swipe-act{border:none;font-family:var(--font);font-weight:700;font-size:.8rem;color:#fff;padding:0 18px;cursor:pointer;white-space:nowrap}
+.swipe-act.add{background:var(--bl)}
+.swipe-act.del{background:var(--r)}
+.songcard.mcard{min-height:80px;display:flex;flex-direction:column;justify-content:center;gap:4px;padding:13px 14px;touch-action:pan-y;position:relative;z-index:1;background:var(--w);will-change:transform}
+.mcard-top{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
+.mcard-title{font-size:16px;font-weight:700;line-height:1.2;flex:1;min-width:0}
+.mcard-genre{flex-shrink:0;font-size:.62rem;white-space:nowrap}
+.mcard-artist{font-size:14px;color:var(--ink2)}
+.mcard-bot{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.mcard-dur{font-family:var(--mono);font-size:.74rem;color:var(--ink3)}
+.mcard-links{display:flex;gap:12px;margin-left:auto;align-items:center}
+.sc-licon{background:none;border:none;font-size:1.1rem;line-height:1;padding:2px;cursor:pointer;text-decoration:none}
 /* calendar */
 .calhdr{display:flex;align-items:center;gap:10px;margin-bottom:17px;flex-wrap:wrap}
 .calnav{display:flex;gap:3px}
@@ -442,6 +457,17 @@ html[data-theme="dark"] .sb-group-name{color:var(--ink)!important}
 .help-pop strong{color:var(--ink);font-weight:600}
 .help-pop ul{margin:6px 0 0 0;padding-left:16px}
 .help-pop ul li{margin-bottom:3px}
+/* ── Rehearsal RSVP / attendance ── */
+.rsvp-mine{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-top:9px}
+.rsvp-opt{padding:5px 11px;border-radius:8px;border:1.5px solid var(--bd);background:var(--w);color:var(--ink2);font-family:var(--font);font-size:.72rem;font-weight:600;cursor:pointer;transition:background .12s,border-color .12s,color .12s}
+.rsvp-opt:hover{border-color:var(--a)}
+.rsvp-opt.on-yes{background:var(--g2);border-color:var(--g);color:var(--g)}
+.rsvp-opt.on-no{background:var(--r2);border-color:var(--r);color:var(--r)}
+.rsvp-opt.on-maybe{background:var(--amb2);border-color:var(--amb);color:var(--amb)}
+.rsvp-note{flex:1;min-width:120px;padding:5px 9px;border-radius:8px;border:1.5px solid var(--bd);background:var(--w);color:var(--ink);font-family:var(--font);font-size:.72rem}
+.rsvp-note:focus{outline:none;border-color:var(--a)}
+.rsvp-summary{display:inline-flex;align-items:center;gap:4px;margin-top:7px;padding:4px 10px;border-radius:99px;background:var(--a2);color:var(--a);font-size:.7rem;font-weight:600;cursor:pointer}
+.rsvp-summary:hover{filter:brightness(.97)}
 </style>
 <script>(function(){const t=localStorage.getItem('appearance');if(t&&t!=='default')document.documentElement.setAttribute('data-theme',t);})();</script>
 
@@ -614,6 +640,10 @@ html[data-theme="dark"] .sb-group-name{color:var(--ink)!important}
           <div id="dshMembers"></div>
         </div>
       </div>
+      <div class="card" id="dshPendingRsvpCard" style="display:none;margin-top:15px">
+        <div class="ch"><div class="ct" data-i18n="Pending RSVPs">Pending RSVPs</div><div class="cl" onclick="nav('rehearsals')" data-i18n="View rehearsals →">View rehearsals →</div></div>
+        <div id="dshPendingRsvp"></div>
+      </div>
     </div>
 
     <!-- SET LISTS -->
@@ -709,7 +739,7 @@ html[data-theme="dark"] .sb-group-name{color:var(--ink)!important}
           <div style="font-size:.74rem;color:var(--ink2);margin-top:2px" id="libCount">24 songs across 5 genres</div>
         </div>
         <!-- View toggle -->
-        <div style="display:flex;background:var(--bg2);border-radius:99px;padding:3px;gap:2px;border:1.5px solid var(--bd)">
+        <div id="libViewToggle" style="display:flex;background:var(--bg2);border-radius:99px;padding:3px;gap:2px;border:1.5px solid var(--bd)">
           <button id="libViewCards" onclick="setLibView('cards')"
             style="padding:4px 13px;border-radius:99px;border:none;font-family:var(--font);font-size:.72rem;font-weight:600;cursor:pointer;transition:all .15s;background:var(--a);color:#fff"
             data-i18n="Cards">Cards
@@ -1977,9 +2007,25 @@ async function loadRehearsals(){
   if(gen!==_rehGen)return;
   const photoMap=await RehearsalsDB.fetchPhotos(data.map(r=>r.id));
   if(gen!==_rehGen)return;
-  data.forEach(r=>{ r.photos=photoMap[r.id]||[]; r._ts=rehearsalDate(r).getTime(); });
+  const rsvpMap=await RsvpDB.fetchForRehearsals(data.map(r=>r.id));
+  if(gen!==_rehGen)return;
+  data.forEach(r=>{
+    r.photos=photoMap[r.id]||[];
+    r._ts=rehearsalDate(r).getTime();
+    r.rsvps=rsvpMap[r.id]||[];
+    r.myRsvp=r.rsvps.find(x=>x.user_id===currentUser.id)||null;
+  });
   rehearsals=data;
   buildCalEv();
+}
+
+// Attendance tally for a rehearsal, counted against the currently active members.
+function rehAttendance(r){
+  const actives=activeMembers();
+  const byUser={};(r.rsvps||[]).forEach(x=>{byUser[x.user_id]=x;});
+  let yes=0,no=0,maybe=0,responded=0;
+  actives.forEach(m=>{const v=byUser[m.id];if(v){responded++;if(v.status==='yes')yes++;else if(v.status==='no')no++;else if(v.status==='maybe')maybe++;}});
+  return {total:actives.length,yes,no,maybe,responded,pending:actives.length-responded};
 }
 
 function rehearsalDate(r){
@@ -2043,6 +2089,7 @@ function rehearsalCard(r,style){
         <span class="pill ${cancelStyle?'pr':'pg'}">${cancelStyle?t('🚫 Cancelled'):t('Rehearsal')}</span>
         ${slLinked&&!cancelStyle?`<span class="pill pp" style="cursor:pointer;display:inline-flex;align-items:center;gap:4px" data-action="setlist" data-slid="${r.setlistId}" title="Open Set List">♩ ${esc(slLinked.name)} <svg width="9" height="9" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 8h8M9 5l3 3-3 3"/></svg></span>`:''}
       </div>
+      ${rsvpCardHtml(r,pastStyle,cancelStyle)}
       ${photoHtml}
     </div>
     <div class="cactions">${actions}</div>
@@ -2056,9 +2103,177 @@ function handleRehCardClick(e,id){
     const action = btn.dataset.action;
     if(action==='cancel'){promptCancel('rehearsal',id);return;}
     if(action==='setlist'){openSetlistFromConcert(btn.dataset.slid);return;}
+    if(action==='rsvp-breakdown'){openRsvpBreakdown(id);return;}
     if(action==='view'){openRehView(id);return;}
   }
   openRehView(id);
+}
+
+// ── RSVP / attendance ─────────────────────────────────────
+// Card block: admin attendance badge + the current user's Yes/No/Maybe + note.
+function rsvpCardHtml(r,pastStyle,cancelStyle){
+  if(cancelStyle)return'';
+  const isAdmin=currentUser.role==='admin';
+  const att=rehAttendance(r);
+  const badge=(isAdmin&&att.total)
+    ?`<span class="rsvp-summary" data-action="rsvp-breakdown" title="${t('View attendance')}">👥 ${att.yes} / ${att.total} ${t('confirmed')}${att.pending?` · ${att.pending} ${t('pending')}`:''}</span>`
+    :'';
+  if(pastStyle)return badge;
+  const my=r.myRsvp?.status||null;
+  const mine=`<div class="rsvp-mine" onclick="event.stopPropagation()">
+      <button type="button" class="rsvp-opt${my==='yes'?' on-yes':''}" onclick="setMyRsvp('${r.id}','yes')">✅ ${t('Yes')}</button>
+      <button type="button" class="rsvp-opt${my==='no'?' on-no':''}" onclick="setMyRsvp('${r.id}','no')">❌ ${t('No')}</button>
+      <button type="button" class="rsvp-opt${my==='maybe'?' on-maybe':''}" onclick="setMyRsvp('${r.id}','maybe')">❓ ${t('Maybe')}</button>
+      <input type="text" class="rsvp-note" maxlength="120" placeholder="${t('Add a note (optional)')}" value="${esc(r.myRsvp?.note||'')}" onclick="event.stopPropagation()" onchange="setMyRsvpNote('${r.id}',this.value)">
+    </div>`;
+  return badge+mine;
+}
+
+async function setMyRsvp(id,status){
+  const r=rehearsals.find(x=>x.id===id);if(!r)return;
+  const card=document.querySelector(`.ccrd[data-rid="${id}"]`);
+  const noteEl=card?card.querySelector('.rsvp-note'):null;
+  const note=noteEl?noteEl.value:(r.myRsvp?.note||'');
+  const saved=await RsvpDB.upsertMine(id,status,note);
+  if(!saved)return;
+  r.rsvps=(r.rsvps||[]).filter(x=>x.user_id!==currentUser.id);
+  const row={user_id:currentUser.id,status:saved.status,note:saved.note,responded_at:saved.responded_at};
+  r.rsvps.push(row);
+  r.myRsvp=row;
+  renderRehearsals();renderDashboard();
+  toast2(t('RSVP saved!'));
+  checkRsvpComplete(id);
+}
+
+async function setMyRsvpNote(id,note){
+  const r=rehearsals.find(x=>x.id===id);if(!r)return;
+  if(!r.myRsvp){if((note||'').trim())toast2(t('Pick Yes, No or Maybe first'),'w');return;}
+  const saved=await RsvpDB.upsertMine(id,r.myRsvp.status,note);
+  if(!saved)return;
+  r.myRsvp.note=saved.note;
+  const e=(r.rsvps||[]).find(x=>x.user_id===currentUser.id);if(e)e.note=saved.note;
+}
+
+// Ask the edge function to email the admin(s) if this was the last pending RSVP.
+function checkRsvpComplete(id){
+  supabase.functions.invoke('rsvp-remind',{body:{mode:'check_complete',rehearsal_id:id}})
+    .then(null,()=>{}).catch(()=>{});
+}
+
+// Admin-only per-member breakdown overlay.
+function openRsvpBreakdown(id){
+  const r=rehearsals.find(x=>x.id===id);if(!r)return;
+  const actives=activeMembers();
+  const byUser={};(r.rsvps||[]).forEach(x=>{byUser[x.user_id]=x;});
+  const att=rehAttendance(r);
+  const rows=actives.map(m=>{
+    const v=byUser[m.id];const st=v?v.status:null;
+    const label=st==='yes'?`<span style="color:var(--g);font-weight:700">✅ ${t('Yes')}</span>`
+      :st==='no'?`<span style="color:var(--r);font-weight:700">❌ ${t('No')}</span>`
+      :st==='maybe'?`<span style="color:var(--amb);font-weight:700">❓ ${t('Maybe')}</span>`
+      :`<span style="color:var(--ink3);font-weight:600">⏳ ${t('Pending')}</span>`;
+    const note=v&&v.note?`<div style="font-size:.72rem;color:var(--ink3);margin-top:2px">“${esc(v.note)}”</div>`:'';
+    const photo=memberPhotos[members.indexOf(m)]||null;
+    return`<div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--bd)">
+      <div class="mav2" style="background:${m.color};${photo?`background-image:url(${photo});background-size:cover;background-position:center`:''}">${photo?'':esc(m.init)}</div>
+      <div style="flex:1;min-width:0"><div style="font-weight:600;font-size:.85rem">${esc(m.name)}</div>${note}</div>
+      <div style="font-size:.8rem;white-space:nowrap">${label}</div>
+    </div>`;
+  }).join('');
+  const o=document.createElement('div');
+  o.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9000;display:flex;align-items:center;justify-content:center;padding:20px';
+  o.onclick=e=>{if(e.target===o)document.body.removeChild(o);};
+  o.innerHTML=`<div style="background:var(--w);border-radius:var(--radl);max-width:440px;width:100%;max-height:80vh;overflow:auto;padding:22px 24px;box-shadow:var(--shl)">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
+      <div style="font-weight:700;font-size:1rem">${esc(r.title)}</div>
+      <button class="rsvpbd-x" style="background:none;border:none;font-size:1.1rem;cursor:pointer;color:var(--ink3)">✕</button>
+    </div>
+    <div style="font-size:.78rem;color:var(--ink2);margin-bottom:14px">✅ ${att.yes} ${t('yes')} · ❓ ${att.maybe} ${t('maybe')} · ❌ ${att.no} ${t('no')} · ⏳ ${att.pending} ${t('pending')}</div>
+    ${rows||`<div style="color:var(--ink3);font-size:.82rem">${t('No members yet.')}</div>`}
+  </div>`;
+  document.body.appendChild(o);
+  o.querySelector('.rsvpbd-x').onclick=()=>o.remove();
+}
+
+// ── One-click RSVP page (/rsvp?token=…&status=…) ──────────────
+// Set synchronously so auth.js can bail before showing the sign-in screen.
+window.RSVP_ONECLICK=(function(){
+  const seg=location.pathname.replace(/\/+$/,'');
+  const p=new URLSearchParams(location.search);
+  const token=p.get('token');
+  if(!seg.endsWith('/rsvp')||!token)return null;
+  return {token,status:p.get('status')||''};
+})();
+
+async function renderRsvpOneClick(){
+  const oc=window.RSVP_ONECLICK;if(!oc)return;
+  const as=document.getElementById('authScreen');if(as)as.style.display='none';
+  const app=document.getElementById('app');if(app)app.classList.remove('vis');
+  const loader=document.getElementById('appLoader');if(loader)loader.style.display='none';
+
+  const wrap=document.createElement('div');
+  wrap.id='rsvpOneClick';
+  wrap.style.cssText='position:fixed;inset:0;z-index:9500;background:var(--bg);display:flex;align-items:flex-start;justify-content:center;padding:48px 20px;overflow:auto';
+  document.body.appendChild(wrap);
+  const logo=`<div style="font-family:Georgia,serif;font-size:1.7rem;letter-spacing:6px;color:var(--ink);text-align:center;margin-bottom:20px">ritovo<span style="color:var(--a)">.</span></div>`;
+  const shell=inner=>{wrap.innerHTML=`<div style="max-width:420px;width:100%">${logo}<div style="background:var(--w);border:1.5px solid var(--bd);border-radius:var(--radl);box-shadow:var(--sh);padding:30px 28px">${inner}</div></div>`;};
+
+  shell(`<div style="text-align:center;font-size:.9rem;color:var(--ink2)">Recording your response…</div>`);
+
+  let curStatus=['yes','no','maybe'].includes(oc.status)?oc.status:null;
+  let info=null;
+
+  const submit=async(status,note)=>{
+    const res=await RsvpDB.submitByToken(oc.token,status,note||'');
+    if(res&&res.success){
+      curStatus=status;info=res;
+      supabase.functions.invoke('rsvp-remind',{body:{mode:'check_complete',rehearsal_id:res.rehearsal_id,token:oc.token}}).then(null,()=>{}).catch(()=>{});
+    }
+    return res;
+  };
+
+  const fmtDate=ds=>{if(!ds)return'';const d=new Date(ds+'T00:00:00');return d.toLocaleDateString(undefined,{weekday:'long',month:'long',day:'numeric'});};
+
+  const drawError=msg=>shell(`<div style="text-align:center"><div style="font-size:2.2rem;margin-bottom:10px">⚠️</div><div style="font-weight:700;font-size:1.05rem;margin-bottom:8px">Link not valid</div><div style="font-size:.85rem;color:var(--ink2);line-height:1.5">${msg}</div><div style="margin-top:22px"><a href="/" style="color:var(--a);font-weight:600;text-decoration:none">Open Ritovo →</a></div></div>`);
+
+  const draw=()=>{
+    const opt=(label,kind)=>`<button type="button" class="rsvp-opt${curStatus===kind?' on-'+kind:''}" style="flex:1;padding:10px" onclick="window._rsvpOcPick('${kind}')">${label}</button>`;
+    const heading=curStatus==='yes'?'You’re in! ✅':curStatus==='no'?'Got it — you can’t make it ❌':curStatus==='maybe'?'Marked as maybe ❓':'Will you be there?';
+    shell(`
+      <div style="text-align:center;margin-bottom:6px;font-weight:700;font-size:1.15rem">${heading}</div>
+      <div style="text-align:center;font-size:.9rem;color:var(--ink2);margin-bottom:4px">${esc(info?.rehearsal_title||'Rehearsal')}</div>
+      <div style="text-align:center;font-size:.82rem;color:var(--ink3);margin-bottom:20px">${esc(info?.band_name||'')}${info?.rehearsal_date?' · '+fmtDate(info.rehearsal_date):''}${info?.rehearsal_start?' · '+esc(info.rehearsal_start):''}</div>
+      <div style="display:flex;gap:8px;margin-bottom:14px">${opt('✅ Yes','yes')}${opt('❌ No','no')}${opt('❓ Maybe','maybe')}</div>
+      <input id="rsvpOcNote" type="text" class="rsvp-note" maxlength="120" placeholder="Add a note (optional — e.g. ‘15 min late’)" value="${esc(info?.note||'')}" style="width:100%;box-sizing:border-box;margin-bottom:12px;padding:9px 11px">
+      <button type="button" class="btn btn-p btn-fw" onclick="window._rsvpOcSaveNote()">Save note</button>
+      <div id="rsvpOcMsg" style="text-align:center;font-size:.78rem;color:var(--g);margin-top:12px;min-height:1em"></div>
+      <div style="text-align:center;margin-top:14px"><a href="/" style="color:var(--a);font-weight:600;text-decoration:none;font-size:.85rem">Open Ritovo →</a></div>`);
+  };
+
+  window._rsvpOcPick=async kind=>{
+    const note=(document.getElementById('rsvpOcNote')||{}).value||'';
+    const res=await submit(kind,note);
+    if(!res||res.error){drawError(res?.error==='expired'?'This RSVP link has expired.':'This RSVP link is invalid or has already been used.');return;}
+    draw();
+    const m=document.getElementById('rsvpOcMsg');if(m)m.textContent='Response saved ✓';
+  };
+  window._rsvpOcSaveNote=async()=>{
+    if(!curStatus){const m=document.getElementById('rsvpOcMsg');if(m){m.style.color='var(--amb)';m.textContent='Pick Yes, No or Maybe first';}return;}
+    const note=(document.getElementById('rsvpOcNote')||{}).value||'';
+    const res=await submit(curStatus,note);
+    const m=document.getElementById('rsvpOcMsg');
+    if(m){if(res&&res.success){m.style.color='var(--g)';m.textContent='Note saved ✓';}else{m.style.color='var(--r)';m.textContent='Could not save note';}}
+  };
+
+  // Auto-submit the status carried in the link (one-tap from email).
+  if(curStatus){
+    const res=await submit(curStatus,'');
+    if(!res||res.error){drawError(res?.error==='expired'?'This RSVP link has expired.':'This RSVP link is invalid or has already been used.');return;}
+    draw();
+  } else {
+    // No/invalid status in URL — show the picker; first tap will submit.
+    info={};draw();
+  }
 }
 
 // Share — single tap, no picker, uses admin preference
@@ -3428,7 +3643,11 @@ function renderLib(){
       :`<div class="es" style="grid-column:1/-1"><div class="es-ico">🎵</div><h3>${t('No songs in library yet')}</h3><p>${t('Start by adding songs to your library.')}</p></div>`;
     grid.innerHTML=msg;return;
   }
-  grid.innerHTML=f.map(s=>`
+  grid.innerHTML=f.map(s=>isMobile()?mobileSongCard(s):desktopSongCard(s)).join('');
+  if(isMobile())wireCardSwipe();
+}
+// Desktop card — unchanged markup, extracted into a function so renderLib can branch
+function desktopSongCard(s){return `
     <div class="songcard${s.hidden?' hidden-song':''}" onclick="openSongEdit('${s.id}')">
       ${s.hidden?`<div style="position:absolute;top:10px;right:10px;font-size:.62rem;font-weight:700;color:var(--ink3);background:var(--bg2);border:1px solid var(--bd);border-radius:99px;padding:2px 7px;letter-spacing:.04em">${t('HIDDEN')}</div>`:''}
       <div class="sctt" style="padding-right:${s.hidden?'52px':'0'}">${s.title}</div>
@@ -3460,7 +3679,91 @@ function renderLib(){
           </svg>
         </div>`:''}
       </div>
-    </div>`).join('');
+    </div>`;}
+
+// ── MOBILE SONG CARD (≥80px, fully tappable, swipe-to-reveal) ──
+const _GENRE_PILLS=['pp','pg','pbl','pamb','pr','pgray'];
+function genrePillClass(g){if(!g)return 'pgray';let h=0;for(let i=0;i<g.length;i++)h=(h*31+g.charCodeAt(i))>>>0;return _GENRE_PILLS[h%_GENRE_PILLS.length];}
+function mobileSongCard(s){
+  const icon=(url,label,emoji,color)=>url?`<a class="sc-licon" href="${url}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()" title="${label}"${color?` style="color:${color}"`:''}>${emoji}</a>`:'';
+  const links=[
+    icon(s.lyrics,'Lyrics','📄'),
+    icon(s.sheet_music,'Sheet Music','🎼'),
+    icon(s.spotify,'Spotify','🎵','#1DB954'),
+    icon(s.youtube,'YouTube','▶','var(--r)'),
+    icon(s.apple,'Apple Music','🍎'),
+    icon(s.amazon,'Amazon Music','🛒','#FF9900'),
+  ].join('');
+  return `<div class="swipe-wrap">
+    <div class="swipe-actions">
+      <button class="swipe-act add" onclick="event.stopPropagation();quickAddToSetlist('${s.id}')" data-i18n="＋ Setlist">＋ Setlist</button>
+      ${currentUser.role==='admin'?`<button class="swipe-act del" onclick="event.stopPropagation();deleteSong('${s.id}')" data-i18n="Delete">Delete</button>`:''}
+    </div>
+    <div class="songcard mcard${s.hidden?' hidden-song':''}" onclick="openSongEdit('${s.id}')">
+      <div class="mcard-top">
+        <span class="mcard-title">${s.title}</span>
+        ${s.genre?`<span class="pill ${genrePillClass(s.genre)} mcard-genre">${s.genre}</span>`:''}
+      </div>
+      <div class="mcard-artist">${s.artist||''}</div>
+      <div class="mcard-bot">
+        ${s.key?`<span class="kp">${s.key}</span>`:''}
+        ${s.dur?`<span class="mcard-dur">${fmtDur(s.dur)}</span>`:''}
+        ${links?`<span class="mcard-links">${links}</span>`:''}
+      </div>
+    </div>
+  </div>`;
+}
+// Swipe-to-reveal via pointer events (delegated once on the grid — survives re-renders)
+let _cardSwipeWired=false;
+function wireCardSwipe(){
+  if(_cardSwipeWired)return;_cardSwipeWired=true;
+  const grid=document.getElementById('libGrid');if(!grid)return;
+  const REVEAL=-128; // px the card slides left to expose the action buttons
+  let card=null,startX=0,startY=0,baseX=0,horizontal=false,moved=false;
+  const offsetOf=c=>{const m=/translateX\((-?\d+(?:\.\d+)?)px\)/.exec(c.style.transform);return m?parseFloat(m[1]):0;};
+  grid.addEventListener('pointerdown',e=>{
+    if(!isMobile())return;
+    const c=e.target.closest('.songcard');if(!c)return;
+    card=c;startX=e.clientX;startY=e.clientY;baseX=offsetOf(c);horizontal=false;moved=false;
+  });
+  grid.addEventListener('pointermove',e=>{
+    if(!card)return;
+    const dx=e.clientX-startX,dy=e.clientY-startY;
+    if(!horizontal){
+      if(Math.abs(dx)>8&&Math.abs(dx)>Math.abs(dy)){horizontal=true;card.style.transition='none';}
+      else if(Math.abs(dy)>8){card=null;return;} // vertical scroll — let the page handle it
+      else return;
+    }
+    moved=true;
+    let nx=Math.max(REVEAL,Math.min(0,baseX+dx));
+    card.style.transform='translateX('+nx+'px)';
+    e.preventDefault();
+  });
+  const end=()=>{
+    if(!card)return;
+    if(horizontal){
+      card.style.transition='';
+      const open=offsetOf(card)<REVEAL/2;
+      card.style.transform='translateX('+(open?REVEAL:0)+'px)';
+    }
+    card=null;
+  };
+  grid.addEventListener('pointerup',end);
+  grid.addEventListener('pointercancel',end);
+  // Swallow the tap that ends a swipe so it doesn't also open the edit modal
+  grid.addEventListener('click',e=>{
+    if(moved){moved=false;e.stopPropagation();e.preventDefault();}
+  },true);
+}
+async function quickAddToSetlist(id){
+  if(!activeSetlistId){toast2(t('Create or open a set list first'),'w');return;}
+  if(getSlS().includes(id)){toast2(t('Already in this set list'),'w');return;}
+  getSlS().push(id);
+  renderSL();renderSlMeta();
+  await SetlistsDB.saveSongs(activeSetlistId,getSlS());
+  const s=songByAnyId(id);
+  toast2(`"${s?.title||t('Song')}" ${t('added to set list!')}`);
+  renderLib(); // reset the swiped card
 }
 function filtG(g){aG=g;applyLibFilters();}
 function filterLib(v){applyLibFilters();}
@@ -3519,16 +3822,29 @@ async function addSong(){
 }
 
 // ── LIBRARY VIEW TOGGLE ───────────────────────────────────
-let libView=window.matchMedia('(max-width:640px)').matches?'cards':'sheet';
+function isMobile(){return window.innerWidth<768;}
+// Mobile is always cards. Desktop reads the saved preference (default: spreadsheet).
+let libView=isMobile()?'cards':(localStorage.getItem('songLibraryView')||'sheet');
 function setLibView(v){
+  if(isMobile())v='cards'; // phones never get spreadsheet view
   libView=v;
+  const tog=document.getElementById('libViewToggle');
+  if(tog)tog.style.display=isMobile()?'none':'';
   const bc=document.getElementById('libViewCards');
   const bs=document.getElementById('libViewSheet');
   bc.style.background=v==='cards'?'var(--a)':'transparent';bc.style.color=v==='cards'?'#fff':'var(--ink2)';
   bs.style.background=v==='sheet'?'var(--a)':'transparent';bs.style.color=v==='sheet'?'#fff':'var(--ink2)';
   document.getElementById('libViewCardsArea').style.display=v==='cards'?'':'none';
   document.getElementById('libViewSheetArea').style.display=v==='sheet'?'':'none';
+  if(!isMobile())localStorage.setItem('songLibraryView',v); // persist desktop preference only
   if(v==='sheet'){if(songs.length)renderSheet();}
+}
+// Re-evaluate when the viewport crosses the mobile/desktop boundary (resize / rotate).
+let _libWasMobile=isMobile();
+function syncLibViewForViewport(){
+  const desired=isMobile()?'cards':(localStorage.getItem('songLibraryView')||'sheet');
+  setLibView(desired);
+  if(desired==='cards')renderLib(); // re-render so card markup matches the new viewport
 }
 restoreColOrder(); // restore user's saved column order before first render
 setLibView(libView);
@@ -4349,6 +4665,8 @@ window.addEventListener('resize',()=>{
   else checkLandscapeHint();
   // Recalculate spreadsheet table width so scrollbar updates with window size
   if(libView==='sheet')setSheetTblWidth();
+  // Library view: only re-sync when crossing the 768px mobile/desktop boundary
+  if(isMobile()!==_libWasMobile){_libWasMobile=isMobile();syncLibViewForViewport();}
 });
 window.addEventListener('orientationchange',()=>setTimeout(checkLandscapeHint,200));
 
@@ -4654,7 +4972,7 @@ async function confReh(){
 
     if((ch==='email'||ch==='both')&&saved?.id){
       supabase.functions.invoke('notify-rehearsal',{
-        body:{band_id:activeBandId,title,date:confirmedKey,start,end,location,notes,setlist:slName||undefined},
+        body:{band_id:activeBandId,title,date:confirmedKey,start,end,location,notes,setlist:slName||undefined,rehearsal_id:saved.id},
       }).then(r=>{if(r.error)console.error('[bandapp] notify-rehearsal:',r.error);})
         .catch(e=>console.error('[bandapp] notify-rehearsal:',e));
     }
@@ -6111,6 +6429,33 @@ function renderDashboard(){
       return`<div class="mr2"><div class="mav2" style="background:${m.color};${photo?`background-image:url(${photo});background-size:cover;background-position:center`:''}">${photo?'':m.init}</div><div style="flex:1"><div class="mn">${m.name}</div><div class="mi">${instLine}</div></div><div class="ad ${avToday}"></div></div>`;
     }).join('') : empty(t('No members yet. Invite someone to join!'));
   }
+
+  // Pending RSVPs widget (admin only) — upcoming rehearsals with non-responders.
+  const pendCard = document.getElementById('dshPendingRsvpCard');
+  const pendBox  = document.getElementById('dshPendingRsvp');
+  if(pendCard && pendBox){
+    if(currentUser.role!=='admin'){
+      pendCard.style.display='none';
+    } else {
+      const pendingRehs = rehearsals
+        .filter(r=>!r.cancelled && r.date>=todayStr)
+        .map(r=>({r, att:rehAttendance(r)}))
+        .filter(x=>x.att.pending>0)
+        .sort((a,b)=>a.r.date.localeCompare(b.r.date))
+        .slice(0,5);
+      if(!pendingRehs.length){
+        pendCard.style.display='none';
+      } else {
+        pendCard.style.display='';
+        pendBox.innerHTML = pendingRehs.map(({r,att})=>{
+          const d=new Date(r.date+'T00:00:00');
+          const when=`${t(_dows[d.getDay()])} ${d.getDate()} ${t(MAb[d.getMonth()])}`;
+          const msg=`${att.pending} ${att.pending>1?t('members haven’t responded'):t('member hasn’t responded')}`;
+          return`<div class="er" style="cursor:pointer" onclick="openRsvpBreakdown('${r.id}')"><div class="edb"><div class="edd">${t(_dows[d.getDay()])}</div><div class="edn">${d.getDate()}</div></div><div style="flex:1"><div class="en">${esc(r.title||'Rehearsal')}</div><div class="em">${when} · ${msg}</div></div><span class="rsvp-summary" style="margin:0">👥 ${att.yes}/${att.total}</span></div>`;
+        }).join('');
+      }
+    }
+  }
 }
 
 async function initApp(){
@@ -6603,6 +6948,8 @@ async function saveProfile(){
 
 // Auto-inject close buttons into every modal that doesn't already have one
 document.addEventListener('DOMContentLoaded', () => {
+  // One-click RSVP page takes over before anything else renders.
+  if (window.RSVP_ONECLICK) { renderRsvpOneClick(); return; }
   document.querySelectorAll('.mov').forEach(ov => {
     const id = ov.id;
     const mod = ov.querySelector('.mod');
@@ -7488,6 +7835,7 @@ async function saveSettings(){
 <script src="js/db/setlists.js"></script>
 <script src="js/db/concerts.js"></script>
 <script src="js/db/rehearsals.js"></script>
+<script src="js/db/rsvps.js"></script>
 <script src="js/db/members.js"></script>
 <script src="js/db/blackouts.js"></script>
 <script src="js/db/changelog.js"></script>

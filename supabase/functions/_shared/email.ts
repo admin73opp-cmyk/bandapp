@@ -78,3 +78,23 @@ export function btn(label: string, url: string): string {
 export function h(s: string): string {
   return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')
 }
+
+// One-click RSVP buttons (Yes / No / Maybe) for rehearsal emails.
+// Each link hits the SPA /rsvp page with the member's opaque token; the page
+// records the response via the submit_rsvp_by_token RPC — no login required.
+export function rsvpButtons(appUrl: string, token: string): string {
+  const base = appUrl.replace(/\/$/, '')
+  const link = (status: string) => `${base}/rsvp?token=${encodeURIComponent(token)}&status=${status}`
+  const cell = (label: string, color: string, status: string) =>
+    `<td style="padding:0 6px">
+      <a href="${link(status)}" style="display:inline-block;padding:12px 22px;font-size:15px;font-weight:600;color:#ffffff;text-decoration:none;border-radius:8px;background:${color}">${label}</a>
+    </td>`
+  return `<p style="margin:0 0 10px;font-size:14px;color:#1a1a2e;font-weight:600">Can you make it?</p>
+  <table cellpadding="0" cellspacing="0" style="margin:0 0 24px">
+    <tr>
+      ${cell('✅ Yes',   '#22A565', 'yes')}
+      ${cell('❌ No',    '#E5484D', 'no')}
+      ${cell('❓ Maybe', '#8B8B96', 'maybe')}
+    </tr>
+  </table>`
+}

@@ -35,3 +35,9 @@ content_path = "./supabase/templates/recovery.html"
 [auth.email.template.reauthentication]
 subject = "Your Ritovo password was changed"
 content_path = "./supabase/templates/password-changed.html"
+
+# rsvp-remind authorizes every path itself (cron secret / RSVP token / member
+# JWT), so platform-level JWT verification is disabled — the daily pg_cron call
+# and the logged-out one-click /rsvp page must both be able to reach it.
+[functions.rsvp-remind]
+verify_jwt = false
