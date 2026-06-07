@@ -194,7 +194,9 @@ select option{background:var(--w)}
 .mn{font-size:.82rem;font-weight:600}.mi{font-size:.69rem;color:var(--ink2)}
 .ad{width:7px;height:7px;border-radius:50%;margin-left:auto;flex-shrink:0}.ad.on{background:var(--g)}.ad.off{background:var(--r)}.ad.pt2{background:var(--amb)}
 /* dashboard — next event hero */
-.dne{background:linear-gradient(135deg,var(--a2),var(--w));border:1.5px solid rgba(108,99,255,.28);border-radius:var(--radl);padding:18px 20px;box-shadow:var(--sh);display:flex;gap:18px;align-items:center;flex-wrap:wrap}
+.dne{background:linear-gradient(135deg,var(--a2),var(--w));border:1.5px solid rgba(108,99,255,.28);border-radius:var(--radl);padding:18px 20px;box-shadow:var(--sh);display:flex;gap:18px;align-items:center;flex-wrap:wrap;cursor:pointer;transition:border-color .13s,box-shadow .13s}
+.dne:hover{border-color:rgba(108,99,255,.55);box-shadow:var(--shl)}
+.dne:focus-visible{outline:2px solid var(--a);outline-offset:2px}
 .dne-cal{width:64px;height:70px;border-radius:12px;background:var(--w);border:1.5px solid var(--bd);display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0;box-shadow:var(--sh)}
 .dne-cal .m{font-size:.62rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--a)}.dne-cal .d{font-size:1.9rem;font-weight:800;line-height:1}.dne-cal .dow{font-size:.58rem;font-weight:700;color:var(--ink3);text-transform:uppercase}
 .dne-body{flex:1;min-width:200px}
@@ -6623,7 +6625,7 @@ function renderDashboard(){
     const sl = nextSlId && setlists.find(s=>s.id===nextSlId);
     if(sl){
       const cnt = (slSongs[sl.id]||[]).filter(id=>songByAnyId(id)).length;
-      chips += `<span class="dne-chip" onclick="dshOpenSetlistById('${sl.id}')">♩ ${esc(sl.name)}${cnt?` · ${cnt} ${t('songs')}`:''}</span>`;
+      chips += `<span class="dne-chip" onclick="event.stopPropagation();dshOpenSetlistById('${sl.id}')">♩ ${esc(sl.name)}${cnt?` · ${cnt} ${t('songs')}`:''}</span>`;
     }
     if(isReh){
       const att = rehAttendance(raw);
@@ -6632,7 +6634,8 @@ function renderDashboard(){
       chips += `<span class="dne-chip">👥 ${att.yes}/${att.total} ${t('going')}</span>`;
       chips += `<span class="dne-chip" style="border-color:rgba(108,99,255,.3)">${t('You')}: ${myLabel}</span>`;
     }
-    elNext.innerHTML = `<div class="dne">
+    const openAction = isReh ? `nav('rehearsals');openRehView('${raw.id}')` : `nav('concerts');openConcertView('${raw.id}')`;
+    elNext.innerHTML = `<div class="dne" role="button" tabindex="0" onclick="${openAction}" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();${openAction}}">
       <div class="dne-cal"><div class="m">${t(MAb[d.getMonth()])}</div><div class="d">${d.getDate()}</div><div class="dow">${t(_DOWS[d.getDay()])}</div></div>
       <div class="dne-body">${badge}<div class="dne-title">${esc(raw.title||(isReh?'Rehearsal':'Concert'))}</div><div class="dne-meta">${meta}</div>${chips?`<div class="dne-chips">${chips}</div>`:''}</div>
       <div class="dne-cd">${_dshCountdown(nextEvent.date)}</div>
