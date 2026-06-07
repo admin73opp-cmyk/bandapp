@@ -2,6 +2,7 @@
 window.PT_BR = {
   /* ── DASHBOARD ────────────────────────────────────────── */
   'Add Song': 'Adicionar música',
+  'Get directions': 'Como chegar',
   'Add Concert': 'Adicionar show',
   'Active Set List': 'Setlist ativa',
   'Member Status': 'Status dos membros',

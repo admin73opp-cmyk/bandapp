@@ -2,6 +2,7 @@
 window.NL = {
   /* ── DASHBOARD ────────────────────────────────────────── */
   'Add Song': 'Nummer toevoegen',
+  'Get directions': 'Routebeschrijving',
   'Add Concert': 'Concert toevoegen',
   'Active Set List': 'Actieve setlist',
   'Member Status': 'Ledenstatus',

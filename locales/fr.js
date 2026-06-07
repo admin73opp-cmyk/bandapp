@@ -2,6 +2,7 @@
 window.FR = {
   /* ── DASHBOARD ────────────────────────────────────────── */
   'Add Song': 'Ajouter un morceau',
+  'Get directions': 'Itinéraire',
   'Add Concert': 'Ajouter un concert',
   'Active Set List': 'Setlist active',
   'Member Status': 'Statut des membres',

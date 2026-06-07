@@ -221,6 +221,12 @@ select option{background:var(--w)}
 /* dashboard — skeleton shimmer */
 .skl{background:linear-gradient(90deg,var(--bg) 25%,var(--bg2) 37%,var(--bg) 63%);background-size:400% 100%;animation:sklsh 1.3s ease infinite;border-radius:6px;height:13px;margin:9px 0}
 @keyframes sklsh{0%{background-position:100% 0}100%{background-position:-100% 0}}
+/* clickable address → navigation chooser */
+.maplink{color:var(--a);cursor:pointer;border-bottom:1px dashed rgba(108,99,255,.5);font-weight:600}
+.maplink:hover{border-bottom-style:solid}
+.maplink:focus-visible{outline:2px solid var(--a);outline-offset:2px;border-radius:3px}
+.nav-sheet-btn{display:flex;align-items:center;gap:11px;width:100%;text-align:left;justify-content:flex-start;margin-bottom:8px;font-size:.92rem;padding:13px 14px}
+.nav-sheet-btn .nb-ico{font-size:1.15rem;line-height:1;flex-shrink:0}
 /* setlist */
 .stabs{display:flex;gap:5px;overflow-x:auto;padding-bottom:2px;margin-bottom:14px}
 .stb{padding:6px 13px;border-radius:99px;font-size:.77rem;font-weight:600;border:1.5px solid var(--bd);background:transparent;color:var(--ink2);cursor:pointer;transition:all .12s;white-space:nowrap;font-family:var(--font)}
@@ -2124,7 +2130,7 @@ function rehearsalCard(r,style){
     <div>
       <div class="ctitle">${esc(r.title)}${badge}</div>
       <div class="cmeta">
-        ${r.location?`<span class="cmi"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 2C5.8 2 4 3.8 4 6c0 3.5 4 8 4 8s4-4.5 4-8c0-2.2-1.8-4-4-4z"/><circle cx="8" cy="6" r="1.5"/></svg>${esc(r.location)}</span>`:''}
+        ${r.location?`<span class="cmi"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 2C5.8 2 4 3.8 4 6c0 3.5 4 8 4 8s4-4.5 4-8c0-2.2-1.8-4-4-4z"/><circle cx="8" cy="6" r="1.5"/></svg>${mapAddr(r.location)}</span>`:''}
         <span class="cmi"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M8 4v4l3 2"/></svg>${r.start}–${r.end}</span>
       </div>
       <div class="cbadges">
@@ -2347,7 +2353,7 @@ function openRehView(id){
   // Details
   document.getElementById('rvDate').textContent=`${t(MO_FULL[r.month])} ${r.day}, ${r.year}`;
   document.getElementById('rvTime').textContent=`${r.start} – ${r.end}`;
-  document.getElementById('rvLocation').textContent=r.location||'—';
+  document.getElementById('rvLocation').innerHTML=r.location?mapAddr(r.location):'—';
   document.getElementById('rvNotes').textContent=r.notes||'';
   document.getElementById('rvNotesRow').style.display=r.notes?'':'none';
 
@@ -4158,6 +4164,51 @@ function renderSheet(){
 
 function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 
+// ── Address → navigation app ──────────────────────────────
+// Render an event address/venue as a tappable link that opens
+// a chooser for Google Maps / Waze / Apple Maps. Address is
+// kept in data-addr (safe for quotes); window.open('_blank')
+// matches every other external link in the app and lets the OS
+// route to the installed app via universal links on iOS.
+function mapAddr(addr){
+  if(!addr) return '';
+  return `<span class="maplink" role="button" tabindex="0" data-addr="${esc(addr)}" onclick="event.stopPropagation();openMapsForEl(this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();event.stopPropagation();openMapsForEl(this);}" title="${t('Get directions')}">${esc(addr)}</span>`;
+}
+function openMapsForEl(el){ if(el&&el.dataset) openMapsChooser(el.dataset.addr||''); }
+function closeMapsChooser(){ const e=document.getElementById('mapsChooser'); if(e) e.remove(); }
+function openMapsChooser(addr){
+  addr=(addr||'').trim(); if(!addr) return;
+  closeMapsChooser();
+  const q=encodeURIComponent(addr);
+  const apps=[
+    {label:'Google Maps', ico:'🗺️', url:`https://www.google.com/maps/search/?api=1&query=${q}`},
+    {label:'Waze',        ico:'🚗', url:`https://waze.com/ul?q=${q}&navigate=yes`},
+    {label:'Apple Maps',  ico:'🧭', url:`https://maps.apple.com/?q=${q}`},
+  ];
+  const ov=document.createElement('div');
+  ov.id='mapsChooser';
+  ov.style.cssText='position:fixed;inset:0;z-index:9998;background:rgba(0,0,0,.45);display:flex;align-items:flex-end;justify-content:center';
+  ov.addEventListener('click', e=>{ if(e.target===ov) closeMapsChooser(); });
+  const sheet=document.createElement('div');
+  sheet.style.cssText='background:var(--w);border:1px solid var(--bd);border-radius:var(--radl) var(--radl) 0 0;box-shadow:var(--shl);width:100%;max-width:440px;padding:18px 16px calc(16px + env(safe-area-inset-bottom))';
+  sheet.innerHTML=`<div style="font-weight:700;font-size:.95rem;margin-bottom:3px">${t('Get directions')}</div><div style="font-size:.8rem;color:var(--ink2);margin-bottom:15px">📍 ${esc(addr)}</div>`;
+  apps.forEach(a=>{
+    const b=document.createElement('button');
+    b.className='btn btn-g nav-sheet-btn';
+    b.innerHTML=`<span class="nb-ico">${a.ico}</span> ${a.label}`;
+    b.addEventListener('click', ()=>{ window.open(a.url,'_blank','noopener,noreferrer'); closeMapsChooser(); });
+    sheet.appendChild(b);
+  });
+  const cancel=document.createElement('button');
+  cancel.className='btn btn-g nav-sheet-btn';
+  cancel.style.cssText='justify-content:center;color:var(--ink2);margin-top:4px;margin-bottom:0';
+  cancel.textContent=t('Cancel');
+  cancel.addEventListener('click', closeMapsChooser);
+  sheet.appendChild(cancel);
+  ov.appendChild(sheet);
+  document.body.appendChild(ov);
+}
+
 // ── Spreadsheet safety: single-level undo of the last cell edit (Ctrl/Cmd+Z) ──
 let _sheetUndo=null,_sheetUndoing=false;
 function wireSheetUndo(){
@@ -5251,7 +5302,7 @@ function concertCard(c,style){
     <div>
       <div class="ctitle">${esc(c.title)}${badge}</div>
       <div class="cmeta">
-        <span class="cmi"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 2C5.8 2 4 3.8 4 6c0 3.5 4 8 4 8s4-4.5 4-8c0-2.2-1.8-4-4-4z"/><circle cx="8" cy="6" r="1.5"/></svg>${esc(c.venue)}</span>
+        <span class="cmi"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 2C5.8 2 4 3.8 4 6c0 3.5 4 8 4 8s4-4.5 4-8c0-2.2-1.8-4-4-4z"/><circle cx="8" cy="6" r="1.5"/></svg>${mapAddr(c.venue)}</span>
         <span class="cmi"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M8 4v4l3 2"/></svg>${esc(c.time)} · ${esc(c.duration)}min</span>
         <span class="cmi"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 14s1-3 6-3 6 3 6 3M8 8a3 3 0 100-6 3 3 0 000 6z"/></svg>~${esc(c.audience)}</span>
       </div>
@@ -5347,7 +5398,7 @@ function openConcertView(id){
   document.getElementById('cvPastBadge').style.display=(past&&!c.cancelled)?'':'none';
   document.getElementById('cvDate').textContent=`${t(MO_FULL[c.month])} ${c.day}, ${c.year}`;
   document.getElementById('cvTime').textContent=`${c.time} · ${c.duration} min`;
-  document.getElementById('cvVenue').textContent=c.venue||'—';
+  document.getElementById('cvVenue').innerHTML=c.venue?mapAddr(c.venue):'—';
   document.getElementById('cvAudience').textContent=c.audience?`~${c.audience} ${t('people')}`:'';
   const paidEl=document.getElementById('cvPaidRow');
   if(c.paid&&c.total){paidEl.style.display='';document.getElementById('cvPaid').textContent=`${c.total}${c.price?' · '+c.price:''}`;}
@@ -6554,7 +6605,11 @@ function renderDashboard(){
     const timeStr = isReh ? ((raw.start&&raw.end)?`${raw.start}–${raw.end}`:(raw.start||'')) : (raw.time||'');
     const venue = isReh ? (raw.location||'') : (raw.venue||'');
     const dateLabel = `${t(_DOWS[d.getDay()])}, ${t(MAb[d.getMonth()])} ${d.getDate()}`;
-    const meta = [dateLabel, timeStr, venue].filter(Boolean).map(esc).join(' · ');
+    const metaBits = [];
+    if(dateLabel) metaBits.push(esc(dateLabel));
+    if(timeStr) metaBits.push(esc(timeStr));
+    if(venue) metaBits.push(mapAddr(venue));
+    const meta = metaBits.join(' · ');
     let chips = '';
     const sl = nextSlId && setlists.find(s=>s.id===nextSlId);
     if(sl){
