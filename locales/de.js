@@ -1,5 +1,28 @@
 /* German (DE) translations */
 window.DE = {
+  /* ── DASHBOARD ────────────────────────────────────────── */
+  'Add Song': 'Song hinzufügen',
+  'Add Concert': 'Konzert hinzufügen',
+  'Active Set List': 'Aktive Setlist',
+  'Member Status': 'Mitgliederstatus',
+  'Recent Activity': 'Letzte Aktivität',
+  'Quick Actions': 'Schnellaktionen',
+  'View Full Setlist →': 'Vollständige Setlist ansehen →',
+  'No events scheduled': 'Keine Termine geplant',
+  'Plan your next rehearsal to get the group together.': 'Plane deine nächste Probe, um die Gruppe zusammenzubringen.',
+  'No songs in this set list yet.': 'Noch keine Songs in dieser Setlist.',
+  'No recent activity yet.': 'Noch keine Aktivität.',
+  'Invite more members': 'Weitere Mitglieder einladen',
+  'Today': 'Heute',
+  'Tomorrow': 'Morgen',
+  'in': 'in',
+  'days': 'Tagen',
+  'Going': 'Dabei',
+  'Not going': 'Nicht dabei',
+  'Not responded': 'Keine Antwort',
+  'going': 'dabei',
+  'You': 'Du',
+  'Someone': 'Jemand',
   /* ── AUTH SCREEN ──────────────────────────────────────── */
   'Manage your music group, rehearsals & setlists': 'Verwalte deine Group, Proben und Setlists',
   'Sign in': 'Anmelden',

@@ -193,6 +193,34 @@ select option{background:var(--w)}
 .mav2{width:31px;height:31px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.67rem;font-weight:700;color:#fff;flex-shrink:0}
 .mn{font-size:.82rem;font-weight:600}.mi{font-size:.69rem;color:var(--ink2)}
 .ad{width:7px;height:7px;border-radius:50%;margin-left:auto;flex-shrink:0}.ad.on{background:var(--g)}.ad.off{background:var(--r)}.ad.pt2{background:var(--amb)}
+/* dashboard — next event hero */
+.dne{background:linear-gradient(135deg,var(--a2),var(--w));border:1.5px solid rgba(108,99,255,.28);border-radius:var(--radl);padding:18px 20px;box-shadow:var(--sh);display:flex;gap:18px;align-items:center;flex-wrap:wrap}
+.dne-cal{width:64px;height:70px;border-radius:12px;background:var(--w);border:1.5px solid var(--bd);display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0;box-shadow:var(--sh)}
+.dne-cal .m{font-size:.62rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--a)}.dne-cal .d{font-size:1.9rem;font-weight:800;line-height:1}.dne-cal .dow{font-size:.58rem;font-weight:700;color:var(--ink3);text-transform:uppercase}
+.dne-body{flex:1;min-width:200px}
+.dne-title{font-size:1.18rem;font-weight:700;letter-spacing:-.02em;margin:5px 0 3px}
+.dne-meta{font-size:.8rem;color:var(--ink2);display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.dne-cd{font-size:.78rem;font-weight:700;color:var(--a);white-space:nowrap;background:var(--a2);border:1px solid rgba(108,99,255,.25);border-radius:99px;padding:3px 11px;align-self:flex-start}
+.dne-chips{margin-top:10px;display:flex;gap:7px;flex-wrap:wrap;align-items:center}
+.dne-chip{display:inline-flex;align-items:center;gap:5px;padding:4px 11px;border-radius:99px;font-size:.74rem;font-weight:600;cursor:pointer;background:var(--w);border:1.5px solid var(--bd);color:var(--ink)}
+.dne-empty{text-align:center;padding:26px 16px}
+/* dashboard — quick actions */
+.dqa{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:2px}
+.dqb{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;padding:15px 8px;background:var(--w);border:1.5px solid var(--bd);border-radius:var(--rad);cursor:pointer;font-family:var(--font);font-size:.76rem;font-weight:600;color:var(--ink);transition:border-color .13s,transform .13s,background .13s}
+.dqb:hover{border-color:var(--a);background:var(--a2);transform:translateY(-1px)}
+.dqb svg{width:22px;height:22px;color:var(--a)}
+/* dashboard — activity feed */
+.dac{display:flex;gap:9px;align-items:flex-start;padding:9px 0;border-bottom:1px solid var(--bd)}.dac:last-child{border-bottom:none}
+.dac-dot{width:7px;height:7px;border-radius:50%;background:var(--a);margin-top:5px;flex-shrink:0}
+.dac-desc{font-size:.8rem;font-weight:500;line-height:1.3}.dac-meta{font-size:.69rem;color:var(--ink3);margin-top:2px}
+/* dashboard — rsvp status icon */
+.rvi{margin-left:auto;font-size:.78rem;font-weight:700;flex-shrink:0;width:18px;text-align:center}.rvi.y{color:var(--g)}.rvi.n{color:var(--r)}.rvi.m{color:var(--amb)}.rvi.p{color:var(--ink3)}
+/* dashboard — setlist song peek */
+.dsl-song{display:flex;gap:8px;align-items:baseline;font-size:.8rem;padding:5px 0;border-bottom:1px solid var(--bd)}.dsl-song:last-child{border-bottom:none}
+.dsl-num{font-family:var(--mono);font-size:.7rem;color:var(--ink3);flex-shrink:0}.dsl-art{color:var(--ink3);font-size:.72rem;margin-left:auto;flex-shrink:0}
+/* dashboard — skeleton shimmer */
+.skl{background:linear-gradient(90deg,var(--bg) 25%,var(--bg2) 37%,var(--bg) 63%);background-size:400% 100%;animation:sklsh 1.3s ease infinite;border-radius:6px;height:13px;margin:9px 0}
+@keyframes sklsh{0%{background-position:100% 0}100%{background-position:-100% 0}}
 /* setlist */
 .stabs{display:flex;gap:5px;overflow-x:auto;padding-bottom:2px;margin-bottom:14px}
 .stb{padding:6px 13px;border-radius:99px;font-size:.77rem;font-weight:600;border:1.5px solid var(--bd);background:transparent;color:var(--ink2);cursor:pointer;transition:all .12s;white-space:nowrap;font-family:var(--font)}
@@ -633,20 +661,29 @@ html[data-theme="dark"] .sb-group-name{color:var(--ink)!important}
         </div>
         <p id="dshS" style="font-size:.84rem;color:var(--ink2);margin-top:4px"></p>
       </div>
-      <div class="sg" id="dshStats"></div>
-      <div class="dg">
+      <!-- WIDGET 1 — Next Event (full width) -->
+      <div id="dshNextEvent"></div>
+      <!-- Row 2: Active Set List + Member Status -->
+      <div class="dg" style="margin-top:14px">
         <div class="card">
-          <div class="ch" data-i18n="Upcoming"><div class="ct">Upcoming</div><div class="cl" onclick="nav('calendar')" data-i18n="See calendar →">See calendar →</div></div>
-          <div id="dshUpcoming"></div>
+          <div class="ch"><div class="ct" data-i18n="Active Set List">Active Set List</div><div class="cl" id="dshSetlistLink" onclick="dshOpenSetlist()" data-i18n="View Full Setlist →">View Full Setlist →</div></div>
+          <div id="dshSetlist"></div>
         </div>
         <div class="card">
-          <div class="ch" data-i18n="Group Members"><div class="ct">Group Members</div><div class="cl" onclick="nav('members')" data-i18n="Manage →">Manage →</div></div>
+          <div class="ch"><div class="ct" data-i18n="Member Status">Member Status</div><div class="cl" onclick="nav('members')" data-i18n="Manage →">Manage →</div></div>
           <div id="dshMembers"></div>
         </div>
       </div>
-      <div class="card" id="dshPendingRsvpCard" style="display:none;margin-top:15px">
-        <div class="ch"><div class="ct" data-i18n="Pending RSVPs">Pending RSVPs</div><div class="cl" onclick="nav('rehearsals')" data-i18n="View rehearsals →">View rehearsals →</div></div>
-        <div id="dshPendingRsvp"></div>
+      <!-- Row 3: Recent Activity + Quick Actions -->
+      <div class="dg" style="margin-top:14px">
+        <div class="card">
+          <div class="ch"><div class="ct" data-i18n="Recent Activity">Recent Activity</div><div class="cl" onclick="nav('calendar')" data-i18n="See calendar →">See calendar →</div></div>
+          <div id="dshActivity"></div>
+        </div>
+        <div class="card">
+          <div class="ch"><div class="ct" data-i18n="Quick Actions">Quick Actions</div></div>
+          <div id="dshQuickActions"></div>
+        </div>
       </div>
     </div>
 
@@ -6437,105 +6474,223 @@ function copyGroupInviteLink(){
   }
 }
 
-function renderDashboard(){
-  const group = getActiveBand();
-  const todayStr = new Date().toISOString().split('T')[0];
-  const thisMonth = todayStr.slice(0,7);
-  const dshS = document.getElementById('dshS');
-  const dshStats = document.getElementById('dshStats');
-  const dshUpcoming = document.getElementById('dshUpcoming');
-  const dshMembers = document.getElementById('dshMembers');
-  const empty = txt => `<div style="color:var(--ink3);font-size:.82rem;padding:4px 0">${txt}</div>`;
+// ── Dashboard ────────────────────────────────────────────
+// Actionable nerve center: Next Event (hero) + Active Set List,
+// Member Status, Recent Activity, Quick Actions.
+// Synchronous widgets paint instantly from in-memory globals;
+// the two data-fetching widgets (Active Set List, Recent
+// Activity) show skeletons then fill via one parallel load,
+// each guarded so one failure never blocks the others.
+let _dshGen = 0;          // generation counter — drops stale async paints on band switch
+let _dshTargetSlId = null; // setlist the "View Full Setlist →" link should open
 
+const _DOWS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+function _dshCountdown(dateStr){
+  const today = new Date(TODAY_STR+'T00:00:00');
+  const d = new Date(dateStr+'T00:00:00');
+  const diff = Math.round((d - today) / 86400000);
+  if(diff <= 0) return t('Today');
+  if(diff === 1) return t('Tomorrow');
+  return `${t('in')} ${diff} ${t('days')}`;
+}
+
+function renderDashboard(){
+  const gen = ++_dshGen;
+  const group = getActiveBand();
+  const dshS  = document.getElementById('dshS');
+  const elNext = document.getElementById('dshNextEvent');
+  const elSet  = document.getElementById('dshSetlist');
+  const elMem  = document.getElementById('dshMembers');
+  const elAct  = document.getElementById('dshActivity');
+  const elQA   = document.getElementById('dshQuickActions');
+  const empty = txt => `<div style="color:var(--ink3);font-size:.82rem;padding:4px 0">${txt}</div>`;
+  const skel  = n => Array.from({length:n}).map(()=>`<div class="skl"></div>`).join('');
+
+  // No group selected
   if(!activeBandId || !group){
-    if(dshS) dshS.textContent = t('Create or join a group to get started.');
-    if(dshStats) dshStats.innerHTML = '';
-    if(dshUpcoming) dshUpcoming.innerHTML = empty(t('No group selected.'));
-    if(dshMembers) dshMembers.innerHTML = empty(t('No group selected.'));
+    if(dshS)  dshS.textContent = t('Create or join a group to get started.');
+    if(elNext) elNext.innerHTML = '';
+    if(elSet)  elSet.innerHTML = empty(t('No group selected.'));
+    if(elMem)  elMem.innerHTML = empty(t('No group selected.'));
+    if(elAct)  elAct.innerHTML = empty(t('No group selected.'));
+    if(elQA)   elQA.innerHTML = '';
     return;
   }
 
-  // Upcoming: merge concerts + rehearsals, sort, take first 4
-  const upEv = [
-    ...rehearsals.filter(r=>!r.cancelled&&r.date>=todayStr).map(r=>({
-      type:'rehearsal', date:r.date, title:r.title||'Rehearsal',
-      detail:[r.location,(r.startTime&&r.endTime)?`${r.startTime}–${r.endTime}`:''].filter(Boolean).join(' · ')
-    })),
-    ...concerts.filter(c=>!c.cancelled&&c.date>=todayStr).map(c=>({
-      type:'concert', date:c.date, title:c.title||'Concert',
-      detail:[c.venue,c.time].filter(Boolean).join(' · ')
-    })),
-  ].sort((a,b)=>a.date.localeCompare(b.date)).slice(0,4);
+  const todayStr = TODAY_STR, thisMonth = todayStr.slice(0,7);
 
-  // Subtitle
-  const rCount = rehearsals.filter(r=>!r.cancelled&&r.date>=todayStr&&r.date.slice(0,7)===thisMonth).length;
-  const cCount = concerts.filter(c=>!c.cancelled&&c.date>=todayStr&&c.date.slice(0,7)===thisMonth).length;
+  // Greeting subtitle — this month's schedule summary
   if(dshS){
+    const rCount = rehearsals.filter(r=>!r.cancelled&&r.date>=todayStr&&r.date.slice(0,7)===thisMonth).length;
+    const cCount = concerts.filter(c=>!c.cancelled&&c.date>=todayStr&&c.date.slice(0,7)===thisMonth).length;
     const parts=[];
     if(rCount) parts.push(`${rCount} ${t(rCount>1?'rehearsals':'rehearsal')}`);
     if(cCount) parts.push(`${cCount} ${t(cCount>1?'concerts':'concert')}`);
     dshS.textContent = parts.length ? `${parts.join(' '+t('and')+' ')} ${t('coming up this month.')}` : t('Nothing scheduled this month yet.');
   }
 
-  // Stat cards
-  const nextGig = concerts.filter(c=>!c.cancelled&&c.date>=todayStr).sort((a,b)=>a.date.localeCompare(b.date))[0];
-  const _ngd=nextGig?new Date(nextGig.date+'T00:00:00'):null;
-  const _ngLabel=_ngd?`${t(MAb[_ngd.getMonth()])} ${_ngd.getDate()}`:'—';
-  if(dshStats) dshStats.innerHTML =
-    `<div class="sc" onclick="nav('members')"><div class="t1">${t('Members')}</div><div class="sv">${members.length}</div><div class="ss">${members.length===1?t('1 member'):t('Active group')}</div></div>`+
-    `<div class="sc" onclick="nav('library')"><div class="t1">${t('Songs')}</div><div class="sv">${songs.length}</div><div class="ss">${t('In library')}</div></div>`+
-    `<div class="sc" onclick="nav('setlists')"><div class="t1">${t('Set Lists')}</div><div class="sv">${setlists.length}</div><div class="ss">${setlists.length?t('Ready to play'):t('None yet')}</div></div>`+
-    `<div class="sc" onclick="nav('concerts')"><div class="t1">${t('Next Gig')}</div><div class="sv">${_ngLabel}</div><div class="ss">${nextGig?.venue||t('None scheduled')}</div></div>`;
+  // Merge future, non-cancelled rehearsals + concerts → earliest first
+  const upEv = [
+    ...rehearsals.filter(r=>!r.cancelled&&r.date>=todayStr).map(r=>({type:'rehearsal', date:r.date, raw:r})),
+    ...concerts.filter(c=>!c.cancelled&&c.date>=todayStr).map(c=>({type:'concert', date:c.date, raw:c})),
+  ].sort((a,b)=>a.date.localeCompare(b.date));
+  const nextEvent = upEv[0] || null;
 
-  // Upcoming events list
-  const _dows=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-  if(dshUpcoming){
-    dshUpcoming.innerHTML = upEv.length ? upEv.map(ev=>{
-      const d=new Date(ev.date+'T00:00:00');
-      const pill=ev.type==='concert'?`<span class="pill pp">${t('Concert')}</span>`:`<span class="pill pg">${t('Rehearsal')}</span>`;
-      return`<div class="er"><div class="edb"><div class="edd">${t(_dows[d.getDay()])}</div><div class="edn">${d.getDate()}</div></div><div style="flex:1"><div class="en">${ev.title}</div><div class="em">${ev.detail}</div></div>${pill}</div>`;
-    }).join('') : empty(t('No upcoming events.'));
-  }
+  // Setlist linked to the next event (rehearsal: single; concert: first), else most-recent setlist
+  const nextSlId = nextEvent ? (nextEvent.type==='rehearsal' ? nextEvent.raw.setlistId : (nextEvent.raw.setlistIds||[])[0]) : null;
+  const targetSl = (nextSlId && setlists.find(s=>s.id===nextSlId)) || setlists[0] || null;
+  _dshTargetSlId = targetSl ? targetSl.id : null;
 
-  // Group members list
-  if(dshMembers){
+  // ── WIDGET 1 — Next Event (paints now; re-paints once setlist song count loads) ──
+  const paintNext = () => {
+    if(!elNext) return;
+    if(!nextEvent){
+      elNext.innerHTML = `<div class="card dne-empty"><div style="font-size:1.7rem;margin-bottom:6px">📅</div><div style="font-weight:700;margin-bottom:4px">${t('No events scheduled')}</div><p style="font-size:.8rem;color:var(--ink2);margin-bottom:14px">${t('Plan your next rehearsal to get the group together.')}</p><button class="btn btn-p btn-sm" onclick="openNewRehearsal()">+ ${t('Schedule Rehearsal')}</button></div>`;
+      return;
+    }
+    const raw = nextEvent.raw, isReh = nextEvent.type==='rehearsal';
+    const d = new Date(nextEvent.date+'T00:00:00');
+    const badge = isReh ? `<span class="pill pg">${t('Rehearsal')}</span>` : `<span class="pill pp">${t('Concert')}</span>`;
+    const timeStr = isReh ? ((raw.start&&raw.end)?`${raw.start}–${raw.end}`:(raw.start||'')) : (raw.time||'');
+    const venue = isReh ? (raw.location||'') : (raw.venue||'');
+    const dateLabel = `${t(_DOWS[d.getDay()])}, ${t(MAb[d.getMonth()])} ${d.getDate()}`;
+    const meta = [dateLabel, timeStr, venue].filter(Boolean).map(esc).join(' · ');
+    let chips = '';
+    const sl = nextSlId && setlists.find(s=>s.id===nextSlId);
+    if(sl){
+      const cnt = (slSongs[sl.id]||[]).filter(id=>songByAnyId(id)).length;
+      chips += `<span class="dne-chip" onclick="dshOpenSetlistById('${sl.id}')">♩ ${esc(sl.name)}${cnt?` · ${cnt} ${t('songs')}`:''}</span>`;
+    }
+    if(isReh){
+      const att = rehAttendance(raw);
+      const myMap = {yes:'✓ '+t('Going'), no:'✗ '+t('Not going'), maybe:'? '+t('Maybe')};
+      const myLabel = raw.myRsvp?.status ? myMap[raw.myRsvp.status] : t('Not responded');
+      chips += `<span class="dne-chip">👥 ${att.yes}/${att.total} ${t('going')}</span>`;
+      chips += `<span class="dne-chip" style="border-color:rgba(108,99,255,.3)">${t('You')}: ${myLabel}</span>`;
+    }
+    elNext.innerHTML = `<div class="dne">
+      <div class="dne-cal"><div class="m">${t(MAb[d.getMonth()])}</div><div class="d">${d.getDate()}</div><div class="dow">${t(_DOWS[d.getDay()])}</div></div>
+      <div class="dne-body">${badge}<div class="dne-title">${esc(raw.title||(isReh?'Rehearsal':'Concert'))}</div><div class="dne-meta">${meta}</div>${chips?`<div class="dne-chips">${chips}</div>`:''}</div>
+      <div class="dne-cd">${_dshCountdown(nextEvent.date)}</div>
+    </div>`;
+  };
+  paintNext();
+
+  // ── WIDGET 3 — Member Status (RSVP for the next event when it's a rehearsal, else availability dot) ──
+  if(elMem){
     const active = activeMembers();
-    dshMembers.innerHTML = active.length ? active.slice(0,6).map(m=>{
-      const idx=members.indexOf(m);
-      const photo=memberPhotos[idx]||null;
-      const avToday=(m.avail||[])[new Date().getDay()]?'on':'off';
-      const instLine=[m.instrument,m.vocals&&m.vocals!=='None'?m.vocals:''].filter(Boolean).join(' · ');
-      return`<div class="mr2"><div class="mav2" style="background:${m.color};${photo?`background-image:url(${photo});background-size:cover;background-position:center`:''}">${photo?'':m.init}</div><div style="flex:1"><div class="mn">${m.name}</div><div class="mi">${instLine}</div></div><div class="ad ${avToday}"></div></div>`;
-    }).join('') : empty(t('No members yet. Invite someone to join!'));
-  }
-
-  // Pending RSVPs widget (admin only) — upcoming rehearsals with non-responders.
-  const pendCard = document.getElementById('dshPendingRsvpCard');
-  const pendBox  = document.getElementById('dshPendingRsvp');
-  if(pendCard && pendBox){
-    if(currentUser.role!=='admin'){
-      pendCard.style.display='none';
+    const nextReh = (nextEvent && nextEvent.type==='rehearsal') ? nextEvent.raw : null;
+    const rsvpBy = {}; if(nextReh) (nextReh.rsvps||[]).forEach(x=>{rsvpBy[x.user_id]=x.status;});
+    const rvIcon = {yes:['y','✓'], no:['n','✗'], maybe:['m','?']};
+    if(!active.length){
+      elMem.innerHTML = empty(t('No members yet. Invite someone to join!'));
     } else {
-      const pendingRehs = rehearsals
-        .filter(r=>!r.cancelled && r.date>=todayStr)
-        .map(r=>({r, att:rehAttendance(r)}))
-        .filter(x=>x.att.pending>0)
-        .sort((a,b)=>a.r.date.localeCompare(b.r.date))
-        .slice(0,5);
-      if(!pendingRehs.length){
-        pendCard.style.display='none';
-      } else {
-        pendCard.style.display='';
-        pendBox.innerHTML = pendingRehs.map(({r,att})=>{
-          const d=new Date(r.date+'T00:00:00');
-          const when=`${t(_dows[d.getDay()])} ${d.getDate()} ${t(MAb[d.getMonth()])}`;
-          const msg=`${att.pending} ${att.pending>1?t('members haven’t responded'):t('member hasn’t responded')}`;
-          return`<div class="er" style="cursor:pointer" onclick="openRsvpBreakdown('${r.id}')"><div class="edb"><div class="edd">${t(_dows[d.getDay()])}</div><div class="edn">${d.getDate()}</div></div><div style="flex:1"><div class="en">${esc(r.title||'Rehearsal')}</div><div class="em">${when} · ${msg}</div></div><span class="rsvp-summary" style="margin:0">👥 ${att.yes}/${att.total}</span></div>`;
-        }).join('');
+      elMem.innerHTML = active.map(m=>{
+        const idx = members.indexOf(m);
+        const photo = memberPhotos[idx]||null;
+        const instLine = [m.instrument, (m.vocals&&m.vocals!=='None')?m.vocals:''].filter(Boolean).join(' · ');
+        let status;
+        if(nextReh){
+          const ic = rvIcon[rsvpBy[m.id]] || ['p','·'];
+          status = `<span class="rvi ${ic[0]}" title="${t('RSVP')}">${ic[1]}</span>`;
+        } else {
+          const avToday = (m.avail||[])[new Date().getDay()]?'on':'off';
+          status = `<div class="ad ${avToday}"></div>`;
+        }
+        return `<div class="mr2"><div class="mav2" style="background:${m.color};${photo?`background-image:url(${photo});background-size:cover;background-position:center`:''}">${photo?'':m.init}</div><div style="flex:1"><div class="mn">${esc(m.name)}</div><div class="mi">${esc(instLine)}</div></div>${status}</div>`;
+      }).join('');
+      if(active.length < 3){
+        elMem.innerHTML += `<div class="cl" style="margin-top:10px;cursor:pointer" onclick="openInvMod()">${t('Invite more members')} →</div>`;
       }
     }
   }
+
+  // ── WIDGET 5 — Quick Actions ──
+  if(elQA){
+    const ico = {
+      reh:`<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="3" width="12" height="11" rx="1.5"/><path d="M2 6h12M5 1v3M11 1v3"/></svg>`,
+      song:`<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 12V3l7-1.5V11"/><circle cx="4" cy="12" r="2"/><circle cx="11" cy="11" r="2"/></svg>`,
+      con:`<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 1l2 4.5 5 .5-3.7 3.3L12.5 15 8 12.3 3.5 15l1.2-5.7L1 6l5-.5z"/></svg>`,
+      inv:`<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="6" cy="5" r="2.5"/><path d="M1.5 14c0-2.5 2-4 4.5-4s4.5 1.5 4.5 4M12.5 5v4M14.5 7h-4"/></svg>`,
+    };
+    elQA.innerHTML = `<div class="dqa">
+      <div class="dqb" onclick="openNewRehearsal()">${ico.reh}${t('Schedule Rehearsal')}</div>
+      <div class="dqb" onclick="openAddSong()">${ico.song}${t('Add Song')}</div>
+      <div class="dqb" onclick="openNewConcert();nav('concerts')">${ico.con}${t('Add Concert')}</div>
+      <div class="dqb" onclick="openInvMod()">${ico.inv}${t('Invite Member')}</div>
+    </div>`;
+  }
+
+  // ── WIDGETS 2 & 4 — skeletons, then one parallel load (each result isolated) ──
+  if(elSet) elSet.innerHTML = skel(4);
+  if(elAct) elAct.innerHTML = skel(4);
+
+  const pSongs = targetSl
+    ? (slSongs[targetSl.id]
+        ? Promise.resolve(slSongs[targetSl.id])
+        : SetlistsDB.fetchSongs(targetSl.id).then(ids=>{ slSongs[targetSl.id]=ids; return ids; }))
+    : Promise.resolve(null);
+  const pActs = ChangelogDB.fetch(activeBandId, 7);
+
+  Promise.all([
+    pSongs.then(r=>r, ()=>null),   // setlist song ids (null = no setlist / failed)
+    pActs.then(r=>r, ()=>[]),      // changelog entries (null = table missing, [] = none/failed)
+  ]).then(([slIds, acts])=>{
+    if(gen !== _dshGen) return; // a newer render started — drop this stale paint
+
+    // WIDGET 1 chip now has its song count available
+    paintNext();
+
+    // WIDGET 2 — Active Set List
+    if(elSet){
+      const link = document.getElementById('dshSetlistLink');
+      if(!targetSl){
+        if(link) link.style.display='none';
+        elSet.innerHTML = `<div style="text-align:center;padding:14px 8px"><div style="font-weight:600;font-size:.85rem;margin-bottom:8px">${t('No set lists yet')}</div><button class="btn btn-p btn-sm" onclick="nav('setlists')">+ ${t('Create Set List')}</button></div>`;
+      } else {
+        if(link) link.style.display='';
+        const validIds = (slIds||[]).filter(id=>songByAnyId(id));
+        const totalSec = validIds.reduce((a,id)=>{const s=songByAnyId(id);return a+(s&&s.dur?s.dur:0);},0);
+        const mins = Math.round(totalSec/60);
+        const peek = validIds.slice(0,3).map((id,i)=>{
+          const s=songByAnyId(id);
+          return `<div class="dsl-song"><span class="dsl-num">${String(i+1).padStart(2,'0')}</span><span>${esc(s.title)}</span><span class="dsl-art">${esc(s.artist||'')}</span></div>`;
+        }).join('');
+        const metaLine = `${validIds.length} ${validIds.length===1?t('song'):t('songs')}${mins?` · ~${mins} ${t('min')}`:''}`;
+        elSet.innerHTML = `<div style="font-weight:700;font-size:.95rem;letter-spacing:-.01em">${esc(targetSl.name)}</div>
+          <div style="font-size:.74rem;color:var(--ink2);margin:3px 0 10px">${metaLine}</div>
+          ${validIds.length?peek:empty(t('No songs in this set list yet.'))}`;
+      }
+    }
+
+    // WIDGET 4 — Recent Activity (friendly empty state if table missing or no entries)
+    if(elAct){
+      if(!acts || !acts.length){
+        elAct.innerHTML = empty(t('No recent activity yet.'));
+      } else {
+        elAct.innerHTML = acts.slice(0,5).map(e=>
+          `<div class="dac"><div class="dac-dot"></div><div style="flex:1"><div class="dac-desc">${esc(e.description)}</div><div class="dac-meta">${esc(e.user_name||t('Someone'))} · ${_timeAgo(e.created_at)}</div></div></div>`
+        ).join('');
+      }
+    }
+  });
 }
+
+// Open a specific set list in the full Set Lists view (from dashboard chip / link)
+async function dshOpenSetlistById(id){
+  if(!id){ nav('setlists'); return; }
+  nav('setlists');
+  activeSetlistId = id;
+  await loadSetlistSongs(id);
+  slS = getSlS();
+  renderSLDropdown();
+  const dd = document.getElementById('slDropdown'); if(dd) dd.value = id;
+  const sl = setlists.find(x=>x.id===id);
+  const nameEl = document.getElementById('slName'); if(nameEl) nameEl.textContent = sl ? sl.name : 'Set List';
+  renderSlMeta(); renderSL();
+}
+// "View Full Setlist →" header link — opens the dashboard's current target set list
+function dshOpenSetlist(){ _dshTargetSlId ? dshOpenSetlistById(_dshTargetSlId) : nav('setlists'); }
 
 async function initApp(){
   populateCountrySelects();

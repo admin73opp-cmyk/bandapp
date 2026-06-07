@@ -1,5 +1,28 @@
 /* Dutch (NL) translations */
 window.NL = {
+  /* ── DASHBOARD ────────────────────────────────────────── */
+  'Add Song': 'Nummer toevoegen',
+  'Add Concert': 'Concert toevoegen',
+  'Active Set List': 'Actieve setlist',
+  'Member Status': 'Ledenstatus',
+  'Recent Activity': 'Recente activiteit',
+  'Quick Actions': 'Snelle acties',
+  'View Full Setlist →': 'Volledige setlist bekijken →',
+  'No events scheduled': 'Geen evenementen gepland',
+  'Plan your next rehearsal to get the group together.': 'Plan je volgende repetitie om de group samen te brengen.',
+  'No songs in this set list yet.': 'Nog geen nummers in deze setlist.',
+  'No recent activity yet.': 'Nog geen recente activiteit.',
+  'Invite more members': 'Meer leden uitnodigen',
+  'Today': 'Vandaag',
+  'Tomorrow': 'Morgen',
+  'in': 'over',
+  'days': 'dagen',
+  'Going': 'Aanwezig',
+  'Not going': 'Afwezig',
+  'Not responded': 'Niet gereageerd',
+  'going': 'aanwezig',
+  'You': 'Jij',
+  'Someone': 'Iemand',
   /* ── AUTH SCREEN ──────────────────────────────────────── */
   'Manage your music group, rehearsals & setlists': 'Beheer je group, repetities en setlists',
   'Sign in': 'Inloggen',
