@@ -204,6 +204,12 @@ select option{background:var(--w)}
 .dne-chips{margin-top:10px;display:flex;gap:7px;flex-wrap:wrap;align-items:center}
 .dne-chip{display:inline-flex;align-items:center;gap:5px;padding:4px 11px;border-radius:99px;font-size:.74rem;font-weight:600;cursor:pointer;background:var(--w);border:1.5px solid var(--bd);color:var(--ink)}
 .dne-empty{text-align:center;padding:26px 16px}
+/* dashboard — next concert strip */
+.dnc{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:12px 16px;background:var(--w);border:1.5px solid var(--bd);border-left:3px solid var(--a);border-radius:var(--rad);box-shadow:var(--sh);cursor:pointer;transition:border-color .13s}
+.dnc:hover{border-color:var(--a)}
+.dnc-title{font-weight:700;font-size:.92rem;letter-spacing:-.01em}
+.dnc-meta{font-size:.76rem;color:var(--ink2)}
+.dnc-cd{margin-left:auto;font-size:.74rem;font-weight:700;color:var(--a);white-space:nowrap;background:var(--a2);border:1px solid rgba(108,99,255,.25);border-radius:99px;padding:3px 11px}
 /* dashboard — quick actions */
 .dqa{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:2px}
 .dqb{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;padding:15px 8px;background:var(--w);border:1.5px solid var(--bd);border-radius:var(--rad);cursor:pointer;font-family:var(--font);font-size:.76rem;font-weight:600;color:var(--ink);transition:border-color .13s,transform .13s,background .13s}
@@ -669,6 +675,8 @@ html[data-theme="dark"] .sb-group-name{color:var(--ink)!important}
       </div>
       <!-- WIDGET 1 — Next Event (full width) -->
       <div id="dshNextEvent"></div>
+      <!-- Next upcoming concert (shown when the next event isn't already that concert) -->
+      <div id="dshNextConcert" style="margin-top:12px"></div>
       <!-- Row 2: Active Set List + Member Status -->
       <div class="dg" style="margin-top:14px">
         <div class="card">
@@ -6561,6 +6569,7 @@ function renderDashboard(){
   if(!activeBandId || !group){
     if(dshS)  dshS.textContent = t('Create or join a group to get started.');
     if(elNext) elNext.innerHTML = '';
+    const _nc=document.getElementById('dshNextConcert'); if(_nc) _nc.innerHTML='';
     if(elSet)  elSet.innerHTML = empty(t('No group selected.'));
     if(elMem)  elMem.innerHTML = empty(t('No group selected.'));
     if(elAct)  elAct.innerHTML = empty(t('No group selected.'));
@@ -6630,6 +6639,28 @@ function renderDashboard(){
     </div>`;
   };
   paintNext();
+
+  // ── Next upcoming concert — surfaced even when a rehearsal is sooner ──
+  const elConcert = document.getElementById('dshNextConcert');
+  if(elConcert){
+    const nextConcert = concerts.filter(c=>!c.cancelled&&c.date>=todayStr).sort((a,b)=>a.date.localeCompare(b.date))[0];
+    // Hide when the hero already shows this concert (i.e. it's the next event)
+    if(!nextConcert || (nextEvent && nextEvent.type==='concert')){
+      elConcert.innerHTML='';
+    } else {
+      const cd=new Date(nextConcert.date+'T00:00:00');
+      const dateLabel=`${t(_DOWS[cd.getDay()])}, ${t(MAb[cd.getMonth()])} ${cd.getDate()}`;
+      const bits=[esc(dateLabel)];
+      if(nextConcert.time) bits.push(esc(nextConcert.time));
+      if(nextConcert.venue) bits.push(mapAddr(nextConcert.venue));
+      elConcert.innerHTML=`<div class="dnc" onclick="nav('concerts');openConcertView('${nextConcert.id}')">
+        <span class="pill pp">${t('Concert')}</span>
+        <span class="dnc-title">${esc(nextConcert.title||'Concert')}</span>
+        <span class="dnc-meta">${bits.join(' · ')}</span>
+        <span class="dnc-cd">${_dshCountdown(nextConcert.date)}</span>
+      </div>`;
+    }
+  }
 
   // ── WIDGET 3 — Member Status (RSVP for the next event when it's a rehearsal, else availability dot) ──
   if(elMem){
