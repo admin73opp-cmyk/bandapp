@@ -109,7 +109,7 @@ const fileMap = {}; // 'js/auth.js' → 'js/auth.a1b2c3d4.js'
   try {
     const minified = await minify(html, {
       collapseWhitespace: true,
-      minifyCSS: true,
+      minifyCSS: { level: 2 },
       minifyJS: { compress: true, mangle: { toplevel: false } },
       removeComments: true,
       collapseBooleanAttributes: true,

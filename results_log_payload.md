@@ -20,5 +20,17 @@
 | P1 | Minify locale files at build (terser, mangle off) | 211,089 | **205,943** | ✅ KEPT (−5,146 / −2.4%) |
 | P2 | Minify `js/` files at build (terser compress, mangle off) | 205,943 | **197,544** | ✅ KEPT (−8,399 / −4.1%) |
 | P3 | Aggressive html-minifier opts (removeComments, sortAttrs/Class, etc.) | 197,544 | **197,475** | ✅ kept (−69, marginal — HTML already tight) |
+| P4 | clean-css level 2 (structural CSS merging) | 197,475 | **197,440** | ✅ kept (−35, marginal — CSS already tight) |
 
-**Current baseline: 197,475 gz bytes.** Cumulative: −13,614 (−6.5%).
+### Build-level ceiling reached (after P4)
+Meaningful wins were P1 (locales −5.1KB) + P2 (js −8.4KB). P3/P4 are tens of bytes — the
+HTML/CSS were already minified. **Cumulative: 211,089 → 197,440 gz (−13,649 / −6.5%), gate
+23/23 every round.** Remaining levers need a human decision (out of "surgical" scope):
+  • **Concatenate the 6 locales into one file** so gzip dedupes shared structure: tested
+    = −3,781 gz (−1.9%), but needs a fragile build-time rewrite of the locale injector.
+  • **Dedupe the English keys across locales** (store keys once, values per language):
+    potentially much larger, but an i18n data-format + i18n.js refactor whose translation
+    correctness the gate can't fully verify.
+  • Both are the asset-2 equivalent of asset-1's "lever B" — bigger payoff, real risk.
+
+**Current baseline: 197,440 gz bytes.** Cumulative: −13,649 (−6.5%).
