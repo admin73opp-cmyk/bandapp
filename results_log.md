@@ -21,12 +21,13 @@
 | 1 | `defer` on all 10 `<head>` scripts | 492.7 | 495.0 / 488.6 | ❌ reverted — no gain (metric stubs the network, so `defer` has nothing to bite on here) |
 | 2 | Inject the 6 locale tables (317KB) on the `load` event instead of parsing them inline → moves their eval past `loadEventEnd` | 492.7 | **470.0 / 452.4** | ✅ **KEPT** — new baseline, all 23 checks pass |
 
-**Current baseline: 470.0 ms** (was 492.7). Net improvement so far: **~5–8%.**
+**Current baseline: 444.4 ms** (was 492.7). Net improvement so far: **~10–13%.**
 
 _Note / tradeoff (round 2): non-English returning users now see English for a few ms
 before their locale loads. Acceptable for a load-time win; revert is trivial if you dislike it._
 
 | 3 | Collapse inline `<style>` whitespace (semantics-preserving) | 470.0 | n/a | ❌ reverted — only 585 bytes (1.3% of CSS / 0.1% of doc); below the metric's noise floor, not worth scoring |
+| 4 | **Minify the 4 inline JS blocks with terser** (no-mangle, no-compress, comments off → semantics-preserving; saved 38.6KB / 12.9%, doc 501KB→463KB) | 470.0 | **444.4 / 427.0** | ✅ **KEPT** — new baseline, all 23 checks pass, all inline fn names verified intact |
 
 ### Diminishing-returns checkpoint (after round 3)
 Diagnosis of the 501KB document: **298KB is inline app JavaScript** parsed on every
