@@ -2,5 +2,6 @@
 .env.local
 .DS_Store
 Node_modules/
+node_modules/
 .claude/
 dist/

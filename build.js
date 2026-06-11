@@ -7,6 +7,7 @@
 const fs     = require('fs');
 const path   = require('path');
 const crypto = require('crypto');
+const { minify } = require('html-minifier-terser');
 
 const OUT = 'dist';
 
@@ -55,14 +56,12 @@ for (const file of findJs('js')) {
   console.log(`  ${rel} → ${hashed}`);
 }
 
-// ── Rewrite index.html ──────────────────────────────────────
+// ── Rewrite index.html (hash-bust external js/ refs) ────────
 let html = fs.readFileSync('index.html', 'utf8');
 for (const [orig, hashed] of Object.entries(fileMap)) {
   // src="js/auth.js"  →  src="/js/auth.a1b2c3d4.js"
   html = html.split(`src="${orig}"`).join(`src="/${hashed}"`);
 }
-fs.writeFileSync(path.join(OUT, 'index.html'), html);
-console.log('  index.html → dist/index.html');
 
 // ── Copy locales unchanged (no hashing — cache-busted by index.html) ──
 if (fs.existsSync('locales')) {
@@ -82,4 +81,18 @@ if (fs.existsSync('logo')) {
   console.log('  logo/ → dist/logo/');
 }
 
-console.log(`\n✓ Build complete → ${OUT}/`);
+// ── Minify inline CSS/JS + collapse whitespace, then write index.html ──
+// minifyJS uses terser defaults; toplevel mangle is kept OFF so global
+// functions referenced from inline onclick="" handlers keep their names.
+minify(html, {
+  collapseWhitespace: true,
+  minifyCSS: true,
+  minifyJS: { mangle: { toplevel: false } },
+}).then((minified) => {
+  fs.writeFileSync(path.join(OUT, 'index.html'), minified);
+  console.log('  index.html → dist/index.html (minified)');
+  console.log(`\n✓ Build complete → ${OUT}/`);
+}).catch((err) => {
+  console.error('✗ Minify failed:', err);
+  process.exit(1);
+});
