@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='16' fill='%236C63FF'/><text x='16' y='22' text-anchor='middle' font-size='18' fill='white'>♪</text></svg>">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%236C63FF'/><line x1='10' y1='9' x2='10' y2='23' stroke='white' stroke-width='1.6' stroke-linecap='round'/><text x='12.3' y='22.6' font-family='Garamond,Georgia,serif' font-size='15' font-weight='300' fill='white'>r</text><circle cx='23' cy='9.6' r='1.7' fill='white'/></svg>">
 <title>Ritovo</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="js/supabase-client.js"></script>
@@ -409,6 +409,7 @@ select option{background:var(--w)}
 .pdfn{font-size:.69rem;color:var(--ink3);display:flex;align-items:center;gap:3px}
 .es{text-align:center;padding:38px 14px;color:var(--ink3)}
 .es-ico{font-size:2.1rem;margin-bottom:9px;opacity:.45}.es h3{font-size:.93rem;margin-bottom:4px;color:var(--ink2)}.es p{font-size:.79rem}
+.es-mark{width:58px;height:58px;margin:0 auto 14px;color:var(--ink3);opacity:.6;display:block}.es-mark svg{width:100%;height:100%;display:block}
 @media(max-width:768px){
   .sb{transform:translateX(-100%)}.sb.open{transform:none}.mc{margin-left:0}.mc.sb-minimized{margin-left:0}.hbg{display:block}.sb-toggle{display:none}
   .tb-icon-btn .tb-btn-label{display:none}
@@ -555,27 +556,27 @@ html[data-theme="dark"] .sb-group-name{color:var(--ink)!important}
     <div class="sb-nav">
       <div class="ns">
         <div class="nsl" data-i18n="Main">Main</div>
-        <div class="ni on" onclick="nav('dashboard')" data-label="Dashboard" data-i18n="Dashboard"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="1" width="6" height="6" rx="1.5"/><rect x="9" y="1" width="6" height="6" rx="1.5"/><rect x="1" y="9" width="6" height="6" rx="1.5"/><rect x="9" y="9" width="6" height="6" rx="1.5"/></svg><span class="sb-label">Dashboard</span></div>
-        <div class="ni" onclick="nav('calendar')" data-label="Calendar" data-i18n="Calendar"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="2" width="14" height="13" rx="2"/><path d="M1 6h14M5 1v2M11 1v2"/></svg><span class="sb-label">Calendar</span></div>
-        <div class="ni" onclick="nav('rehearsals')" data-label="Rehearsals" data-i18n="Rehearsals"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M6 6l5 2-5 2V6z"/></svg><span class="sb-label">Rehearsals</span><span class="nb" id="sbRehCount" style="display:none">0</span></div>
-        <div class="ni" onclick="nav('concerts')" data-label="Concerts" data-i18n="Concerts"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 1l2.4 4.9 5.4.8-3.9 3.8.9 5.3L8 13.3l-4.8 2.5.9-5.3L.2 6.7l5.4-.8L8 1z"/></svg><span class="sb-label">Concerts</span><span class="nb" id="sbConCount" style="display:none">0</span></div>
+        <div class="ni on" onclick="nav('dashboard')" data-label="Dashboard" data-i18n="Dashboard"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="6.5" height="6.5" rx="2"/><rect x="13.5" y="4" width="6.5" height="6.5" rx="2"/><rect x="4" y="13.5" width="6.5" height="6.5" rx="2"/><rect x="13.5" y="13.5" width="6.5" height="6.5" rx="2"/></svg><span class="sb-label">Dashboard</span></div>
+        <div class="ni" onclick="nav('calendar')" data-label="Calendar" data-i18n="Calendar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="15.5" rx="2.5"/><path d="M3.5 9.5h17M8 3v3.5M16 3v3.5"/><circle cx="12" cy="15" r="1.5" fill="currentColor" stroke="none"/></svg><span class="sb-label">Calendar</span></div>
+        <div class="ni" onclick="nav('rehearsals')" data-label="Rehearsals" data-i18n="Rehearsals"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M9.4 4.2h5.2l2.9 15.8H6.5z"/><path d="M7.7 14h8.6"/><path d="M12 18 14.4 8"/><circle cx="14.6" cy="7.5" r="1.5" fill="currentColor" stroke="none"/></svg><span class="sb-label">Rehearsals</span><span class="nb" id="sbRehCount" style="display:none">0</span></div>
+        <div class="ni" onclick="nav('concerts')" data-label="Concerts" data-i18n="Concerts"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M6 11a6 6 0 0 0 12 0"/><path d="M12 17v3.5M8.5 20.5h7"/></svg><span class="sb-label">Concerts</span><span class="nb" id="sbConCount" style="display:none">0</span></div>
       </div>
       <div class="ns">
         <div class="nsl" data-i18n="Music">Music</div>
-        <div class="ni" onclick="nav('setlists')" data-label="Set Lists" data-i18n="Set Lists"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 4h12M2 8h8M2 12h10"/></svg><span class="sb-label">Set Lists</span><span class="nb" id="sbSlCount" style="display:none">0</span></div>
-        <div class="ni" onclick="nav('library')" data-label="Song Library" data-i18n="Song Library"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="5" cy="12" r="2"/><circle cx="13" cy="11" r="2"/><path d="M7 12V4l8-2v8"/></svg><span class="sb-label">Song Library</span><span class="nb" id="sbLibCount" style="background:var(--bl)">0</span></div>
+        <div class="ni" onclick="nav('setlists')" data-label="Set Lists" data-i18n="Set Lists"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6.5h11M9 12h11M9 17.5h7"/><circle cx="4.5" cy="6.5" r="1.4" fill="currentColor" stroke="none"/><circle cx="4.5" cy="12" r="1.4" fill="currentColor" stroke="none"/><circle cx="4.5" cy="17.5" r="1.4" fill="currentColor" stroke="none"/></svg><span class="sb-label">Set Lists</span><span class="nb" id="sbSlCount" style="display:none">0</span></div>
+        <div class="ni" onclick="nav('library')" data-label="Song Library" data-i18n="Song Library"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M10 18V5.5l7-1.8V15.5"/><circle cx="7.6" cy="18" r="2.5" fill="currentColor" stroke="none"/><circle cx="14.6" cy="15.5" r="2.5" fill="currentColor" stroke="none"/></svg><span class="sb-label">Song Library</span><span class="nb" id="sbLibCount" style="background:var(--bl)">0</span></div>
       </div>
       <div class="ns">
         <div class="nsl" data-i18n="Group">Group</div>
-        <div class="ni" onclick="nav('members')" data-label="Members" data-i18n="Members"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="6" cy="5" r="2.5"/><path d="M1 14c0-3 2.2-5 5-5s5 2 5 5"/><circle cx="12" cy="5" r="2"/><path d="M14 13c0-2.4-1.5-4-4-4"/></svg><span class="sb-label">Members</span><span class="nb" id="sbMemCount" style="display:none">0</span></div>
-        <div class="ni" onclick="nav('guestdir')" data-label="Guest Directory" data-i18n="Guest Directory"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="5" r="3"/><path d="M2 14c0-3.3 2.7-5 6-5s6 1.7 6 5"/><path d="M12 8l2 2-2 2" stroke-linecap="round"/></svg><span class="sb-label">Guest Directory</span><span class="nb" id="sbGuestCount" style="display:none">0</span></div>
-        <div class="ni" onclick="nav('bandprofile')" data-label="Group Profile" data-i18n="Group Profile"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="6" r="4"/><path d="M1 14c0-4 3-6 7-6s7 2 7 6"/></svg><span class="sb-label">Group Profile</span></div>
+        <div class="ni" onclick="nav('members')" data-label="Members" data-i18n="Members"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 19.5a5.5 5.5 0 0 1 11 0"/><path d="M15.5 5.2a3.2 3.2 0 0 1 0 6"/><path d="M16.2 14.4a5.5 5.5 0 0 1 4.3 5.1"/></svg><span class="sb-label">Members</span><span class="nb" id="sbMemCount" style="display:none">0</span></div>
+        <div class="ni" onclick="nav('guestdir')" data-label="Guest Directory" data-i18n="Guest Directory"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="8.5" r="3.4"/><path d="M3.8 20a6.2 6.2 0 0 1 12.4 0"/><circle cx="18.5" cy="6" r="2" fill="currentColor" stroke="none"/></svg><span class="sb-label">Guest Directory</span><span class="nb" id="sbGuestCount" style="display:none">0</span></div>
+        <div class="ni" onclick="nav('bandprofile')" data-label="Group Profile" data-i18n="Group Profile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M9.5 8v8"/><circle cx="14.5" cy="8.6" r="1.5" fill="currentColor" stroke="none"/></svg><span class="sb-label">Group Profile</span></div>
       </div>
       <div class="ns">
         <div class="nsl" data-i18n="Account">Account</div>
-        <div class="ni" onclick="nav('myprofile')" data-label="My Profile" data-i18n="My Profile"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="5" r="3"/><path d="M2 14c0-3.3 2.7-5 6-5s6 1.7 6 5"/></svg><span class="sb-label">My Profile</span></div>
-        <div class="ni" onclick="nav('settings')" data-label="Settings" data-i18n="Settings"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="2.2"/><path d="M8 1.5v1M8 13.5v1M1.5 8h1M13.5 8h1M3.4 3.4l.7.7M11.9 11.9l.7.7M3.4 12.6l.7-.7M11.9 4.1l.7-.7"/></svg><span class="sb-label">Settings</span></div>
-        <div class="ni" onclick="doLogout()" style="color:var(--r)" onmouseover="this.style.background='var(--r2)'" onmouseout="this.style.background='transparent'" data-label="Log Out" data-i18n="Log Out"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 2H3a1 1 0 00-1 1v10a1 1 0 001 1h3M10 11l3-3-3-3M13 8H6"/></svg><span class="sb-label">Log Out</span></div>
+        <div class="ni" onclick="nav('myprofile')" data-label="My Profile" data-i18n="My Profile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.6"/><path d="M5.5 20a6.5 6.5 0 0 1 13 0"/></svg><span class="sb-label">My Profile</span></div>
+        <div class="ni" onclick="nav('settings')" data-label="Settings" data-i18n="Settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h8M16 8h4M4 16h4M12 16h8"/><circle cx="14" cy="8" r="2.2" fill="currentColor" stroke="none"/><circle cx="9" cy="16" r="2.2" fill="currentColor" stroke="none"/></svg><span class="sb-label">Settings</span></div>
+        <div class="ni" onclick="doLogout()" style="color:var(--r)" onmouseover="this.style.background='var(--r2)'" onmouseout="this.style.background='transparent'" data-label="Log Out" data-i18n="Log Out"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8"/><path d="M11 12h8.5M16 8.5l3.5 3.5-3.5 3.5"/></svg><span class="sb-label">Log Out</span></div>
       </div>
     </div>
     <div class="sb-foot">
@@ -593,8 +594,8 @@ html[data-theme="dark"] .sb-group-name{color:var(--ink)!important}
         <button class="btn btn-p btn-sm tb-icon-btn" onclick="openNewConcert();nav('concerts')" title="+ Concert" data-i18n-title="+ Concert">
           <span class="tb-btn-label" data-i18n="+ Concert">+ Concert</span>
           <span class="tb-btn-icon">
-            <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 1l2.4 4.9 5.4.8-3.9 3.8.9 5.3L8 13.3l-4.8 2.5.9-5.3L.2 6.7l5.4-.8L8 1z"/></svg>
-            <svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M8 2v12M2 8h12"/></svg>
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M6 11a6 6 0 0 0 12 0"/><path d="M12 17v3.5M8.5 20.5h7"/></svg>
+            <svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M8 2v12M2 8h12"/></svg>
           </span>
         </button>
         <button class="btn btn-p btn-sm tb-icon-btn" onclick="openSlMod()" title="+ Set List" data-i18n="Create Set List">
@@ -652,13 +653,13 @@ html[data-theme="dark"] .sb-group-name{color:var(--ink)!important}
         <button class="btn btn-p btn-sm" onclick="openSlMod()" data-i18n="Create Set List">+ Set List</button>
       </div>
       <div id="slEmptyNoSongs" style="display:none;text-align:center;padding:50px 20px">
-        <div style="font-size:2rem;margin-bottom:10px">🎵</div>
+        <div class="es-mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 18V5.5l7-1.8V15.5"/><circle cx="7.6" cy="18" r="2.5" fill="currentColor" stroke="none"/><circle cx="14.6" cy="15.5" r="2.5" fill="currentColor" stroke="none"/></svg></div>
         <div style="font-weight:700;font-size:1rem;margin-bottom:8px" data-i18n="No songs in library yet">No songs in library yet</div>
         <p style="font-size:.84rem;color:var(--ink2);margin-bottom:18px" data-i18n="Start by adding songs to your library.">Add songs to the library first, then you can build set lists.</p>
         <button class="btn btn-p btn-sm" onclick="nav('library')" data-i18n="Go to Song Library →">Go to Song Library →</button>
       </div>
       <div id="slEmptyNoLists" style="display:none;text-align:center;padding:50px 20px">
-        <div style="font-size:2rem;margin-bottom:10px">📋</div>
+        <div class="es-mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6.5h11M9 12h11M9 17.5h7"/><circle cx="4.5" cy="6.5" r="1.4" fill="currentColor" stroke="none"/><circle cx="4.5" cy="12" r="1.4" fill="currentColor" stroke="none"/><circle cx="4.5" cy="17.5" r="1.4" fill="currentColor" stroke="none"/></svg></div>
         <div style="font-weight:700;font-size:1rem;margin-bottom:8px" data-i18n="No set lists yet">No set lists yet</div>
         <p style="font-size:.84rem;color:var(--ink2);margin-bottom:18px">You have songs in the library — create your first set list!</p>
         <button class="btn btn-p btn-sm" onclick="openSlMod()">+ Create Set List</button>
@@ -781,7 +782,7 @@ html[data-theme="dark"] .sb-group-name{color:var(--ink)!important}
     <div class="pg-area" id="pg-calendar">
 
       <div id="calNoGroup" style="display:none;text-align:center;padding:60px 20px">
-        <div style="font-size:2.5rem;margin-bottom:12px">🎸</div>
+        <div class="es-mark"><svg viewBox="0 0 120 120" fill="none" aria-hidden="true"><line x1="34" y1="32" x2="34" y2="88" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><text x="44" y="86" font-family="'Garamond','Georgia','Times New Roman',serif" font-size="56" font-weight="300" fill="currentColor">r</text><circle cx="88" cy="32" r="4.5" fill="currentColor"/></svg></div>
         <div style="font-size:1.1rem;font-weight:700;margin-bottom:8px" data-i18n="No Group Yet">No Group Yet</div>
         <p style="font-size:.84rem;color:var(--ink2);margin-bottom:20px" data-i18n="Start by creating a group.">Start by creating a group.</p>
         <button class="btn btn-p btn-sm" onclick="openNewBand()" data-i18n="+ Create a Group">+ Create a Group</button>
@@ -881,7 +882,7 @@ html[data-theme="dark"] .sb-group-name{color:var(--ink)!important}
 
     <div class="pg-area" id="pg-rehearsals">
       <div id="rehearsalsNoGroup" style="display:none;text-align:center;padding:60px 20px">
-        <div style="font-size:2.5rem;margin-bottom:12px">🎸</div>
+        <div class="es-mark"><svg viewBox="0 0 120 120" fill="none" aria-hidden="true"><line x1="34" y1="32" x2="34" y2="88" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><text x="44" y="86" font-family="'Garamond','Georgia','Times New Roman',serif" font-size="56" font-weight="300" fill="currentColor">r</text><circle cx="88" cy="32" r="4.5" fill="currentColor"/></svg></div>
         <div style="font-size:1.1rem;font-weight:700;margin-bottom:8px" data-i18n="No Group Yet">No Group Yet</div>
         <p style="font-size:.84rem;color:var(--ink2);margin-bottom:20px" data-i18n="Start by creating a group.">Start by creating a group.</p>
         <button class="btn btn-p btn-sm" onclick="openNewBand()" data-i18n="+ Create a Group">+ Create a Group</button>
@@ -915,7 +916,7 @@ html[data-theme="dark"] .sb-group-name{color:var(--ink)!important}
     </div>
     <div class="pg-area" id="pg-concerts">
       <div id="concertsNoGroup" style="display:none;text-align:center;padding:60px 20px">
-        <div style="font-size:2.5rem;margin-bottom:12px">🎸</div>
+        <div class="es-mark"><svg viewBox="0 0 120 120" fill="none" aria-hidden="true"><line x1="34" y1="32" x2="34" y2="88" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><text x="44" y="86" font-family="'Garamond','Georgia','Times New Roman',serif" font-size="56" font-weight="300" fill="currentColor">r</text><circle cx="88" cy="32" r="4.5" fill="currentColor"/></svg></div>
         <div style="font-size:1.1rem;font-weight:700;margin-bottom:8px">No Group Yet</div>
         <p style="font-size:.84rem;color:var(--ink2);margin-bottom:20px">Start by creating a group.</p>
         <button class="btn btn-p btn-sm" onclick="openNewBand()">+ Create a Group</button>
@@ -950,7 +951,7 @@ html[data-theme="dark"] .sb-group-name{color:var(--ink)!important}
 
     <div class="pg-area" id="pg-members">
       <div id="membersNoGroup" style="display:none;text-align:center;padding:60px 20px">
-        <div style="font-size:2.5rem;margin-bottom:12px">🎸</div>
+        <div class="es-mark"><svg viewBox="0 0 120 120" fill="none" aria-hidden="true"><line x1="34" y1="32" x2="34" y2="88" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><text x="44" y="86" font-family="'Garamond','Georgia','Times New Roman',serif" font-size="56" font-weight="300" fill="currentColor">r</text><circle cx="88" cy="32" r="4.5" fill="currentColor"/></svg></div>
         <div style="font-size:1.1rem;font-weight:700;margin-bottom:8px">No Group Yet</div>
         <p style="font-size:.84rem;color:var(--ink2);margin-bottom:20px">Start by creating your first group to manage members.</p>
         <button class="btn btn-p btn-sm" onclick="openNewBand()">+ Create a Group</button>
@@ -972,7 +973,7 @@ html[data-theme="dark"] .sb-group-name{color:var(--ink)!important}
 
     <div class="pg-area" id="pg-guestdir">
       <div id="guestDirNoGroup" style="display:none;text-align:center;padding:60px 20px">
-        <div style="font-size:2.5rem;margin-bottom:12px">🎸</div>
+        <div class="es-mark"><svg viewBox="0 0 120 120" fill="none" aria-hidden="true"><line x1="34" y1="32" x2="34" y2="88" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><text x="44" y="86" font-family="'Garamond','Georgia','Times New Roman',serif" font-size="56" font-weight="300" fill="currentColor">r</text><circle cx="88" cy="32" r="4.5" fill="currentColor"/></svg></div>
         <div style="font-size:1.1rem;font-weight:700;margin-bottom:8px">No Group Yet</div>
         <p style="font-size:.84rem;color:var(--ink2);margin-bottom:20px">Start by creating your first group to manage guest musicians.</p>
         <button class="btn btn-p btn-sm" onclick="openNewBand()">+ Create a Group</button>
@@ -1003,7 +1004,7 @@ html[data-theme="dark"] .sb-group-name{color:var(--ink)!important}
     <div class="pg-area" id="pg-bandprofile">
 
       <div id="bpEmpty" style="display:none;text-align:center;padding:60px 20px">
-        <div style="font-size:2.5rem;margin-bottom:12px">🎸</div>
+        <div class="es-mark"><svg viewBox="0 0 120 120" fill="none" aria-hidden="true"><line x1="34" y1="32" x2="34" y2="88" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><text x="44" y="86" font-family="'Garamond','Georgia','Times New Roman',serif" font-size="56" font-weight="300" fill="currentColor">r</text><circle cx="88" cy="32" r="4.5" fill="currentColor"/></svg></div>
         <div style="font-size:1.1rem;font-weight:700;margin-bottom:8px">No Group Yet</div>
         <p style="font-size:.84rem;color:var(--ink2);margin-bottom:20px">You're not part of any group. Create one to get started.</p>
         <button class="btn btn-p btn-sm" onclick="openNewBand()">+ Create a Group</button>
