@@ -18,3 +18,8 @@ invite email via `score_email.py` — **lower is better** (deterministic).
 | # | Hypothesis / change | Before | After | Kept? |
 |---|---|---|---|---|
 | — | _baseline established_ | — | 2,852 | — |
+| E1 | Add `min()` helper collapsing inter-tag whitespace in `emailLayout` | 2,852 | **2,422** | ✅ KEPT (−430 / −15.1%) |
+
+**Current baseline: 2,422 bytes** (−15.1%). Applies to ALL transactional emails (shared layout).
+Rendering identical (text-adjacent whitespace untouched). Asset judged near-optimal after E1 —
+remaining bytes are real content + inline styles; further squeezing risks rendering for marginal gain.
