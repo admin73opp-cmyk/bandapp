@@ -7,7 +7,8 @@ ready via `score_applogin.py` — **lower is better** (median of 7, CPU throttle
 
 | Baseline | Score (ms) | Date |
 |---|---|---|
-| Setup baseline | **733.4** | 2026-06-11 |
+| Setup baseline (empty data) | 733.4 | 2026-06-11 |
+| **Re-baseline (realistic data)** | **956.2** | 2026-06-11 |
 
 > Harness: Supabase stubbed logged-in (session + 1 band, user as admin, empty lists).
 > The dashboard renders first try, 0 console errors. Use paired A/B for keep decisions
@@ -23,4 +24,4 @@ ready via `score_applogin.py` — **lower is better** (median of 7, CPU throttle
 
 | # | Hypothesis / change | Before | After | Kept? |
 |---|---|---|---|---|
-| — | _baseline established_ | — | 733.4 | — |
+| — | _baseline (realistic data: 15 members, 60 songs, 20 rehearsals, 8 concerts, 12 setlists)_ | — | 956.2 | — |

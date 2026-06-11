@@ -60,11 +60,28 @@ const STUB = `(function(){
   var UID='u-1';
   var SESSION={access_token:'tok',refresh_token:'r',expires_at:9999999999,user:{id:UID,email:'demo@ritovo.app',user_metadata:{first_name:'Demo'},app_metadata:{}}};
   var profile={id:UID,first_name:'Demo',last_name:'User',email:'demo@ritovo.app',initials:'DU',instrument:'Guitar',vocals:'None',availability:[1,1,1,1,1,1,1],color:'#6C63FF',lang:'en'};
+  // Realistic seed: 15 members, 60 songs, 20 rehearsals, 8 concerts, 12 setlists, 5 blackouts.
+  var MEMBERS=[]; for(var i=0;i<15;i++){var mid=i===0?UID:'u-'+i;
+    MEMBERS.push({role:i===0?'admin':'member',guest_start:null,guest_end:null,guest_band:null,guest_status:null,user_id:mid,band_id:'b-1',
+      profiles:{id:mid,first_name:'Member'+i,last_name:'Test',email:'m'+i+'@demo.co',initials:'M'+i,instrument:'Guitar',instrument2:'',vocals:'None',availability:[1,1,1,1,1,1,1],color:'#6C63FF',lang:'en'}});}
+  var BANDMEM=MEMBERS.map(function(m){return {role:m.role,user_id:m.user_id};});
+  var SONGS=[]; for(var i=1;i<=60;i++)SONGS.push({id:'s'+i,band_id:'b-1',name:'Song '+i,duration:'3:'+(10+i%49),notes:'',spotify_url:null,youtube_url:null,apple_url:null,amazon_url:null,lyrics_url:null,sheet_music_url:null});
+  var REH=[]; for(var i=1;i<=20;i++)REH.push({id:'r'+i,band_id:'b-1',date:'2026-0'+(1+i%9)+'-1'+(i%9),start_time:'19:00',end_time:'21:00',setlist_id:null});
+  var CON=[]; for(var i=1;i<=8;i++)CON.push({id:'c'+i,band_id:'b-1',name:'Gig '+i,date:'2026-1'+(i%2)+'-0'+(1+i%9),concert_setlists:[]});
+  var SL=[]; for(var i=1;i<=12;i++)SL.push({id:'sl'+i,band_id:'b-1',name:'Set '+i,created_at:'2026-01-0'+(1+i%9)});
+  var BO=[]; for(var i=1;i<=5;i++)BO.push({id:'bo'+i,band_id:'b-1',from_date:'2026-0'+(1+i)+'-01',to_date:'2026-0'+(1+i)+'-05',member_ids:[UID]});
   function dataFor(table){
-    if(table==='bands') return [{id:'b-1',name:'Demo Band',platforms:[],band_members:[{role:'admin',user_id:UID}]}];
-    if(table==='band_members') return [{role:'admin',guest_start:null,guest_end:null,guest_band:null,guest_status:null,user_id:UID,band_id:'b-1',profiles:profile}];
-    if(table==='profiles') return [profile];
-    return [];
+    switch(table){
+      case 'bands': return [{id:'b-1',name:'Demo Band',platforms:[],band_members:BANDMEM}];
+      case 'band_members': return MEMBERS;
+      case 'profiles': return [profile];
+      case 'songs': return SONGS;
+      case 'rehearsals': return REH;
+      case 'concerts': return CON;
+      case 'setlists': return SL;
+      case 'blackouts': return BO;
+      default: return [];
+    }
   }
   function qchain(table){
     var state={table:table,single:false};
