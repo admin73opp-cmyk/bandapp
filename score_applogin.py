@@ -65,7 +65,7 @@ const STUB = `(function(){
     MEMBERS.push({role:i===0?'admin':'member',guest_start:null,guest_end:null,guest_band:null,guest_status:null,user_id:mid,band_id:'b-1',
       profiles:{id:mid,first_name:'Member'+i,last_name:'Test',email:'m'+i+'@demo.co',initials:'M'+i,instrument:'Guitar',instrument2:'',vocals:'None',availability:[1,1,1,1,1,1,1],color:'#6C63FF',lang:'en'}});}
   var BANDMEM=MEMBERS.map(function(m){return {role:m.role,user_id:m.user_id};});
-  var SONGS=[]; for(var i=1;i<=60;i++)SONGS.push({id:'s'+i,band_id:'b-1',name:'Song '+i,duration:'3:'+(10+i%49),notes:'',spotify_url:null,youtube_url:null,apple_url:null,amazon_url:null,lyrics_url:null,sheet_music_url:null});
+  var SONGS=[]; for(var i=1;i<=60;i++)SONGS.push({id:'s'+i,band_id:'b-1',title:'Song '+i,artist:'Artist '+(i%20),name:'Song '+i,duration:'3:'+(10+i%49),notes:'',spotify_url:null,youtube_url:null,apple_url:null,amazon_url:null,lyrics_url:null,sheet_music_url:null});
   var REH=[]; for(var i=1;i<=20;i++)REH.push({id:'r'+i,band_id:'b-1',date:'2026-0'+(1+i%9)+'-1'+(i%9),start_time:'19:00',end_time:'21:00',setlist_id:null});
   var CON=[]; for(var i=1;i<=8;i++)CON.push({id:'c'+i,band_id:'b-1',name:'Gig '+i,date:'2026-1'+(i%2)+'-0'+(1+i%9),concert_setlists:[]});
   var SL=[]; for(var i=1;i<=12;i++)SL.push({id:'sl'+i,band_id:'b-1',name:'Set '+i,created_at:'2026-01-0'+(1+i%9)});
