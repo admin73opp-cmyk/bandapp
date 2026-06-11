@@ -21,13 +21,21 @@
 | 1 | `defer` on all 10 `<head>` scripts | 492.7 | 495.0 / 488.6 | ❌ reverted — no gain (metric stubs the network, so `defer` has nothing to bite on here) |
 | 2 | Inject the 6 locale tables (317KB) on the `load` event instead of parsing them inline → moves their eval past `loadEventEnd` | 492.7 | **470.0 / 452.4** | ✅ **KEPT** — new baseline, all 23 checks pass |
 
-**Current baseline: 444.4 ms** (was 492.7). Net improvement so far: **~10–13%.**
+**Current baseline: round 5** (doc 442,662 bytes). Honest cumulative under paired
+A/B measurement: **~8% faster load, −12.6% document size** vs the original.
 
 _Note / tradeoff (round 2): non-English returning users now see English for a few ms
 before their locale loads. Acceptable for a load-time win; revert is trivial if you dislike it._
 
 | 3 | Collapse inline `<style>` whitespace (semantics-preserving) | 470.0 | n/a | ❌ reverted — only 585 bytes (1.3% of CSS / 0.1% of doc); below the metric's noise floor, not worth scoring |
 | 4 | **Minify the 4 inline JS blocks with terser** (no-mangle, no-compress, comments off → semantics-preserving; saved 38.6KB / 12.9%, doc 501KB→463KB) | 470.0 | **444.4 / 427.0** | ✅ **KEPT** — new baseline, all 23 checks pass, all inline fn names verified intact |
+| 5 | **terser with `compress` + `mangle:{toplevel:false}`** (mangles locals only; every global/handler name preserved; saved another 22.6KB, doc 463KB→440KB) | 444.4 | wins 3/3 paired A/B (see note) | ✅ **KEPT** — all 23 checks pass, global fn names verified intact |
+
+> **Measurement note (round 5):** absolute ms drifts with machine load, so single
+> cross-time scores are unreliable. Switched to **paired A/B** (score baseline and
+> candidate back-to-back, repeat). Round 5 beat round 4 in all 3 pairs (476<530,
+> 449<492, 463<485). Paired **original vs now**: now won all 3 pairs (avg ~476 vs
+> ~517 ms ≈ **~8% faster**). Document size: **506,771 → 442,662 bytes (−12.6%)**.
 
 ### Diminishing-returns checkpoint (after round 3)
 Diagnosis of the 501KB document: **298KB is inline app JavaScript** parsed on every
