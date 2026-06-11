@@ -1,63 +1,70 @@
 # Ritovo — Auto Research Engineer Report
-### Run 1 · Asset: auth/landing page load time · 2026-06-11
+### Overnight run · 5 assets · 2026-06-11
+
+> The deal: pick ONE thing, turn "is it good?" into a single honest number, then change it —
+> keep what wins, trash what loses, and **never touch or game the measuring stick.**
 
 ---
 
-## The deal
-Pick ONE thing, turn "is it good?" into a single honest number, then change it all
-night — keep what wins, trash what loses, never touch the measuring stick.
+## Scoreboard
 
-| | |
-|---|---|
-| **Asset optimized** | `index.html` (Ritovo auth / landing page) |
-| **Metric (locked `score.py`)** | median `loadEventEnd` in headless Chromium — **lower is better** |
-| **Fairness controls** | local server · external CDN stubbed · CPU throttled 4× · 7 loads, median |
-| **Anti-cheat** | 23-check correctness gate — auth screen, logo, i18n, all 9 `*DB`, locales, supabase must survive, or the run scores **INVALID** |
+| # | Asset | Metric (locked scorer) | Baseline → Best | Result |
+|---|---|---|---|---|
+| 1 | Landing/auth page | median load ms (`score.py`) | — | **~8% faster, −12.6% size** |
+| 2 | Download payload | gzipped bytes (`score_payload.py`) | 211,089 → 197,440 | **−6.5%** |
+| 3 | Accessibility | axe violations (`score_a11y.py`) | 25 → **0** | **target hit 🎯** |
+| 4 | Invite email | raw bytes (`score_email.py`) | 2,852 → 2,422 | **−15.1%** (all emails) |
+| 5 | Logged-in app speed | render ms (`score_applogin.py`) | ~1,137 → ~766 | **−33% (~370ms)** |
 
----
-
-## Rounds
-
-| # | Hypothesis / change | Result | Kept? |
-|---|---|---|---|
-| 0 | baseline | original `index.html` (506,771 B) | — |
-| 1 | `defer` on the 10 `<head>` scripts | no gain (metric stubs the network) | ❌ revert |
-| 2 | **Lazy-load 317 KB of locale tables on `load`** | off the critical path | ✅ **keep** |
-| 3 | Collapse inline `<style>` whitespace | 585 B — below noise floor | ❌ revert |
-| 4 | **Minify 4 inline JS blocks — terser, semantics-only** | −38.6 KB (−12.9% JS) | ✅ **keep** |
-| 5 | **terser `compress` + mangle locals (globals preserved)** | −22.6 KB more | ✅ **keep** |
-| B | Lazy-load post-login app code | scoped → not safely/honestly tractable | ⏹ declined |
-
-**3 wins kept · 2 losers reverted · 1 big lever investigated and walked away from.**
+Five constitutions (`instructions*.md`, human-owned), five locked scorers (read-only to the AI,
+each with a correctness/safety gate), five logs (`results_log*.md`). Everything committed and
+pushed to `claude/auto-research-engineer-j3e5jv`.
 
 ---
 
-## Total improvement (paired A/B, drift-controlled)
+## Per-asset rounds
 
-| | Before | After | Δ |
-|---|---|---|---|
-| First-load time | ~517 ms | ~476 ms | **≈ −8%** |
-| Document size | 506,771 B | 442,662 B | **−64,109 B (−12.6%)** |
-| Correctness | — | 23/23 every round | ✅ |
+**Asset 1 — landing speed** · *kept 2 of 4*
+- ✅ Lazy-load 317KB of locales on `load` · ✅ minify inline JS (terser ×2)
+- ❌ `defer` head scripts (metric stubs the network) · ❌ CSS whitespace (below noise)
+- Declined "lever B" (defer post-login JS): auth code is tangled in the monolith; the easy
+  version would game `loadEventEnd` without improving real time-to-interactive.
 
-> Absolute ms drifts with machine load, so mid-run I switched from single scores to
-> **paired A/B** (score baseline and candidate back-to-back, repeat) — the honest arbiter.
+**Asset 2 — payload** · *kept all 4*
+- ✅ minify locales at build · ✅ minify `js/` at build · ✅ aggressive HTML-minifier opts · ✅ clean-css L2
+- Hit the build-level ceiling; bigger gains need locale-structure changes (flagged, not forced).
+
+**Asset 3 — accessibility** · *kept all 3, target reached*
+- ✅ `role="main"` landmark · ✅ `role="status"` on toast · ✅ brand purple #6C63FF→#685FF6 (WCAG-AA)
+- No rules suppressed, nothing hidden — all real fixes. 25 → 0.
+
+**Asset 4 — invite email** · *kept 1, judged near-optimal*
+- ✅ `min()` helper collapsing inter-tag whitespace in the shared layout (−15.1%, benefits every email)
+- Already best-practice (no external imgs, inline styles, 36× under Gmail's clip limit).
+
+**Asset 5 — logged-in app speed** · *kept 1 (the big one)*
+- ✅ defer off-screen tab renders to `requestIdleCallback`; dashboard paints first (−33%)
+- **Caught a measurement bug honestly:** the first realistic dataset gave songs a `name` field,
+  but the app renders by `title`+`artist`, so `renderLib` was throwing and the baseline was on a
+  broken render. Corrected the data, re-baselined, verified all tabs populate (0 errors), *then*
+  measured the win.
 
 ---
 
-## Integrity notes (what I refused to do)
-- Never edited `score.py` or `instructions.md`.
-- Reverted round 3 instead of logging a 585-byte "win."
-- **Declined lever B's easy path**: deferring the 215 KB app block would have improved
-  the *number* more than real time-to-interactive (the scorer stubs the network) — a
-  metric-game — and the auth code is tangled into the monolith, so a clean split isn't
-  surgical here. Banked the honest ~8% instead.
+## Methodology notes (the honest bits)
+- **Paired A/B** for timing metrics: absolute ms drifts with machine load, so wins are confirmed by
+  scoring baseline vs candidate back-to-back, not by cross-time single numbers.
+- **Correctness/safety gates** in every scorer so "faster/smaller" can never mean "broken/deleted":
+  a 23-check structural gate (assets 1/2/3/5), a 10-check email-safety gate (asset 4), and for the
+  minified-code change (asset 5) an extra out-of-band verification that every deferred tab renders.
+- **Integrity:** no scorer was ever edited to score better; round 3 (asset 1) was reverted rather
+  than logged as a 585-byte "win"; asset-1 lever B and the asset-5 dataset change were surfaced to
+  the human rather than slipped in.
 
-## Next legitimate levers (need a human decision / different setup)
-1. **Live-backend test env** → unlocks the true post-login split (biggest remaining win).
-2. **`build.js` minify step** for external `js/` files → smaller, safe gain.
-3. **Evolve `score.py`** to also reward real-network wins (FCP / TTI / HTTP-2) — the one
-   change that would make `defer`-class optimizations count. Owner's call, never mine.
+## Open levers (need a human decision / different setup)
+- True post-login JS split (asset 1) and locale key-dedup (asset 2) — bigger payoffs, real risk.
+- Extend `score.py` to also reward real-network wins (FCP/TTI/HTTP-2) — would make `defer`-class wins count.
+- A scheduler/GitHub Action to run the loops truly unattended (this container has no cron).
 
 ---
-*Branch: `claude/auto-research-engineer-j3e5jv` · all rounds committed & pushed · `results_log.md` has the full play-by-play.*
+*Branch: `claude/auto-research-engineer-j3e5jv` · all rounds committed with before/after numbers.*
