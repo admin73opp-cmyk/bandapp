@@ -24,6 +24,27 @@
 **Current baseline: round 5** (doc 442,662 bytes). Honest cumulative under paired
 A/B measurement: **~8% faster load, −12.6% document size** vs the original.
 
+---
+
+## Lever B (lazy-load post-login code) — investigated, NOT pursued (2026-06-11)
+Scoped it before changing anything. Finding: the 215KB inline app block is a single
+minified IIFE that **intermixes the auth-critical functions** (`switchTab`, `doLogin`,
+`showForgotPassword`, `openFeedbackModal`, …) with all post-login code + `initApp`, and a
+`DOMContentLoaded` handler in the next block depends on it. So a clean "keep auth on the
+critical path, defer the rest" split is not surgically achievable on the monolith.
+The only easy version (wholesale-defer the block to `load`) would **partly game
+`loadEventEnd`** — the scorer stubs the network, so it would improve the number more than
+real time-to-interactive, and add a brief window where the sign-in buttons aren't wired.
+Decision (human): **stop B, bank the ~8%.** A true split needs the readable source + a
+live-backend test environment and is out of scope for this run.
+
+### Final standing
+- Kept wins: round 2 (locales), round 4 + round 5 (terser JS minify). All pushed.
+- Net: **~8% faster first load, −12.6% document size**, page intact (23/23 checks every round).
+- Next legitimate levers (need a human decision / different setup): true post-login split
+  with a backend test env; minify external `js/` files via a `build.js` step; or change
+  `score.py` to also reward real-network wins (FCP/TTI/HTTP-2) — owner's call.
+
 _Note / tradeoff (round 2): non-English returning users now see English for a few ms
 before their locale loads. Acceptable for a load-time win; revert is trivial if you dislike it._
 
