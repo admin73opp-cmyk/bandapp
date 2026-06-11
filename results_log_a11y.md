@@ -17,3 +17,7 @@ checks must pass or score = INVALID.
 | # | Hypothesis / change | Before | After | Kept? |
 |---|---|---|---|---|
 | — | _baseline established_ | — | 25 | — |
+| A1 | Add `role="main"` to auth card wrapper (landmark) | 25 | **17** | ✅ KEPT (−8, region ×5→×1) |
+| A2 | Add `role="status"` aria-live to `#toast` | 17 | **15** | ✅ KEPT (−2, region cleared) |
+
+**Current baseline: 15** (color-contrast ×3 remaining).
