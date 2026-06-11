@@ -17,3 +17,6 @@
 | # | Hypothesis / change | Before | After | Kept? |
 |---|---|---|---|---|
 | — | _baseline established_ | — | 211,089 | — |
+| P1 | Minify locale files at build (terser, mangle off) | 211,089 | **205,943** | ✅ KEPT (−5,146 / −2.4%) |
+
+**Current baseline: 205,943 gz bytes.**

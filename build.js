@@ -8,6 +8,7 @@ const fs     = require('fs');
 const path   = require('path');
 const crypto = require('crypto');
 const { minify } = require('html-minifier-terser');
+const { minify: minifyJS } = require('terser');
 
 const OUT = 'dist';
 
@@ -63,36 +64,53 @@ for (const [orig, hashed] of Object.entries(fileMap)) {
   html = html.split(`src="${orig}"`).join(`src="/${hashed}"`);
 }
 
-// ── Copy locales unchanged (no hashing — cache-busted by index.html) ──
-if (fs.existsSync('locales')) {
-  copyDir('locales', path.join(OUT, 'locales'));
-  console.log('  locales/ → dist/locales/');
-}
+(async () => {
+  // ── Minify + copy locales (cache-busted by index.html) ──
+  // Locale files are pure data objects (window.XX = {...}); mangle is kept OFF
+  // so the window.XX global names survive, but whitespace/comments are stripped.
+  if (fs.existsSync('locales')) {
+    const dst = path.join(OUT, 'locales');
+    fs.mkdirSync(dst, { recursive: true });
+    for (const e of fs.readdirSync('locales')) {
+      const src = fs.readFileSync(path.join('locales', e), 'utf8');
+      let out = src;
+      if (e.endsWith('.js')) {
+        try {
+          const r = await minifyJS(src, { compress: true, mangle: { toplevel: false }, format: { comments: false } });
+          if (r.code) out = r.code;
+        } catch (err) { console.error('  locale minify skip', e, err.message); }
+      }
+      fs.writeFileSync(path.join(dst, e), out);
+    }
+    console.log('  locales/ → dist/locales/ (minified)');
+  }
 
-// ── Copy .well-known/ for Universal Links (iOS) and App Links (Android) ──
-if (fs.existsSync('.well-known')) {
-  copyDir('.well-known', path.join(OUT, '.well-known'));
-  console.log('  .well-known/ → dist/.well-known/');
-}
+  // ── Copy .well-known/ for Universal Links (iOS) and App Links (Android) ──
+  if (fs.existsSync('.well-known')) {
+    copyDir('.well-known', path.join(OUT, '.well-known'));
+    console.log('  .well-known/ → dist/.well-known/');
+  }
 
-// ── Copy logo/ so edge functions can reference hosted SVG assets ──
-if (fs.existsSync('logo')) {
-  copyDir('logo', path.join(OUT, 'logo'));
-  console.log('  logo/ → dist/logo/');
-}
+  // ── Copy logo/ so edge functions can reference hosted SVG assets ──
+  if (fs.existsSync('logo')) {
+    copyDir('logo', path.join(OUT, 'logo'));
+    console.log('  logo/ → dist/logo/');
+  }
 
-// ── Minify inline CSS/JS + collapse whitespace, then write index.html ──
-// minifyJS uses terser defaults; toplevel mangle is kept OFF so global
-// functions referenced from inline onclick="" handlers keep their names.
-minify(html, {
-  collapseWhitespace: true,
-  minifyCSS: true,
-  minifyJS: { mangle: { toplevel: false } },
-}).then((minified) => {
-  fs.writeFileSync(path.join(OUT, 'index.html'), minified);
-  console.log('  index.html → dist/index.html (minified)');
-  console.log(`\n✓ Build complete → ${OUT}/`);
-}).catch((err) => {
-  console.error('✗ Minify failed:', err);
-  process.exit(1);
-});
+  // ── Minify inline CSS/JS + collapse whitespace, then write index.html ──
+  // minifyJS uses terser defaults; toplevel mangle is kept OFF so global
+  // functions referenced from inline onclick="" handlers keep their names.
+  try {
+    const minified = await minify(html, {
+      collapseWhitespace: true,
+      minifyCSS: true,
+      minifyJS: { mangle: { toplevel: false } },
+    });
+    fs.writeFileSync(path.join(OUT, 'index.html'), minified);
+    console.log('  index.html → dist/index.html (minified)');
+    console.log(`\n✓ Build complete → ${OUT}/`);
+  } catch (err) {
+    console.error('✗ Minify failed:', err);
+    process.exit(1);
+  }
+})();
