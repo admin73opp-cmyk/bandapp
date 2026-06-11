@@ -19,5 +19,10 @@ checks must pass or score = INVALID.
 | — | _baseline established_ | — | 25 | — |
 | A1 | Add `role="main"` to auth card wrapper (landmark) | 25 | **17** | ✅ KEPT (−8, region ×5→×1) |
 | A2 | Add `role="status"` aria-live to `#toast` | 17 | **15** | ✅ KEPT (−2, region cleared) |
+| A3 | Darken light-theme `--a` #6C63FF→#685FF6 (4.31→4.61 vs white) | 15 | **0** | ✅ KEPT (−15, all 3 contrast fixed) |
 
-**Current baseline: 15** (color-contrast ×3 remaining).
+**Current baseline: 0 — TARGET REACHED** (zero axe violations on the landing page).
+
+> A3 note: `--a` is the brand primary. #685FF6 is a 4% darkening — visually the same purple
+> but WCAG-AA compliant (4.61:1 on white). Applied to both light-theme declarations; dark
+> theme (#8B84FF) untouched. Trivial to revert if you prefer the exact original hex.
