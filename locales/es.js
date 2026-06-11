@@ -315,7 +315,6 @@ window.ES = {
 
   /* ── REHEARSALS PAGE ──────────────────────────────────── */
   'Past Rehearsals': 'Ensayos pasados',
-  '🚫 Cancelled': '🚫 Cancelado',
   'No upcoming rehearsals — click + New Rehearsal to schedule one.': 'No hay ensayos próximos — haz clic en + Nuevo ensayo para programar uno.',
   'No past rehearsals yet.': 'Aún no hay ensayos pasados.',
   'New Rehearsal': 'Nuevo ensayo',
@@ -350,7 +349,6 @@ window.ES = {
   'Link Concert to Set List': 'Vincular concierto a la setlist',
   'Concert View': 'Vista del concierto',
   'Delete concert?': '¿Eliminar concierto?',
-  '🚫 Cancel': '🚫 Cancelar',
   '♩ Link Set List': '♩ Vincular setlist',
   'Concert': 'Concierto',
   'Free': 'Gratuito',
@@ -382,7 +380,7 @@ window.ES = {
   'No members yet. Invite someone to join!': 'Aún no hay miembros. ¡Invita a alguien a unirse!',
   'No full-group days this month': 'No hay días con toda la grupo este mes',
   'Showing best partial availability — no full-group days found.': 'Mostrando la mejor disponibilidad parcial — no se encontraron días con toda la grupo.',
-  '⚡ Best day': '⚡ Mejor día',
+  'Best day': 'Mejor día',
   '2nd choice': '2ª opción',
   '3rd choice': '3ª opción',
   'available': 'disponibles',
@@ -428,7 +426,7 @@ window.ES = {
   'Individual days can still be blocked separately on the calendar.': 'Los días individuales aún pueden bloquearse por separado en el calendario.',
 
   /* ── CALENDAR PAGE ────────────────────────────────────── */
-  '⚡ Best Rehearsal Days': '⚡ Mejores días de ensayo',
+  'Best Rehearsal Days': 'Mejores días de ensayo',
   'Top available days this month, excluding blackouts and booked events.': 'Los mejores días disponibles este mes, excluyendo períodos bloqueados y eventos reservados.',
   'Full': 'Completo',
   'Compact': 'Compacto',
@@ -437,8 +435,6 @@ window.ES = {
   'Full group': 'Toda la grupo',
   'Blackout': 'Período bloqueado',
   'Cross-group conflict ⊘': 'Conflicto entre grupos ⊘',
-  'Full group ⚡': 'Toda la grupo ⚡',
-  '⚡ Full group:': '⚡ Toda la grupo:',
   'No blackouts': 'Sin períodos bloqueados',
   'blackout period': 'período bloqueado',
   'blackout periods': 'períodos bloqueados',
