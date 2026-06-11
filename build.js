@@ -41,30 +41,36 @@ function copyDir(src, dest) {
 fs.rmSync(OUT, { recursive: true, force: true });
 fs.mkdirSync(OUT, { recursive: true });
 
-// ── Hash + copy JS files ────────────────────────────────────
+// ── Minify + hash + copy JS files ───────────────────────────
 const fileMap = {}; // 'js/auth.js' → 'js/auth.a1b2c3d4.js'
 
-for (const file of findJs('js')) {
-  const h        = sha8(file);
-  const rel      = file.replace(/\\/g, '/');          // normalise on Windows too
-  const dir      = path.dirname(rel);
-  const base     = path.basename(rel, '.js');
-  const hashed   = `${dir}/${base}.${h}.js`;
-
-  fs.mkdirSync(path.join(OUT, dir), { recursive: true });
-  fs.copyFileSync(file, path.join(OUT, hashed));
-  fileMap[rel] = hashed;
-  console.log(`  ${rel} → ${hashed}`);
-}
-
-// ── Rewrite index.html (hash-bust external js/ refs) ────────
-let html = fs.readFileSync('index.html', 'utf8');
-for (const [orig, hashed] of Object.entries(fileMap)) {
-  // src="js/auth.js"  →  src="/js/auth.a1b2c3d4.js"
-  html = html.split(`src="${orig}"`).join(`src="/${hashed}"`);
-}
-
 (async () => {
+  for (const file of findJs('js')) {
+    const rel    = file.replace(/\\/g, '/');          // normalise on Windows too
+    const dir    = path.dirname(rel);
+    const base   = path.basename(rel, '.js');
+    let code = fs.readFileSync(file, 'utf8');
+    // mangle toplevel OFF so const BandsDB / function names referenced from
+    // the inline app code (across files) keep their names.
+    try {
+      const r = await minifyJS(code, { compress: true, mangle: { toplevel: false }, format: { comments: false } });
+      if (r.code) code = r.code;
+    } catch (err) { console.error('  js minify skip', rel, err.message); }
+    const h      = crypto.createHash('sha256').update(code).digest('hex').slice(0, 8);
+    const hashed = `${dir}/${base}.${h}.js`;
+    fs.mkdirSync(path.join(OUT, dir), { recursive: true });
+    fs.writeFileSync(path.join(OUT, hashed), code);
+    fileMap[rel] = hashed;
+    console.log(`  ${rel} → ${hashed}`);
+  }
+
+  // ── Rewrite index.html (hash-bust external js/ refs) ────────
+  let html = fs.readFileSync('index.html', 'utf8');
+  for (const [orig, hashed] of Object.entries(fileMap)) {
+    // src="js/auth.js"  →  src="/js/auth.a1b2c3d4.js"
+    html = html.split(`src="${orig}"`).join(`src="/${hashed}"`);
+  }
+
   // ── Minify + copy locales (cache-busted by index.html) ──
   // Locale files are pure data objects (window.XX = {...}); mangle is kept OFF
   // so the window.XX global names survive, but whitespace/comments are stripped.

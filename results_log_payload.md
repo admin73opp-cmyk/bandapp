@@ -18,5 +18,6 @@
 |---|---|---|---|---|
 | — | _baseline established_ | — | 211,089 | — |
 | P1 | Minify locale files at build (terser, mangle off) | 211,089 | **205,943** | ✅ KEPT (−5,146 / −2.4%) |
+| P2 | Minify `js/` files at build (terser compress, mangle off) | 205,943 | **197,544** | ✅ KEPT (−8,399 / −4.1%) |
 
-**Current baseline: 205,943 gz bytes.**
+**Current baseline: 197,544 gz bytes.** Cumulative: −13,545 (−6.4%).
