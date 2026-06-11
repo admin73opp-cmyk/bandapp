@@ -25,3 +25,16 @@
 
 _Note / tradeoff (round 2): non-English returning users now see English for a few ms
 before their locale loads. Acceptable for a load-time win; revert is trivial if you dislike it._
+
+| 3 | Collapse inline `<style>` whitespace (semantics-preserving) | 470.0 | n/a | ❌ reverted — only 585 bytes (1.3% of CSS / 0.1% of doc); below the metric's noise floor, not worth scoring |
+
+### Diminishing-returns checkpoint (after round 3)
+Diagnosis of the 501KB document: **298KB is inline app JavaScript** parsed on every
+load — the single dominant cost. Locales (the other 317KB) were already moved off the
+critical path in round 2. The remaining safe/surgical levers (CSS whitespace, deferring
+the 27KB DB files) are all below the noise floor. The two high-value levers left both
+need a human decision (see chat):
+  A. **Minify the 298KB inline JS** — needs a real JS minifier (terser); none installed,
+     and hand-rolling one is unsafe. Requires installing a tool / build step.
+  B. **Lazy-load post-login app code** past `load` — large refactor of the 7,300-line
+     inline app; violates the "surgical, <3 files" rule without sign-off.
