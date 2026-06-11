@@ -8,12 +8,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="js/supabase-client.js"></script>
 <script src="js/capacitor-bridge.js"></script>
-<script src="locales/nl.js"></script>
-<script src="locales/fr.js"></script>
-<script src="locales/es.js"></script>
-<script src="locales/de.js"></script>
-<script src="locales/it.js"></script>
-<script src="locales/pt-BR.js"></script>
+<script>addEventListener('load',function(){['nl','fr','es','de','it','pt-BR'].forEach(function(l){var s=document.createElement('script');s.src='locales/'+l+'.js';document.head.appendChild(s);});});</script>
 <script src="js/i18n.js"></script>
 <style>
 :root{--font:-apple-system,BlinkMacSystemFont,'Segoe UI','Helvetica Neue',Arial,sans-serif;--mono:'SF Mono','Fira Code','Fira Mono','Roboto Mono',Menlo,monospace;--ink:#111118;--ink2:#5A5A72;--ink3:#9A9AB0;--bg:#F5F5F8;--bg2:#EEEEF3;--w:#FFFFFF;--bd:#E2E2EC;--a:#6C63FF;--a2:#EDEAFF;--g:#16A34A;--g2:#DCFCE7;--r:#DC2626;--r2:#FEE2E2;--amb:#D97706;--amb2:#FEF3C7;--bl:#2563EB;--bl2:#DBEAFE;--rad:10px;--radl:16px;--sh:0 1px 3px rgba(0,0,0,.07),0 4px 14px rgba(0,0,0,.05);--shl:0 8px 30px rgba(0,0,0,.12)}
