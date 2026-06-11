@@ -52,11 +52,9 @@
 html{overflow-x:hidden}body{font-family:var(--font);background:var(--bg);color:var(--ink);min-height:100vh;overflow-x:hidden;-webkit-font-smoothing:antialiased}
 select option{background:var(--w);color:var(--ink)}
 ::-webkit-scrollbar{width:5px}::-webkit-scrollbar-thumb{background:var(--bd);border-radius:99px}
-/* forms */
 .fg{margin-bottom:13px}.fg label{display:block;font-size:.71rem;font-weight:700;color:var(--ink2);margin-bottom:5px;letter-spacing:.02em}
 .fg input,.fg select,.fg textarea{width:100%;padding:10px 13px;background:var(--bg);border:1.5px solid var(--bd);border-radius:var(--rad);color:var(--ink);font-family:var(--font);font-size:.875rem;outline:none;transition:border-color .14s,box-shadow .14s}
 .fg input:focus,.fg select:focus,.fg textarea:focus{border-color:var(--a);box-shadow:0 0 0 3px var(--a2);background:var(--w)}
-/* Force date/time inputs to respect container width on all browsers including iOS/Android */
 .fg input[type="date"],
 .fg input[type="time"]{
   -webkit-appearance:none;
@@ -71,31 +69,25 @@ select option{background:var(--w);color:var(--ink)}
 .fr{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 @media(max-width:420px){.fr{grid-template-columns:1fr}}
 select option{background:var(--w)}
-/* buttons */
 .btn{padding:10px 18px;border:none;border-radius:var(--rad);font-family:var(--font);font-size:.845rem;font-weight:600;cursor:pointer;transition:all .14s;display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
 .btn-p{background:var(--a);color:#fff}.btn-p:hover{background:#5851e0;transform:translateY(-1px);box-shadow:0 4px 12px rgba(108,99,255,.3)}
 .btn-g{background:transparent;color:var(--ink2);border:1.5px solid var(--bd)}.btn-g:hover{border-color:var(--a);color:var(--a);background:var(--a2)}
 .btn-sm{padding:6px 13px;font-size:.78rem}.btn-xs{padding:4px 8px;font-size:.71rem}
 .btn-fw{width:100%;justify-content:center}
 .btn-ic{width:30px;height:30px;padding:0;justify-content:center;border-radius:7px;background:transparent;border:1.5px solid var(--bd);color:var(--ink2)}.btn-ic:hover{border-color:var(--a);color:var(--a);background:var(--a2)}
-/* pills */
 .pill{display:inline-flex;align-items:center;padding:3px 9px;border-radius:99px;font-size:.69rem;font-weight:600}
 .pp{background:var(--a2);color:var(--a)}.pg{background:var(--g2);color:var(--g)}.pr{background:var(--r2);color:var(--r)}.pamb{background:var(--amb2);color:var(--amb)}.pbl{background:var(--bl2);color:var(--bl)}.pgray{background:var(--bg2);color:var(--ink2);border:1px solid var(--bd)}
-/* chips */
 .chip{display:inline-flex;align-items:center;padding:5px 12px;border-radius:99px;font-size:.76rem;font-weight:500;background:var(--w);color:var(--ink2);border:1.5px solid var(--bd);cursor:pointer;transition:all .12s;font-family:var(--font)}
 .chip.on{background:var(--a);border-color:var(--a);color:#fff;font-weight:600}.chip:hover:not(.on){border-color:var(--a);color:var(--a)}
-/* cards */
 .card{background:var(--w);border:1px solid var(--bd);border-radius:var(--radl);padding:18px;box-shadow:var(--sh)}
 .ch{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
 .ct{font-size:.91rem;font-weight:700;letter-spacing:-.02em}
 .cl{font-size:.74rem;color:var(--a);font-weight:600;cursor:pointer}.cl:hover{text-decoration:underline}
 .t1{font-size:.68rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3)}
-/* layout */
 #authScreen{position:fixed;inset:0;background:var(--w);display:flex;align-items:center;justify-content:center;z-index:1000}
 #app{display:none;min-height:100vh}#app.vis{display:flex}
 .sb{width:226px;min-height:100vh;background:var(--w);border-right:1px solid var(--bd);display:flex;flex-direction:column;position:fixed;left:0;top:0;bottom:0;z-index:100;transition:width .22s ease,transform .27s ease}
 .mc{margin-left:226px;flex:1;min-width:0;min-height:100vh;display:flex;flex-direction:column;transition:margin-left .22s ease}
-/* minimized sidebar */
 .sb.minimized{width:56px}
 .mc.sb-minimized{margin-left:56px}
 .sb.minimized .sb-label{display:none}
@@ -111,16 +103,13 @@ select option{background:var(--w)}
 .sb.minimized .ns{margin-bottom:8px}
 .sb.minimized .nsl{display:none}
 .sb.minimized .sb-nav{padding:6px 4px}
-/* mini toggle button */
 .sb-toggle{position:absolute;top:16px;right:-12px;width:22px;height:22px;border-radius:50%;background:var(--w);border:1.5px solid var(--bd);display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:101;box-shadow:var(--sh);transition:background .13s,border-color .13s}
 .sb-toggle:hover{background:var(--a2);border-color:var(--a)}
 .sb-toggle svg{width:11px;height:11px;color:var(--ink2);transition:transform .22s}
 .sb.minimized .sb-toggle svg{transform:rotate(180deg)}
-/* tooltip on minimized nav items */
 .sb.minimized .ni{position:relative}
 .sb.minimized .ni:hover::after{content:attr(data-label);position:absolute;left:100%;top:50%;transform:translateY(-50%);margin-left:10px;background:var(--ink);color:#fff;padding:5px 10px;border-radius:7px;font-size:.75rem;font-weight:500;white-space:nowrap;pointer-events:none;z-index:200;box-shadow:var(--sh)}
 .sb-ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.22);backdrop-filter:blur(2px);z-index:99}.sb-ov.vis{display:block}
-/* sidebar pieces */
 .sb-logo{padding:17px 15px 13px;font-size:1.03rem;font-weight:700;letter-spacing:-.03em;display:flex;align-items:center;gap:7px;border-bottom:1px solid var(--bd)}
 .rit-mark,.rit-word{display:block;color:var(--ink);flex-shrink:0}
 .sb.minimized .sb-logo-word{display:none}
@@ -137,13 +126,11 @@ select option{background:var(--w)}
 .uav{width:31px;height:31px;border-radius:50%;background:var(--a2);border:2px solid var(--a);display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:700;color:var(--a);flex-shrink:0}
 .lt{display:flex;border:1.5px solid var(--bd);border-radius:7px;overflow:hidden;margin-left:auto}
 
-/* topbar icon buttons — show label on desktop, icon on mobile */
 .tb-icon-btn .tb-btn-icon{display:none;align-items:center;gap:3px}
 .tb-icon-btn .tb-btn-label{display:inline}
 .tb{padding:12px 21px;padding-top:calc(12px + env(safe-area-inset-top));border-bottom:1px solid var(--bd);background:var(--w);display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:50}
 .hbg{display:none;background:none;border:none;color:var(--ink);cursor:pointer;padding:4px}
 .pt{font-size:.98rem;font-weight:700;letter-spacing:-.02em}.ps{font-size:.71rem;color:var(--ink3);margin-top:1px}.ta{margin-left:auto;display:flex;gap:7px;align-items:center}
-/* pages */
 .pg-area{display:none;padding:22px;flex:1}.pg-area.on{display:block;animation:fu .17s ease}
 @keyframes fu{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
 @keyframes spin{to{transform:rotate(360deg)}}
@@ -151,11 +138,9 @@ select option{background:var(--w)}
 #appLoader .al-logo{width:198px;height:198px;color:var(--ink);animation:rit-pulse 2.4s ease-in-out infinite}
 @keyframes rit-pulse{0%,100%{opacity:.9}50%{opacity:.35}}
 #appLoader .al-text{font-size:.82rem;color:var(--ink2)}
-/* stats */
 .sg{display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:10px;margin-bottom:17px}
 .sc{background:var(--w);border:1px solid var(--bd);border-radius:var(--radl);padding:16px;box-shadow:var(--sh);transition:border-color .13s,transform .13s}
 .sc[onclick]{cursor:pointer}.sc[onclick]:hover{border-color:var(--a);transform:translateY(-2px)}
-/* spreadsheet */
 .sh-hd{position:relative;padding:8px 8px;border-bottom:2px solid var(--bd);text-align:left;font-size:.68rem;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.05em;white-space:nowrap;overflow:hidden;cursor:pointer;user-select:none;transition:color .12s,background .12s}
 .sh-hd:hover{color:var(--a);background:var(--a2)}
 .sh-hd.sort-asc,.sh-hd.sort-desc{color:var(--a);background:var(--a2)}
@@ -169,7 +154,6 @@ select option{background:var(--w)}
 .sh-cell{width:100%;padding:7px 8px;border:none;background:transparent;font-family:var(--font);font-size:.8rem;color:var(--ink);outline:none;min-width:80px;box-sizing:border-box}
 .sh-dur::-webkit-outer-spin-button,.sh-dur::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
 .sh-dur{-moz-appearance:textfield}
-/* Persistent scrollbars on the spreadsheet — override macOS overlay behaviour */
 #sheetScrollOuter{scrollbar-width:thin;scrollbar-color:var(--a) var(--bg2);scrollbar-gutter:stable}
 #sheetScrollOuter::-webkit-scrollbar{-webkit-appearance:none;width:8px;height:10px}
 #sheetScrollOuter::-webkit-scrollbar-track{-webkit-appearance:none;background:var(--bg2);border-radius:0}
@@ -182,7 +166,6 @@ select option{background:var(--w)}
 .sh-sel:focus{background:var(--a2);outline:2px solid var(--a);outline-offset:-2px;border-radius:4px}
 .sh-chk{display:flex;align-items:center;justify-content:center;height:100%;padding:4px}
 .sv{font-size:1.85rem;font-weight:700;letter-spacing:-.04em;margin:5px 0 2px}.ss{font-size:.71rem;color:var(--ink3)}
-/* dash */
 .dg{display:grid;grid-template-columns:1fr 1fr;gap:14px}
 @media(max-width:900px){.dg{grid-template-columns:1fr}}
 .er{display:flex;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--bd)}.er:last-child{border-bottom:none}
@@ -193,7 +176,6 @@ select option{background:var(--w)}
 .mav2{width:31px;height:31px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.67rem;font-weight:700;color:#fff;flex-shrink:0}
 .mn{font-size:.82rem;font-weight:600}.mi{font-size:.69rem;color:var(--ink2)}
 .ad{width:7px;height:7px;border-radius:50%;margin-left:auto;flex-shrink:0}.ad.on{background:var(--g)}.ad.off{background:var(--r)}.ad.pt2{background:var(--amb)}
-/* dashboard — next event hero */
 .dne{background:linear-gradient(135deg,var(--a2),var(--w));border:1.5px solid rgba(108,99,255,.28);border-radius:var(--radl);padding:18px 20px;box-shadow:var(--sh);display:flex;gap:18px;align-items:center;flex-wrap:wrap;cursor:pointer;transition:border-color .13s,box-shadow .13s}
 .dne:hover{border-color:rgba(108,99,255,.55);box-shadow:var(--shl)}
 .dne:focus-visible{outline:2px solid var(--a);outline-offset:2px}
@@ -206,36 +188,28 @@ select option{background:var(--w)}
 .dne-chips{margin-top:10px;display:flex;gap:7px;flex-wrap:wrap;align-items:center}
 .dne-chip{display:inline-flex;align-items:center;gap:5px;padding:4px 11px;border-radius:99px;font-size:.74rem;font-weight:600;cursor:pointer;background:var(--w);border:1.5px solid var(--bd);color:var(--ink)}
 .dne-empty{text-align:center;padding:26px 16px}
-/* dashboard — next concert strip */
 .dnc{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:12px 16px;background:var(--w);border:1.5px solid var(--bd);border-left:3px solid var(--a);border-radius:var(--rad);box-shadow:var(--sh);cursor:pointer;transition:border-color .13s}
 .dnc:hover{border-color:var(--a)}
 .dnc-title{font-weight:700;font-size:.92rem;letter-spacing:-.01em}
 .dnc-meta{font-size:.76rem;color:var(--ink2)}
 .dnc-cd{margin-left:auto;font-size:.74rem;font-weight:700;color:var(--a);white-space:nowrap;background:var(--a2);border:1px solid rgba(108,99,255,.25);border-radius:99px;padding:3px 11px}
-/* dashboard — quick actions */
 .dqa{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:2px}
 .dqb{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;padding:15px 8px;background:var(--w);border:1.5px solid var(--bd);border-radius:var(--rad);cursor:pointer;font-family:var(--font);font-size:.76rem;font-weight:600;color:var(--ink);transition:border-color .13s,transform .13s,background .13s}
 .dqb:hover{border-color:var(--a);background:var(--a2);transform:translateY(-1px)}
 .dqb svg{width:22px;height:22px;color:var(--a)}
-/* dashboard — activity feed */
 .dac{display:flex;gap:9px;align-items:flex-start;padding:9px 0;border-bottom:1px solid var(--bd)}.dac:last-child{border-bottom:none}
 .dac-dot{width:7px;height:7px;border-radius:50%;background:var(--a);margin-top:5px;flex-shrink:0}
 .dac-desc{font-size:.8rem;font-weight:500;line-height:1.3}.dac-meta{font-size:.69rem;color:var(--ink3);margin-top:2px}
-/* dashboard — rsvp status icon */
 .rvi{margin-left:auto;font-size:.78rem;font-weight:700;flex-shrink:0;width:18px;text-align:center}.rvi.y{color:var(--g)}.rvi.n{color:var(--r)}.rvi.m{color:var(--amb)}.rvi.p{color:var(--ink3)}
-/* dashboard — setlist song peek */
 .dsl-song{display:flex;gap:8px;align-items:baseline;font-size:.8rem;padding:5px 0;border-bottom:1px solid var(--bd)}.dsl-song:last-child{border-bottom:none}
 .dsl-num{font-family:var(--mono);font-size:.7rem;color:var(--ink3);flex-shrink:0}.dsl-art{color:var(--ink3);font-size:.72rem;margin-left:auto;flex-shrink:0}
-/* dashboard — skeleton shimmer */
 .skl{background:linear-gradient(90deg,var(--bg) 25%,var(--bg2) 37%,var(--bg) 63%);background-size:400% 100%;animation:sklsh 1.3s ease infinite;border-radius:6px;height:13px;margin:9px 0}
 @keyframes sklsh{0%{background-position:100% 0}100%{background-position:-100% 0}}
-/* clickable address → navigation chooser */
 .maplink{color:var(--a);cursor:pointer;border-bottom:1px dashed rgba(108,99,255,.5);font-weight:600}
 .maplink:hover{border-bottom-style:solid}
 .maplink:focus-visible{outline:2px solid var(--a);outline-offset:2px;border-radius:3px}
 .nav-sheet-btn{display:flex;align-items:center;gap:11px;width:100%;text-align:left;justify-content:flex-start;margin-bottom:8px;font-size:.92rem;padding:13px 14px}
 .nav-sheet-btn .nb-ico{font-size:1.15rem;line-height:1;flex-shrink:0}
-/* setlist */
 .stabs{display:flex;gap:5px;overflow-x:auto;padding-bottom:2px;margin-bottom:14px}
 .stb{padding:6px 13px;border-radius:99px;font-size:.77rem;font-weight:600;border:1.5px solid var(--bd);background:transparent;color:var(--ink2);cursor:pointer;transition:all .12s;white-space:nowrap;font-family:var(--font)}
 .stb.on{background:var(--a);border-color:var(--a);color:#fff}
@@ -249,7 +223,6 @@ select option{background:var(--w)}
 .lb2{background:none;border:none;color:var(--ink3);cursor:pointer;font-size:.82rem;padding:2px 4px;border-radius:4px;transition:color .11s}.lb2:hover{color:var(--a)}
 .nc{color:var(--ink2);font-size:.75rem;font-style:italic;max-width:155px}
 .dov{background:var(--a2)!important;outline:2px dashed var(--a)}
-/* library */
 .lf{display:flex;gap:7px;flex-wrap:wrap;align-items:center;margin-bottom:15px}
 .sb2{padding:8px 13px;background:var(--w);border:1.5px solid var(--bd);border-radius:var(--rad);font-family:var(--font);font-size:.83rem;color:var(--ink);outline:none;transition:border-color .13s}
 .sb2:focus{border-color:var(--a);box-shadow:0 0 0 3px var(--a2)}
@@ -276,7 +249,6 @@ select option{background:var(--w)}
 .sclinks{display:flex;gap:5px;margin-top:9px}
 .svb{padding:4px 9px;border-radius:6px;font-size:.69rem;font-weight:600;border:1.5px solid var(--bd);background:transparent;color:var(--ink2);cursor:pointer;transition:all .11s;font-family:var(--font)}
 .svb:hover{border-color:var(--a);color:var(--a)}.svb-sp{border-color:rgba(29,185,84,.4);color:#1DB954}.svb-yt{border-color:rgba(220,38,38,.3);color:var(--r)}.svb-am{border-color:rgba(255,153,0,.4);color:#FF9900}.svb-ly{border-color:rgba(108,99,255,.35);color:var(--a)}
-/* mobile song cards + swipe-to-reveal */
 .swipe-wrap{position:relative;overflow:hidden;border-radius:var(--radl)}
 .swipe-actions{position:absolute;inset:0 0 0 auto;display:flex;align-items:stretch}
 .swipe-act{border:none;font-family:var(--font);font-weight:700;font-size:.8rem;color:#fff;padding:0 18px;cursor:pointer;white-space:nowrap}
@@ -291,7 +263,6 @@ select option{background:var(--w)}
 .mcard-dur{font-family:var(--mono);font-size:.74rem;color:var(--ink3)}
 .mcard-links{display:flex;gap:12px;margin-left:auto;align-items:center}
 .sc-licon{background:none;border:none;font-size:1.1rem;line-height:1;padding:2px;cursor:pointer;text-decoration:none}
-/* calendar */
 .calhdr{display:flex;align-items:center;gap:10px;margin-bottom:17px;flex-wrap:wrap}
 .calnav{display:flex;gap:3px}
 .cnb{width:29px;height:29px;border-radius:7px;background:var(--w);border:1.5px solid var(--bd);color:var(--ink);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .11s}.cnb:hover{border-color:var(--a);color:var(--a)}
@@ -327,7 +298,6 @@ select option{background:var(--w)}
 .cal-leg{display:flex;gap:11px;flex-wrap:wrap;margin-top:11px}
 .li{display:flex;align-items:center;gap:4px;font-size:.69rem;color:var(--ink2)}
 .ld2{width:7px;height:7px;border-radius:50%}
-/* best days */
 .bp2{background:var(--w);border:1px solid var(--bd);border-radius:var(--radl);padding:16px;margin-bottom:13px;box-shadow:var(--sh)}
 .bpt{font-size:.87rem;font-weight:700;margin-bottom:2px;display:flex;align-items:center;gap:5px}
 .bps{font-size:.72rem;color:var(--ink2);margin-bottom:12px}
@@ -344,7 +314,6 @@ select option{background:var(--w)}
 .bcbtn{display:block;width:100%;margin-top:8px;padding:5px;border-radius:6px;border:1.5px solid var(--bd);background:transparent;font-family:var(--font);font-size:.69rem;font-weight:600;color:var(--ink2);cursor:pointer;text-align:center;transition:all .12s}
 .bcbtn:hover{background:var(--a);border-color:var(--a);color:#fff}
 .bc1 .bcbtn{border-color:rgba(22,163,74,.4);color:var(--g)}.bc1 .bcbtn:hover{background:var(--g);border-color:var(--g);color:#fff}
-/* avail table */
 .at{width:100%;border-collapse:collapse}
 .at th{font-size:.61rem;font-weight:700;color:var(--ink3);text-align:center;padding:3px 2px;min-width:21px}
 .at th.cfl{background:var(--g2);color:var(--g)}.at th.cbl{background:var(--r2);color:var(--r)}
@@ -361,13 +330,11 @@ select option{background:var(--w)}
 .ac-no{background:var(--bg);border:1px solid var(--bd)}
 .fbchips{display:flex;gap:5px;flex-wrap:wrap;margin-top:11px;padding-top:11px;border-top:1px solid var(--bd)}
 .fbc{padding:4px 10px;border-radius:99px;background:var(--g2);border:1.5px solid var(--g);font-size:.71rem;font-weight:600;color:var(--g);cursor:pointer;transition:all .12s}.fbc:hover{background:var(--g);color:#fff;border-color:var(--g)}
-/* concerts */
 .clist{display:flex;flex-direction:column;gap:9px}
 .ccrd{background:var(--w);border:1px solid var(--bd);border-radius:var(--radl);padding:15px;display:grid;grid-template-columns:62px 1fr auto;gap:13px;align-items:center;box-shadow:var(--sh);transition:border-color .13s,transform .13s;cursor:pointer}.ccrd:hover{border-color:var(--a);transform:translateY(-1px)}
 .ccrd.past{opacity:.65;background:var(--bg);box-shadow:none}.ccrd.past:hover{opacity:.85;transform:none}
 .ccrd.cancelled{opacity:.5;background:var(--bg2);box-shadow:none;border-style:dashed}.ccrd.cancelled:hover{opacity:.7;transform:none}
 .ccrd.cancelled .ctitle{text-decoration:line-through;color:var(--ink2)}
-/* concert photo thumbnails */
 .concert-photos{display:flex;gap:5px;flex-wrap:wrap;margin-top:8px}
 .concert-thumb{width:48px;height:48px;border-radius:6px;object-fit:cover;border:1.5px solid var(--bd);cursor:pointer;transition:transform .12s}.concert-thumb:hover{transform:scale(1.08)}
 .concert-thumb-add{width:48px;height:48px;border-radius:6px;border:2px dashed var(--bd);display:flex;align-items:center;justify-content:center;font-size:1.1rem;color:var(--ink3);cursor:pointer;transition:border-color .12s,color .12s}.concert-thumb-add:hover{border-color:var(--a);color:var(--a)}
@@ -379,7 +346,6 @@ select option{background:var(--w)}
 .cmi{display:flex;align-items:center;gap:3px;font-size:.72rem;color:var(--ink2)}.cmi svg{width:12px;height:12px}
 .cbadges{display:flex;gap:5px;flex-wrap:wrap;margin-top:7px}.cactions{display:flex;flex-direction:column;gap:5px;flex-shrink:0;min-width:0}
 .cactions .btn{white-space:nowrap;font-size:.75rem;padding:6px 8px;text-align:center;justify-content:center}
-/* members */
 .memgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(248px,1fr));gap:10px}
 .memcard{background:var(--w);border:1px solid var(--bd);border-radius:var(--radl);padding:15px;box-shadow:var(--sh);transition:border-color .13s,transform .13s}.memcard:hover{border-color:var(--a);transform:translateY(-2px)}
 .mctop{display:flex;gap:10px;align-items:flex-start;margin-bottom:11px}
@@ -390,7 +356,6 @@ select option{background:var(--w)}
 .mcd.y{background:var(--g2);color:var(--g)}.mcd.n{background:var(--bg);color:var(--ink3);border:1px solid var(--bd)}
 .mcfoot{display:flex;gap:5px;margin-top:11px;padding-top:10px;border-top:1px solid var(--bd);flex-wrap:wrap}
 .mcfoot .btn{flex:1 1 auto;min-width:0;text-align:center;justify-content:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:.75rem;padding:6px 8px}
-/* group profile */
 .bphdr{background:var(--w);border:1px solid var(--bd);border-radius:var(--radl);padding:21px;margin-bottom:13px;display:flex;gap:17px;align-items:flex-start;box-shadow:var(--sh)}
 .bpphoto{width:74px;height:74px;border-radius:14px;background:var(--a);display:flex;align-items:center;justify-content:center;font-size:1.75rem;font-weight:700;color:#fff;flex-shrink:0}
 .bpname{font-size:1.35rem;font-weight:700;letter-spacing:-.04em;margin-bottom:4px}
@@ -405,11 +370,9 @@ select option{background:var(--w)}
 .dtogs{display:flex;gap:5px;flex-wrap:wrap}
 .dtog{padding:6px 11px;border-radius:8px;border:1.5px solid var(--bd);background:var(--bg);color:var(--ink2);font-size:.74rem;font-weight:600;cursor:pointer;transition:all .11s;font-family:var(--font)}
 .dtog.on{background:var(--g2);border-color:var(--g);color:var(--g)}
-/* blackout list */
 .boit{display:flex;align-items:flex-start;gap:9px;padding:10px 11px;background:var(--bg);border:1px solid var(--bd);border-radius:9px}
 .bost{width:3px;align-self:stretch;border-radius:2px;flex-shrink:0}
 .bobd{flex:1;min-width:0}.bola{font-weight:600;font-size:.82rem;margin-bottom:2px}.boda{font-family:var(--mono);font-size:.69rem;color:var(--ink2)}
-/* modal */
 .mov{position:fixed;inset:0;background:rgba(0,0,0,.28);backdrop-filter:blur(3px);display:flex;align-items:center;justify-content:center;z-index:500}
 .mod{background:var(--w);border-radius:var(--radl);padding:25px;width:min(510px,95vw);max-height:91vh;overflow-y:auto;overflow-x:hidden;box-shadow:var(--shl);position:relative}
 .mod-x{position:absolute;top:13px;right:13px;width:26px;height:26px;border-radius:50%;border:1.5px solid var(--bd);background:var(--bg);color:var(--ink2);font-size:.75rem;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1;transition:background .13s,border-color .13s,color .13s;z-index:2;flex-shrink:0;padding:0}.mod-x:hover{background:var(--r2);border-color:var(--r);color:var(--r)}
@@ -421,15 +384,12 @@ select option{background:var(--w)}
 .most{font-size:.79rem;color:var(--ink2);margin-bottom:17px}
 .moft{display:flex;gap:7px;justify-content:flex-end;margin-top:17px;padding-top:13px;border-top:1px solid var(--bd)}
 .aib{display:inline-flex;align-items:center;gap:4px;background:var(--a2);border:1.5px solid rgba(108,99,255,.3);border-radius:99px;padding:3px 10px;font-size:.69rem;font-weight:600;color:var(--a);margin-bottom:13px}
-/* paid gig */
 .popts{display:flex;gap:7px;margin-bottom:12px}
 .popt{flex:1;padding:10px 7px;border:1.5px solid var(--bd);border-radius:var(--rad);background:var(--bg);cursor:pointer;text-align:center;transition:all .13s}.popt:hover{border-color:var(--a)}.popt.on{border-color:var(--a);background:var(--a2)}
 .poi{font-size:1.1rem;margin-bottom:2px}.pol{font-size:.74rem;font-weight:600}
-/* invite */
 .invopts{display:flex;gap:7px;margin-bottom:13px}
 .invopt{flex:1;padding:10px 6px;border:1.5px solid var(--bd);border-radius:var(--rad);background:var(--bg);cursor:pointer;text-align:center;transition:all .13s}.invopt:hover{border-color:var(--a)}.invopt.on{border-color:var(--a);background:var(--a2)}
 .invic{font-size:1.15rem;margin-bottom:3px}.invl{font-size:.7rem;font-weight:600}
-/* language picker */
 .lang-picker{position:relative}
 .lang-picker-btn{display:flex;align-items:center;gap:8px;width:100%;padding:10px 13px;background:var(--bg);border:1.5px solid var(--bd);border-radius:var(--rad);cursor:pointer;font-size:.875rem;color:var(--ink);font-family:var(--font);text-align:left;transition:border-color .14s,box-shadow .14s}
 .lang-picker-btn:focus,.lang-picker-btn:hover{border-color:var(--a)}
@@ -441,32 +401,25 @@ select option{background:var(--w)}
 .lang-picker-opt.selected{color:var(--a);font-weight:600}
 .lang-picker-opt.soon{opacity:.45;cursor:default;pointer-events:none}
 .lang-picker-flag{width:20px;height:15px;border-radius:2px;object-fit:cover;flex-shrink:0}
-/* toast */
 .toast{position:fixed;bottom:17px;right:17px;background:#111118;color:#fff;border-radius:var(--rad);padding:10px 15px;font-size:.79rem;font-weight:500;display:flex;align-items:center;gap:7px;box-shadow:var(--shl);z-index:9999;transform:translateY(48px);opacity:0;transition:all .27s cubic-bezier(.2,.8,.4,1)}
 @media(prefers-color-scheme:dark){.toast{background:#2A2A38;color:#F0F0F8}}
 #feedbackFab{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);z-index:300;background:var(--a);color:#fff;border:none;border-radius:99px;padding:8px 16px;font-family:var(--font);font-size:.73rem;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:5px;box-shadow:0 4px 16px rgba(108,99,255,.35);transition:background .14s,box-shadow .14s,transform .14s}#feedbackFab:hover{background:#5851e0;box-shadow:0 6px 20px rgba(108,99,255,.45);transform:translateX(-50%) translateY(-2px)}
 .toast.on{transform:none;opacity:1}
 .td{width:6px;height:6px;border-radius:50%;background:var(--g);flex-shrink:0}.td.w{background:var(--amb)}
-/* pdf note */
 .pdfn{font-size:.69rem;color:var(--ink3);display:flex;align-items:center;gap:3px}
-/* empty */
 .es{text-align:center;padding:38px 14px;color:var(--ink3)}
 .es-ico{font-size:2.1rem;margin-bottom:9px;opacity:.45}.es h3{font-size:.93rem;margin-bottom:4px;color:var(--ink2)}.es p{font-size:.79rem}
-/* mobile */
 @media(max-width:768px){
   .sb{transform:translateX(-100%)}.sb.open{transform:none}.mc{margin-left:0}.mc.sb-minimized{margin-left:0}.hbg{display:block}.sb-toggle{display:none}
-  /* topbar: show icons, hide labels on mobile */
   .tb-icon-btn .tb-btn-label{display:none}
   .tb-icon-btn .tb-btn-icon{display:inline-flex}
   .tb-icon-btn{padding:7px 9px}
   .pg-area{padding:13px}.sg{grid-template-columns:repeat(2,1fr)}
   .slt .nc,.slt .lkcol{display:none}
-  /* Card: date | content stacked, actions row below full width */
   .ccrd{grid-template-columns:54px 1fr;grid-template-rows:auto auto}
   .ccrd .cactions{grid-column:1/-1;display:flex;flex-direction:row;gap:6px;padding-top:10px;border-top:1px solid var(--bd);margin-top:6px;flex-wrap:wrap}
   .cactions .btn{flex:1;min-width:0;justify-content:center;padding:7px 6px;font-size:.75rem;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .bphdr{flex-direction:column}.lg2{grid-template-columns:1fr}.memgrid{grid-template-columns:1fr}
-  /* Song edit modal → bottom sheet on mobile */
   #seMod{align-items:flex-end}
   #seMod .mod{width:100%;max-width:100%;height:90vh;max-height:90vh;border-radius:18px 18px 0 0;animation:sheetUp .25s ease}
 }
@@ -478,7 +431,6 @@ select option{background:var(--w)}
 .phone-cc-display svg{opacity:.5;flex-shrink:0}
 .phone-num{flex:1;min-width:0;padding:9px 13px;background:var(--bg);border:1.5px solid var(--bd);border-radius:var(--rad);color:var(--ink);font-family:var(--font);font-size:.83rem;outline:none;transition:border-color .13s}
 .phone-num:focus{border-color:var(--a)}
-/* ── Forced themes (override media query) ── */
 html[data-theme="light"]{--ink:#111118;--ink2:#5A5A72;--ink3:#9A9AB0;--bg:#F5F5F8;--bg2:#EEEEF3;--w:#FFFFFF;--bd:#E2E2EC;--a:#6C63FF;--a2:#EDEAFF;--g:#16A34A;--g2:#DCFCE7;--r:#DC2626;--r2:#FEE2E2;--amb:#D97706;--amb2:#FEF3C7;--bl:#2563EB;--bl2:#DBEAFE;--sh:0 1px 3px rgba(0,0,0,.07),0 4px 14px rgba(0,0,0,.05);--shl:0 8px 30px rgba(0,0,0,.12);color-scheme:light}
 html[data-theme="dark"]{--ink:#F0F0F8;--ink2:#9A9AB8;--ink3:#5A5A78;--bg:#111116;--bg2:#18181F;--w:#1C1C26;--bd:#2A2A38;--a:#8B84FF;--a2:#1E1A3A;--g:#22C55E;--g2:#0D2818;--r:#F87171;--r2:#2A0E0E;--amb:#FBB85A;--amb2:#2A1A00;--bl:#60A5FA;--bl2:#0D1E3A;--sh:0 1px 3px rgba(0,0,0,.3),0 4px 14px rgba(0,0,0,.25);--shl:0 8px 30px rgba(0,0,0,.5);color-scheme:dark}
 html[data-theme="dark"] ::-webkit-scrollbar-thumb{background:var(--bd)}
@@ -495,7 +447,6 @@ html[data-theme="dark"] .sb-group-name{color:var(--ink)!important}
 .auth-err-x{background:none;border:none;color:var(--r);cursor:pointer;font-size:1.1rem;line-height:1;padding:0;flex-shrink:0;opacity:.65}
 .auth-err-x:hover{opacity:1}
 
-/* ── Help tooltips ─────────────────────────────────────────── */
 .help-btn{display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;border-radius:50%;border:1.5px solid var(--ink3);background:none;color:var(--ink3);font-size:.65rem;font-weight:700;font-family:var(--font);cursor:pointer;line-height:1;flex-shrink:0;transition:border-color .13s,color .13s;padding:0}
 .help-btn:hover{border-color:var(--a);color:var(--a)}
 .help-pop{position:absolute;z-index:9999;background:var(--w);border:1.5px solid var(--bd);border-radius:var(--rad);box-shadow:var(--shl);padding:13px 15px;max-width:280px;min-width:200px;font-size:.8rem;color:var(--ink2);line-height:1.55;opacity:0;pointer-events:none;transition:opacity .15s,transform .15s;transform:translateY(6px)}
@@ -503,7 +454,6 @@ html[data-theme="dark"] .sb-group-name{color:var(--ink)!important}
 .help-pop strong{color:var(--ink);font-weight:600}
 .help-pop ul{margin:6px 0 0 0;padding-left:16px}
 .help-pop ul li{margin-bottom:3px}
-/* ── Rehearsal RSVP / attendance ── */
 .rsvp-mine{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-top:9px}
 .rsvp-opt{padding:5px 11px;border-radius:8px;border:1.5px solid var(--bd);background:var(--w);color:var(--ink2);font-family:var(--font);font-size:.72rem;font-weight:600;cursor:pointer;transition:background .12s,border-color .12s,color .12s}
 .rsvp-opt:hover{border-color:var(--a)}
@@ -519,7 +469,6 @@ html[data-theme="dark"] .sb-group-name{color:var(--ink)!important}
 
 <body>
 
-<!-- AUTH -->
 <div id="authScreen">
   <div style="width:min(380px,95vw)">
     <div style="margin-bottom:8px"><svg class="rit-word" width="100%" viewBox="38 0 482 120" xmlns="http://www.w3.org/2000/svg" aria-label="Ritovo"><line x1="40" y1="28" x2="40" y2="92" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><text x="58" y="88" font-family="'Garamond','Georgia','Times New Roman',serif" font-size="58" font-weight="300" letter-spacing="12" fill="currentColor">ritovo</text><circle cx="468" cy="28" r="4" fill="currentColor"/></svg></div>
@@ -554,14 +503,12 @@ html[data-theme="dark"] .sb-group-name{color:var(--ink)!important}
       <div id="signupErr" class="auth-err" style="display:none"><span class="auth-err-msg"></span><button class="auth-err-x" onclick="clearAuthErr('signupErr')" aria-label="Dismiss">✕</button></div>
       <button class="btn btn-p btn-fw" onclick="doSignUp()" data-i18n="Create account">Create account</button>
     </div>
-    <!-- Post-signup: check email -->
     <div id="sf-confirm" style="display:none;text-align:center;padding:8px 0">
       <div style="font-size:2.2rem;margin-bottom:10px">📧</div>
       <div style="font-weight:700;font-size:1.05rem;margin-bottom:8px" data-i18n="Check your inbox">Check your inbox</div>
       <p style="font-size:.84rem;color:var(--ink2);margin-bottom:18px" data-i18n="We sent a confirmation link to" data-i18n="Click it to activate your account, then sign in.">We sent a confirmation link to <strong id="sf-confirm-email"></strong>. Click it to activate your account, then sign in.</p>
       <button class="btn btn-g btn-fw" onclick="switchTab('login')" data-i18n="Back to sign in">Back to sign in</button>
     </div>
-    <!-- Forgot password form -->
     <div id="ff" style="display:none">
       <div style="font-weight:600;font-size:.9rem;margin-bottom:6px" data-i18n="Reset your password">Reset your password</div>
       <p style="font-size:.81rem;color:var(--ink2);margin-bottom:14px" data-i18n="Enter your email and we'll send you a link to set a new password.">Enter your email and we'll send you a link to set a new password.</p>
@@ -572,14 +519,12 @@ html[data-theme="dark"] .sb-group-name{color:var(--ink)!important}
         <a href="#" style="font-size:.75rem;color:var(--a);text-decoration:none" onclick="switchTab('login');return false" data-i18n="Back to sign in">Back to sign in</a>
       </div>
     </div>
-    <!-- Forgot password: link sent -->
     <div id="ff-sent" style="display:none;text-align:center;padding:8px 0">
       <div style="font-size:2.2rem;margin-bottom:10px">✉️</div>
       <div style="font-weight:700;font-size:1.05rem;margin-bottom:8px" data-i18n="Link sent!">Link sent!</div>
       <p style="font-size:.84rem;color:var(--ink2);margin-bottom:18px" data-i18n="Check your inbox at" data-i18n="and click the link to reset your password.">Check your inbox at <strong id="ff-sent-email"></strong> and click the link to reset your password.</p>
       <button class="btn btn-g btn-fw" onclick="switchTab('login')" data-i18n="Back to sign in">Back to sign in</button>
     </div>
-    <!-- Password recovery form (reached via email link) -->
     <div id="reset-pw-form" style="display:none">
       <div style="font-weight:600;font-size:.9rem;margin-bottom:6px" data-i18n="Set a new password">Set a new password</div>
       <p style="font-size:.81rem;color:var(--ink2);margin-bottom:14px" data-i18n="Choose a new password for your account.">Choose a new password for your account.</p>
@@ -591,13 +536,11 @@ html[data-theme="dark"] .sb-group-name{color:var(--ink)!important}
   </div>
 </div>
 
-<!-- APP -->
 <div id="app">
   <div id="appLoader"><svg class="al-logo" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><line x1="34" y1="32" x2="34" y2="88" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><text x="44" y="86" font-family="'Garamond','Georgia','Times New Roman',serif" font-size="56" font-weight="300" fill="currentColor">r</text><circle cx="88" cy="32" r="4.5" fill="currentColor"/></svg><div class="al-text">Loading your group data…</div></div>
   <button id="feedbackFab" onclick="openFeedbackModal()">🐛 Bug / Feedback</button>
   <div class="sb-ov" id="sbOv" onclick="toggleSb()"></div>
   <nav class="sb" id="sb">
-    <!-- minimize toggle -->
     <div class="sb-toggle" id="sbToggle" onclick="toggleSbMinimize()" title="Collapse sidebar" data-i18n-title="Collapse sidebar">
       <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 12L6 8l4-4"/></svg>
     </div>
@@ -647,7 +590,6 @@ html[data-theme="dark"] .sb-group-name{color:var(--ink)!important}
       <div><div class="pt" id="pgT">Dashboard</div><div class="ps" id="pgS"></div></div>
       <div class="ta">
         <button class="btn btn-p btn-sm" onclick="openInvMod()" data-i18n="Invite">Invite</button>
-        <!-- + Concert: text on desktop, icon on mobile -->
         <button class="btn btn-p btn-sm tb-icon-btn" onclick="openNewConcert();nav('concerts')" title="+ Concert" data-i18n-title="+ Concert">
           <span class="tb-btn-label" data-i18n="+ Concert">+ Concert</span>
           <span class="tb-btn-icon">
@@ -655,7 +597,6 @@ html[data-theme="dark"] .sb-group-name{color:var(--ink)!important}
             <svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M8 2v12M2 8h12"/></svg>
           </span>
         </button>
-        <!-- + Set List: text on desktop, icon on mobile -->
         <button class="btn btn-p btn-sm tb-icon-btn" onclick="openSlMod()" title="+ Set List" data-i18n="Create Set List">
           <span class="tb-btn-label">+ Set List</span>
           <span class="tb-btn-icon">
@@ -666,7 +607,6 @@ html[data-theme="dark"] .sb-group-name{color:var(--ink)!important}
       </div>
     </div>
 
-    <!-- DASHBOARD -->
     <div class="pg-area on" id="pg-dashboard">
       <div style="margin-bottom:17px">
         <div style="display:flex;align-items:center;gap:8px">
@@ -675,11 +615,8 @@ html[data-theme="dark"] .sb-group-name{color:var(--ink)!important}
         </div>
         <p id="dshS" style="font-size:.84rem;color:var(--ink2);margin-top:4px"></p>
       </div>
-      <!-- WIDGET 1 — Next Event (full width) -->
       <div id="dshNextEvent"></div>
-      <!-- Next upcoming concert (shown when the next event isn't already that concert) -->
       <div id="dshNextConcert" style="margin-top:12px"></div>
-      <!-- Row 2: Active Set List + Member Status -->
       <div class="dg" style="margin-top:14px">
         <div class="card">
           <div class="ch"><div class="ct" data-i18n="Active Set List">Active Set List</div><div class="cl" id="dshSetlistLink" onclick="dshOpenSetlist()" data-i18n="View Full Setlist →">View Full Setlist →</div></div>
@@ -690,7 +627,6 @@ html[data-theme="dark"] .sb-group-name{color:var(--ink)!important}
           <div id="dshMembers"></div>
         </div>
       </div>
-      <!-- Row 3: Recent Activity + Quick Actions -->
       <div class="dg" style="margin-top:14px">
         <div class="card">
           <div class="ch"><div class="ct" data-i18n="Recent Activity">Recent Activity</div><div class="cl" onclick="nav('calendar')" data-i18n="See calendar →">See calendar →</div></div>
@@ -703,7 +639,6 @@ html[data-theme="dark"] .sb-group-name{color:var(--ink)!important}
       </div>
     </div>
 
-    <!-- SET LISTS -->
     <div class="pg-area" id="pg-setlists">
       <div style="display:flex;gap:9px;align-items:center;margin-bottom:15px;flex-wrap:wrap">
         <div style="flex:1">
@@ -716,7 +651,6 @@ html[data-theme="dark"] .sb-group-name{color:var(--ink)!important}
         <button class="btn btn-g btn-sm" onclick="openAsMod()" data-i18n="+ Songs">+ Songs</button>
         <button class="btn btn-p btn-sm" onclick="openSlMod()" data-i18n="Create Set List">+ Set List</button>
       </div>
-      <!-- Empty states -->
       <div id="slEmptyNoSongs" style="display:none;text-align:center;padding:50px 20px">
         <div style="font-size:2rem;margin-bottom:10px">🎵</div>
         <div style="font-weight:700;font-size:1rem;margin-bottom:8px" data-i18n="No songs in library yet">No songs in library yet</div>
@@ -729,9 +663,7 @@ html[data-theme="dark"] .sb-group-name{color:var(--ink)!important}
         <p style="font-size:.84rem;color:var(--ink2);margin-bottom:18px">You have songs in the library — create your first set list!</p>
         <button class="btn btn-p btn-sm" onclick="openSlMod()">+ Create Set List</button>
       </div>
-      <!-- Set list content (hidden when empty) -->
       <div id="slContent">
-      <!-- Setlist dropdown selector -->
       <div style="display:flex;gap:9px;align-items:center;margin-bottom:14px;flex-wrap:wrap">
         <div style="flex:1;position:relative">
           <select id="slDropdown" onchange="selSLDropdown(this)" style="width:100%;padding:9px 36px 9px 13px;background:var(--w);border:1.5px solid var(--bd);border-radius:var(--rad);color:var(--ink);font-family:var(--font);font-size:.875rem;font-weight:600;outline:none;cursor:pointer;appearance:none;transition:border-color .13s">
@@ -747,15 +679,10 @@ html[data-theme="dark"] .sb-group-name{color:var(--ink)!important}
           <div style="flex:1">
             <div style="font-size:.98rem;font-weight:700;letter-spacing:-.02em;margin-bottom:6px" id="slName">Blue Note Summer Jazz Night</div>
             <div id="slMeta" style="display:flex;gap:5px;flex-wrap:wrap;align-items:center">
-              <!-- populated by renderSlMeta() -->
             </div>
-            <!-- Linked concert row -->
             <div id="slConcertLink" style="margin-top:8px;display:flex;align-items:center;gap:7px;flex-wrap:wrap">
-              <!-- populated by renderSlMeta() -->
             </div>
-            <!-- Linked rehearsal row -->
             <div id="slRehLink" style="margin-top:6px;display:flex;align-items:center;gap:7px;flex-wrap:wrap">
-              <!-- populated by renderSlMeta() -->
             </div>
           </div>
           <div style="display:flex;gap:5px;flex-wrap:wrap;align-items:center">
@@ -781,12 +708,10 @@ html[data-theme="dark"] .sb-group-name{color:var(--ink)!important}
           <span style="font-size:.69rem;color:var(--ink3)" data-i18n="Drag ⠿ to reorder">Drag ⠿ to reorder</span>
         </div>
       </div>
-      </div> <!-- /slContent -->
+      </div>
     </div>
 
-    <!-- LIBRARY -->
     <div class="pg-area" id="pg-library">
-      <!-- Header -->
       <div style="display:flex;gap:9px;align-items:center;margin-bottom:15px;flex-wrap:wrap">
         <div style="flex:1">
           <div style="display:flex;align-items:center;gap:7px">
@@ -795,7 +720,6 @@ html[data-theme="dark"] .sb-group-name{color:var(--ink)!important}
           </div>
           <div style="font-size:.74rem;color:var(--ink2);margin-top:2px" id="libCount">24 songs across 5 genres</div>
         </div>
-        <!-- View toggle -->
         <div id="libViewToggle" style="display:flex;background:var(--bg2);border-radius:99px;padding:3px;gap:2px;border:1.5px solid var(--bd)">
           <button id="libViewCards" onclick="setLibView('cards')"
             style="padding:4px 13px;border-radius:99px;border:none;font-family:var(--font);font-size:.72rem;font-weight:600;cursor:pointer;transition:all .15s;background:var(--a);color:#fff"
@@ -809,7 +733,6 @@ html[data-theme="dark"] .sb-group-name{color:var(--ink)!important}
         <button class="btn btn-p btn-sm" onclick="openAddSong()" data-i18n="+ Add Song">+ Add Song</button>
       </div>
 
-      <!-- Filters (both views) -->
       <div class="lf" id="libFilters" style="row-gap:8px">
         <input class="sb2" id="libFTitle" placeholder="Title…" oninput="applyLibFilters()" style="flex:1;min-width:110px;max-width:200px" data-i18n-placeholder="Title…">
         <input class="sb2" id="libFArtist" placeholder="Artist…" oninput="applyLibFilters()" style="flex:1;min-width:110px;max-width:200px" data-i18n-placeholder="Artist…">
@@ -821,16 +744,13 @@ html[data-theme="dark"] .sb-group-name{color:var(--ink)!important}
         </span>
       </div>
 
-      <!-- Cards view -->
       <div id="libViewCardsArea">
         <div class="lg2" id="libGrid"></div>
       </div>
 
-      <!-- Spreadsheet view -->
       <div id="libViewSheetArea" style="display:none">
         <div id="sheetSizeBanner" style="display:none;background:var(--amb2);color:var(--amb);border:1px solid var(--amb);border-radius:var(--rad);padding:8px 12px;font-size:.78rem;font-weight:600;margin-bottom:10px" data-i18n="Spreadsheet mode works best on larger screens">⚠ Spreadsheet mode works best on larger screens</div>
         <div style="background:var(--w);border:1px solid var(--bd);border-radius:var(--radl);box-shadow:var(--sh)">
-          <!-- Toolbar: outside the scroll area so it never moves -->
           <div style="padding:10px 14px;border-bottom:1px solid var(--bd);display:flex;gap:8px;align-items:center;flex-wrap:wrap;background:var(--bg)">
             <span style="font-size:.72rem;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.06em" data-i18n="Click any cell to edit">Click any cell to edit</span>
             <div style="margin-left:auto;display:flex;gap:6px;flex-wrap:wrap">
@@ -842,7 +762,6 @@ html[data-theme="dark"] .sb-group-name{color:var(--ink)!important}
               <button class="btn btn-g btn-sm" onclick="addSheetRow()" style="font-size:.72rem" data-i18n="+ Row">+ Row</button>
             </div>
           </div>
-          <!-- Scroll container: only the table scrolls. Toolbar and footer stay fixed. -->
           <div id="sheetScrollOuter" style="overflow-x:scroll;overflow-y:auto;max-height:calc(100vh - 270px)">
             <div id="sheetScroll" style="position:relative">
               <table id="sheetTbl" style="border-collapse:collapse;font-size:.8rem;table-layout:fixed">
@@ -852,7 +771,6 @@ html[data-theme="dark"] .sb-group-name{color:var(--ink)!important}
               </table>
             </div>
           </div>
-          <!-- Footer: outside the scroll area so it never moves -->
           <div style="padding:8px 14px;border-top:1px solid var(--bd);font-size:.71rem;color:var(--ink3);background:var(--bg)" data-i18n="Changes are auto-saved as you edit each cell.">
             <span data-i18n="Changes are auto-saved as you edit each cell.">Changes are auto-saved as you edit each cell.</span>
           </div>
@@ -860,10 +778,8 @@ html[data-theme="dark"] .sb-group-name{color:var(--ink)!important}
       </div>
     </div>
 
-    <!-- CALENDAR -->
     <div class="pg-area" id="pg-calendar">
 
-      <!-- Empty state: no group yet -->
       <div id="calNoGroup" style="display:none;text-align:center;padding:60px 20px">
         <div style="font-size:2.5rem;margin-bottom:12px">🎸</div>
         <div style="font-size:1.1rem;font-weight:700;margin-bottom:8px" data-i18n="No Group Yet">No Group Yet</div>
@@ -871,10 +787,8 @@ html[data-theme="dark"] .sb-group-name{color:var(--ink)!important}
         <button class="btn btn-p btn-sm" onclick="openNewBand()" data-i18n="+ Create a Group">+ Create a Group</button>
       </div>
 
-      <!-- Content (hidden when no group) -->
       <div id="calContent">
 
-      <!-- HEADER ROW -->
       <div class="calhdr">
         <div class="calnav">
           <button class="cnb" onclick="chMonth(-1)"><svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 12L6 8l4-4"/></svg></button>
@@ -885,7 +799,6 @@ html[data-theme="dark"] .sb-group-name{color:var(--ink)!important}
           <button class="help-btn" onclick="showHelp(this,'<strong>Calendar</strong><ul><li>Monthly overview of all group events — rehearsals and concerts.</li><li>Use the arrows to navigate between months.</li><li>Click any event to view its details or jump to it.</li><li>Switch between <strong>Full</strong> and compact view.</li></ul>')" title="Help">?</button>
         </div>
 
-        <!-- VIEW TOGGLE -->
         <div style="display:flex;background:var(--bg2);border-radius:99px;padding:3px;gap:2px;border:1.5px solid var(--bd)">
           <button id="toggleFull" onclick="setCalView('full')"
             style="padding:4px 13px;border-radius:99px;border:none;font-family:var(--font);font-size:.72rem;font-weight:600;cursor:pointer;transition:all .15s;background:var(--a);color:#fff"
@@ -903,7 +816,6 @@ html[data-theme="dark"] .sb-group-name{color:var(--ink)!important}
         </div>
       </div>
 
-      <!-- ══ FULL VIEW ══ -->
       <div id="calViewFull">
         <div class="bp2">
           <div class="bpt" data-i18n="⚡ Best Rehearsal Days">⚡ Best Rehearsal Days</div>
@@ -922,7 +834,6 @@ html[data-theme="dark"] .sb-group-name{color:var(--ink)!important}
             <div class="li" data-i18n="Full group ⚡"><div class="ld2" style="background:var(--g);box-shadow:0 0 0 2px #86EFAC"></div>Full group ⚡</div>
           </div>
         </div>
-      <!-- ══ CALENDAR CHANGE LOG ══ -->
       <div id="calChangelogSection" style="margin-top:18px">
         <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;flex-wrap:wrap">
           <div style="font-size:.82rem;font-weight:700;letter-spacing:-.01em">📋 Change Log</div>
@@ -942,9 +853,7 @@ html[data-theme="dark"] .sb-group-name{color:var(--ink)!important}
 
       </div>
 
-      <!-- ══ COMPACT VIEW = Availability Grid ══ -->
       <div id="calViewCompact" style="display:none">
-        <!-- Landscape hint on mobile portrait -->
         <div id="landscapeHint" style="display:none;align-items:center;gap:8px;padding:9px 13px;background:var(--bl2);border:1px solid rgba(96,165,250,.25);border-radius:var(--rad);margin-bottom:12px;font-size:.75rem;color:var(--bl)">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="5" width="22" height="14" rx="2"/><path d="M1 9h22M5 5v14"/></svg>
           <span data-i18n="Rotate to landscape for a better view">Rotate to landscape for a better view</span>
@@ -966,20 +875,17 @@ html[data-theme="dark"] .sb-group-name{color:var(--ink)!important}
         </div>
       </div>
 
-      </div><!-- /calContent -->
+      </div>
     </div>
 
 
-    <!-- REHEARSALS -->
     <div class="pg-area" id="pg-rehearsals">
-      <!-- Empty state: no group yet -->
       <div id="rehearsalsNoGroup" style="display:none;text-align:center;padding:60px 20px">
         <div style="font-size:2.5rem;margin-bottom:12px">🎸</div>
         <div style="font-size:1.1rem;font-weight:700;margin-bottom:8px" data-i18n="No Group Yet">No Group Yet</div>
         <p style="font-size:.84rem;color:var(--ink2);margin-bottom:20px" data-i18n="Start by creating a group.">Start by creating a group.</p>
         <button class="btn btn-p btn-sm" onclick="openNewBand()" data-i18n="+ Create a Group">+ Create a Group</button>
       </div>
-      <!-- Content (hidden when no group) -->
       <div id="rehearsalsContent">
         <div style="display:flex;gap:9px;align-items:center;margin-bottom:15px;flex-wrap:wrap">
           <div style="flex:1">
@@ -1008,14 +914,12 @@ html[data-theme="dark"] .sb-group-name{color:var(--ink)!important}
       </div>
     </div>
     <div class="pg-area" id="pg-concerts">
-      <!-- Empty state: no group yet -->
       <div id="concertsNoGroup" style="display:none;text-align:center;padding:60px 20px">
         <div style="font-size:2.5rem;margin-bottom:12px">🎸</div>
         <div style="font-size:1.1rem;font-weight:700;margin-bottom:8px">No Group Yet</div>
         <p style="font-size:.84rem;color:var(--ink2);margin-bottom:20px">Start by creating a group.</p>
         <button class="btn btn-p btn-sm" onclick="openNewBand()">+ Create a Group</button>
       </div>
-      <!-- Content (hidden when no group) -->
       <div id="concertsContent">
         <div style="display:flex;gap:9px;align-items:center;margin-bottom:15px;flex-wrap:wrap">
           <div style="flex:1">
@@ -1044,16 +948,13 @@ html[data-theme="dark"] .sb-group-name{color:var(--ink)!important}
       </div>
     </div>
 
-    <!-- MEMBERS -->
     <div class="pg-area" id="pg-members">
-      <!-- Empty state: no group yet -->
       <div id="membersNoGroup" style="display:none;text-align:center;padding:60px 20px">
         <div style="font-size:2.5rem;margin-bottom:12px">🎸</div>
         <div style="font-size:1.1rem;font-weight:700;margin-bottom:8px">No Group Yet</div>
         <p style="font-size:.84rem;color:var(--ink2);margin-bottom:20px">Start by creating your first group to manage members.</p>
         <button class="btn btn-p btn-sm" onclick="openNewBand()">+ Create a Group</button>
       </div>
-      <!-- Content (hidden when no group) -->
       <div id="membersContent">
         <div style="display:flex;gap:9px;align-items:center;margin-bottom:15px;flex-wrap:wrap">
           <div style="flex:1">
@@ -1069,16 +970,13 @@ html[data-theme="dark"] .sb-group-name{color:var(--ink)!important}
       </div>
     </div>
 
-    <!-- GUEST DIRECTORY -->
     <div class="pg-area" id="pg-guestdir">
-      <!-- Empty state: no group yet -->
       <div id="guestDirNoGroup" style="display:none;text-align:center;padding:60px 20px">
         <div style="font-size:2.5rem;margin-bottom:12px">🎸</div>
         <div style="font-size:1.1rem;font-weight:700;margin-bottom:8px">No Group Yet</div>
         <p style="font-size:.84rem;color:var(--ink2);margin-bottom:20px">Start by creating your first group to manage guest musicians.</p>
         <button class="btn btn-p btn-sm" onclick="openNewBand()">+ Create a Group</button>
       </div>
-      <!-- Content (hidden when no group) -->
       <div id="guestDirContent">
         <div style="display:flex;gap:9px;align-items:center;margin-bottom:6px;flex-wrap:wrap">
           <div style="flex:1">
@@ -1102,10 +1000,8 @@ html[data-theme="dark"] .sb-group-name{color:var(--ink)!important}
       </div>
     </div>
 
-    <!-- GROUP PROFILE -->
     <div class="pg-area" id="pg-bandprofile">
 
-      <!-- Empty state: no group yet -->
       <div id="bpEmpty" style="display:none;text-align:center;padding:60px 20px">
         <div style="font-size:2.5rem;margin-bottom:12px">🎸</div>
         <div style="font-size:1.1rem;font-weight:700;margin-bottom:8px">No Group Yet</div>
@@ -1113,13 +1009,10 @@ html[data-theme="dark"] .sb-group-name{color:var(--ink)!important}
         <button class="btn btn-p btn-sm" onclick="openNewBand()">+ Create a Group</button>
       </div>
 
-      <!-- Group content (hidden when no group) -->
       <div id="bpContent">
 
-      <!-- ── HERO HEADER ── -->
       <div style="background:var(--w);border:1px solid var(--bd);border-radius:var(--radl);overflow:hidden;box-shadow:var(--sh);margin-bottom:16px">
 
-        <!-- Cover photo strip -->
         <div id="bpCover" style="height:160px;background:linear-gradient(135deg,#6C63FF 0%,#4C46C9 40%,#2563EB 100%);position:relative" onclick="bpCoverClick()" title="Click to change cover photo">
           <div data-overlay style="position:absolute;inset:0;opacity:.08;font-size:2.5rem;display:flex;align-items:center;justify-content:center;letter-spacing:1.5rem;pointer-events:none">🎷🎸🎹🎺🥁🎵</div>
           <div id="bpCoverEditBadge" style="display:none;position:absolute;top:10px;right:10px;background:rgba(0,0,0,.45);border-radius:8px;padding:5px 10px;display:none;align-items:center;gap:5px;font-size:.72rem;font-weight:600;color:#fff;backdrop-filter:blur(4px);cursor:pointer">
@@ -1129,7 +1022,6 @@ html[data-theme="dark"] .sb-group-name{color:var(--ink)!important}
           <input type="file" id="bpCoverInput" accept="image/*" style="display:none" onchange="handleBpCover(event)">
         </div>
 
-        <!-- Logo + info row -->
         <div style="padding:0 20px 20px;position:relative">
           <div style="position:relative;display:inline-block;margin-top:-36px;margin-bottom:12px">
             <div id="bpLogo" onclick="bpLogoClick()"
@@ -1150,7 +1042,6 @@ html[data-theme="dark"] .sb-group-name{color:var(--ink)!important}
               <div id="bpMetaDisplay" style="font-size:.8rem;color:var(--ink2);margin-top:2px"></div>
               <div class="bpbio" id="bpBioDisplay" style="margin-top:8px;max-width:560px"></div>
               <div class="bpplat" id="bpplat" style="margin-top:10px"></div>
-              <!-- Inline edit fields — hidden by default -->
               <div id="bpEditFields" style="display:none;margin-top:8px;max-width:560px">
                 <div class="fg" style="margin-bottom:7px"><input id="beNameInline" placeholder="Group name" style="font-size:1.1rem;font-weight:700"></div>
                 <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:7px">
@@ -1215,13 +1106,11 @@ html[data-theme="dark"] .sb-group-name{color:var(--ink)!important}
           <div id="bpPhotosEmpty" style="font-size:.78rem;color:var(--ink3);padding:8px 0" data-i18n="No group photos yet.">No group photos yet.</div>
         </div>
 
-        <!-- WhatsApp Group card -->
         <div class="card" style="grid-column:1/-1">
           <div class="ch">
             <div class="ct" style="display:flex;align-items:center;gap:7px"><span style="font-size:1.05rem">💬</span> WhatsApp Group</div>
           </div>
           <div style="font-size:.75rem;color:var(--ink2);margin-bottom:12px" data-i18n="Paste your group's WhatsApp group invite link. Members can join with one tap from any device.">Paste your group's WhatsApp group invite link. Members can join with one tap from any device.</div>
-          <!-- Connected state -->
           <div id="waLinkDisplay" style="display:none;margin-bottom:10px">
             <div style="background:var(--g2);border:1.5px solid #86EFAC;border-radius:8px;padding:10px 13px;display:flex;align-items:center;gap:10px">
               <span style="font-size:1.3rem;flex-shrink:0">💬</span>
@@ -1231,12 +1120,10 @@ html[data-theme="dark"] .sb-group-name{color:var(--ink)!important}
               </div>
             </div>
           </div>
-          <!-- Input -->
           <div id="waInputRow" style="margin-bottom:10px">
             <input id="waLinkInput" style="width:100%;padding:9px 13px;background:var(--bg);border:1.5px solid var(--bd);border-radius:var(--rad);color:var(--ink);font-family:var(--font);font-size:.83rem;outline:none;transition:border-color .13s;box-sizing:border-box" placeholder="https://chat.whatsapp.com/…" oninput="validateWaLink(this)" onfocus="this.style.borderColor='var(--a)'" onblur="this.style.borderColor='var(--bd)'">
             <div id="waLinkErr" style="display:none;font-size:.71rem;color:var(--r);margin-top:4px">⚠ Must be a valid WhatsApp group link (chat.whatsapp.com/…)</div>
           </div>
-          <!-- Actions -->
           <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">
             <button class="btn btn-sm" style="background:#25D366;color:#fff;border:none;display:inline-flex;align-items:center;gap:6px;box-shadow:0 2px 8px rgba(37,211,102,.25);font-family:var(--font);font-weight:600;padding:8px 14px;border-radius:var(--rad);cursor:pointer;font-size:.845rem" onclick="openWhatsApp()">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.117.554 4.103 1.523 5.824L.057 23.882l6.233-1.632A11.935 11.935 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.894a9.877 9.877 0 01-5.031-1.378l-.361-.214-3.741.981.998-3.648-.235-.374A9.856 9.856 0 012.105 12C2.105 6.533 6.533 2.105 12 2.105S21.895 6.533 21.895 12 17.467 21.894 12 21.894z"/></svg>
@@ -1248,7 +1135,6 @@ html[data-theme="dark"] .sb-group-name{color:var(--ink)!important}
           </div>
         </div>
 
-        <!-- Lyrics / Sheet Music Repository card — admin only -->
         <div class="card" id="bpLyricsCard" style="grid-column:1/-1;display:none">
           <div class="ch">
             <div class="ct" style="display:flex;align-items:center;gap:7px"><span style="font-size:1.05rem">📄</span> Lyrics / Sheet Music Repository</div>
@@ -1269,7 +1155,6 @@ html[data-theme="dark"] .sb-group-name{color:var(--ink)!important}
           <button class="btn btn-p btn-sm" onclick="saveLyricsRepo()">Save</button>
         </div>
 
-        <!-- Notification Preference card -->
         <div class="card" style="grid-column:1/-1">
           <div class="ch">
             <div class="ct" style="display:flex;align-items:center;gap:7px" data-i18n="Rehearsal Notifications"><span style="font-size:1.05rem">📣</span> Rehearsal Notifications</div>
@@ -1295,11 +1180,10 @@ html[data-theme="dark"] .sb-group-name{color:var(--ink)!important}
         </div>
 
       </div>
-    </div> <!-- /bpContent -->
+    </div>
     </div>
 
     <div class="pg-area" id="pg-myprofile">
-      <!-- Hero: Cover + Avatar (always editable via file inputs) -->
       <div style="margin:-22px -22px 0;position:relative">
         <div id="mpCover" onclick="document.getElementById('mpCoverInput').click()" style="height:160px;background:linear-gradient(135deg,#6C63FF 0%,#4ECCA3 100%);position:relative;overflow:hidden;cursor:pointer" title="Change cover photo">
           <input type="file" id="mpCoverInput" accept="image/*" style="display:none" onchange="handleMpCover(event)">
@@ -1328,7 +1212,6 @@ html[data-theme="dark"] .sb-group-name{color:var(--ink)!important}
 
       <div style="display:flex;flex-direction:column;gap:16px;margin-top:8px">
 
-        <!-- PERSONAL INFO -->
         <div class="card" id="mp-card-personal">
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
             <div class="ct" data-i18n="Personal Info">Personal Info</div>
@@ -1338,7 +1221,6 @@ html[data-theme="dark"] .sb-group-name{color:var(--ink)!important}
               <button class="btn btn-g btn-sm" id="mp-btn-cancel-personal" style="display:none" onclick="mpCancel('personal')" data-i18n="Cancel">Cancel</button>
             </div>
           </div>
-          <!-- Read view -->
           <div id="mpv-personal">
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px 24px">
               <div data-i18n="First Name"><div class="mp-lbl">First Name</div><div id="mpv-first" class="mp-val">—</div></div>
@@ -1351,7 +1233,6 @@ html[data-theme="dark"] .sb-group-name{color:var(--ink)!important}
             </div>
             <div id="mpv-bio" style="margin-top:12px;font-size:.84rem;color:var(--ink2);line-height:1.55;white-space:pre-wrap;display:none"></div>
           </div>
-          <!-- Edit view -->
           <div id="mpe-personal" style="display:none">
             <div class="fr">
               <div class="fg" data-i18n="First Name"><label>First Name</label><input id="mpFirst" placeholder="Marco"></div>
@@ -1382,7 +1263,6 @@ html[data-theme="dark"] .sb-group-name{color:var(--ink)!important}
           </div>
         </div>
 
-        <!-- MUSIC -->
         <div class="card" id="mp-card-music">
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
             <div class="ct" data-i18n="Music">Music</div>
@@ -1392,7 +1272,6 @@ html[data-theme="dark"] .sb-group-name{color:var(--ink)!important}
               <button class="btn btn-g btn-sm" id="mp-btn-cancel-music" style="display:none" onclick="mpCancel('music')" data-i18n="Cancel">Cancel</button>
             </div>
           </div>
-          <!-- Read view -->
           <div id="mpv-music">
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px 24px">
               <div data-i18n="Instrument(s)"><div class="mp-lbl">Instrument(s)</div><div id="mpv-inst" style="display:flex;gap:6px;flex-wrap:wrap;margin-top:4px"></div></div>
@@ -1403,7 +1282,6 @@ html[data-theme="dark"] .sb-group-name{color:var(--ink)!important}
               <div id="mpv-gear" style="font-size:.84rem;color:var(--ink2);margin-top:3px;line-height:1.5;white-space:pre-wrap"></div>
             </div>
           </div>
-          <!-- Edit view -->
           <div id="mpe-music" style="display:none">
             <div class="fr">
               <div class="fg" data-i18n="Main Instrument" data-i18n="— Select —"><label>Main Instrument</label><select id="mpInst1" onchange="renderMpInstPreview()"><option value="">— Select —</option></select></div>
@@ -1415,7 +1293,6 @@ html[data-theme="dark"] .sb-group-name{color:var(--ink)!important}
           </div>
         </div>
 
-        <!-- AVAILABILITY -->
         <div class="card" id="mp-card-avail">
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
             <div class="ct" data-i18n="Weekly Availability">Weekly Availability</div>
@@ -1426,16 +1303,13 @@ html[data-theme="dark"] .sb-group-name{color:var(--ink)!important}
             </div>
           </div>
           <div style="font-size:.74rem;color:var(--ink3);margin-bottom:12px" data-i18n="Which days are you generally available? Used for rehearsal planning.">Which days are you generally available? Used for rehearsal planning.</div>
-          <!-- Read view -->
           <div id="mpv-avail"></div>
-          <!-- Edit view -->
           <div id="mpe-avail" style="display:none;margin-top:4px">
             <div id="mpAvailDays" style="display:flex;gap:6px;flex-wrap:wrap"></div>
             <div style="font-size:.72rem;color:var(--ink3);margin-top:10px" data-i18n="Individual days can still be blocked separately on the calendar.">Individual days can still be blocked separately on the calendar.</div>
           </div>
         </div>
 
-        <!-- LINKS & SOCIAL -->
         <div class="card" id="mp-card-links">
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
             <div class="ct" data-i18n="Links & Social">Links &amp; Social</div>
@@ -1445,9 +1319,7 @@ html[data-theme="dark"] .sb-group-name{color:var(--ink)!important}
               <button class="btn btn-g btn-sm" id="mp-btn-cancel-links" style="display:none" onclick="mpCancel('links')" data-i18n="Cancel">Cancel</button>
             </div>
           </div>
-          <!-- Read view -->
           <div id="mpv-links"></div>
-          <!-- Edit view -->
           <div id="mpe-links" style="display:none">
             <div class="fg"><label>Spotify</label><input id="mpSpotify" placeholder="https://open.spotify.com/artist/…" oninput="renderMpLinkPreview()"></div>
             <div class="fg"><label>Apple Music</label><input id="mpApple" placeholder="https://music.apple.com/…" oninput="renderMpLinkPreview()"></div>
@@ -1541,8 +1413,6 @@ html[data-theme="dark"] .sb-group-name{color:var(--ink)!important}
   </div>
 </div>
 
-<!-- MODALS -->
-<!-- AI SET LIST -->
 <div class="mov" id="slMod" style="display:none" onclick="closeMB(event,'slMod')">
 <div class="mod" style="max-width:420px">
   <div class="mott" data-i18n="New Set List">New Set List</div>
@@ -1559,7 +1429,6 @@ html[data-theme="dark"] .sb-group-name{color:var(--ink)!important}
 
   <div id="slConcertPreview" style="display:none;padding:10px 13px;background:var(--a2);border:1.5px solid rgba(108,99,255,.25);border-radius:var(--rad);font-size:.78rem;color:var(--a);margin-top:-6px;margin-bottom:4px"></div>
 
-  <!-- Creation mode -->
   <div style="height:1px;background:var(--bd);margin:8px 0 14px"></div>
   <div style="font-size:.69rem;font-weight:700;color:var(--ink2);margin-bottom:9px;letter-spacing:.04em;text-transform:uppercase" data-i18n="How do you want to build it?">How do you want to build it?</div>
   <div style="display:flex;gap:8px">
@@ -1579,7 +1448,6 @@ html[data-theme="dark"] .sb-group-name{color:var(--ink)!important}
 </div>
 </div>
 
-<!-- ADD SONGS TO SETLIST -->
 <div class="mov" id="asMod" style="display:none" onclick="closeMB(event,'asMod')">
 <div class="mod" style="max-width:460px">
   <div class="mott" data-i18n="Add Songs">Add Songs</div>
@@ -1593,7 +1461,6 @@ html[data-theme="dark"] .sb-group-name{color:var(--ink)!important}
 </div>
 </div>
 
-<!-- ADD LIBRARY SONG -->
 <div class="mov" id="alsMod" style="display:none" onclick="closeMB(event,'alsMod')">
 <div class="mod">
   <div class="mott" data-i18n="Add Song to Library">Add Song to Library</div>
@@ -1649,14 +1516,10 @@ html[data-theme="dark"] .sb-group-name{color:var(--ink)!important}
 </div>
 </div>
 
-<!-- EVENT / CONCERT -->
-<!-- INVITE -->
-<!-- INVITE -->
 <div class="mov" id="invMod" style="display:none" onclick="closeMB(event,'invMod')">
 <div class="mod">
   <div class="mott">Invite a Musician</div>
 
-  <!-- Option A: existing user lookup -->
   <div style="padding:12px;background:var(--a2);border:1px solid rgba(108,99,255,.3);border-radius:var(--rad);margin-bottom:16px">
     <div style="font-size:.72rem;font-weight:700;color:var(--a);letter-spacing:.04em;text-transform:uppercase;margin-bottom:8px">Already on Ritovo?</div>
     <div style="display:flex;gap:7px;align-items:flex-end">
@@ -1666,14 +1529,12 @@ html[data-theme="dark"] .sb-group-name{color:var(--ink)!important}
     <div id="invLookupResult" style="display:none;margin-top:10px"></div>
   </div>
 
-  <!-- Divider -->
   <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px">
     <div style="flex:1;height:1px;background:var(--bd)"></div>
     <div style="font-size:.68rem;color:var(--ink3);font-weight:700;letter-spacing:.05em">OR INVITE A NEW USER</div>
     <div style="flex:1;height:1px;background:var(--bd)"></div>
   </div>
 
-  <!-- Option B: new user — invite via Supabase email -->
   <div style="font-size:.75rem;color:var(--ink2);padding:8px 11px;background:var(--a2);border:1px solid rgba(108,99,255,.2);border-radius:var(--rad);margin-bottom:12px">
     📧 An invite email will be sent. The musician clicks the link, sets a password, and lands straight in the group — no sign-up form needed.
   </div>
@@ -1691,7 +1552,6 @@ html[data-theme="dark"] .sb-group-name{color:var(--ink)!important}
 </div>
 </div>
 
-<!-- JOIN GROUP -->
 <div class="mov" id="joinGroupMod" style="display:none" onclick="closeMB(event,'joinGroupMod')">
 <div class="mod" style="max-width:420px">
   <div class="mott">Join a Group</div>
@@ -1705,7 +1565,6 @@ html[data-theme="dark"] .sb-group-name{color:var(--ink)!important}
 </div>
 </div>
 
-<!-- ONBOARDING MODAL — shown to invited users on first login -->
 <div class="mov" id="onboardingMod" style="display:none">
 <div class="mod" style="max-width:420px">
   <div style="text-align:center;margin-bottom:18px">
@@ -1721,7 +1580,6 @@ html[data-theme="dark"] .sb-group-name{color:var(--ink)!important}
 </div>
 </div>
 
-<!-- BLOCK DAYS -->
 <div class="mov" id="blkMod" style="display:none" onclick="closeMB(event,'blkMod')">
 <div class="mod">
   <div class="mott" data-i18n="Block Days">Block Days</div>
@@ -1738,7 +1596,6 @@ html[data-theme="dark"] .sb-group-name{color:var(--ink)!important}
 </div>
 </div>
 
-<!-- GROUP SWITCH -->
 <div class="mov" id="bswMod" style="display:none" onclick="closeMB(event,'bswMod')">
 <div class="mod" style="max-width:360px">
   <div class="mott" data-i18n="Your Groups">Your Groups</div>
@@ -1751,7 +1608,6 @@ html[data-theme="dark"] .sb-group-name{color:var(--ink)!important}
 </div>
 </div>
 
-<!-- CREATE NEW GROUP MODAL -->
 <div class="mov" id="newGroupMod" style="display:none" onclick="closeMB(event,'newGroupMod')">
 <div class="mod" style="max-width:460px">
   <div class="mott" data-i18n="Create New Group">Create New Group</div>
@@ -1782,10 +1638,8 @@ html[data-theme="dark"] .sb-group-name{color:var(--ink)!important}
 </div>
 </div>
 
-<!-- BLACKOUT MODAL -->
 <div class="mov" id="boMod" style="display:none" onclick="closeMB(event,'boMod')">
 <div class="mod" style="max-width:445px;display:flex;flex-direction:column;max-height:91vh;padding:0;overflow:hidden">
-  <!-- scrollable body -->
   <div style="padding:25px 25px 0;overflow-y:auto;flex:1">
     <input type="hidden" id="boId">
     <div class="mott" data-i18n="Blackout Period">Blackout Period</div>
@@ -1796,7 +1650,6 @@ html[data-theme="dark"] .sb-group-name{color:var(--ink)!important}
     <div class="fg" data-i18n="Who does this affect?" data-i18n="Whole group" data-i18n="Specific members only"><label>Who does this affect?</label><select id="boSc" onchange="togBOM()"><option value="group">Whole group</option><option value="members">Specific members only</option></select></div>
     <div id="boMR" style="display:none;margin-bottom:12px" data-i18n="Select affected members"><div style="font-size:.71rem;color:var(--ink2);margin-bottom:7px">Select affected members</div><div style="display:flex;flex-wrap:wrap;gap:6px" id="boMC"></div></div>
   </div>
-  <!-- sticky footer — Save always visible -->
   <div style="padding:13px 25px 20px;border-top:1px solid var(--bd);display:flex;gap:7px;justify-content:flex-end;background:var(--w);flex-shrink:0">
     <button class="btn btn-g" onclick="closeMod('boMod')" data-i18n="Cancel">Cancel</button>
     <button class="btn btn-p" onclick="savBO()" data-i18n="Save">Save Period</button>
@@ -1804,7 +1657,6 @@ html[data-theme="dark"] .sb-group-name{color:var(--ink)!important}
 </div>
 </div>
 
-<!-- REHEARSAL CONFIRM -->
 <div class="mov" id="rehMod" style="display:none" onclick="closeMB(event,'rehMod')">
 <div class="mod" style="max-width:415px">
   <div class="aib">⚡ Great day for rehearsal</div>
@@ -1821,7 +1673,6 @@ html[data-theme="dark"] .sb-group-name{color:var(--ink)!important}
     </select>
   </div>
 
-  <!-- Notification channel -->
   <div style="height:1px;background:var(--bd);margin:4px 0 13px"></div>
   <div style="font-size:.69rem;font-weight:700;color:var(--ink2);margin-bottom:8px;letter-spacing:.04em;text-transform:uppercase">Notify members via</div>
   <div style="display:flex;gap:7px;margin-bottom:10px" id="rmNotifOpts">
@@ -1836,12 +1687,10 @@ html[data-theme="dark"] .sb-group-name{color:var(--ink)!important}
     </div>
   </div>
 
-  <!-- Error shown when WhatsApp is selected but not configured -->
   <div id="rmWaErr" style="display:none;padding:9px 12px;background:var(--r2);border:1px solid #FECACA;border-radius:var(--rad);font-size:.76rem;color:var(--r);margin-bottom:10px">
     ⚠ No WhatsApp group linked. Go to <strong>Group Profile → WhatsApp Group</strong> to add your group invite link first.
   </div>
 
-  <!-- Confirmation note — updates based on selection -->
   <div id="rmNotifNote" style="background:var(--g2);border-radius:var(--rad);padding:9px 12px;font-size:.73rem;color:var(--g);border:1px solid #86EFAC">
     ✓ Members will be notified by email once confirmed.
   </div>
@@ -6848,7 +6697,6 @@ async function submitFeedback(){
   }
 }
 </script>
-<!-- MUSICIAN PROFILE MODAL -->
 <div class="mov" id="profMod" style="display:none" onclick="closeMB(event,'profMod')">
 <div class="mod" style="max-width:560px">
 
@@ -6857,7 +6705,6 @@ async function submitFeedback(){
   <div style="display:flex;align-items:center;gap:14px;margin-bottom:20px">
     <div style="position:relative;flex-shrink:0">
       <div id="profAv" style="width:58px;height:58px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.2rem;font-weight:700;color:#fff;cursor:pointer;overflow:hidden;background:#6C63FF" title="Click to change photo" onclick="document.getElementById('profPhotoInput').click()"></div>
-      <!-- camera badge — edit own profile only -->
       <div class="edit-only" onclick="document.getElementById('profPhotoInput').click()" style="position:absolute;bottom:0;right:0;width:20px;height:20px;border-radius:50%;background:var(--a);border:2px solid var(--w);display:flex;align-items:center;justify-content:center;cursor:pointer">
         <svg width="10" height="10" viewBox="0 0 16 16" fill="none" stroke="#fff" stroke-width="1.5"><path d="M2 5a1 1 0 011-1h1.5l1-2h5l1 2H13a1 1 0 011 1v7a1 1 0 01-1 1H3a1 1 0 01-1-1V5z"/><circle cx="8" cy="8.5" r="2"/></svg>
       </div>
@@ -6875,7 +6722,6 @@ async function submitFeedback(){
     </div>
   </div>
 
-  <!-- Personal info -->
   <div style="font-size:.69rem;font-weight:700;color:var(--ink2);margin-bottom:9px;letter-spacing:.04em;text-transform:uppercase">Personal Info</div>
   <div class="fr">
     <div class="fg"><label>First Name</label><input id="pfFirst"></div>
@@ -6904,7 +6750,6 @@ async function submitFeedback(){
   </div>
   <div class="fg"><label>Bio</label><textarea id="pfBio" style="min-height:60px" placeholder="A few words about yourself…"></textarea></div>
 
-  <!-- Music info -->
   <div style="height:1px;background:var(--bd);margin:4px 0 14px"></div>
   <div style="font-size:.69rem;font-weight:700;color:var(--ink2);margin-bottom:9px;letter-spacing:.04em;text-transform:uppercase">Music</div>
   <div class="fr">
@@ -6919,7 +6764,6 @@ async function submitFeedback(){
       </select>
     </div>
   </div>
-  <!-- Live instrument icon preview -->
   <div id="pfInstPreview" style="display:none;margin-top:-6px;margin-bottom:10px">
     <div style="font-size:.72rem;color:var(--ink3);margin-bottom:5px">Preview</div>
     <div id="pfInstPills" style="display:flex;gap:6px;flex-wrap:wrap"></div>
@@ -6930,13 +6774,11 @@ async function submitFeedback(){
     </select>
   </div>
 
-  <!-- Availability -->
   <div style="height:1px;background:var(--bd);margin:4px 0 14px"></div>
   <div style="font-size:.69rem;font-weight:700;color:var(--ink2);margin-bottom:9px;letter-spacing:.04em;text-transform:uppercase">Weekly Availability</div>
   <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:13px" id="pfAvailDays"></div>
   <div style="font-size:.72rem;color:var(--ink3);margin-top:-6px;margin-bottom:13px">Tap to toggle. This is your usual weekly pattern — individual days can still be blocked on the calendar.</div>
 
-  <!-- Equipment -->
   <div style="height:1px;background:var(--bd);margin:4px 0 14px"></div>
   <div style="font-size:.69rem;font-weight:700;color:var(--ink2);margin-bottom:9px;letter-spacing:.04em;text-transform:uppercase">Equipment</div>
   <div class="fg"><label>Gear / Setup Notes <span style="font-weight:400;color:var(--ink3)">(optional)</span></label>
@@ -6944,7 +6786,6 @@ async function submitFeedback(){
   </div>
 
 
-  <!-- Links & Social -->
   <div style="height:1px;background:var(--bd);margin:4px 0 14px"></div>
   <div style="font-size:.69rem;font-weight:700;color:var(--ink2);margin-bottom:9px;letter-spacing:.04em;text-transform:uppercase" data-i18n="Set Lists" data-i18n="(optional)">Links &amp; Social <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--ink3)">(all optional)</span></div>
   <div class="fg"><label>Spotify</label><input id="pfSpotify" placeholder="https://open.spotify.com/artist/…"></div>
@@ -6954,7 +6795,6 @@ async function submitFeedback(){
   <div class="fg"><label>Facebook</label><input id="pfFacebook" placeholder="https://facebook.com/…"></div>
   <div class="fg"><label>Website</label><input id="pfWebsite" placeholder="https://yoursite.com"></div>
 
-  <!-- live platform link previews — shown when fields have content -->
   <div id="pfLinkPreview" style="display:none;margin-top:-4px;margin-bottom:8px">
     <div style="font-size:.72rem;color:var(--ink3);margin-bottom:7px">Preview</div>
     <div id="pfLinkPills" class="bpplat"></div>
@@ -7616,7 +7456,6 @@ async function saveSettings(){
 }
 </script>
 
-<!-- SONG EDIT MODAL -->
 <div class="mov" id="seMod" style="display:none" onclick="if(event.target===event.currentTarget)cancelSongEdit()">
 <div class="mod" style="max-width:500px">
   <div class="mott" data-i18n="Edit Song">Edit Song</div>
@@ -7651,7 +7490,6 @@ async function saveSettings(){
     </div>
   </div>
 
-  <!-- Lyrics / Sheet Music -->
   <div style="height:1px;background:var(--bd);margin:4px 0 14px"></div>
   <div style="font-size:.69rem;font-weight:700;color:var(--ink2);margin-bottom:6px;letter-spacing:.04em;text-transform:uppercase">📄 Lyrics / Sheet Music <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--ink3)">(optional)</span></div>
   <div id="seLyricsRepoHint" style="font-size:.72rem;color:var(--a);margin-bottom:8px;display:none"></div>
@@ -7668,7 +7506,6 @@ async function saveSettings(){
   </div>
   <div style="font-size:.69rem;color:var(--ink3);margin-bottom:4px">Accepted: PDF, PNG, JPG, GIF, MXL, XML &nbsp;·&nbsp; Max 10 MB &nbsp;·&nbsp; Stored in Ritovo</div>
 
-  <!-- Sheet Music -->
   <div style="font-size:.69rem;font-weight:700;color:var(--ink2);margin-bottom:6px;margin-top:14px;letter-spacing:.04em;text-transform:uppercase">🎵 Sheet Music <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--ink3)">(optional)</span></div>
   <div style="display:flex;gap:7px;align-items:center;margin-bottom:8px">
     <input id="seSheetMusic" style="flex:1;padding:9px 13px;background:var(--bg);border:1.5px solid var(--bd);border-radius:var(--rad);color:var(--ink);font-family:var(--font);font-size:.83rem;outline:none;transition:border-color .13s" placeholder="Paste link or upload →" onfocus="this.style.borderColor='var(--a)'" onblur="this.style.borderColor='var(--bd)'" oninput="document.getElementById('seSheetMusicViewBtn').style.display=this.value?'':'none'">
@@ -7682,9 +7519,7 @@ async function saveSettings(){
     <span id="seSheetMusicStatus" style="font-size:.72rem;color:var(--ink3)"></span>
   </div>
 
-  <!-- Streaming links -->
   <div style="height:1px;background:var(--bd);margin:4px 0 14px"></div>
-  <!-- Mobile-only collapse toggle (hidden on desktop via openSongEdit) -->
   <button id="seStreamingToggle" onclick="toggleStreamingLinks()" style="display:none;width:100%;text-align:left;padding:9px 12px;border-radius:var(--rad);border:1.5px solid var(--bd);background:var(--bg2);color:var(--ink2);font-family:var(--font);font-size:.78rem;font-weight:600;cursor:pointer;margin-bottom:8px" data-i18n="Show streaming links">Show streaming links ▾</button>
   <div id="seStreamingWrap">
   <div style="font-size:.69rem;font-weight:700;color:var(--ink2);margin-bottom:9px;letter-spacing:.04em;text-transform:uppercase" data-i18n="Streaming Links (optional)">Streaming Links <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--ink3)">(optional)</span></div>
@@ -7694,15 +7529,12 @@ async function saveSettings(){
   <div class="fg" data-i18n="Amazon Music URL"><label>Amazon Music URL</label><input id="seAmazon" placeholder="https://music.amazon.com/…"></div>
   </div>
 
-  <!-- Actions row -->
   <div style="height:1px;background:var(--bd);margin:4px 0 14px"></div>
   <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:4px">
-    <!-- Hide toggle -->
     <button id="seHideBtn" onclick="toggleHideSong(editingSongId)"
       style="flex:1;padding:9px 14px;border-radius:var(--rad);border:1.5px solid var(--bd);background:var(--bg2);color:var(--ink2);font-family:var(--font);font-size:.8rem;font-weight:600;cursor:pointer;transition:all .15s;text-align:center">
       🙈 Hide Song
     </button>
-    <!-- Delete — admin only -->
     <button id="seDeleteBtn" onclick="deleteSong(editingSongId)"
       style="padding:9px 14px;border-radius:var(--rad);border:1.5px solid var(--r2);background:var(--r2);color:var(--r);font-family:var(--font);font-size:.8rem;font-weight:600;cursor:pointer;transition:all .15s"
       onmouseover="this.style.background='var(--r)';this.style.color='#fff'" onmouseout="this.style.background='var(--r2)';this.style.color='var(--r)'">
@@ -7718,7 +7550,6 @@ async function saveSettings(){
 </div>
 </div>
 
-<!-- CONCERT EDIT MODAL -->
 <div class="mov" id="ceMod" style="display:none" onclick="closeMB(event,'ceMod')">
 <div class="mod" style="max-width:520px;display:flex;flex-direction:column;max-height:91vh;padding:0;overflow:hidden">
   <div style="padding:25px 25px 0;overflow-y:auto;flex:1">
@@ -7752,7 +7583,6 @@ async function saveSettings(){
       </div>
     </div>
 
-    <!-- Paid / Free -->
     <div style="height:1px;background:var(--bd);margin:4px 0 14px"></div>
     <div style="font-size:.69rem;font-weight:700;color:var(--ink2);margin-bottom:9px;letter-spacing:.04em;text-transform:uppercase" data-i18n="Gig Type">Gig Type</div>
     <div class="popts">
@@ -7766,13 +7596,11 @@ async function saveSettings(){
       </div>
     </div>
 
-    <!-- Notes -->
     <div style="height:1px;background:var(--bd);margin:4px 0 14px"></div>
     <div class="fg" data-i18n="Notes" data-i18n="(optional)"><label>Notes <span style="font-weight:400;color:var(--ink3)">(optional)</span></label>
       <textarea id="ceNotes" style="min-height:60px" placeholder="Logistics, special requests, setlist notes…" data-i18n-placeholder="Logistics, special requests, setlist notes…"></textarea>
     </div>
 
-    <!-- Set List link -->
     <div style="height:1px;background:var(--bd);margin:4px 0 14px"></div>
     <div style="font-size:.69rem;font-weight:700;color:var(--ink2);margin-bottom:9px;letter-spacing:.04em;text-transform:uppercase" data-i18n="Streaming Links (optional)">Set List <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--ink3)">(optional)</span></div>
     <div class="fg" style="margin-bottom:6px">
@@ -7782,7 +7610,6 @@ async function saveSettings(){
     </div>
     <div id="ceSetlistLinked" style="display:none;margin-bottom:4px"></div>
 
-    <!-- Photos — shown only when editing an existing concert -->
     <div id="cePhotosSection" style="display:none">
       <div style="height:1px;background:var(--bd);margin:4px 0 14px"></div>
       <div style="font-size:.69rem;font-weight:700;color:var(--ink2);margin-bottom:9px;letter-spacing:.04em;text-transform:uppercase" data-i18n="Concert Photos">Concert Photos</div>
@@ -7790,7 +7617,6 @@ async function saveSettings(){
       <div style="font-size:.71rem;color:var(--ink3);margin-bottom:8px" data-i18n="Photos appear on the concert card. Click a photo to view full size.">Photos appear on the concert card. Click a photo to view full size.</div>
     </div>
   </div>
-  <!-- sticky footer -->
   <div style="padding:13px 25px 20px;border-top:1px solid var(--bd);display:flex;gap:7px;justify-content:flex-end;align-items:center;background:var(--w);flex-shrink:0">
     <button class="btn btn-g" onclick="closeMod('ceMod')" data-i18n="Cancel">Cancel</button>
     <button class="btn btn-p" onclick="saveConcertEdit()" data-i18n="Save">Save Concert</button>
@@ -7798,7 +7624,6 @@ async function saveSettings(){
 </div>
 </div>
 
-<!-- LINK SETLIST → CONCERT MODAL -->
 <div class="mov" id="slLinkMod" style="display:none" onclick="closeMB(event,'slLinkMod')">
 <div class="mod" style="max-width:440px">
   <div class="mott">Link Set List to Concert</div>
@@ -7810,7 +7635,6 @@ async function saveSettings(){
 </div>
 </div>
 
-<!-- LINK REHEARSAL → SETLIST MODAL -->
 <div class="mov" id="slRehLinkMod" style="display:none" onclick="closeMB(event,'slRehLinkMod')">
 <div class="mod" style="max-width:440px">
   <div class="mott">Link Set List to Rehearsal</div>
@@ -7822,7 +7646,6 @@ async function saveSettings(){
 </div>
 </div>
 
-<!-- LINK CONCERT → SETLIST MODAL -->
 <div class="mov" id="concertLinkMod" style="display:none" onclick="closeMB(event,'concertLinkMod')">
 <div class="mod" style="max-width:440px">
   <div class="mott">Link Concert to Set List</div>
@@ -7834,10 +7657,8 @@ async function saveSettings(){
 </div>
 </div>
 
-<!-- SETLIST PREVIEW MODAL (opened from concert) -->
 <div class="mov" id="slPreviewMod" style="display:none" onclick="closeMB(event,'slPreviewMod')">
 <div class="mod" style="max-width:580px;display:flex;flex-direction:column;max-height:91vh;padding:0;overflow:hidden">
-  <!-- header -->
   <div style="padding:20px 22px 14px;border-bottom:1px solid var(--bd);flex-shrink:0">
     <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:8px">
       <div>
@@ -7848,7 +7669,6 @@ async function saveSettings(){
     </div>
     <div id="slPopMeta" style="display:flex;gap:5px;flex-wrap:wrap"></div>
   </div>
-  <!-- song list -->
   <div style="overflow-y:auto;flex:1">
     <table style="width:100%;border-collapse:collapse">
       <thead>
@@ -7862,7 +7682,6 @@ async function saveSettings(){
       <tbody id="slPopSongs"></tbody>
     </table>
   </div>
-  <!-- footer -->
   <div style="padding:12px 22px;border-top:1px solid var(--bd);display:flex;gap:8px;justify-content:flex-end;background:var(--w);flex-shrink:0">
     <button class="btn btn-g" onclick="closeMod('slPreviewMod')">Close</button>
     <button class="btn btn-p" id="slPopOpenFull">Open Full Set List →</button>
@@ -7870,7 +7689,6 @@ async function saveSettings(){
 </div>
 </div>
 
-<!-- CONCERT VIEW MODAL -->
 <div class="mov" id="cvMod" style="display:none" onclick="closeMB(event,'cvMod')">
 <div class="mod" style="max-width:500px">
   <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:16px">
@@ -7900,7 +7718,6 @@ async function saveSettings(){
 </div>
 </div>
 
-<!-- CANCEL CONFIRMATION MODAL -->
 <div class="mov" id="cancelMod" style="display:none" onclick="closeMB(event,'cancelMod')">
 <div class="mod" style="max-width:400px">
   <div style="font-size:2rem;text-align:center;margin-bottom:10px">🚫</div>
@@ -7918,11 +7735,9 @@ async function saveSettings(){
 </div>
 </div>
 
-<!-- REHEARSAL VIEW MODAL (read-only) -->
 <div class="mov" id="reViewMod" style="display:none" onclick="closeMB(event,'reViewMod')">
 <div class="mod" style="max-width:480px">
 
-  <!-- Header -->
   <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:16px">
     <div>
       <div style="font-size:.69rem;font-weight:700;color:var(--g);text-transform:uppercase;letter-spacing:.07em;margin-bottom:4px" data-i18n="Rehearsal">Rehearsal</div>
@@ -7932,7 +7747,6 @@ async function saveSettings(){
     </div>
   </div>
 
-  <!-- Details -->
   <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:16px">
     <div style="display:flex;align-items:center;gap:10px">
       <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" style="color:var(--ink3);flex-shrink:0"><rect x="1" y="2" width="14" height="13" rx="2"/><path d="M1 6h14M5 1v2M11 1v2"/></svg>
@@ -7946,12 +7760,10 @@ async function saveSettings(){
       <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" style="color:var(--ink3);flex-shrink:0"><path d="M8 2C5.8 2 4 3.8 4 6c0 3.5 4 8 4 8s4-4.5 4-8c0-2.2-1.8-4-4-4z"/><circle cx="8" cy="6" r="1.5"/></svg>
       <span id="rvLocation" style="font-size:.87rem"></span>
     </div>
-    <!-- Notes row -->
     <div id="rvNotesRow" style="display:flex;align-items:flex-start;gap:10px">
       <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" style="color:var(--ink3);flex-shrink:0;margin-top:2px"><path d="M2 4h12M2 8h8M2 12h10"/></svg>
       <span id="rvNotes" style="font-size:.84rem;color:var(--ink2);line-height:1.5"></span>
     </div>
-    <!-- Set list row -->
     <div id="rvSlRow" style="display:flex;align-items:center;gap:10px">
       <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" style="color:var(--ink3);flex-shrink:0"><path d="M2 4h12M2 8h8M2 12h10"/></svg>
       <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
@@ -7964,18 +7776,15 @@ async function saveSettings(){
     </div>
   </div>
 
-  <!-- Photos -->
   <div style="height:1px;background:var(--bd);margin-bottom:14px"></div>
   <div style="font-size:.69rem;font-weight:700;color:var(--ink2);margin-bottom:9px;letter-spacing:.04em;text-transform:uppercase">Photos</div>
   <div id="rvPhotos" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px"></div>
 
-  <!-- Actions — populated dynamically based on past/upcoming -->
   <div style="height:1px;background:var(--bd);margin-bottom:13px"></div>
   <div id="rvActions" style="display:flex;gap:7px;justify-content:flex-end;flex-wrap:wrap"></div>
 </div>
 </div>
 
-<!-- REHEARSAL EDIT MODAL -->
 <div class="mov" id="reMod" style="display:none" onclick="closeMB(event,'reMod')">
 <div class="mod" style="max-width:480px;display:flex;flex-direction:column;max-height:91vh;padding:0;overflow:hidden">
   <div style="padding:25px 25px 0;overflow-y:auto;flex:1">
@@ -8007,7 +7816,6 @@ async function saveSettings(){
 </div>
 </div>
 
-<!-- INVITE MESSAGE MODAL -->
 <div class="mov" id="invMsgMod" style="display:none" onclick="closeMB(event,'invMsgMod')">
 <div class="mod" style="max-width:480px">
   <div class="mott" data-i18n="Review Invitation Message">Review Invitation Message</div>
@@ -8021,7 +7829,6 @@ async function saveSettings(){
 </div>
 </div>
 
-<!-- MEDIA PICKER MODAL -->
 <div class="mov" id="mediaPicker" style="display:none" onclick="closeMB(event,'mediaPicker')">
 <div class="mod" style="max-width:320px">
   <div class="mott" id="mediaPickerTitle"></div>
@@ -8031,8 +7838,6 @@ async function saveSettings(){
 </div>
 </div>
 
-<!-- GROUP PROFILE EDIT MODAL -->
-<!-- DELETE GROUP MODAL -->
 <div class="mov" id="deleteBandMod" style="display:none" onclick="closeMB(event,'deleteBandMod')">
 <div class="mod" style="max-width:420px">
   <div style="font-size:2.5rem;text-align:center;margin-bottom:8px">⚠️</div>
@@ -8049,11 +7854,9 @@ async function saveSettings(){
 </div>
 </div>
 
-<!-- GUEST DETAIL MODAL -->
 <div class="mov" id="guestDetailMod" style="display:none" onclick="closeMB(event,'guestDetailMod')">
 <div class="mod" style="max-width:480px">
 
-  <!-- Header -->
   <div style="display:flex;align-items:center;gap:14px;margin-bottom:20px">
     <div id="gdAv" style="width:58px;height:58px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.2rem;font-weight:700;color:#fff;flex-shrink:0;background:#9A9AB0"></div>
     <div style="flex:1">
@@ -8068,7 +7871,6 @@ async function saveSettings(){
     </div>
   </div>
 
-  <!-- Details -->
   <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:18px">
     <div style="display:flex;gap:10px;align-items:flex-start">
       <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" style="color:var(--ink3);flex-shrink:0;margin-top:1px"><circle cx="5" cy="12" r="2"/><circle cx="13" cy="11" r="2"/><path d="M7 12V4l8-2v8"/></svg>
@@ -8084,24 +7886,20 @@ async function saveSettings(){
     </div>
   </div>
 
-  <!-- Bio -->
   <div style="height:1px;background:var(--bd);margin-bottom:14px"></div>
   <div style="font-size:.69rem;font-weight:700;color:var(--ink2);margin-bottom:7px;letter-spacing:.04em;text-transform:uppercase">Bio</div>
   <div id="gdBio" style="font-size:.83rem;color:var(--ink2);line-height:1.6;margin-bottom:14px;white-space:pre-wrap"></div>
 
-  <!-- Gear -->
   <div id="gdGearRow">
     <div style="font-size:.69rem;font-weight:700;color:var(--ink2);margin-bottom:7px;letter-spacing:.04em;text-transform:uppercase">Gear</div>
     <div id="gdGear" style="font-size:.83rem;color:var(--ink2);margin-bottom:14px;white-space:pre-wrap"></div>
   </div>
 
-  <!-- Links -->
   <div id="gdLinksRow">
     <div style="height:1px;background:var(--bd);margin-bottom:14px"></div>
     <div class="bpplat" id="gdLinks" style="margin-bottom:14px"></div>
   </div>
 
-  <!-- Footer -->
   <div style="height:1px;background:var(--bd);margin-bottom:13px"></div>
   <div style="display:flex;gap:7px;flex-wrap:wrap">
     <button class="btn btn-g" onclick="closeMod('guestDetailMod')" style="flex:1">Close</button>
@@ -8111,7 +7909,6 @@ async function saveSettings(){
 </div>
 </div>
 
-<!-- GUEST CONVERT MODAL -->
 <div class="mov" id="guestConvertMod" style="display:none" onclick="closeMB(event,'guestConvertMod')">
 <div class="mod" style="max-width:400px">
   <div class="mott" id="gcModalTitle" data-i18n="Convert to Guest">Convert to Guest</div>
@@ -8130,7 +7927,6 @@ async function saveSettings(){
 </div>
 </div>
 
-<!-- Feedback / Bug Report Modal -->
 <div class="mov" id="feedbackMod" style="display:none" onclick="closeMB(event,'feedbackMod')">
 <div class="mod" style="max-width:460px">
   <button class="mod-x" onclick="closeMod('feedbackMod')">✕</button>
@@ -8154,9 +7950,7 @@ async function saveSettings(){
 </div>
 </div>
 
-<!-- xlsx — loaded here (end of body) so it doesn't block the auth screen / sign-in flow -->
 <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
-<!-- Supabase data layer — loaded after app script so they share global scope -->
 <script src="js/db/bands.js"></script>
 <script src="js/db/songs.js"></script>
 <script src="js/db/setlists.js"></script>
@@ -8166,7 +7960,6 @@ async function saveSettings(){
 <script src="js/db/members.js"></script>
 <script src="js/db/blackouts.js"></script>
 <script src="js/db/changelog.js"></script>
-<!-- Auth — last so it can reference initApp, toast2, and all app globals -->
 <script src="js/auth.js"></script>
 </body>
 </html>
