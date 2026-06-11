@@ -110,7 +110,16 @@ const fileMap = {}; // 'js/auth.js' → 'js/auth.a1b2c3d4.js'
     const minified = await minify(html, {
       collapseWhitespace: true,
       minifyCSS: true,
-      minifyJS: { mangle: { toplevel: false } },
+      minifyJS: { compress: true, mangle: { toplevel: false } },
+      removeComments: true,
+      collapseBooleanAttributes: true,
+      removeRedundantAttributes: true,
+      removeScriptTypeAttributes: true,
+      removeStyleLinkTypeAttributes: true,
+      useShortDoctype: true,
+      decodeEntities: true,
+      sortAttributes: true,   // reorders attrs/classes for better gzip — semantics-safe
+      sortClassName: true,
     });
     fs.writeFileSync(path.join(OUT, 'index.html'), minified);
     console.log('  index.html → dist/index.html (minified)');
