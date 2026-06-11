@@ -22,3 +22,19 @@ valid JS, non-empty strings.
 | # | Hypothesis / change | Before | After | Kept? |
 |---|---|---|---|---|
 | — | _baseline established_ | — | 132 | — |
+| I1 | Translate the 22 missing keys → Dutch (nl) | 132 | **110** | ✅ KEPT |
+| I2 | → German (de) | 110 | **88** | ✅ KEPT |
+| I3 | → French (fr) | 88 | **66** | ✅ KEPT |
+| I4 | → Spanish (es) | 66 | **44** | ✅ KEPT |
+| I5 | → Italian (it) | 44 | **22** | ✅ KEPT |
+| I6 | → Brazilian Portuguese (pt-BR) | 22 | **0** | ✅ KEPT |
+
+**Final: 0 missing entries — TARGET REACHED.** Each locale 749 → 771 entries; all gates
+pass; browser-verified that all 6 locale objects still load (asset-1 23-check gate green).
+
+> ⚠️ Human spot-check requested before merge (per instructions rule 5): the 132 new
+> entries are AI translations. Terminology was matched to each file's existing choices
+> ("setlist" untranslated; Song = Nummer/Song/Morceau/Canción/Brano/Música; 'Lead &amp;
+> backing' reuses existing 'Lead & backing' values). Judgment calls: 'RSVP' kept as-is in
+> NL/DE/FR (common usage) but translated in ES ('Confirmar asistencia'), IT ('Conferma
+> presenza'), PT-BR ('Confirmar presença').
