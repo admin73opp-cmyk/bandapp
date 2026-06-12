@@ -158,7 +158,7 @@ window.NL = {
   'Cancel — keep the group': 'Annuleren — group behouden',
   'Save Rehearsal': 'Repetitie opslaan',
   'Confirm Guest Role': 'Gastrol bevestigen',
-  '✉️ Send via Email': '✉️ Versturen via e-mail',
+  'Send via Email': 'Versturen via e-mail',
   'Save Group Profile': 'Groupprofiel opslaan',
   'Delete Group': 'Group verwijderen',
   'Promote to full Member?': 'Promoveren tot volledig lid?',

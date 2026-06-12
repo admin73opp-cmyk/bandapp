@@ -158,7 +158,7 @@ window.IT = {
   'Cancel — keep the group': 'Annulla — mantieni la group',
   'Save Rehearsal': 'Salva prova',
   'Confirm Guest Role': 'Conferma ruolo ospite',
-  '✉️ Send via Email': '✉️ Invia tramite e-mail',
+  'Send via Email': 'Invia tramite e-mail',
   'Save Group Profile': 'Salva profilo group',
   'Delete Group': 'Elimina group',
   'Promote to full Member?': 'Promuovi a membro completo?',

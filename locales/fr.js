@@ -158,7 +158,7 @@ window.FR = {
   'Cancel — keep the group': 'Annuler — conserver le groupe',
   'Save Rehearsal': 'Enregistrer la répétition',
   'Confirm Guest Role': 'Confirmer le rôle d\'invité',
-  '✉️ Send via Email': '✉️ Envoyer par e-mail',
+  'Send via Email': 'Envoyer par e-mail',
   'Save Group Profile': 'Enregistrer le profil du groupe',
   'Delete Group': 'Supprimer le groupe',
   'Promote to full Member?': 'Promouvoir en membre à part entière ?',

@@ -158,7 +158,7 @@ window.PT_BR = {
   'Cancel — keep the group': 'Cancelar — manter a grupo',
   'Save Rehearsal': 'Salvar Ensaio',
   'Confirm Guest Role': 'Confirmar Papel de Convidado',
-  '✉️ Send via Email': '✉️ Enviar por E-mail',
+  'Send via Email': 'Enviar por E-mail',
   'Save Group Profile': 'Salvar Perfil da Grupo',
   'Delete Group': 'Excluir Grupo',
   'Promote to full Member?': 'Promover a Membro completo?',

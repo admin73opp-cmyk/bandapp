@@ -3861,7 +3861,7 @@
       </div>
       <div id="sf" style="display:none">
         <div id="sf-invite-banner" style="display:none;padding:10px 14px;background:var(--a2);border:1px solid rgba(108,99,255,.3);border-radius:var(--rad);margin-bottom:14px;font-size:.85rem;text-align:center">
-          <div style="font-size:1.4rem;margin-bottom:4px">🎸</div>
+          <div style="margin-bottom:4px"><svg width="28" height="28" viewBox="0 0 120 120" fill="none" style="color:var(--a)" aria-hidden="true"><line x1="34" y1="32" x2="34" y2="88" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><text x="44" y="86" font-family="'Garamond','Georgia','Times New Roman',serif" font-size="56" font-weight="300" fill="currentColor">r</text><circle cx="88" cy="32" r="5.5" fill="currentColor"/></svg></div>
           <div style="font-weight:700;color:var(--a);margin-bottom:2px" data-i18n="You've been invited!">You've been invited!</div>
           <div style="color:var(--ink2)"><span data-i18n="Sign up to join">Sign up to join</span> <strong id="sf-invite-group">the group</strong></div>
         </div>
@@ -3876,7 +3876,7 @@
         <button class="btn btn-p btn-fw" onclick="doSignUp()" data-i18n="Create account">Create account</button>
       </div>
       <div id="sf-confirm" style="display:none;text-align:center;padding:8px 0">
-        <div style="font-size:2.2rem;margin-bottom:10px">📧</div>
+        <div style="margin-bottom:10px;color:var(--a)"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5.5" width="18" height="13" rx="2.5"/><path d="m4.5 8 7.5 5.5L19.5 8"/></svg></div>
         <div style="font-weight:700;font-size:1.05rem;margin-bottom:8px" data-i18n="Check your inbox">Check your inbox</div>
         <p style="font-size:.84rem;color:var(--ink2);margin-bottom:18px"><span data-i18n="We sent a confirmation link to">We sent a confirmation link to</span> <strong id="sf-confirm-email"></strong>. <span data-i18n="Click it to activate your account, then sign in.">Click it to activate your account, then sign in.</span></p>
         <button class="btn btn-g btn-fw" onclick="switchTab('login')" data-i18n="Back to sign in">Back to sign in</button>
@@ -3892,7 +3892,7 @@
         </div>
       </div>
       <div id="ff-sent" style="display:none;text-align:center;padding:8px 0">
-        <div style="font-size:2.2rem;margin-bottom:10px">✉️</div>
+        <div style="margin-bottom:10px;color:var(--a)"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5.5" width="18" height="13" rx="2.5"/><path d="m4.5 8 7.5 5.5L19.5 8"/></svg></div>
         <div style="font-weight:700;font-size:1.05rem;margin-bottom:8px" data-i18n="Link sent!">Link sent!</div>
         <p style="font-size:.84rem;color:var(--ink2);margin-bottom:18px"><span data-i18n="Check your inbox at">Check your inbox at</span> <strong id="ff-sent-email"></strong> <span data-i18n="and click the link to reset your password.">and click the link to reset your password.</span></p>
         <button class="btn btn-g btn-fw" onclick="switchTab('login')" data-i18n="Back to sign in">Back to sign in</button>
@@ -3915,7 +3915,7 @@
       </svg>
       <div class="al-text">Loading your group data…</div>
     </div>
-    <button id="feedbackFab" onclick="openFeedbackModal()">🐛 Bug / Feedback</button>
+    <button id="feedbackFab" onclick="openFeedbackModal()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0" aria-hidden="true"><circle cx="12" cy="13.5" r="5.5"/><path d="M12 8v11M8.6 6.5l1.6 2M15.4 6.5l-1.6 2M3.8 11l3 1M20.2 11l-3 1M4.5 18l2.7-1.6M19.5 18l-2.7-1.6"/></svg> Bug / Feedback</button>
     <div class="sb-ov" id="sbOv" onclick="toggleSb()"></div>
     <nav class="sb" id="sb">
       <div class="sb-toggle" id="sbToggle" onclick="toggleSbMinimize()" title="Collapse sidebar" data-i18n-title="Collapse sidebar">
@@ -4109,7 +4109,7 @@
                     <path d="M3 2h7l3 3v9H3V2z" />
                     <path d="M10 2v4h4" />
                   </svg>Links hidden in PDF</span>
-                <button class="btn btn-g btn-sm" onclick="printSL()">🖨 Print</button>
+                <button class="btn btn-g btn-sm" onclick="printSL()"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px" aria-hidden="true"><path d="M7 8V3.5h10V8"/><rect x="3.5" y="8" width="17" height="8.5" rx="1.8"/><path d="M7 13.5h10v7H7z"/><circle cx="17.5" cy="10.8" r="1" fill="currentColor" stroke="none"/></svg> Print</button>
                 <button class="btn btn-g btn-sm" onclick="printSL()">↓ PDF</button>
               </div>
             </div>
@@ -4312,7 +4312,7 @@
                   <option value="">All members</option>
                 </select>
                 <button id="clCleanupBtn" class="btn btn-g btn-sm" style="display:none;font-size:.72rem" onclick="cleanupChangelog()" title="Remove all entries older than 60 days"><svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M2 4h12M5 4V2h6v2M6 7v5M10 7v5M3 4l1 10h8l1-10"/></svg> Clean up &gt;60 days</button>
-                <div style="margin-left:auto;font-size:.69rem;color:var(--ink3)">ℹ Entries kept for 60 days</div>
+                <div style="margin-left:auto;font-size:.69rem;color:var(--ink3)"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" style="vertical-align:-1px" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 11v5"/><circle cx="12" cy="7.8" r="1.3" fill="currentColor" stroke="none"/></svg> Entries kept for 60 days</div>
               </div>
               <div id="clList" style="display:flex;flex-direction:column;gap:4px"></div>
             </div>
@@ -4464,12 +4464,12 @@
             </div>
           </div>
           <div style="padding:10px 13px;background:var(--bg2);border:1px solid var(--bd);border-radius:var(--rad);font-size:.78rem;color:var(--ink2);margin-bottom:16px;display:flex;align-items:center;gap:8px">
-            <span style="font-size:1rem">📋</span>
+            <span style="flex-shrink:0;display:inline-flex"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6.5h11M9 12h11M9 17.5h7"/><circle cx="4.5" cy="6.5" r="1.4" fill="currentColor" stroke="none"/><circle cx="4.5" cy="12" r="1.4" fill="currentColor" stroke="none"/><circle cx="4.5" cy="17.5" r="1.4" fill="currentColor" stroke="none"/></svg></span>
             <span data-i18n="Guests whose end date has passed are automatically moved here. Admins can promote them to full Members at any time.">Guests whose end date has passed are automatically moved here. Admins can promote them to full Members at any time.</span>
           </div>
           <div id="guestDirList" style="display:flex;flex-direction:column;gap:8px"></div>
           <div id="guestDirEmpty" style="display:none;text-align:center;padding:40px 20px;color:var(--ink3)">
-            <div style="font-size:2rem;margin-bottom:10px;opacity:.4">👤</div>
+            <div style="margin-bottom:10px;opacity:.4"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="3.6"/><path d="M5.5 20a6.5 6.5 0 0 1 13 0"/></svg></div>
             <div style="font-size:.88rem;font-weight:600;color:var(--ink2);margin-bottom:4px" data-i18n="No past guests yet">No past guests yet</div>
             <div style="font-size:.78rem" data-i18n="Expired guest musicians will appear here automatically.">Expired guest musicians will appear here automatically.</div>
           </div>
@@ -4490,7 +4490,7 @@
           <div style="background:var(--w);border:1px solid var(--bd);border-radius:var(--radl);overflow:hidden;box-shadow:var(--sh);margin-bottom:16px">
 
             <div id="bpCover" style="height:160px;background:linear-gradient(135deg,#6C63FF 0%,#4C46C9 40%,#2563EB 100%);position:relative" onclick="bpCoverClick()" title="Click to change cover photo">
-              <div data-overlay style="position:absolute;inset:0;opacity:.08;font-size:2.5rem;display:flex;align-items:center;justify-content:center;letter-spacing:1.5rem;pointer-events:none">🎷🎸🎹🎺🥁🎵</div>
+              <div data-overlay style="position:absolute;inset:0;opacity:.13;display:flex;align-items:center;justify-content:center;gap:34px;pointer-events:none"><svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2.6 9.9 4.1v8.9a4.8 4.8 0 0 0 9.6 0v-1.6c0-.5.3-.9.7-1.1l1.6-.8"/><circle cx="9.9" cy="7.2" r="1.05" fill="currentColor" stroke="none"/><circle cx="9.9" cy="10.4" r="1.05" fill="currentColor" stroke="none"/><circle cx="11.2" cy="13.8" r="1.05" fill="currentColor" stroke="none"/></svg><svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12.8 11.2 19.8 4.2"/><circle cx="20.6" cy="3.4" r="1.3" fill="currentColor" stroke="none"/><path d="M12.8 11.2c1.1 1.1.3 2.4-.9 2.6-.9.15-1.7.6-2.1 1.4-.4.8-.2 1.7-1 2.5a3.7 3.7 0 0 1-5.2-5.2c.8-.8 1.7-.6 2.5-1 .8-.4 1.25-1.2 1.4-2.1.2-1.2 1.5-2 2.6-.9z"/></svg><svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="7" width="18" height="10.5" rx="1.5"/><path d="M9 7v10.5M15 7v10.5"/><path d="M6 7v5.2M12 7v5.2M18 7v5.2"/></svg><svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11h11"/><path d="M14 11c2.6 0 4.2-1.2 5.6-2.8M14 11c2.6 0 4.2 1.2 5.6 2.8"/><path d="M19.6 8.2a8.4 8.4 0 0 1 0 5.6"/><path d="M7.5 11v4.2M10.5 11v4.2M13.5 11v4.2M6.3 15.2h8.4"/><circle cx="3" cy="11" r="1.2" fill="currentColor" stroke="none"/></svg><svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><ellipse cx="12" cy="11.5" rx="7.5" ry="2.6"/><path d="M4.5 11.5v5.2c0 1.5 3.3 2.8 7.5 2.8s7.5-1.3 7.5-2.8v-5.2"/><path d="M7.2 3.6l4 3.2M16.8 3.6l-4 3.2"/><circle cx="6.4" cy="3" r="1.1" fill="currentColor" stroke="none"/><circle cx="17.6" cy="3" r="1.1" fill="currentColor" stroke="none"/></svg><svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><g transform="rotate(43 13.5 7.8)"><rect x="11" y="2.8" width="5" height="9.6" rx="2.5"/></g><path d="M10.7 11.3 5.2 16.8"/><circle cx="4.5" cy="17.5" r="1.3" fill="currentColor" stroke="none"/></svg></div>
               <div id="bpCoverEditBadge" style="display:none;position:absolute;top:10px;right:10px;background:rgba(0,0,0,.45);border-radius:8px;padding:5px 10px;display:none;align-items:center;gap:5px;font-size:.72rem;font-weight:600;color:#fff;backdrop-filter:blur(4px);cursor:pointer">
                 <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
                   <path d="M2 5a1 1 0 011-1h1.5l1-2h5l1 2H13a1 1 0 011 1v7a1 1 0 01-1 1H3a1 1 0 01-1-1V5z" />
@@ -4559,12 +4559,12 @@
                     <div class="fg" style="margin-bottom:7px"><label style="font-size:.69rem">Bio</label><textarea id="beBioInline" style="min-height:60px" placeholder="A few words about the group…"></textarea></div>
                     <div style="font-size:.69rem;font-weight:700;color:var(--ink2);margin-bottom:8px;text-transform:uppercase;letter-spacing:.04em">Platform Links <span style="font-weight:400;color:var(--ink3);text-transform:none">(leave blank to hide)</span></div>
                     <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
-                      <div class="fg"><label style="font-size:.69rem">🎵 Spotify</label><input id="bePlat_spotify" placeholder="https://open.spotify.com/artist/…" style="font-size:.75rem"></div>
-                      <div class="fg"><label style="font-size:.69rem">🍎 Apple Music</label><input id="bePlat_apple" placeholder="https://music.apple.com/…" style="font-size:.75rem"></div>
-                      <div class="fg"><label style="font-size:.69rem">▶ YouTube</label><input id="bePlat_youtube" placeholder="https://youtube.com/@…" style="font-size:.75rem"></div>
-                      <div class="fg"><label style="font-size:.69rem">📸 Instagram</label><input id="bePlat_instagram" placeholder="https://instagram.com/…" style="font-size:.75rem"></div>
-                      <div class="fg"><label style="font-size:.69rem">📘 Facebook</label><input id="bePlat_facebook" placeholder="https://facebook.com/…" style="font-size:.75rem"></div>
-                      <div class="fg"><label style="font-size:.69rem">🌐 Website</label><input id="bePlat_website" placeholder="https://yoursite.com" style="font-size:.75rem"></div>
+                      <div class="fg"><label style="font-size:.69rem">Spotify</label><input id="bePlat_spotify" placeholder="https://open.spotify.com/artist/…" style="font-size:.75rem"></div>
+                      <div class="fg"><label style="font-size:.69rem">Apple Music</label><input id="bePlat_apple" placeholder="https://music.apple.com/…" style="font-size:.75rem"></div>
+                      <div class="fg"><label style="font-size:.69rem">YouTube</label><input id="bePlat_youtube" placeholder="https://youtube.com/@…" style="font-size:.75rem"></div>
+                      <div class="fg"><label style="font-size:.69rem">Instagram</label><input id="bePlat_instagram" placeholder="https://instagram.com/…" style="font-size:.75rem"></div>
+                      <div class="fg"><label style="font-size:.69rem">Facebook</label><input id="bePlat_facebook" placeholder="https://facebook.com/…" style="font-size:.75rem"></div>
+                      <div class="fg"><label style="font-size:.69rem">Website</label><input id="bePlat_website" placeholder="https://yoursite.com" style="font-size:.75rem"></div>
                     </div>
                   </div>
                 </div>
@@ -4617,12 +4617,12 @@
 
             <div class="card" style="grid-column:1/-1">
               <div class="ch">
-                <div class="ct" style="display:flex;align-items:center;gap:7px"><span style="font-size:1.05rem">💬</span> WhatsApp Group</div>
+                <div class="ct" style="display:flex;align-items:center;gap:7px"><span style="display:inline-flex;color:var(--g)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.5 11.5a8 8 0 0 1-11.6 7.2L4 20l1.3-4.9a8 8 0 1 1 15.2-3.6z"/><circle cx="8.8" cy="11.7" r="1.1" fill="currentColor" stroke="none"/><circle cx="12.5" cy="11.7" r="1.1" fill="currentColor" stroke="none"/><circle cx="16.2" cy="11.7" r="1.1" fill="currentColor" stroke="none"/></svg></span> WhatsApp Group</div>
               </div>
               <div style="font-size:.75rem;color:var(--ink2);margin-bottom:12px" data-i18n="Paste your group's WhatsApp group invite link. Members can join with one tap from any device.">Paste your group's WhatsApp group invite link. Members can join with one tap from any device.</div>
               <div id="waLinkDisplay" style="display:none;margin-bottom:10px">
                 <div style="background:var(--g2);border:1.5px solid #86EFAC;border-radius:8px;padding:10px 13px;display:flex;align-items:center;gap:10px">
-                  <span style="font-size:1.3rem;flex-shrink:0">💬</span>
+                  <span style="flex-shrink:0;display:inline-flex;color:var(--g)"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.5 11.5a8 8 0 0 1-11.6 7.2L4 20l1.3-4.9a8 8 0 1 1 15.2-3.6z"/><circle cx="8.8" cy="11.7" r="1.1" fill="currentColor" stroke="none"/><circle cx="12.5" cy="11.7" r="1.1" fill="currentColor" stroke="none"/><circle cx="16.2" cy="11.7" r="1.1" fill="currentColor" stroke="none"/></svg></span>
                   <div style="flex:1;min-width:0">
                     <div style="font-size:.72rem;font-weight:700;color:var(--g);margin-bottom:2px">WhatsApp Group Connected</div>
                     <div id="waLinkText" style="font-family:var(--mono);font-size:.68rem;color:var(--ink2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis"></div>
@@ -4676,15 +4676,15 @@
               </div>
               <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px">
                 <div class="popt" id="settOptEmail" onclick="setNotifPref('email')" style="flex:1;min-width:120px">
-                  <div class="poi" data-i18n="Email only">✉️</div>
+                  <div class="poi" data-i18n="Email only"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5.5" width="18" height="13" rx="2.5"/><path d="m4.5 8 7.5 5.5L19.5 8"/></svg></div>
                   <div class="pol">Email only</div>
                 </div>
                 <div class="popt" id="settOptWa" onclick="setNotifPref('whatsapp')" style="flex:1;min-width:120px">
-                  <div class="poi" data-i18n="WhatsApp only">💬</div>
+                  <div class="poi" data-i18n="WhatsApp only"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.5 11.5a8 8 0 0 1-11.6 7.2L4 20l1.3-4.9a8 8 0 1 1 15.2-3.6z"/><circle cx="8.8" cy="11.7" r="1.1" fill="currentColor" stroke="none"/><circle cx="12.5" cy="11.7" r="1.1" fill="currentColor" stroke="none"/><circle cx="16.2" cy="11.7" r="1.1" fill="currentColor" stroke="none"/></svg></div>
                   <div class="pol">WhatsApp only</div>
                 </div>
                 <div class="popt on" id="settOptBoth" onclick="setNotifPref('both')" style="flex:1;min-width:120px">
-                  <div class="poi" data-i18n="Both">📣</div>
+                  <div class="poi" data-i18n="Both"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 10.5v3a1.5 1.5 0 0 0 1.5 1.5h2l7.5 4.5v-15L7 9H5a1.5 1.5 0 0 0-1.5 1.5z"/><path d="M18 9.5a3.5 3.5 0 0 1 0 5"/></svg></div>
                   <div class="pol">Both</div>
                 </div>
               </div>
@@ -4974,7 +4974,7 @@
           <div class="card">
             <div class="ct" style="margin-bottom:4px" data-i18n="Integrations">Integrations</div>
             <div style="display:flex;align-items:flex-start;gap:9px;padding:11px 13px;background:var(--bl2);border:1px solid rgba(96,165,250,.25);border-radius:var(--rad);font-size:.76rem;color:var(--bl);margin-top:10px">
-              <span style="font-size:1rem;flex-shrink:0">📅</span>
+              <span style="flex-shrink:0;color:var(--bl);display:inline-flex"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15.5" rx="2.5"/><path d="M3.5 9.5h17M8 3v3.5M16 3v3.5"/><circle cx="12" cy="15" r="1.5" fill="currentColor" stroke="none"/></svg></span>
               <span><strong>Google Calendar sync</strong> — connect your Google Calendar so rehearsals and concerts appear automatically. <span style="text-decoration:underline;cursor:pointer" onclick="toast2(t('Google Calendar sync coming soon'))">Set up →</span></span>
             </div>
           </div>
@@ -5004,7 +5004,7 @@
       <div style="font-size:.69rem;font-weight:700;color:var(--ink2);margin-bottom:9px;letter-spacing:.04em;text-transform:uppercase" data-i18n="How do you want to build it?">How do you want to build it?</div>
       <div style="display:flex;gap:8px">
         <div class="popt on" id="slModeManual" onclick="selSlMode('manual')" style="flex:1">
-          <div class="poi" data-i18n="Manual">✏️</div>
+          <div class="poi" data-i18n="Manual"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20l.9-3.8L16.2 4.9a1.8 1.8 0 0 1 2.6 0l.3.3a1.8 1.8 0 0 1 0 2.6L7.8 19.1z"/></svg></div>
           <div class="pol">Manual</div>
         </div>
         <div class="popt" id="slModeAI" onclick="selSlMode('ai')" style="flex:1">
@@ -5183,7 +5183,7 @@
   <div class="mov" id="onboardingMod" style="display:none">
     <div class="mod" style="max-width:420px">
       <div style="text-align:center;margin-bottom:18px">
-        <div style="font-size:2.2rem;margin-bottom:8px">🎸</div>
+        <div style="margin-bottom:8px"><svg width="44" height="44" viewBox="0 0 120 120" fill="none" style="color:var(--a)" aria-hidden="true"><line x1="34" y1="32" x2="34" y2="88" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><text x="44" y="86" font-family="'Garamond','Georgia','Times New Roman',serif" font-size="56" font-weight="300" fill="currentColor">r</text><circle cx="88" cy="32" r="5.5" fill="currentColor"/></svg></div>
         <div class="mott" style="margin-bottom:6px">Welcome to the group!</div>
         <div class="most" id="onboardingGroupMsg">You've been added to the group. Set a password to secure your account, then complete your profile.</div>
       </div>
@@ -5320,15 +5320,15 @@
       <div style="font-size:.69rem;font-weight:700;color:var(--ink2);margin-bottom:8px;letter-spacing:.04em;text-transform:uppercase">Notify members via</div>
       <div style="display:flex;gap:7px;margin-bottom:10px" id="rmNotifOpts">
         <div class="popt" id="rmOptEmail" onclick="selNotif('email')" style="flex:1">
-          <div class="poi">✉️</div>
+          <div class="poi"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5.5" width="18" height="13" rx="2.5"/><path d="m4.5 8 7.5 5.5L19.5 8"/></svg></div>
           <div class="pol">Email</div>
         </div>
         <div class="popt" id="rmOptWa" onclick="selNotif('whatsapp')" style="flex:1">
-          <div class="poi">💬</div>
+          <div class="poi"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.5 11.5a8 8 0 0 1-11.6 7.2L4 20l1.3-4.9a8 8 0 1 1 15.2-3.6z"/><circle cx="8.8" cy="11.7" r="1.1" fill="currentColor" stroke="none"/><circle cx="12.5" cy="11.7" r="1.1" fill="currentColor" stroke="none"/><circle cx="16.2" cy="11.7" r="1.1" fill="currentColor" stroke="none"/></svg></div>
           <div class="pol">WhatsApp</div>
         </div>
         <div class="popt" id="rmOptBoth" onclick="selNotif('both')" style="flex:1">
-          <div class="poi">📣</div>
+          <div class="poi"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 10.5v3a1.5 1.5 0 0 0 1.5 1.5h2l7.5 4.5v-15L7 9H5a1.5 1.5 0 0 0-1.5 1.5z"/><path d="M18 9.5a3.5 3.5 0 0 1 0 5"/></svg></div>
           <div class="pol">Both</div>
         </div>
       </div>
@@ -5426,7 +5426,12 @@
       upload: '<path d="M12 16V4.5M7.5 8.5 12 4l4.5 4.5"/><path d="M4.5 19.5h15"/>',
       pin: '<path d="M12 21s-6.5-6.1-6.5-11a6.5 6.5 0 0 1 13 0c0 4.9-6.5 11-6.5 11z"/><circle cx="12" cy="9.8" r="2.3"/>',
       navArrow: '<path d="M12 3.5 19.5 20.5l-7.5-4.5-7.5 4.5z" fill="currentColor" stroke="none"/>',
-      compass: '<circle cx="12" cy="12" r="8.5"/><path d="m15.2 8.8-2 4.6-4.6 2 2-4.6z" fill="currentColor" stroke="none"/>'
+      compass: '<circle cx="12" cy="12" r="8.5"/><path d="m15.2 8.8-2 4.6-4.6 2 2-4.6z" fill="currentColor" stroke="none"/>',
+      metro: '<path d="M9.4 4.2h5.2l2.9 15.8H6.5z"/><path d="M7.7 14h8.6"/><path d="M12 18 14.4 8"/><circle cx="14.6" cy="7.5" r="1.5" fill="currentColor" stroke="none"/>',
+      star: '<path d="M12 3.5l2.5 5.1 5.6.8-4 4 .9 5.6-5-2.6-5 2.6.9-5.6-4-4 5.6-.8z"/>',
+      trash: '<path d="M4 6.5h16M9 6.5V4.2h6v2.3M7.5 9.5v8M12 9.5v8M16.5 9.5v8M5.5 6.5l1.2 13.3h10.6l1.2-13.3"/>',
+      link: '<path d="M10 14.5 14 10.5"/><path d="M8.5 12 6 14.5a3.5 3.5 0 0 0 5 5L13.5 17M15.5 13 18 10.5a3.5 3.5 0 0 0-5-5L10.5 8"/>',
+      info: '<circle cx="12" cy="12" r="8.5"/><path d="M12 11v5"/><circle cx="12" cy="7.8" r="1.3" fill="currentColor" stroke="none"/>'
     };
 
     function ricon(name, size = 13, style = '') {
@@ -5525,7 +5530,7 @@
       t && (t.textContent = e?.name || "this set list");
       const n = rehearsals.filter(e => !e.cancelled && e.date >= TODAY_STR && e.setlistId !== activeSetlistId).sort((e, t) => e.date.localeCompare(t.date)),
         o = document.getElementById("slRehLinkList");
-      o && (n.length ? o.innerHTML = n.map(e => `\n      <button class="btn btn-g btn-fw" style="justify-content:flex-start;gap:10px;font-size:.85rem;padding:11px 14px"\n        onclick="linkSlToRehearsal('${e.id}',null)">\n        <span style="font-size:1rem">🎸</span>\n        <div style="text-align:left">\n          <div style="font-weight:600">${e.title}</div>\n          <div style="font-size:.72rem;color:var(--ink3)">${e.date}${e.start?" · "+e.start:""}</div>\n        </div>\n      </button>`).join("") : o.innerHTML = '<div style="text-align:center;padding:14px;font-size:.78rem;color:var(--ink3)">No future rehearsals available to link.</div>', showMod("slRehLinkMod"))
+      o && (n.length ? o.innerHTML = n.map(e => `\n      <button class="btn btn-g btn-fw" style="justify-content:flex-start;gap:10px;font-size:.85rem;padding:11px 14px"\n        onclick="linkSlToRehearsal('${e.id}',null)">\n        <span style="display:inline-flex;color:var(--a)">${ricon("metro",16)}</span>\n        <div style="text-align:left">\n          <div style="font-weight:600">${e.title}</div>\n          <div style="font-size:.72rem;color:var(--ink3)">${e.date}${e.start?" · "+e.start:""}</div>\n        </div>\n      </button>`).join("") : o.innerHTML = '<div style="text-align:center;padding:14px;font-size:.78rem;color:var(--ink3)">No future rehearsals available to link.</div>', showMod("slRehLinkMod"))
     }
     const MONTH_MAP = {
         JAN: 0,
@@ -5726,7 +5731,7 @@
             token: e.token
           }
         }).then(null, () => {}).catch(() => {})), o
-      }, d = e => s(`<div style="text-align:center"><div style="font-size:2.2rem;margin-bottom:10px">⚠️</div><div style="font-weight:700;font-size:1.05rem;margin-bottom:8px">Link not valid</div><div style="font-size:.85rem;color:var(--ink2);line-height:1.5">${e}</div><div style="margin-top:22px"><a href="/" style="color:var(--a);font-weight:600;text-decoration:none">Open Ritovo →</a></div></div>`), c = () => {
+      }, d = e => s(`<div style="text-align:center"><div style="margin-bottom:10px;color:var(--amb)"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3.8 2.8 19.5a.8.8 0 0 0 .7 1.2h17a.8.8 0 0 0 .7-1.2z"/><path d="M12 9.5v5"/><circle cx="12" cy="17.5" r="1.2" fill="currentColor" stroke="none"/></svg></div><div style="font-weight:700;font-size:1.05rem;margin-bottom:8px">Link not valid</div><div style="font-size:.85rem;color:var(--ink2);line-height:1.5">${e}</div><div style="margin-top:22px"><a href="/" style="color:var(--a);font-weight:600;text-decoration:none">Open Ritovo →</a></div></div>`), c = () => {
         const e = (e, t) => `<button type="button" class="rsvp-opt${i===t?" on-"+t:""}" style="flex:1;padding:10px" onclick="window._rsvpOcPick('${t}')">${e}</button>`;
         s(`\n      <div style="text-align:center;margin-bottom:6px;font-weight:700;font-size:1.15rem">${"yes"===i?"You’re in! ✅":"no"===i?"Got it — you can’t make it ❌":"maybe"===i?"Marked as maybe ❓":"Will you be there?"}</div>\n      <div style="text-align:center;font-size:.9rem;color:var(--ink2);margin-bottom:4px">${esc(l?.rehearsal_title||"Rehearsal")}</div>\n      <div style="text-align:center;font-size:.82rem;color:var(--ink3);margin-bottom:20px">${esc(l?.band_name||"")}${l?.rehearsal_date?" · "+(e=>e?new Date(e+"T00:00:00").toLocaleDateString(void 0,{weekday:"long",month:"long",day:"numeric"}):"")(l.rehearsal_date):""}${l?.rehearsal_start?" · "+esc(l.rehearsal_start):""}</div>\n      <div style="display:flex;gap:8px;margin-bottom:14px">${e(ricon("check",13)+" Yes","yes")}${e(ricon("x",13)+" No","no")}${e(ricon("q",13)+" Maybe","maybe")}</div>\n      <input id="rsvpOcNote" type="text" class="rsvp-note" maxlength="120" placeholder="Add a note (optional — e.g. ‘15 min late’)" value="${esc(l?.note||"")}" style="width:100%;box-sizing:border-box;margin-bottom:12px;padding:9px 11px">\n      <button type="button" class="btn btn-p btn-fw" onclick="window._rsvpOcSaveNote()">Save note</button>\n      <div id="rsvpOcMsg" style="text-align:center;font-size:.78rem;color:var(--g);margin-top:12px;min-height:1em"></div>\n      <div style="text-align:center;margin-top:14px"><a href="/" style="color:var(--a);font-weight:600;text-decoration:none;font-size:.85rem">Open Ritovo →</a></div>`)
       };
@@ -5777,7 +5782,7 @@
       document.getElementById("rvPhotos").innerHTML = i.length ? i.map((e, t) => `<img src="${e.url}" style="width:72px;height:72px;border-radius:8px;object-fit:cover;border:1.5px solid var(--bd);cursor:pointer" onclick="openRehPhotoLightbox('${n.id}',${t})">`).join("") : '<span style="font-size:.76rem;color:var(--ink3)">No photos yet</span>';
       const l = document.getElementById("rvActions"),
         r = "admin" === currentUser.role;
-      n.cancelled ? l.innerHTML = '<button class="btn btn-g" onclick="closeMod(\'reViewMod\')">Close</button>' + (r ? `<button class="btn btn-g btn-sm" style="color:var(--red,#e53935);border-color:var(--red,#e53935)" onclick="deleteRehearsal('${n.id}')">🗑 Delete</button>` : "") : l.innerHTML = o ? '<button class="btn btn-g" onclick="closeMod(\'reViewMod\')">Close</button>' : `\n      <button class="btn btn-g" onclick="closeMod('reViewMod')">Close</button>\n      <button class="btn btn-g btn-sm" style="color:var(--amb);border-color:var(--amb2)" onclick="closeMod('reViewMod');promptCancel('rehearsal','${n.id}')">${t("Cancel")}</button>\n      <button class="btn btn-g btn-sm" onclick="closeMod('reViewMod');openRehEdit('${n.id}')">Edit</button>\n      <button class="btn btn-p btn-sm" onclick="closeMod('reViewMod');shareRehearsal('${n.id}')">Share</button>`, showMod("reViewMod")
+      n.cancelled ? l.innerHTML = '<button class="btn btn-g" onclick="closeMod(\'reViewMod\')">Close</button>' + (r ? `<button class="btn btn-g btn-sm" style="color:var(--red,#e53935);border-color:var(--red,#e53935)" onclick="deleteRehearsal('${n.id}')">${ricon("trash",11)} Delete</button>` : "") : l.innerHTML = o ? '<button class="btn btn-g" onclick="closeMod(\'reViewMod\')">Close</button>' : `\n      <button class="btn btn-g" onclick="closeMod('reViewMod')">Close</button>\n      <button class="btn btn-g btn-sm" style="color:var(--amb);border-color:var(--amb2)" onclick="closeMod('reViewMod');promptCancel('rehearsal','${n.id}')">${t("Cancel")}</button>\n      <button class="btn btn-g btn-sm" onclick="closeMod('reViewMod');openRehEdit('${n.id}')">Edit</button>\n      <button class="btn btn-p btn-sm" onclick="closeMod('reViewMod');shareRehearsal('${n.id}')">Share</button>`, showMod("reViewMod")
     }
     async function deleteRehearsal(e) {
       const t = rehearsals.find(t => t.id === e);
@@ -7157,8 +7162,7 @@
       document.getElementById("invMsgText").value = n;
       const o = document.querySelector(".invopt.on .invl")?.textContent || "Email";
       document.getElementById("invMsgChannel").textContent = o;
-      const a = "WhatsApp" === o ? "💬 " : "Email" === o ? "✉️ " : "🔗 ";
-      document.getElementById("invSendBtn").textContent = `${a}Send via ${o}`, closeMod("invMod"), showMod("invMsgMod")
+      document.getElementById("invSendBtn").textContent = `Send via ${o}`, closeMod("invMod"), showMod("invMsgMod")
     }
 
     function sendInvitation() {
@@ -7186,7 +7190,7 @@
       if ("free" === payT) return e.className = "pill pgray", void(e.textContent = "Free gig");
       const t = document.getElementById("gigTot")?.value,
         n = document.getElementById("tickPx")?.value;
-      let o = "💰 Paid gig";
+      let o = "Paid gig";
       t && (o += ` · €${t} total`), n && (o += ` · €${n}/ticket`), e.className = "pill pg", e.textContent = o
     }
 
@@ -7416,14 +7420,14 @@
       }
       const a = document.getElementById("slMeta"),
         s = slTotalDur(),
-        i = s ? `<span class="pill pgray" style="font-family:var(--mono);font-size:.72rem">⏱ ${fmtDurLong(s)}</span>` : "";
+        i = s ? `<span class="pill pgray" style="font-family:var(--mono);font-size:.72rem">${ricon("clock",10)} ${fmtDurLong(s)}</span>` : "";
       if (a) {
         const t = "Wedding" === e.type ? "pamb" : "Practice" === e.type ? "pgray" : "pp",
           n = e.date ? new Date(e.date + "T12:00:00").toLocaleDateString("en-US", {
             month: "short",
             day: "numeric"
           }) : "",
-          o = e.paid ? `<span class="pill pg">💰 ${e.total||"Paid"}${e.price?` · ${e.price}`:""}</span>` : "";
+          o = e.paid ? `<span class="pill pg">€ ${e.total||"Paid"}${e.price?` · ${e.price}`:""}</span>` : "";
         a.innerHTML = `\n      <span class="pill ${t}">${e.type||"Concert"}</span>\n      ${n?`<span class="pill pgray">${n}${e.venue?" · "+e.venue:""}</span>`:""}\n      ${e.duration?`<span class="pill pgray">${e.duration} min</span>`:""}\n      ${e.audience?`<span class="pill pgray">~${e.audience} people</span>`:""}\n      ${o}\n      ${i}`
       }
       const l = document.getElementById("slRehLink");
@@ -7433,9 +7437,9 @@
           a = n.filter(e => e.date < TODAY_STR),
           s = "admin" === currentUser.role;
         if (o.length || a.length) {
-          const e = [...o, ...a].map(e => `<span style="display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:99px;background:var(--g2);border:1.5px solid #86EFAC;font-size:.75rem;font-weight:600;color:var(--g);cursor:pointer;${e.date<TODAY_STR?"opacity:.65":""}" onclick="nav('rehearsals')">🎸 ${esc(e.title)}${e.date?" · "+esc(e.date):""}</span>\n         ${s?`<button class="btn btn-xs btn-g" onclick="linkSlToRehearsal(null,'${e.id}')" style="font-size:.66rem" title="Unlink">✕</button>`:""}`).join("");
+          const e = [...o, ...a].map(e => `<span style="display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:99px;background:var(--g2);border:1.5px solid #86EFAC;font-size:.75rem;font-weight:600;color:var(--g);cursor:pointer;${e.date<TODAY_STR?"opacity:.65":""}" onclick="nav('rehearsals')">${ricon("metro",12)} ${esc(e.title)}${e.date?" · "+esc(e.date):""}</span>\n         ${s?`<button class="btn btn-xs btn-g" onclick="linkSlToRehearsal(null,'${e.id}')" style="font-size:.66rem" title="Unlink">✕</button>`:""}`).join("");
           l.innerHTML = `<span style="font-size:.72rem;color:var(--ink3)" data-i18n="Linked rehearsals:">${t("Linked rehearsals:")||"Linked rehearsals:"}</span>${e}${s?'<button class="btn btn-xs btn-g" onclick="openSlRehLinkModal()" style="font-size:.7rem">+ Link more</button>':""}`
-        } else l.innerHTML = `<span style="font-size:.72rem;color:var(--ink3)" data-i18n="No rehearsal linked">${t("No rehearsal linked")||"No rehearsal linked"}</span>${s?` <button class="btn btn-xs btn-g" onclick="openSlRehLinkModal()" style="font-size:.7rem">🔗 ${t("Link to Rehearsal")||"Link to Rehearsal"}</button>`:""}`
+        } else l.innerHTML = `<span style="font-size:.72rem;color:var(--ink3)" data-i18n="No rehearsal linked">${t("No rehearsal linked")||"No rehearsal linked"}</span>${s?` <button class="btn btn-xs btn-g" onclick="openSlRehLinkModal()" style="font-size:.7rem">${ricon("link",11)} ${t("Link to Rehearsal")||"Link to Rehearsal"}</button>`:""}`
       }
       const r = document.getElementById("slConcertLink");
       if (!r) return;
@@ -7445,7 +7449,7 @@
       if (c.length || u.length) {
         const e = [...c, ...u].map(e => `<span style="display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:99px;background:var(--a2);border:1.5px solid rgba(108,99,255,.25);font-size:.75rem;font-weight:600;color:var(--a);cursor:pointer;${isPast(e)?"opacity:.65":""}" onclick="nav('concerts');openConcertView('${e.id}')">★ ${e.title}</span>\n       <button class="btn btn-xs btn-g" onclick="linkSlToConcert(null,'${e.id}')" style="font-size:.66rem" title="Unlink">✕</button>`).join("");
         r.innerHTML = `<span style="font-size:.72rem;color:var(--ink3)">Linked concerts:</span>${e}<button class="btn btn-xs btn-g" onclick="openSlLinkModal()" style="font-size:.7rem">+ Link more</button>`
-      } else r.innerHTML = '\n      <span style="font-size:.72rem;color:var(--ink3)">No concert linked</span>\n      <button class="btn btn-xs btn-g" onclick="openSlLinkModal()" style="font-size:.7rem">🔗 Link to Concert</button>'
+      } else r.innerHTML = '\n      <span style="font-size:.72rem;color:var(--ink3)">No concert linked</span>\n      <button class="btn btn-xs btn-g" onclick="openSlLinkModal()" style="font-size:.7rem">' + ricon("link", 11) + ' Link to Concert</button>'
     }
     async function linkSlToConcert(e, n) {
       if (n) return await ConcertsDB.unlinkSetlist(n, activeSetlistId), await loadConcerts(), renderSlMeta(), renderConcerts(), void toast2("Concert unlinked");
@@ -7482,7 +7486,7 @@
         const t = e.value,
           n = concerts.find(e => e.id === t),
           o = document.getElementById("slConcertPreview");
-        n && t ? (o.style.display = "", o.textContent = `📍 ${n.venue} · ${n.time} · ~${n.audience} people`) : o.style.display = "none"
+        n && t ? (o.style.display = "", o.innerHTML = `${ricon("pin",11)} ${esc(n.venue)} · ${esc(n.time)} · ~${esc(String(n.audience))} people`) : o.style.display = "none"
       }, showMod("slMod")
     }
     let slCreateMode = "manual";
@@ -8353,7 +8357,7 @@
         r.textContent = e[t] || "", r.style.display = e[t] ? "" : "none"
       }
       const d = document.getElementById("seHideBtn");
-      d.textContent = t.hidden ? "👁 Unhide Song" : "🙈 Hide Song", d.style.background = t.hidden ? "var(--g2)" : "var(--bg2)", d.style.borderColor = t.hidden ? "#86EFAC" : "var(--bd)", d.style.color = t.hidden ? "var(--g)" : "var(--ink2)";
+      d.innerHTML = t.hidden ? '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 12S6 5.8 12 5.8 21.5 12 21.5 12 18 18.2 12 18.2 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="2.8"/></svg> Unhide Song' : '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4l16 16"/><path d="M9.9 5.2A9.4 9.4 0 0 1 12 5c6 0 9.5 7 9.5 7a16.9 16.9 0 0 1-2.6 3.5M6.6 6.6C4 8.5 2.5 12 2.5 12s3.5 7 9.5 7c1.6 0 3-.4 4.3-1.1"/><path d="M10 10.2a2.8 2.8 0 0 0 3.9 3.9"/></svg> Hide Song', d.style.background = t.hidden ? "var(--g2)" : "var(--bg2)", d.style.borderColor = t.hidden ? "#86EFAC" : "var(--bd)", d.style.color = t.hidden ? "var(--g)" : "var(--ink2)";
       const c = document.getElementById("seDeleteBtn");
       c && (c.style.display = "admin" === currentUser.role ? "" : "none");
       const u = document.getElementById("seStreamingWrap"),
@@ -8515,7 +8519,7 @@
       const a = songByAnyId(n.id);
       if (editingSongId === n.id) {
         const e = document.getElementById("seHideBtn");
-        e.textContent = a.hidden ? "👁 Unhide Song" : "🙈 Hide Song", e.style.background = a.hidden ? "var(--g2)" : "var(--bg2)", e.style.borderColor = a.hidden ? "#86EFAC" : "var(--bd)", e.style.color = a.hidden ? "var(--g)" : "var(--ink2)"
+        e.innerHTML = a.hidden ? '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 12S6 5.8 12 5.8 21.5 12 21.5 12 18 18.2 12 18.2 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="2.8"/></svg> Unhide Song' : '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4l16 16"/><path d="M9.9 5.2A9.4 9.4 0 0 1 12 5c6 0 9.5 7 9.5 7a16.9 16.9 0 0 1-2.6 3.5M6.6 6.6C4 8.5 2.5 12 2.5 12s3.5 7 9.5 7c1.6 0 3-.4 4.3-1.1"/><path d="M10 10.2a2.8 2.8 0 0 0 3.9 3.9"/></svg> Hide Song', e.style.background = a.hidden ? "var(--g2)" : "var(--bg2)", e.style.borderColor = a.hidden ? "#86EFAC" : "var(--bd)", e.style.color = a.hidden ? "var(--g)" : "var(--ink2)"
       }
       renderLib(), toast2(a.hidden ? "Song hidden from setlists" : "Song visible again")
     }
@@ -8704,7 +8708,7 @@
           n = e.to !== e.from ? ` → ${fmtD(e.to)}` : "",
           o = "members" === e.scope ? `<div style="font-size:.67rem;color:var(--ink3);margin-top:2px">${e.mids.map(e=>members.find(t=>t.id===e)?.name.split(" ")[0]).filter(Boolean).join(", ")}</div>` : "";
         return `<div class="boit"><div class="bost" style="background:${"group"===e.scope?"var(--r)":"var(--bl)"}"></div><div class="bobd"><div class="bola">${e.label}</div><div class="boda">${t}${n}</div>${o}</div><div style="display:flex;align-items:center;gap:5px;flex-shrink:0"><span class="pill ${"group"===e.scope?"pr":"pbl"}">${"group"===e.scope?"Whole group":`${e.mids.length} member${1!==e.mids.length?"s":""}`}</span><button class="btn-ic btn" onclick="editBO('${e.id}')" aria-label="Edit blocked days" style="width:27px;height:27px"><svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M11 2l3 3-8 8H3v-3L11 2z"/></svg></button><button class="btn-ic btn" onclick="delBO('${e.id}')" aria-label="Delete blocked days" style="width:27px;height:27px;color:var(--r);border-color:var(--r2)"><svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 4h12M5 4V2h6v2M6 7v5M10 7v5M3 4l1 10h8l1-10"/></svg></button></div></div>`
-      }).join("") : e.innerHTML = '<div class="es" style="padding:20px"><div class="es-ico" style="font-size:1.6rem">📅</div><h3>No blackout periods</h3><p>Add holidays, closures, or absences.</p></div>')
+      }).join("") : e.innerHTML = '<div class="es" style="padding:20px"><div class="es-ico">' + ricon("cal", 26) + '</div><h3>No blackout periods</h3><p>Add holidays, closures, or absences.</p></div>')
     }
     const DN = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"],
       MN = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
@@ -9201,14 +9205,14 @@
       document.getElementById("cvPhotos").innerHTML = l.length ? l.map((e, t) => `<img src="${e.url}" style="width:72px;height:72px;border-radius:8px;object-fit:cover;border:1.5px solid var(--bd);cursor:pointer" onclick="openPhotoLightbox('${n.id}',${t})">`).join("") : `<span style="font-size:.76rem;color:var(--ink3)">${t("No photos yet")}</span>`;
       const r = document.getElementById("cvActions"),
         d = "admin" === currentUser.role;
-      if (n.cancelled) r.innerHTML = `<button class="btn btn-g" onclick="closeMod('cvMod')">${t("Close")}</button>` + (d ? `<button class="btn btn-g btn-sm" style="color:var(--red,#e53935);border-color:var(--red,#e53935)" onclick="deleteConcert('${n.id}')">🗑 Delete</button>` : "");
+      if (n.cancelled) r.innerHTML = `<button class="btn btn-g" onclick="closeMod('cvMod')">${t("Close")}</button>` + (d ? `<button class="btn btn-g btn-sm" style="color:var(--red,#e53935);border-color:var(--red,#e53935)" onclick="deleteConcert('${n.id}')">${ricon("trash",11)} Delete</button>` : "");
       else if (o) r.innerHTML = `<button class="btn btn-g" onclick="closeMod('cvMod')">${t("Close")}</button>`;
       else {
         const e = (n.setlistIds || []).map(e => {
           const t = setlists.find(t => t.id === e);
           return t ? `<button class="btn btn-p btn-sm" onclick="openSetlistFromConcert('${e}')">♩ ${esc(t.name)}</button>` : ""
         }).join("");
-        r.innerHTML = `\n      <button class="btn btn-g" onclick="closeMod('cvMod')">${t("Close")}</button>\n      <button class="btn btn-g btn-sm" style="color:var(--amb);border-color:var(--amb2)" onclick="closeMod('cvMod');promptCancel('concert','${n.id}')">${t("🚫 Cancel")}</button>\n      <button class="btn btn-g btn-sm" onclick="closeMod('cvMod');openConcertEdit('${n.id}')">${t("Edit")}</button>\n      <button class="btn btn-g btn-sm" onclick="closeMod('cvMod');openConcertLinkFromConcert('${n.id}')">♩ ${t("Link Set List")}</button>\n      ${e}`
+        r.innerHTML = `\n      <button class="btn btn-g" onclick="closeMod('cvMod')">${t("Close")}</button>\n      <button class="btn btn-g btn-sm" style="color:var(--amb);border-color:var(--amb2)" onclick="closeMod('cvMod');promptCancel('concert','${n.id}')">${t("Cancel")}</button>\n      <button class="btn btn-g btn-sm" onclick="closeMod('cvMod');openConcertEdit('${n.id}')">${t("Edit")}</button>\n      <button class="btn btn-g btn-sm" onclick="closeMod('cvMod');openConcertLinkFromConcert('${n.id}')">♩ ${t("Link Set List")}</button>\n      ${e}`
       }
       showMod("cvMod")
     }
@@ -10146,112 +10150,47 @@
         e && e.classList.remove("open"), t && t.classList.remove("open")
       }
     });
-    const INSTRUMENTS = [{
-      v: "Guitar",
-      i: "🎸",
-      label: "Guitar"
-    }, {
-      v: "Acoustic Guitar",
-      i: "🪕",
-      label: "Acoustic Guitar"
-    }, {
-      v: "Bass Guitar",
-      i: "🎸",
-      label: "Bass Guitar"
-    }, {
-      v: "Piano / Keys",
-      i: "🎹",
-      label: "Piano / Keys"
-    }, {
-      v: "Drums",
-      i: "🥁",
-      label: "Drums"
-    }, {
-      v: "Percussion",
-      i: "🪘",
-      label: "Percussion"
-    }, {
-      v: "Saxophone",
-      i: "🎷",
-      label: "Saxophone"
-    }, {
-      v: "Trumpet",
-      i: "🎺",
-      label: "Trumpet"
-    }, {
-      v: "Trombone",
-      i: "🎺",
-      label: "Trombone"
-    }, {
-      v: "Clarinet",
-      i: "🪈",
-      label: "Clarinet"
-    }, {
-      v: "Flute",
-      i: "🪈",
-      label: "Flute"
-    }, {
-      v: "Violin",
-      i: "🎻",
-      label: "Violin"
-    }, {
-      v: "Viola",
-      i: "🎻",
-      label: "Viola"
-    }, {
-      v: "Cello",
-      i: "🎻",
-      label: "Cello"
-    }, {
-      v: "Double Bass",
-      i: "🎻",
-      label: "Double Bass"
-    }, {
-      v: "Harp",
-      i: "🎵",
-      label: "Harp"
-    }, {
-      v: "Vocals",
-      i: "🎤",
-      label: "Vocals"
-    }, {
-      v: "Harmonica",
-      i: "🎵",
-      label: "Harmonica"
-    }, {
-      v: "Banjo",
-      i: "🪕",
-      label: "Banjo"
-    }, {
-      v: "Ukulele",
-      i: "🪕",
-      label: "Ukulele"
-    }, {
-      v: "Mandolin",
-      i: "🪕",
-      label: "Mandolin"
-    }, {
-      v: "Accordion",
-      i: "🪗",
-      label: "Accordion"
-    }, {
-      v: "DJ / Turntables",
-      i: "🎧",
-      label: "DJ / Turntables"
-    }, {
-      v: "Other",
-      i: "🎵",
-      label: "Other"
-    }];
+    const INSTRUMENTS = ["Guitar", "Acoustic Guitar", "Bass Guitar", "Piano / Keys", "Drums", "Percussion", "Saxophone", "Trumpet", "Trombone", "Clarinet", "Flute", "Violin", "Viola", "Cello", "Double Bass", "Harp", "Vocals", "Harmonica", "Banjo", "Ukulele", "Mandolin", "Accordion", "DJ / Turntables", "Other"].map(e => ({
+      v: e,
+      label: e
+    }));
+    // Ritovo instrument icon family — same 24-grid / 1.75-stroke geometry as
+    // the nav set, brand downbeat dot as sound holes, valve caps and tuners.
+    const _INST_IC = {
+      'Guitar': '<path d="M12.8 11.2 19.8 4.2"/><circle cx="20.6" cy="3.4" r="1.3" fill="currentColor" stroke="none"/><path d="M12.8 11.2c1.1 1.1.3 2.4-.9 2.6-.9.15-1.7.6-2.1 1.4-.4.8-.2 1.7-1 2.5a3.7 3.7 0 0 1-5.2-5.2c.8-.8 1.7-.6 2.5-1 .8-.4 1.25-1.2 1.4-2.1.2-1.2 1.5-2 2.6-.9z"/>',
+      'Acoustic Guitar': '<path d="M11.7 12.3 19.6 4.4"/><path d="M18.4 3.2l2.4 2.4"/><circle cx="8.8" cy="15.2" r="5.2"/><circle cx="10.8" cy="13.2" r="1.3" fill="currentColor" stroke="none"/>',
+      'Bass Guitar': '<path d="M11.4 12.6 20.4 3.6"/><circle cx="21" cy="3" r="1.1" fill="currentColor" stroke="none"/><circle cx="18.7" cy="5.3" r="1.1" fill="currentColor" stroke="none"/><circle cx="8.2" cy="15.8" r="4.4"/>',
+      'Piano / Keys': '<rect x="3" y="7" width="18" height="10.5" rx="1.5"/><path d="M9 7v10.5M15 7v10.5"/><path d="M6 7v5.2M12 7v5.2M18 7v5.2"/>',
+      'Drums': '<ellipse cx="12" cy="11.5" rx="7.5" ry="2.6"/><path d="M4.5 11.5v5.2c0 1.5 3.3 2.8 7.5 2.8s7.5-1.3 7.5-2.8v-5.2"/><path d="M7.2 3.6l4 3.2M16.8 3.6l-4 3.2"/><circle cx="6.4" cy="3" r="1.1" fill="currentColor" stroke="none"/><circle cx="17.6" cy="3" r="1.1" fill="currentColor" stroke="none"/>',
+      'Percussion': '<path d="M4.2 9.2 5.2 19.2h4.2L10.4 9.2"/><ellipse cx="7.3" cy="9" rx="3.1" ry="1.25"/><path d="M14.1 11.2l.8 8h3.8l.8-8"/><ellipse cx="16.8" cy="11" rx="2.7" ry="1.1"/>',
+      'Saxophone': '<path d="M12 2.6 9.9 4.1v8.9a4.8 4.8 0 0 0 9.6 0v-1.6c0-.5.3-.9.7-1.1l1.6-.8"/><circle cx="9.9" cy="7.2" r="1.05" fill="currentColor" stroke="none"/><circle cx="9.9" cy="10.4" r="1.05" fill="currentColor" stroke="none"/><circle cx="11.2" cy="13.8" r="1.05" fill="currentColor" stroke="none"/>',
+      'Trumpet': '<path d="M3 11h11"/><path d="M14 11c2.6 0 4.2-1.2 5.6-2.8M14 11c2.6 0 4.2 1.2 5.6 2.8"/><path d="M19.6 8.2a8.4 8.4 0 0 1 0 5.6"/><path d="M7.5 11v4.2M10.5 11v4.2M13.5 11v4.2M6.3 15.2h8.4"/><circle cx="3" cy="11" r="1.2" fill="currentColor" stroke="none"/>',
+      'Trombone': '<path d="M3 10.2h12"/><path d="M15 10.2c2.5 0 4-1.1 5.3-2.6M15 10.2c2.5 0 4 1.1 5.3 2.6"/><path d="M20.3 7.6a8 8 0 0 1 0 5.2"/><path d="M3 13.8h11a1.8 1.8 0 0 0 1.8-1.8v-.4"/><circle cx="3" cy="13.8" r="1.2" fill="currentColor" stroke="none"/>',
+      'Clarinet': '<path d="M10.6 3h2.8"/><path d="M11 3l-.2 13.2c-1.1.5-1.9 1.4-2.2 2.8M13 3l.2 13.2c1.1.5 1.9 1.4 2.2 2.8"/><path d="M8.6 19h6.8"/><circle cx="12" cy="7.5" r="1.05" fill="currentColor" stroke="none"/><circle cx="12" cy="10.7" r="1.05" fill="currentColor" stroke="none"/><circle cx="12" cy="13.9" r="1.05" fill="currentColor" stroke="none"/>',
+      'Flute': '<rect x="2.5" y="10.2" width="19" height="3.6" rx="1.8"/><circle cx="6.2" cy="12" r="1.05" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.05" fill="currentColor" stroke="none"/><circle cx="15.3" cy="12" r="1.05" fill="currentColor" stroke="none"/><circle cx="18.6" cy="12" r="1.05" fill="currentColor" stroke="none"/>',
+      'Violin': '<path d="M11 8.6c2.3 0 3 1.7 2.7 3-.2.9-.1 1.6.4 2.3.9 1.2.5 2.9-.9 3.7a4.4 4.4 0 0 1-4.4 0c-1.4-.8-1.8-2.5-.9-3.7.5-.7.6-1.4.4-2.3-.3-1.3.4-3 2.7-3z"/><path d="M11 8.6V3.6"/><circle cx="11" cy="2.9" r="1.2" fill="currentColor" stroke="none"/><path d="M19.6 4 17.2 20.6"/><circle cx="19.8" cy="2.8" r="1" fill="currentColor" stroke="none"/>',
+      'Viola': '<path d="M12 8.2c2.7 0 3.5 1.8 3.2 3.2-.2.9-.1 1.7.5 2.4 1 1.3.5 3.1-1 4a5 5 0 0 1-5.4 0c-1.5-.9-2-2.7-1-4 .6-.7.7-1.5.5-2.4-.3-1.4.5-3.2 3.2-3.2z"/><path d="M12 8.2V3.2"/><circle cx="12" cy="2.5" r="1.2" fill="currentColor" stroke="none"/><path d="M10.2 12.6l-.4 2.2M14.2 12.6l-.4 2.2"/>',
+      'Cello': '<path d="M12 7.4c2.6 0 3.4 1.7 3.1 3-.2.9-.1 1.6.5 2.3 1 1.3.5 3-.9 3.9a4.9 4.9 0 0 1-5.4 0c-1.4-.9-1.9-2.6-.9-3.9.6-.7.7-1.4.5-2.3-.3-1.3.5-3 3.1-3z"/><path d="M12 7.4V2.8"/><path d="M12 17.8v3.4M10.4 21.2h3.2"/>',
+      'Double Bass': '<path d="M12 6.8c3 0 4 1.9 3.6 3.4-.2.9 0 1.7.6 2.4 1.1 1.4.5 3.4-1.1 4.3a6 6 0 0 1-6.2 0c-1.6-.9-2.2-2.9-1.1-4.3.6-.7.8-1.5.6-2.4-.4-1.5.6-3.4 3.6-3.4z"/><path d="M12 6.8V2.4"/><circle cx="10.4" cy="3.2" r="1" fill="currentColor" stroke="none"/><circle cx="13.6" cy="3.2" r="1" fill="currentColor" stroke="none"/><path d="M12 17.2v3.6M10.4 20.8h3.2"/>',
+      'Harp': '<path d="M5.8 20.5V5.2"/><path d="M5.8 5.2c4.6.4 8.8 1.4 11.2 4.6.9 1.2 1.3 2.6 1.4 4.2l.4 6.5z"/><path d="M9.6 7v13.5M12.8 8.2v12.3M15.8 10.4v10.1"/>',
+      'Vocals': '<g transform="rotate(43 13.5 7.8)"><rect x="11" y="2.8" width="5" height="9.6" rx="2.5"/></g><path d="M10.7 11.3 5.2 16.8"/><circle cx="4.5" cy="17.5" r="1.3" fill="currentColor" stroke="none"/>',
+      'Harmonica': '<rect x="3" y="9.2" width="18" height="5.6" rx="1.2"/><path d="M7.5 9.2v5.6M12 9.2v5.6M16.5 9.2v5.6"/><circle cx="5.2" cy="12" r=".9" fill="currentColor" stroke="none"/><circle cx="18.8" cy="12" r=".9" fill="currentColor" stroke="none"/>',
+      'Banjo': '<path d="M12.6 11.4 20 4"/><circle cx="20.8" cy="3.2" r="1.2" fill="currentColor" stroke="none"/><circle cx="9" cy="15" r="5"/><circle cx="9" cy="15" r="2.2"/>',
+      'Ukulele': '<path d="M11.6 12.4 15.4 8.6"/><path d="M14.4 7.2l2.8 2.8"/><circle cx="8.6" cy="15.4" r="4"/><circle cx="10" cy="14" r="1.2" fill="currentColor" stroke="none"/><circle cx="16.6" cy="6" r="1" fill="currentColor" stroke="none"/>',
+      'Mandolin': '<path d="M13.2 10.8 19.4 4.6"/><circle cx="20.2" cy="3.8" r="1.2" fill="currentColor" stroke="none"/><path d="M13.2 10.8c2.2 2.2 2 5.8-.5 7.7s-6 1.7-7.6-.6c-1.5-2.1-.9-5 1.2-6.8 2-1.8 5-2.2 6.9-.3z"/><circle cx="10.4" cy="13.6" r="1.3" fill="currentColor" stroke="none"/>',
+      'Accordion': '<rect x="3.5" y="5.5" width="3.6" height="13" rx="1"/><rect x="16.9" y="5.5" width="3.6" height="13" rx="1"/><path d="M9.4 6.5v11M12 6.5v11M14.6 6.5v11"/><circle cx="5.3" cy="9" r=".9" fill="currentColor" stroke="none"/><circle cx="5.3" cy="12" r=".9" fill="currentColor" stroke="none"/><circle cx="5.3" cy="15" r=".9" fill="currentColor" stroke="none"/>',
+      'DJ / Turntables': '<rect x="2.8" y="6" width="18.4" height="12" rx="2"/><circle cx="9.8" cy="12" r="3.6"/><circle cx="9.8" cy="12" r="1.1" fill="currentColor" stroke="none"/><path d="M17.6 8.6 15.4 13"/><circle cx="17.8" cy="8.2" r="1.1" fill="currentColor" stroke="none"/>',
+      'Other': '<path d="M10 18V5.5l7-1.8V15.5"/><circle cx="7.6" cy="18" r="2.5" fill="currentColor" stroke="none"/><circle cx="14.6" cy="15.5" r="2.5" fill="currentColor" stroke="none"/>'
+    };
 
-    function instIcon(e) {
+    function instIcon(e, t = 14) {
       if (!e) return "";
-      const t = INSTRUMENTS.find(t => t.v === e || t.label === e);
-      return t ? t.i : "🎵"
+      const n = _INST_IC[e] || _INST_IC.Other;
+      return `<svg width="${t}" height="${t}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;flex-shrink:0" aria-hidden="true">${n}</svg>`
     }
 
     function populateInstrumentSelects() {
-      const e = INSTRUMENTS.map(e => `<option value="${e.v}">${e.i} ${e.label}</option>`).join("");
+      const e = INSTRUMENTS.map(e => `<option value="${e.v}">${e.label}</option>`).join("");
       [{
         id: "pfInst1",
         blank: "— Select —"
@@ -10314,7 +10253,7 @@
           u = "admin" === e.role ? `<span class="pill pp">${t("Admin")}</span>` : c ? `<span class="pill pamb">${t("Guest")}</span><span style="font-size:.67rem;color:var(--ink3);margin-left:4px">until ${e.guestEnd}</span>` : `<span class="pill pgray">${t("Member")}</span>`,
           m = c ? "border:1.5px dashed var(--amb);" : "",
           p = e.vocals && "None" !== e.vocals ? `${t("Vocals")}: ${t({Lead:"Lead vocals",Backing:"Backing vocals",None:"No vocals",Both:"Lead & backing"}[e.vocals]||e.vocals)}` : "";
-        return `<div class="memcard" style="${m}">\n      <div class="mctop">\n        <div class="mcav" style="background:${e.color};color:${_ink(e.color)};cursor:pointer;${memberPhotos[a]?`background-image:url(${memberPhotos[a]});background-size:cover;background-position:center`:""}" onclick="openProfile(${a})">${memberPhotos[a]?"":e.init}</div>\n        <div style="flex:1">\n          <div class="mcn" style="display:flex;align-items:center;gap:6px">\n            ${esc(e.name)}${i?`<span title="${esc(isoName(s.nat))}" style="font-size:.95rem;line-height:1">${i}</span>`:""}\n          </div>\n          <div class="mci" style="display:flex;align-items:center;gap:5px;flex-wrap:wrap;margin-top:3px">\n            <span style="display:inline-flex;align-items:center;gap:3px">${r} ${esc(t(e.instrument))}</span>\n            ${e.inst2?`<span style="color:var(--bd)">·</span><span style="display:inline-flex;align-items:center;gap:3px;color:var(--ink3)">${d} ${esc(t(e.inst2))}</span>`:""}\n          </div>\n          <div style="margin-top:4px;display:flex;align-items:center;gap:5px;flex-wrap:wrap">${u}</div>\n        </div>\n      </div>\n      <div class="t1" style="margin-bottom:6px">${t("Available days")}</div>\n      <div class="mcdays">${e.avail.map((e,t)=>`<div class="mcd ${e?"y":"n"}">${o[t]}</div>`).join("")}</div>\n      ${p?`<div style="font-size:.7rem;color:var(--ink2);margin-top:9px">${p}</div>`:""}\n      <div class="mcfoot">\n        <button class="btn btn-g btn-sm" onclick="openProfile(${a})">${t("View Profile")}</button>\n        ${l&&"admin"!==e.role?`<button class="btn btn-g btn-sm" onclick="openChangeRoleModal(${a})">${t(c?"Make Member":"Make Guest")}</button>`:""}\n        ${l&&"admin"!==e.role&&a!==currentUser.memberIdx?`<button class="btn btn-g btn-sm" style="color:var(--a);border-color:rgba(108,99,255,.35)" onclick="makeAdmin(${a})">⭐ ${t("Make Admin")}</button>`:""}\n        ${l&&a!==currentUser.memberIdx?`<button class="btn btn-g btn-sm" style="color:var(--r);border-color:var(--r2)" onclick="removeMember(${a})" title="${t("Remove")}">${t("Remove")}</button>`:""}\n      </div>\n    </div>`
+        return `<div class="memcard" style="${m}">\n      <div class="mctop">\n        <div class="mcav" style="background:${e.color};color:${_ink(e.color)};cursor:pointer;${memberPhotos[a]?`background-image:url(${memberPhotos[a]});background-size:cover;background-position:center`:""}" onclick="openProfile(${a})">${memberPhotos[a]?"":e.init}</div>\n        <div style="flex:1">\n          <div class="mcn" style="display:flex;align-items:center;gap:6px">\n            ${esc(e.name)}${i?`<span title="${esc(isoName(s.nat))}" style="font-size:.95rem;line-height:1">${i}</span>`:""}\n          </div>\n          <div class="mci" style="display:flex;align-items:center;gap:5px;flex-wrap:wrap;margin-top:3px">\n            <span style="display:inline-flex;align-items:center;gap:3px">${r} ${esc(t(e.instrument))}</span>\n            ${e.inst2?`<span style="color:var(--bd)">·</span><span style="display:inline-flex;align-items:center;gap:3px;color:var(--ink3)">${d} ${esc(t(e.inst2))}</span>`:""}\n          </div>\n          <div style="margin-top:4px;display:flex;align-items:center;gap:5px;flex-wrap:wrap">${u}</div>\n        </div>\n      </div>\n      <div class="t1" style="margin-bottom:6px">${t("Available days")}</div>\n      <div class="mcdays">${e.avail.map((e,t)=>`<div class="mcd ${e?"y":"n"}">${o[t]}</div>`).join("")}</div>\n      ${p?`<div style="font-size:.7rem;color:var(--ink2);margin-top:9px">${p}</div>`:""}\n      <div class="mcfoot">\n        <button class="btn btn-g btn-sm" onclick="openProfile(${a})">${t("View Profile")}</button>\n        ${l&&"admin"!==e.role?`<button class="btn btn-g btn-sm" onclick="openChangeRoleModal(${a})">${t(c?"Make Member":"Make Guest")}</button>`:""}\n        ${l&&"admin"!==e.role&&a!==currentUser.memberIdx?`<button class="btn btn-g btn-sm" style="color:var(--a);border-color:rgba(108,99,255,.35)" onclick="makeAdmin(${a})">${ricon("star",11)} ${t("Make Admin")}</button>`:""}\n        ${l&&a!==currentUser.memberIdx?`<button class="btn btn-g btn-sm" style="color:var(--r);border-color:var(--r2)" onclick="removeMember(${a})" title="${t("Remove")}">${t("Remove")}</button>`:""}\n      </div>\n    </div>`
       }).join(""), renderGuestDir()
     }
 
@@ -10332,7 +10271,7 @@
           const n = Math.round((new Date(e.guestEnd) - new Date(e.guestStart)) / 864e5),
             o = members.indexOf(e),
             a = (o >= 0 ? memberPhotos[o] : null) || e.photo || null;
-          return `<div onclick="openGuestDetail(${t})" style="display:flex;align-items:center;gap:12px;padding:14px 16px;background:var(--w);border:1px solid var(--bd);border-radius:var(--radl);box-shadow:var(--sh);cursor:pointer;transition:border-color .13s,transform .13s" onmouseover="this.style.borderColor='var(--a)';this.style.transform='translateY(-1px)'" onmouseout="this.style.borderColor='var(--bd)';this.style.transform='none'">\n      <div style="width:42px;height:42px;border-radius:50%;background:${e.color||"#9A9AB0"};display:flex;align-items:center;justify-content:center;font-size:.78rem;font-weight:700;color:#fff;flex-shrink:0;${a?`background-image:url(${a});background-size:cover;background-position:center`:""}">${a?"":e.init||e.name.slice(0,2).toUpperCase()}</div>\n      <div style="flex:1;min-width:0">\n        <div style="font-weight:700;font-size:.88rem">${e.name}</div>\n        <div style="font-size:.74rem;color:var(--ink2);margin-top:2px;display:flex;gap:10px;flex-wrap:wrap">\n          <span>${instIcon(e.instrument)} ${e.instrument}</span>\n          <span>📅 ${e.guestStart} → ${e.guestEnd}</span>\n          <span>🎵 ${e.band||"The Jazz Cats"}</span>\n          <span style="color:var(--ink3)">${n} days</span>\n        </div>\n      </div>\n      <div style="display:flex;flex-direction:column;gap:6px;flex-shrink:0;width:100px">\n        <span style="display:block;width:100%;text-align:center;padding:6px 0;background:var(--bg2);border:1.5px solid var(--bd);border-radius:99px;font-size:.75rem;font-weight:600;color:var(--ink3)">Expired</span>\n        <button style="width:100%;padding:7px 0;text-align:center;font-family:var(--font);font-size:.75rem;font-weight:600;background:transparent;border:1.5px solid var(--bd);border-radius:99px;color:var(--ink);cursor:pointer;transition:border-color .13s,color .13s" onclick="event.stopPropagation();promoteGuestToMember(${members.indexOf(e)},'${e.name}')" onmouseover="this.style.borderColor='var(--a)';this.style.color='var(--a)'" onmouseout="this.style.borderColor='var(--bd)';this.style.color='var(--ink)'">↑ Member</button>\n        <button style="width:100%;padding:7px 0;text-align:center;font-family:var(--font);font-size:.75rem;font-weight:600;background:transparent;border:1.5px solid rgba(217,119,6,.4);border-radius:99px;color:var(--amb);cursor:pointer;transition:border-color .13s,background .13s" onclick="event.stopPropagation();openReactivateAsGuest(${members.indexOf(e)},'${e.name}')" onmouseover="this.style.background='var(--amb2)'" onmouseout="this.style.background='transparent'">↑ Guest</button>\n      </div>\n    </div>`
+          return `<div onclick="openGuestDetail(${t})" style="display:flex;align-items:center;gap:12px;padding:14px 16px;background:var(--w);border:1px solid var(--bd);border-radius:var(--radl);box-shadow:var(--sh);cursor:pointer;transition:border-color .13s,transform .13s" onmouseover="this.style.borderColor='var(--a)';this.style.transform='translateY(-1px)'" onmouseout="this.style.borderColor='var(--bd)';this.style.transform='none'">\n      <div style="width:42px;height:42px;border-radius:50%;background:${e.color||"#9A9AB0"};display:flex;align-items:center;justify-content:center;font-size:.78rem;font-weight:700;color:#fff;flex-shrink:0;${a?`background-image:url(${a});background-size:cover;background-position:center`:""}">${a?"":e.init||e.name.slice(0,2).toUpperCase()}</div>\n      <div style="flex:1;min-width:0">\n        <div style="font-weight:700;font-size:.88rem">${e.name}</div>\n        <div style="font-size:.74rem;color:var(--ink2);margin-top:2px;display:flex;gap:10px;flex-wrap:wrap">\n          <span>${instIcon(e.instrument)} ${e.instrument}</span>\n          <span style="display:inline-flex;align-items:center;gap:4px">${ricon("cal",11)} ${e.guestStart} → ${e.guestEnd}</span>\n          <span style="display:inline-flex;align-items:center;gap:4px">${ricon("sheet",11)} ${esc(e.band||"The Jazz Cats")}</span>\n          <span style="color:var(--ink3)">${n} days</span>\n        </div>\n      </div>\n      <div style="display:flex;flex-direction:column;gap:6px;flex-shrink:0;width:100px">\n        <span style="display:block;width:100%;text-align:center;padding:6px 0;background:var(--bg2);border:1.5px solid var(--bd);border-radius:99px;font-size:.75rem;font-weight:600;color:var(--ink3)">Expired</span>\n        <button style="width:100%;padding:7px 0;text-align:center;font-family:var(--font);font-size:.75rem;font-weight:600;background:transparent;border:1.5px solid var(--bd);border-radius:99px;color:var(--ink);cursor:pointer;transition:border-color .13s,color .13s" onclick="event.stopPropagation();promoteGuestToMember(${members.indexOf(e)},'${e.name}')" onmouseover="this.style.borderColor='var(--a)';this.style.color='var(--a)'" onmouseout="this.style.borderColor='var(--bd)';this.style.color='var(--ink)'">↑ Member</button>\n        <button style="width:100%;padding:7px 0;text-align:center;font-family:var(--font);font-size:.75rem;font-weight:600;background:transparent;border:1.5px solid rgba(217,119,6,.4);border-radius:99px;color:var(--amb);cursor:pointer;transition:border-color .13s,background .13s" onclick="event.stopPropagation();openReactivateAsGuest(${members.indexOf(e)},'${e.name}')" onmouseover="this.style.background='var(--amb2)'" onmouseout="this.style.background='transparent'">↑ Guest</button>\n      </div>\n    </div>`
         }).join("")
       }
     }
@@ -10346,7 +10285,7 @@
         s = o.nat ? isoFlag(o.nat) : "",
         i = (n >= 0 ? memberPhotos[n] : null) || t.photo || null,
         l = document.getElementById("gdAv");
-      l.style.background = t.color || "#9A9AB0", i ? (l.style.backgroundImage = `url(${i})`, l.style.backgroundSize = "cover", l.style.backgroundPosition = "center", l.textContent = "") : (l.style.backgroundImage = "", l.textContent = t.init || t.name.slice(0, 2).toUpperCase()), document.getElementById("gdName").textContent = t.name, document.getElementById("gdFlag").innerHTML = s, document.getElementById("gdInstrument").textContent = `${instIcon(t.instrument)} ${t.instrument}${t.inst2?" · "+instIcon(t.inst2)+" "+t.inst2:""}`, document.getElementById("gdGroup").textContent = t.band || "The Jazz Cats", document.getElementById("gdDates").textContent = `${t.guestStart} → ${t.guestEnd} (${a} days)`, document.getElementById("gdBio").textContent = o.bio || "No bio available.", document.getElementById("gdGear").textContent = o.gear || "—", document.getElementById("gdGearRow").style.display = o.gear ? "" : "none";
+      l.style.background = t.color || "#9A9AB0", i ? (l.style.backgroundImage = `url(${i})`, l.style.backgroundSize = "cover", l.style.backgroundPosition = "center", l.textContent = "") : (l.style.backgroundImage = "", l.textContent = t.init || t.name.slice(0, 2).toUpperCase()), document.getElementById("gdName").textContent = t.name, document.getElementById("gdFlag").innerHTML = s, document.getElementById("gdInstrument").innerHTML = `${instIcon(t.instrument)} ${esc(t.instrument)}${t.inst2?" · "+instIcon(t.inst2)+" "+esc(t.inst2):""}`, document.getElementById("gdGroup").textContent = t.band || "The Jazz Cats", document.getElementById("gdDates").textContent = `${t.guestStart} → ${t.guestEnd} (${a} days)`, document.getElementById("gdBio").textContent = o.bio || "No bio available.", document.getElementById("gdGear").textContent = o.gear || "—", document.getElementById("gdGearRow").style.display = o.gear ? "" : "none";
       const r = [];
       o.spotify && r.push({
         label: "Spotify",
@@ -10398,7 +10337,7 @@
       const n = getActiveBand();
       n && "Admin" === n.role && confirm(`Make ${t.name} an admin of ${n.name}? Admins can manage members, songs, and all group settings.`) && (await MembersDB.upsertBandMember(activeBandId, t.id, {
         role: "admin"
-      }), await loadMembers(), renderMembers(), toast2(`⭐ ${t.name.split(" ")[0]} is now an Admin!`))
+      }), await loadMembers(), renderMembers(), toast2(`${t.name.split(" ")[0]} is now an Admin!`))
     }
     let editingGuestConvertIdx = null;
     async function confirmGuestConvert() {
@@ -10449,7 +10388,7 @@
       const l = document.getElementById("bpBioDisplay");
       l && (l.textContent = e ? e.bio : "");
       const r = document.getElementById("bpplat");
-      r && (r.innerHTML = e ? (e.platforms || []).filter(e => e.url).map(e => `<a class="platl" href="${e.url}" target="_blank" onclick="return event.stopPropagation()">${e.icon} ${e.label}</a>`).join("") : "");
+      r && (r.innerHTML = e ? (e.platforms || []).filter(e => e.url).map(e => `<a class="platl" href="${e.url}" target="_blank" onclick="return event.stopPropagation()">${platIcon(e.label)} ${esc(e.label)}</a>`).join("") : "");
       const d = document.getElementById("bpAdminActions");
       d && (d.style.display = n ? "flex" : "none");
       const c = document.getElementById("bpLyricsCard");
@@ -10500,6 +10439,21 @@
         id: activeBandId,
         rehearsal_days: t
       })
+    }
+    // Platform glyphs for link pills — neutral stroke marks in the brand
+    // geometry (stored platform.icon emoji from older saves are ignored).
+    const _PLAT_IC = {
+      Spotify: '<circle cx="12" cy="12" r="8.5"/><path d="M8.2 10.4c2.8-.8 5.4-.5 7.6.8M8.6 13.2c2.2-.6 4.2-.3 6 .7M9 15.8c1.7-.4 3.2-.2 4.6.6"/>',
+      'Apple Music': '<path d="M10 18V5.5l7-1.8V15.5"/><circle cx="7.6" cy="18" r="2.5" fill="currentColor" stroke="none"/><circle cx="14.6" cy="15.5" r="2.5" fill="currentColor" stroke="none"/>',
+      YouTube: '<rect x="3" y="6" width="18" height="12.5" rx="3.5"/><path d="M10.2 9.6v5.3l4.6-2.65z" fill="currentColor" stroke="none"/>',
+      Instagram: '<rect x="4" y="4" width="16" height="16" rx="4.5"/><circle cx="12" cy="12" r="3.6"/><circle cx="16.8" cy="7.2" r="1.3" fill="currentColor" stroke="none"/>',
+      Facebook: '<circle cx="12" cy="12" r="8.5"/><path d="M14.8 8.2h-1.4c-1.1 0-1.8.7-1.8 1.9v8.1M9.5 12.5h4.6"/>',
+      Website: '<circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5c-4.7 4.7-4.7 12.3 0 17M12 3.5c4.7 4.7 4.7 12.3 0 17"/>'
+    };
+
+    function platIcon(e, t = 12) {
+      const n = _PLAT_IC[e] || '<circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17"/>';
+      return `<svg width="${t}" height="${t}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;flex-shrink:0" aria-hidden="true">${n}</svg>`
     }
     const PLATFORM_DEFS = [{
       key: "spotify",
@@ -11191,7 +11145,7 @@
         t = document.getElementById("pfLinkPreview");
       if (!e || !t) return;
       const n = PF_PLATFORMS.filter(e => document.getElementById(e.id)?.value.trim());
-      n.length ? (t.style.display = "", e.innerHTML = n.map(e => `<a class="platl" data-url="${document.getElementById(e.id).value.trim()}" onclick="openMediaUrl(this)">${e.icon} ${e.label}</a>`).join("")) : t.style.display = "none"
+      n.length ? (t.style.display = "", e.innerHTML = n.map(e => `<a class="platl" data-url="${document.getElementById(e.id).value.trim()}" onclick="openMediaUrl(this)">${platIcon(e.label)} ${esc(e.label)}</a>`).join("")) : t.style.display = "none"
     }
 
     function attachPfLinkListeners() {
@@ -11471,7 +11425,7 @@
           mpWebsite: f.website || b.website_url || ""
         },
         E = MP_PLATFORMS.filter(e => B[e.id]?.trim());
-      E.length ? I.innerHTML = '<div class="bpplat">' + E.map(e => `<a class="platl" data-url="${B[e.id].trim()}" onclick="openMediaUrl(this)">${e.icon} ${e.label}</a>`).join("") + "</div>" : I.innerHTML = `<span style="color:var(--ink3);font-size:.84rem">${t("No links added yet")}</span>`
+      E.length ? I.innerHTML = '<div class="bpplat">' + E.map(e => `<a class="platl" data-url="${B[e.id].trim()}" onclick="openMediaUrl(this)">${platIcon(e.label)} ${esc(e.label)}</a>`).join("") + "</div>" : I.innerHTML = `<span style="color:var(--ink3);font-size:.84rem">${t("No links added yet")}</span>`
     }
 
     function handleMpCover(e) {
@@ -11567,7 +11521,7 @@
         t = document.getElementById("mpLinkPreview");
       if (!e || !t) return;
       const n = MP_PLATFORMS.filter(e => document.getElementById(e.id)?.value.trim());
-      n.length ? (t.style.display = "", e.innerHTML = n.map(e => `<a class="platl" data-url="${document.getElementById(e.id).value.trim()}" onclick="openMediaUrl(this)">${e.icon} ${e.label}</a>`).join("")) : t.style.display = "none"
+      n.length ? (t.style.display = "", e.innerHTML = n.map(e => `<a class="platl" data-url="${document.getElementById(e.id).value.trim()}" onclick="openMediaUrl(this)">${platIcon(e.label)} ${esc(e.label)}</a>`).join("")) : t.style.display = "none"
     }
 
     function applyTheme(e) {
@@ -11687,10 +11641,10 @@
       <div style="height:1px;background:var(--bd);margin:4px 0 14px"></div>
       <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:4px">
         <button id="seHideBtn" onclick="toggleHideSong(editingSongId)" style="flex:1;padding:9px 14px;border-radius:var(--rad);border:1.5px solid var(--bd);background:var(--bg2);color:var(--ink2);font-family:var(--font);font-size:.8rem;font-weight:600;cursor:pointer;transition:all .15s;text-align:center">
-          🙈 Hide Song
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4l16 16"/><path d="M9.9 5.2A9.4 9.4 0 0 1 12 5c6 0 9.5 7 9.5 7a16.9 16.9 0 0 1-2.6 3.5M6.6 6.6C4 8.5 2.5 12 2.5 12s3.5 7 9.5 7c1.6 0 3-.4 4.3-1.1"/><path d="M10 10.2a2.8 2.8 0 0 0 3.9 3.9"/></svg> Hide Song
         </button>
         <button id="seDeleteBtn" onclick="deleteSong(editingSongId)" style="padding:9px 14px;border-radius:var(--rad);border:1.5px solid var(--r2);background:var(--r2);color:var(--r);font-family:var(--font);font-size:.8rem;font-weight:600;cursor:pointer;transition:all .15s" onmouseover="this.style.background='var(--r)';this.style.color='#fff'" onmouseout="this.style.background='var(--r2)';this.style.color='var(--r)'">
-          🗑 Delete Song
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6.5h16M9 6.5V4.2h6v2.3M7.5 9.5v8M12 9.5v8M16.5 9.5v8M5.5 6.5l1.2 13.3h10.6l1.2-13.3"/></svg> Delete Song
         </button>
       </div>
       <div style="font-size:.72rem;color:var(--ink3);margin-bottom:4px" data-i18n="Hidden songs are greyed out in the library and excluded from AI setlist suggestions.">Hidden songs are greyed out in the library and excluded from AI setlist suggestions.</div>
@@ -11747,11 +11701,11 @@
         <div style="font-size:.69rem;font-weight:700;color:var(--ink2);margin-bottom:9px;letter-spacing:.04em;text-transform:uppercase" data-i18n="Gig Type">Gig Type</div>
         <div class="popts">
           <div class="popt on" id="cePaidFree" onclick="cePaidSel('free')" data-i18n="Free gig">
-            <div class="poi">🎤</div>
+            <div class="poi"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M6 11a6 6 0 0 0 12 0"/><path d="M12 17v3.5M8.5 20.5h7"/></svg></div>
             <div class="pol">Free gig</div>
           </div>
           <div class="popt" id="cePaidPaid" onclick="cePaidSel('paid')" data-i18n="Paid gig">
-            <div class="poi">💰</div>
+            <div class="poi"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M14.5 9.3a3.6 3.6 0 1 0 0 5.4M8.5 11h4M8.5 13h4"/></svg></div>
             <div class="pol">Paid gig</div>
           </div>
         </div>
@@ -12026,7 +11980,7 @@
       <div style="font-size:.72rem;color:var(--ink3);margin-top:6px;margin-bottom:14px" data-i18n="You can personalise this message before sending. The recipient will receive exactly what you see above.">You can personalise this message before sending. The recipient will receive exactly what you see above.</div>
       <div class="moft">
         <button class="btn btn-g" onclick="closeMod('invMsgMod');showMod('invMod')" data-i18n="← Back">← Back</button>
-        <button class="btn btn-p" id="invSendBtn" onclick="sendInvitation()" data-i18n="✉️ Send via Email">✉️ Send via Email</button>
+        <button class="btn btn-p" id="invSendBtn" onclick="sendInvitation()" data-i18n="Send via Email">Send via Email</button>
       </div>
     </div>
   </div>
@@ -12042,7 +11996,7 @@
 
   <div class="mov" id="deleteBandMod" style="display:none" onclick="closeMB(event,'deleteBandMod')">
     <div class="mod" style="max-width:420px">
-      <div style="font-size:2.5rem;text-align:center;margin-bottom:8px">⚠️</div>
+      <div style="text-align:center;margin-bottom:8px;color:var(--amb)"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3.8 2.8 19.5a.8.8 0 0 0 .7 1.2h17a.8.8 0 0 0 .7-1.2z"/><path d="M12 9.5v5"/><circle cx="12" cy="17.5" r="1.2" fill="currentColor" stroke="none"/></svg></div>
       <div class="mott" style="text-align:center;color:var(--r)" data-i18n="Delete Group">Delete Group</div>
       <div class="most" style="text-align:center"><span data-i18n="This will permanently delete">This will permanently delete</span> <strong id="deleteBandName"></strong> <span data-i18n="and all its data — concerts, rehearsals, set lists, and member assignments.">and all its data — concerts, rehearsals, set lists, and member assignments.</span> <strong data-i18n="This cannot be undone.">This cannot be undone.</strong></div>
       <div style="background:var(--r2);border:1px solid #FECACA;border-radius:var(--rad);padding:11px 14px;margin-bottom:16px;font-size:.8rem;color:var(--r)">

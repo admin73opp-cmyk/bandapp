@@ -158,7 +158,7 @@ window.DE = {
   'Cancel — keep the group': 'Abbrechen — Group behalten',
   'Save Rehearsal': 'Probe speichern',
   'Confirm Guest Role': 'Gastrolle bestätigen',
-  '✉️ Send via Email': '✉️ Per E-Mail senden',
+  'Send via Email': 'Per E-Mail senden',
   'Save Group Profile': 'Groupprofil speichern',
   'Delete Group': 'Group löschen',
   'Promote to full Member?': 'Zum vollwertigen Mitglied befördern?',
