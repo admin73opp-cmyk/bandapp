@@ -158,7 +158,7 @@ window.FR = {
   'Cancel — keep the group': 'Annuler — conserver le groupe',
   'Save Rehearsal': 'Enregistrer la répétition',
   'Confirm Guest Role': 'Confirmer le rôle d\'invité',
-  '✉️ Send via Email': '✉️ Envoyer par e-mail',
+  'Send via Email': 'Envoyer par e-mail',
   'Save Group Profile': 'Enregistrer le profil du groupe',
   'Delete Group': 'Supprimer le groupe',
   'Promote to full Member?': 'Promouvoir en membre à part entière ?',
@@ -315,7 +315,6 @@ window.FR = {
 
   /* ── REHEARSALS PAGE ──────────────────────────────────── */
   'Past Rehearsals': 'Répétitions passées',
-  '🚫 Cancelled': '🚫 Annulé',
   'No upcoming rehearsals — click + New Rehearsal to schedule one.': 'Aucune répétition à venir — cliquez sur + Nouvelle répétition pour en planifier une.',
   'No past rehearsals yet.': 'Aucune répétition passée pour l\'instant.',
   'New Rehearsal': 'Nouvelle répétition',
@@ -350,7 +349,6 @@ window.FR = {
   'Link Concert to Set List': 'Lier un concert à la setlist',
   'Concert View': 'Vue concert',
   'Delete concert?': 'Supprimer le concert ?',
-  '🚫 Cancel': '🚫 Annuler',
   '♩ Link Set List': '♩ Lier une setlist',
   'Concert': 'Concert',
   'Free': 'Gratuit',
@@ -382,7 +380,7 @@ window.FR = {
   'No members yet. Invite someone to join!': 'Aucun membre pour l\'instant. Invitez quelqu\'un à rejoindre !',
   'No full-group days this month': 'Aucun jour avec tout le groupe ce mois-ci',
   'Showing best partial availability — no full-group days found.': 'Meilleure disponibilité partielle — aucun jour avec tout le groupe trouvé.',
-  '⚡ Best day': '⚡ Meilleur jour',
+  'Best day': '⚡ Meilleur jour',
   '2nd choice': '2e choix',
   '3rd choice': '3e choix',
   'available': 'disponibles',
@@ -428,7 +426,7 @@ window.FR = {
   'Individual days can still be blocked separately on the calendar.': 'Les jours individuels peuvent toujours être bloqués séparément dans le calendrier.',
 
   /* ── CALENDAR PAGE ────────────────────────────────────── */
-  '⚡ Best Rehearsal Days': '⚡ Meilleurs jours de répétition',
+  'Best Rehearsal Days': '⚡ Meilleurs jours de répétition',
   'Top available days this month, excluding blackouts and booked events.': 'Meilleurs jours disponibles ce mois-ci, hors périodes bloquées et événements réservés.',
   'Full': 'Complet',
   'Compact': 'Compact',
@@ -437,8 +435,6 @@ window.FR = {
   'Full group': 'Tout le groupe',
   'Blackout': 'Période bloquée',
   'Cross-group conflict ⊘': 'Conflit entre groupes ⊘',
-  'Full group ⚡': 'Tout le groupe ⚡',
-  '⚡ Full group:': '⚡ Tout le groupe :',
   'No blackouts': 'Aucune période bloquée',
   'blackout period': 'période bloquée',
   'blackout periods': 'périodes bloquées',
@@ -801,6 +797,8 @@ window.FR = {
   /* ── SONG LIBRARY SPREADSHEET ──────────────────────────────── */
   'Changes are auto-saved as you edit each cell.': "Les modifications sont enregistrées automatiquement lors de l'édition.",
   'Sheet Music': 'Partitions',
+  'Lyrics': 'Paroles',
+  'Listen': 'Écouter',
   'Click any cell to edit': 'Cliquez sur une cellule pour modifier',
 
 

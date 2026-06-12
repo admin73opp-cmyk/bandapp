@@ -158,7 +158,7 @@ window.NL = {
   'Cancel — keep the group': 'Annuleren — group behouden',
   'Save Rehearsal': 'Repetitie opslaan',
   'Confirm Guest Role': 'Gastrol bevestigen',
-  '✉️ Send via Email': '✉️ Versturen via e-mail',
+  'Send via Email': 'Versturen via e-mail',
   'Save Group Profile': 'Groupprofiel opslaan',
   'Delete Group': 'Group verwijderen',
   'Promote to full Member?': 'Promoveren tot volledig lid?',
@@ -315,7 +315,6 @@ window.NL = {
 
   /* ── REHEARSALS PAGE ──────────────────────────────────── */
   'Past Rehearsals': 'Vorige repetities',
-  '🚫 Cancelled': '🚫 Geannuleerd',
   'No upcoming rehearsals — click + New Rehearsal to schedule one.': 'Geen aankomende repetities — klik op + Nieuwe repetitie om er een te plannen.',
   'No past rehearsals yet.': 'Nog geen eerdere repetities.',
   'New Rehearsal': 'Nieuwe repetitie',
@@ -350,7 +349,6 @@ window.NL = {
   'Link Concert to Set List': 'Optreden koppelen aan setlist',
   'Concert View': 'Optredenweergave',
   'Delete concert?': 'Optreden verwijderen?',
-  '🚫 Cancel': '🚫 Annuleren',
   '♩ Link Set List': '♩ Setlist koppelen',
   'Concert': 'Optreden',
   'Free': 'Gratis',
@@ -382,7 +380,7 @@ window.NL = {
   'No members yet. Invite someone to join!': 'Nog geen leden. Nodig iemand uit om lid te worden!',
   'No full-group days this month': 'Geen volledige groupdagen deze maand',
   'Showing best partial availability — no full-group days found.': 'Beste gedeeltelijke beschikbaarheid weergeven — geen volledige groupdagen gevonden.',
-  '⚡ Best day': '⚡ Beste dag',
+  'Best day': '⚡ Beste dag',
   '2nd choice': '2e keuze',
   '3rd choice': '3e keuze',
   'available': 'beschikbaar',
@@ -428,7 +426,7 @@ window.NL = {
   'Individual days can still be blocked separately on the calendar.': 'Afzonderlijke dagen kunnen nog steeds apart worden geblokkeerd in de kalender.',
 
   /* ── CALENDAR PAGE ────────────────────────────────────── */
-  '⚡ Best Rehearsal Days': '⚡ Beste repetitiedagen',
+  'Best Rehearsal Days': '⚡ Beste repetitiedagen',
   'Top available days this month, excluding blackouts and booked events.': 'Beste beschikbare dagen deze maand, met uitzondering van blokkeerperiodes en geplande evenementen.',
   'Full': 'Volledig',
   'Compact': 'Compact',
@@ -437,8 +435,6 @@ window.NL = {
   'Full group': 'Hele group',
   'Blackout': 'Blokkering',
   'Cross-group conflict ⊘': 'Conflict tussen groups ⊘',
-  'Full group ⚡': 'Hele group ⚡',
-  '⚡ Full group:': '⚡ Hele group:',
   'No blackouts': 'Geen blokkeringen',
   'blackout period': 'blokkeerperiode',
   'blackout periods': 'blokkeerperiodes',
@@ -801,6 +797,8 @@ window.NL = {
   /* ── SONG LIBRARY SPREADSHEET ──────────────────────────────── */
   'Changes are auto-saved as you edit each cell.': 'Wijzigingen worden automatisch opgeslagen terwijl je bewerkt.',
   'Sheet Music': 'Bladmuziek',
+  'Lyrics': 'Songtekst',
+  'Listen': 'Luisteren',
   'Click any cell to edit': 'Klik op een cel om te bewerken',
 
 
