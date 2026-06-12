@@ -797,6 +797,8 @@ window.ES = {
   /* ── SONG LIBRARY SPREADSHEET ──────────────────────────────── */
   'Changes are auto-saved as you edit each cell.': 'Los cambios se guardan automáticamente al editar.',
   'Sheet Music': 'Partitura',
+  'Lyrics': 'Letra',
+  'Listen': 'Escuchar',
   'Click any cell to edit': 'Haz clic en una celda para editar',
 
 

@@ -797,6 +797,8 @@ window.NL = {
   /* ── SONG LIBRARY SPREADSHEET ──────────────────────────────── */
   'Changes are auto-saved as you edit each cell.': 'Wijzigingen worden automatisch opgeslagen terwijl je bewerkt.',
   'Sheet Music': 'Bladmuziek',
+  'Lyrics': 'Songtekst',
+  'Listen': 'Luisteren',
   'Click any cell to edit': 'Klik op een cel om te bewerken',
 
 

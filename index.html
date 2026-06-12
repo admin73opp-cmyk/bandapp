@@ -3366,6 +3366,45 @@
       font-size: var(--t-md)
     }
 
+    .se-qa-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin: 2px 0 16px
+    }
+
+    .se-qa {
+      flex: 1;
+      min-width: 96px;
+      min-height: 46px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      border: 1.5px solid rgba(108,99,255,.3);
+      background: var(--a2);
+      color: var(--aTxt);
+      font-family: var(--font);
+      font-size: var(--t-md);
+      font-weight: 700;
+      cursor: pointer;
+      text-decoration: none;
+      transition: transform .12s, border-color .12s
+    }
+
+    .se-qa:hover {
+      border-color: var(--a);
+      transform: translateY(-1px)
+    }
+
+    .se-qa.qa-play {
+      border-color: rgba(29,185,84,.35);
+      background: rgba(29,185,84,.09);
+      color: #1DB954
+    }
+
     .es-mark {
       width: 58px;
       height: 58px;
@@ -3425,6 +3464,28 @@
 
       .mc {
         padding-bottom: calc(64px + env(safe-area-inset-bottom))
+      }
+
+      #seMod {
+        align-items: stretch
+      }
+
+      #seMod .mod {
+        width: 100%;
+        max-width: 100%;
+        max-height: none;
+        height: 100dvh;
+        border-radius: 0;
+        padding: 22px 18px calc(22px + env(safe-area-inset-bottom))
+      }
+
+      #seMod .mott {
+        font-size: var(--t-2xl)
+      }
+
+      #seMod .se-qa {
+        min-height: 52px;
+        font-size: var(--t-lg)
       }
 
       #feedbackFab {
@@ -7330,9 +7391,17 @@
       return n.length ? 1 === n.length ? `<button class="lb2" title="${n[0].label}" data-url="${n[0].url}" onclick="openMediaUrl(this)">${ricon("play",14)}</button>` : `<button class="lb2" title="Open media links" onclick="openMediaPicker(${t})">${ricon("play",14)}</button>` : ""
     }
 
+    function openMediaPickerForSong(e) {
+      const t = songByAnyId(e);
+      t && _showMediaPickerFor(t)
+    }
+
     function openMediaPicker(e) {
       const t = songByAnyId(slS[e]);
-      if (!t) return;
+      t && _showMediaPickerFor(t)
+    }
+
+    function _showMediaPickerFor(t) {
       const n = songMediaLinks(t),
         o = document.getElementById("mediaPickerTitle"),
         a = document.getElementById("mediaPickerList");
@@ -8431,7 +8500,20 @@
       c && (c.style.display = "admin" === currentUser.role ? "" : "none");
       const u = document.getElementById("seStreamingWrap"),
         m = document.getElementById("seStreamingToggle");
-      u && m && (isMobile() ? (u.style.display = "none", m.style.display = "", m.textContent = "Show streaming links ▾") : (u.style.display = "", m.style.display = "none")), showMod("seMod"), _seSnapshot = seCurrentValues()
+      u && m && (isMobile() ? (u.style.display = "none", m.style.display = "", m.textContent = "Show streaming links ▾") : (u.style.display = "", m.style.display = "none")), seRenderQuickAccess(t), showMod("seMod"), _seSnapshot = seCurrentValues()
+    }
+
+    function seRenderQuickAccess(e) {
+      const n = document.getElementById("seQuickAccess");
+      if (!n) return;
+      const o = [];
+      e.lyrics && o.push(`<a class="se-qa" href="${esc(e.lyrics)}" target="_blank" rel="noopener noreferrer">${ricon("lyrics",16)} ${t("Lyrics")}</a>`);
+      e.sheet_music && o.push(`<a class="se-qa" href="${esc(e.sheet_music)}" target="_blank" rel="noopener noreferrer">${ricon("sheet",16)} ${t("Sheet Music")}</a>`);
+      const a = songMediaLinks(e);
+      a.length && o.push(1 === a.length
+        ? `<button type="button" class="se-qa qa-play" data-url="${esc(a[0].url)}" onclick="openMediaUrl(this)">${ricon("play",16)} ${t("Listen")}</button>`
+        : `<button type="button" class="se-qa qa-play" onclick="openMediaPickerForSong('${e.id}')">${ricon("play",16)} ${t("Listen")}</button>`);
+      n.innerHTML = o.join(""), n.style.display = o.length ? "flex" : "none"
     }
 
     function toggleStreamingLinks() {
@@ -11621,6 +11703,7 @@
     <div class="mod" style="max-width:500px">
       <div class="mott" data-i18n="Edit Song">Edit Song</div>
       <div class="most" data-i18n="Update the song details. Changes apply across all setlists.">Update the song details. Changes apply across all setlists.</div>
+      <div id="seQuickAccess" class="se-qa-row" style="display:none"></div>
 
       <div class="fr">
         <div class="fg" data-i18n="Song Title"><label>Song Title</label><input id="seName"></div>
