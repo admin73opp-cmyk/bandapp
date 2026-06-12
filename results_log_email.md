@@ -1,0 +1,25 @@
+# Auto Research Engineer — Results Log, ASSET 4 (invite email size)
+
+**Asset:** `supabase/functions/_shared/email.ts` · **Metric:** raw bytes of the rendered
+invite email via `score_email.py` — **lower is better** (deterministic).
+**Safety:** 10 email-client checks must pass or score = INVALID.
+
+| Baseline | Score (bytes) | Date |
+|---|---|---|
+| Setup baseline | **2,852** | 2026-06-11 |
+
+> Already safe at setup: 0 external images · 0 `<style>`/`<link>` · table layout · 36× under
+> Gmail's 102KB clip. Known-low headroom (~17% collapsible whitespace).
+
+---
+
+## Rounds
+
+| # | Hypothesis / change | Before | After | Kept? |
+|---|---|---|---|---|
+| — | _baseline established_ | — | 2,852 | — |
+| E1 | Add `min()` helper collapsing inter-tag whitespace in `emailLayout` | 2,852 | **2,422** | ✅ KEPT (−430 / −15.1%) |
+
+**Current baseline: 2,422 bytes** (−15.1%). Applies to ALL transactional emails (shared layout).
+Rendering identical (text-adjacent whitespace untouched). Asset judged near-optimal after E1 —
+remaining bytes are real content + inline styles; further squeezing risks rendering for marginal gain.

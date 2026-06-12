@@ -1,6 +1,13 @@
 // Shared email layout for all Ritovo transactional emails.
 // Usage: wrap your card body HTML with emailLayout({ appUrl, body, footer })
 
+// Collapse ONLY inter-tag whitespace (the readability indentation in the
+// template literals below). Text-adjacent whitespace is left untouched, so
+// rendering is identical while the wire size shrinks.
+function min(s: string): string {
+  return s.replace(/>\s+</g, '><')
+}
+
 export function emailLayout(opts: {
   appUrl: string
   body: string       // HTML for the white card content
@@ -8,7 +15,7 @@ export function emailLayout(opts: {
 }): string {
   const base = opts.appUrl.replace(/\/$/, '')
 
-  return `<!DOCTYPE html>
+  return min(`<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -60,7 +67,7 @@ export function emailLayout(opts: {
   </tr>
 </table>
 </body>
-</html>`
+</html>`)
 }
 
 export const PURPLE = '#6C63FF'

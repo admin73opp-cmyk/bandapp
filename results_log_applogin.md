@@ -1,0 +1,36 @@
+# Auto Research Engineer — Results Log, ASSET 5 (logged-in app speed)
+
+**Asset:** `index.html` (inline boot/render) · **Metric:** ms to logged-in dashboard
+ready via `score_applogin.py` — **lower is better** (median of 7, CPU throttled 4x).
+**Correctness:** dashboard must really render (loader hidden, app visible, auth hidden,
+"Demo Band" present, 9 `*DB` defined) or score = INVALID.
+
+| Baseline | Score (ms) | Date |
+|---|---|---|
+| Setup baseline (empty data) | 733.4 | 2026-06-11 |
+| Re-baseline (realistic data) | 956.2 ⚠️ invalid | 2026-06-11 |
+| **Corrected baseline (data shapes fixed)** | **~1,137** | 2026-06-11 |
+
+> Harness: Supabase stubbed logged-in (session + 1 band, user as admin, empty lists).
+> The dashboard renders first try, 0 console errors. Use paired A/B for keep decisions
+> (timing drifts with machine load).
+>
+> Finding: with empty seed data the cost is dominated by document parse + app-shell
+> construction (already minimized by assets 1 & 2). The logged-in-specific list-render
+> cost only appears with a realistic dataset — see the open question in instructions.
+
+---
+
+## Rounds
+
+| # | Hypothesis / change | Before | After | Kept? |
+|---|---|---|---|---|
+| — | _baseline (realistic data, corrected shapes)_ | — | ~1,137 | — |
+| L1 | Defer off-screen tab renders to requestIdleCallback; keep dashboard + sidebar synchronous | ~1,137 | **~766** | ✅ KEPT (paired A/B wins 3/3; −~370ms / −33%) |
+
+> ⚠️ Setup correction: the first realistic stub gave songs a `name` field, but the app renders
+> songs by `title`+`artist` — so `renderLib` threw and initApp aborted mid-render. The 956 figure
+> measured a partially-broken render. Fixed the song shape (title/artist); now all renders complete
+> with 0 errors. Corrected baseline ~1,137 ms (higher, because all renders actually run now).
+
+**Current baseline: ~766 ms** (−33% vs corrected baseline). Verified: after idle, all deferred tabs populate (library 7,297 DOM nodes, rehearsals/concerts/setlists rendered) with 0 errors — dashboard appears ~370ms sooner, other tabs render in the background.
