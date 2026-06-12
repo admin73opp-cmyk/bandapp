@@ -71,24 +71,45 @@ const fileMap = {}; // 'js/auth.js' → 'js/auth.a1b2c3d4.js'
     html = html.split(`src="${orig}"`).join(`src="/${hashed}"`);
   }
 
-  // ── Minify + copy locales (cache-busted by index.html) ──
-  // Locale files are pure data objects (window.XX = {...}); mangle is kept OFF
-  // so the window.XX global names survive, but whitespace/comments are stripped.
+  // ── Locales: dedupe shared keys into ONE built file ─────────
+  // Source locales/*.js stay human-editable `window.XX = {...}` objects. For the
+  // build we eval them, store each English key ONCE, and ship one minified
+  // dist/locales/all.<hash>.js that reconstructs all six window.XX objects from
+  // a shared key list + per-language value arrays (0 = "absent" → keeps t()'s
+  // English fallback). The wire payload drops a lot because the keys — ~half of
+  // each file and identical across languages — are no longer repeated 6×.
   if (fs.existsSync('locales')) {
-    const dst = path.join(OUT, 'locales');
-    fs.mkdirSync(dst, { recursive: true });
-    for (const e of fs.readdirSync('locales')) {
-      const src = fs.readFileSync(path.join('locales', e), 'utf8');
-      let out = src;
-      if (e.endsWith('.js')) {
-        try {
-          const r = await minifyJS(src, { compress: true, mangle: { toplevel: false }, format: { comments: false } });
-          if (r.code) out = r.code;
-        } catch (err) { console.error('  locale minify skip', e, err.message); }
-      }
-      fs.writeFileSync(path.join(dst, e), out);
+    const LOC = [['nl','NL'],['de','DE'],['fr','FR'],['es','ES'],['it','IT'],['pt-BR','PT_BR']];
+    const objs = {};
+    for (const [f, v] of LOC) {
+      const w = {};
+      new Function('window', fs.readFileSync(`locales/${f}.js`, 'utf8'))(w);
+      objs[v] = w[v] || {};
     }
-    console.log('  locales/ → dist/locales/ (minified)');
+    // union of all keys (NL order first, then any extras), stable
+    const KEYS = [], seen = new Set();
+    for (const [, v] of LOC) for (const k of Object.keys(objs[v])) if (!seen.has(k)) { seen.add(k); KEYS.push(k); }
+    const J = (x) => JSON.stringify(x);
+    let all = `(function(){var K=${J(KEYS)};function b(V){var o={};for(var i=0;i<K.length;i++){if(V[i]!==0)o[K[i]]=V[i]}return o}`;
+    for (const [, v] of LOC) {
+      const vals = KEYS.map(k => (k in objs[v] ? objs[v][k] : 0));
+      all += `window.${v}=b(${J(vals)});`;
+    }
+    all += '})();';
+    try {
+      const r = await minifyJS(all, { compress: true, mangle: true, format: { comments: false } });
+      if (r.code) all = r.code;
+    } catch (err) { console.error('  locale dedupe minify skip:', err.message); }
+    const lh = crypto.createHash('sha256').update(all).digest('hex').slice(0, 8);
+    fs.mkdirSync(path.join(OUT, 'locales'), { recursive: true });
+    fs.writeFileSync(path.join(OUT, 'locales', `all.${lh}.js`), all);
+    console.log(`  locales/*.js → dist/locales/all.${lh}.js (deduped, ${KEYS.length} keys)`);
+
+    // rewrite the lazy-load injector to fetch the single deduped file
+    const INJ_OLD = '<script>addEventListener("load",function(){["nl","fr","es","de","it","pt-BR"].forEach(function(e){var n=document.createElement("script");n.src="locales/"+e+".js",document.head.appendChild(n)})});</script>';
+    const INJ_NEW = `<script>addEventListener("load",function(){var n=document.createElement("script");n.src="/locales/all.${lh}.js",document.head.appendChild(n)});</script>`;
+    if (!html.includes(INJ_OLD)) { console.error('  ✗ locale injector not found — aborting (dist would not load locales)'); process.exit(1); }
+    html = html.replace(INJ_OLD, INJ_NEW);
   }
 
   // ── Copy .well-known/ for Universal Links (iOS) and App Links (Android) ──

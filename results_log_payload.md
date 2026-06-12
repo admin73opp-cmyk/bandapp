@@ -33,4 +33,16 @@ HTML/CSS were already minified. **Cumulative: 211,089 → 197,440 gz (−13,649 
     correctness the gate can't fully verify.
   • Both are the asset-2 equivalent of asset-1's "lever B" — bigger payoff, real risk.
 
-**Current baseline: 197,440 gz bytes.** Cumulative: −13,649 (−6.5%).
+| P5 | **Lever B — locale key-dedup** (build emits one `dist/locales/all.<hash>.js`: shared English keys once + 6 value arrays reconstructing `window.XX`; injector rewritten to load it) | 200,761* | **160,602** | ✅ KEPT (−40,159 / −20.0%) |
+
+*P5 "before" reflects interim growth from asset 6 (SEO tags) + asset 10 (i18n/markup) on top of the 197,440 asset-2 close.
+
+### Lever B landed (the parked big win)
+Locale wire bytes 91,072 → 50,180 gz (−45% of locales): the English keys — ~half of each
+file and identical across languages — were repeated 6× in separate files (gzip's 32KB window
+can't dedup across files). Now stored once. **Source `locales/*.js` and `i18n.js` are UNCHANGED**
+(human-editable objects, all source-based scorers untouched); only the built output ships the
+deduped file. Verified in dist: all 4,632 key-values across 6 languages reconstruct byte-identical
+to source (0 mismatches), `t()` correct, payload gate 23/23.
+
+**Current baseline: 160,602 gz bytes.** Cumulative vs original: 211,089 → 160,602 = **−50,487 (−23.9%)**.
