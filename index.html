@@ -3366,6 +3366,126 @@
       font-size: var(--t-md)
     }
 
+    .ipk {
+      position: relative
+    }
+
+    .ipk-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      width: 100%;
+      padding: 10px 13px;
+      background: var(--bg);
+      border: 1.5px solid var(--bd);
+      border-radius: var(--rad);
+      color: var(--ink);
+      font-family: var(--font);
+      font-size: var(--t-lg);
+      cursor: pointer;
+      text-align: left;
+      transition: border-color .14s
+    }
+
+    .ipk-btn:hover,
+    .ipk-btn:focus-visible {
+      border-color: var(--a);
+      outline: none
+    }
+
+    .ipk-lbl {
+      flex: 1;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis
+    }
+
+    .ipk-ph {
+      color: var(--ink3)
+    }
+
+    .ipk-car {
+      color: var(--ink3);
+      flex-shrink: 0
+    }
+
+    .ipk-list {
+      position: absolute;
+      top: calc(100% + 4px);
+      left: 0;
+      right: 0;
+      background: var(--w);
+      border: 1.5px solid var(--bd);
+      border-radius: var(--rad);
+      box-shadow: var(--shl);
+      z-index: 600;
+      max-height: 272px;
+      overflow-y: auto;
+      display: none
+    }
+
+    .ipk-list.open {
+      display: block
+    }
+
+    .ipk-opt {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      padding: 9px 13px;
+      font-size: var(--t-md);
+      cursor: pointer;
+      transition: background .1s
+    }
+
+    .ipk-opt:hover {
+      background: var(--bg2)
+    }
+
+    .ipk-opt.selected {
+      background: var(--a2);
+      color: var(--aTxt);
+      font-weight: 600
+    }
+
+    .ipk-noico {
+      width: 16px;
+      flex-shrink: 0
+    }
+
+    .fb-seg {
+      display: flex;
+      gap: 7px
+    }
+
+    .fb-seg-btn {
+      flex: 1;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 10px 8px;
+      border-radius: var(--rad);
+      border: 1.5px solid var(--bd);
+      background: var(--bg);
+      color: var(--ink2);
+      font-family: var(--font);
+      font-size: var(--t-sm);
+      font-weight: 600;
+      cursor: pointer;
+      transition: all .12s
+    }
+
+    .fb-seg-btn:hover {
+      border-color: var(--a)
+    }
+
+    .fb-seg-btn.on {
+      background: var(--a2);
+      border-color: var(--a);
+      color: var(--aTxt)
+    }
+
     .se-qa-row {
       display: flex;
       gap: 8px;
@@ -4967,12 +5087,8 @@
             </div>
             <div id="mpe-music" style="display:none">
               <div class="fr">
-                <div class="fg"><label data-i18n="Main Instrument">Main Instrument</label><select id="mpInst1" onchange="renderMpInstPreview()">
-                    <option value="" data-i18n="— Select —">— Select —</option>
-                  </select></div>
-                <div class="fg"><label><span data-i18n="Secondary">Secondary</span> <span style="font-weight:400;color:var(--ink3)" data-i18n="(optional)">(optional)</span></label><select id="mpInst2" onchange="renderMpInstPreview()">
-                    <option value="" data-i18n="None">None</option>
-                  </select></div>
+                <div class="fg"><label data-i18n="Main Instrument">Main Instrument</label><div class="ipk" id="mpInst1_pk"></div><input type="hidden" id="mpInst1"></div>
+                <div class="fg"><label><span data-i18n="Secondary">Secondary</span> <span style="font-weight:400;color:var(--ink3)" data-i18n="(optional)">(optional)</span></label><div class="ipk" id="mpInst2_pk"></div><input type="hidden" id="mpInst2"></div>
               </div>
               <div id="mpInstPreview" style="display:none;margin-bottom:10px" data-i18n="Preview">
                 <div style="font-size:var(--t-xs);color:var(--ink3);margin-bottom:5px">Preview</div>
@@ -5276,9 +5392,7 @@
       </div>
       <div class="fg"><label>Email</label><input type="email" id="invEmail" placeholder="sophie@email.com"></div>
       <div class="fr">
-        <div class="fg"><label>Instrument</label><select id="invInstrument">
-            <option value="">— Instrument —</option>
-          </select></div>
+        <div class="fg"><label>Instrument</label><div class="ipk" id="invInstrument_pk"></div><input type="hidden" id="invInstrument"></div>
         <div class="fg"><label>Role</label><select id="invRole" onchange="toggleInvGuestDates(this)">
             <option>Member</option>
             <option>Admin</option>
@@ -10295,6 +10409,7 @@
       t && (t.innerHTML = e)
     }
     document.addEventListener("click", function(e) {
+      e.target.closest(".ipk") || closeAllInstPickers();
       if (!e.target.closest("#settLangPicker")) {
         const e = document.getElementById("settLangList"),
           t = document.getElementById("settLangBtn");
@@ -10340,30 +10455,65 @@
       return `<svg width="${t}" height="${t}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;flex-shrink:0" aria-hidden="true">${n}</svg>`
     }
 
+    // Custom instrument pickers (icons in the option list — native <option>
+    // cannot render SVG). The hidden input keeps the original element id, so
+    // every existing getElementById(id).value read/write still works.
+    const INST_PICKERS = [{
+      id: "pfInst1",
+      blank: "— Select —",
+      cb: () => renderPfInstIcons()
+    }, {
+      id: "pfInst2",
+      blank: "None",
+      cb: () => renderPfInstIcons()
+    }, {
+      id: "mpInst1",
+      blank: "— Select —",
+      cb: () => renderMpInstPreview()
+    }, {
+      id: "mpInst2",
+      blank: "None",
+      cb: () => renderMpInstPreview()
+    }, {
+      id: "invInstrument",
+      blank: "— Instrument —",
+      cb: null
+    }];
+
     function populateInstrumentSelects() {
-      const e = INSTRUMENTS.map(e => `<option value="${e.v}">${e.label}</option>`).join("");
-      [{
-        id: "pfInst1",
-        blank: "— Select —"
-      }, {
-        id: "pfInst2",
-        blank: "None"
-      }, {
-        id: "mpInst1",
-        blank: "— Select —"
-      }, {
-        id: "mpInst2",
-        blank: "None"
-      }, {
-        id: "invInstrument",
-        blank: "— Instrument —"
-      }].forEach(({
-        id: t,
-        blank: n
-      }) => {
-        const o = document.getElementById(t);
-        o && (o.innerHTML = `<option value="">${n}</option>${e}`)
-      })
+      INST_PICKERS.forEach(e => renderInstPicker(e.id))
+    }
+
+    function renderInstPicker(e) {
+      const n = INST_PICKERS.find(t => t.id === e),
+        o = document.getElementById(e + "_pk"),
+        a = document.getElementById(e);
+      if (!n || !o || !a) return;
+      const s = a.value || "",
+        i = INSTRUMENTS.map(n => `<div class="ipk-opt${n.v===s?" selected":""}" onclick="pickInstrument('${e}','${n.v}')">${instIcon(n.v,16)}<span data-i18n="${esc(n.label)}">${esc(t(n.label))}</span></div>`).join("");
+      o.innerHTML = `<button type="button" class="ipk-btn" onclick="toggleInstPicker('${e}')">${s?instIcon(s,16):""}<span class="ipk-lbl${s?"":" ipk-ph"}" data-i18n="${esc(s||n.blank)}">${s?esc(t(s)):esc(t(n.blank))}</span><svg class="ipk-car" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 9.5 12 16l7-6.5"/></svg></button><div class="ipk-list" id="${e}_list"><div class="ipk-opt${s?"":" selected"}" onclick="pickInstrument('${e}','')"><span class="ipk-noico"></span><span data-i18n="${esc(n.blank)}">${esc(t(n.blank))}</span></div>${i}</div>`
+    }
+
+    function pickFbCat(e) {
+      const t = document.getElementById("fbCat");
+      t && (t.value = e), document.querySelectorAll("#fbCatSeg .fb-seg-btn").forEach(t => t.classList.toggle("on", t.dataset.v === e))
+    }
+
+    function toggleInstPicker(e) {
+      const t = document.getElementById(e + "_list"),
+        n = t && t.classList.contains("open");
+      closeAllInstPickers(), t && !n && t.classList.add("open")
+    }
+
+    function closeAllInstPickers() {
+      document.querySelectorAll(".ipk-list.open").forEach(e => e.classList.remove("open"))
+    }
+
+    function pickInstrument(e, t) {
+      const n = document.getElementById(e);
+      n && (n.value = t), renderInstPicker(e);
+      const o = INST_PICKERS.find(t => t.id === e);
+      o && o.cb && o.cb()
     }
 
     function renderPfInstIcons() {
@@ -10732,7 +10882,7 @@
 
     function openInvMod() {
       const e = document.getElementById("invInstrument");
-      e && (populateInstrumentSelects(), e.value = ""), ["invFirstName", "invLastName", "invEmail"].forEach(e => {
+      e && (e.value = "", populateInstrumentSelects()), ["invFirstName", "invLastName", "invEmail"].forEach(e => {
         const t = document.getElementById(e);
         t && (t.value = "")
       });
@@ -11082,7 +11232,7 @@
     }
 
     function openFeedbackModal() {
-      document.getElementById("fbCat").value = "bug", document.getElementById("fbDesc").value = "", document.getElementById("feedbackMod").style.display = "flex", setTimeout(() => document.getElementById("fbDesc").focus(), 80)
+      pickFbCat("bug"), document.getElementById("fbDesc").value = "", document.getElementById("feedbackMod").style.display = "flex", setTimeout(() => document.getElementById("fbDesc").focus(), 80)
     }
     async function submitFeedback() {
       const e = document.getElementById("fbCat").value,
@@ -11191,14 +11341,10 @@
       <div style="font-size:var(--t-xs);font-weight:700;color:var(--ink2);margin-bottom:9px;letter-spacing:.04em;text-transform:uppercase">Music</div>
       <div class="fr">
         <div class="fg"><label>Main Instrument</label>
-          <select id="pfInst1" onchange="renderPfInstIcons()">
-            <option value="">— Select —</option>
-          </select>
+          <div class="ipk" id="pfInst1_pk"></div><input type="hidden" id="pfInst1">
         </div>
         <div class="fg"><label>Secondary Instrument <span style="font-weight:400;color:var(--ink3)">(optional)</span></label>
-          <select id="pfInst2" onchange="renderPfInstIcons()">
-            <option value="">None</option>
-          </select>
+          <div class="ipk" id="pfInst2_pk"></div><input type="hidden" id="pfInst2">
         </div>
       </div>
       <div id="pfInstPreview" style="display:none;margin-top:-6px;margin-bottom:10px">
@@ -11412,7 +11558,7 @@
         e.disabled = !a, e.closest(".phone-cc-wrap") || (e.style.opacity = a ? "" : "1"), e.style.cursor = a ? "" : "default", e.style.background = a ? "" : "transparent", e.style.borderColor = a ? "" : "transparent"
       }), document.getElementById("profFooter").innerHTML = a ? '<button class="btn btn-g" onclick="closeMod(\'profMod\')">Cancel</button><button class="btn btn-p" onclick="saveProfile()">Save Profile</button>' : '<button class="btn btn-p" onclick="closeMod(\'profMod\')">Close</button>', document.getElementById("profModalTitle").textContent = a ? "Edit My Profile" : n.name.split(" ")[0] + "'s Profile", populateCountrySelects();
       const [d, ...u] = n.name.split(" ");
-      document.getElementById("pfFirst").value = d, document.getElementById("pfLast").value = u.join(" "), document.getElementById("pfBday").value = o.bday || "", document.getElementById("pfNat").value = o.nat || "", document.getElementById("pfEmail").value = a ? currentUser.email || o.email || "" : o.email || "", initPhoneField("pfPhoneCc", "pfPhoneNum", o.phone || ""), document.getElementById("pfCountry").value = o.country || "", document.getElementById("pfBio").value = o.bio || "", renderPfNatFlag(), populateInstrumentSelects(), document.getElementById("pfInst1").value = n.instrument || "", document.getElementById("pfInst2").value = n.inst2 || "", renderPfInstIcons(), document.getElementById("pfVocals").value = n.vocals || "None";
+      document.getElementById("pfFirst").value = d, document.getElementById("pfLast").value = u.join(" "), document.getElementById("pfBday").value = o.bday || "", document.getElementById("pfNat").value = o.nat || "", document.getElementById("pfEmail").value = a ? currentUser.email || o.email || "" : o.email || "", initPhoneField("pfPhoneCc", "pfPhoneNum", o.phone || ""), document.getElementById("pfCountry").value = o.country || "", document.getElementById("pfBio").value = o.bio || "", renderPfNatFlag(), populateInstrumentSelects(), document.getElementById("pfInst1").value = n.instrument || "", renderInstPicker("pfInst1"), document.getElementById("pfInst2").value = n.inst2 || "", renderInstPicker("pfInst2"), renderPfInstIcons(), document.getElementById("pfVocals").value = n.vocals || "None";
       document.getElementById("pfAvailDays").innerHTML = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((e, o) => `\n    <div class="dtog ${n.avail[o]?"on":""}" ${a?"onclick=\"this.classList.toggle('on')\"":'style="pointer-events:none;opacity:.8"'} data-di="${o}">${t(e)}</div>\n  `).join(""), document.getElementById("pfGear").value = o.gear || "", document.getElementById("pfSpotify").value = o.spotify || "", document.getElementById("pfApple").value = o.apple || "", document.getElementById("pfYoutube").value = o.youtube || "", document.getElementById("pfInstagram").value = o.instagram || "", document.getElementById("pfFacebook").value = o.facebook || "", document.getElementById("pfWebsite").value = o.website || "", renderPfLinkPreview(), attachPfLinkListeners(), showMod("profMod")
     }
     async function saveProfile() {
@@ -11467,7 +11613,7 @@
       }
       const u = document.getElementById("mpNameDisplay"),
         s = document.getElementById("mpRoleDisplay");
-      u && (u.textContent = [l, r].filter(Boolean).join(" ") || "Your Profile"), s && (s.textContent = n ? (n.instrument ? t(n.instrument) + " · " : "") + t("admin" === n.role ? "Admin" : "guest" === n.role ? "Guest" : "Member") : t("Member")), populateCountrySelects(), document.getElementById("mpFirst").value = l, document.getElementById("mpLast").value = r, document.getElementById("mpBday").value = o.bday || n?.bday || a.bday || "", document.getElementById("mpNat").value = o.nat || n?.nat || a.nationality || "", document.getElementById("mpEmail").value = currentUser.email || "", document.getElementById("mpCountry").value = o.country || n?.country || a.country || "", initPhoneField("mpPhoneCc", "mpPhoneNum", o.phone || [n?.phoneDial, n?.phoneNum].filter(Boolean).join(" ") || [a.phone_dial, a.phone_number].filter(Boolean).join(" ") || ""), document.getElementById("mpBio").value = o.bio || n?.bio || a.bio || "", renderMpNatFlag(), populateInstrumentSelects(), document.getElementById("mpInst1").value = n?.instrument || currentUser.instrument || a.instrument || "", document.getElementById("mpInst2").value = n?.inst2 || a.instrument2 || "", renderMpInstPreview(), document.getElementById("mpVocals").value = n?.vocals || a.vocals || "None";
+      u && (u.textContent = [l, r].filter(Boolean).join(" ") || "Your Profile"), s && (s.textContent = n ? (n.instrument ? t(n.instrument) + " · " : "") + t("admin" === n.role ? "Admin" : "guest" === n.role ? "Guest" : "Member") : t("Member")), populateCountrySelects(), document.getElementById("mpFirst").value = l, document.getElementById("mpLast").value = r, document.getElementById("mpBday").value = o.bday || n?.bday || a.bday || "", document.getElementById("mpNat").value = o.nat || n?.nat || a.nationality || "", document.getElementById("mpEmail").value = currentUser.email || "", document.getElementById("mpCountry").value = o.country || n?.country || a.country || "", initPhoneField("mpPhoneCc", "mpPhoneNum", o.phone || [n?.phoneDial, n?.phoneNum].filter(Boolean).join(" ") || [a.phone_dial, a.phone_number].filter(Boolean).join(" ") || ""), document.getElementById("mpBio").value = o.bio || n?.bio || a.bio || "", renderMpNatFlag(), populateInstrumentSelects(), document.getElementById("mpInst1").value = n?.instrument || currentUser.instrument || a.instrument || "", renderInstPicker("mpInst1"), document.getElementById("mpInst2").value = n?.inst2 || a.instrument2 || "", renderInstPicker("mpInst2"), renderMpInstPreview(), document.getElementById("mpVocals").value = n?.vocals || a.vocals || "None";
       document.getElementById("mpAvailDays").innerHTML = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((e, o) => `<div class="dtog ${(n?.avail||currentUser.avail||[1,1,1,1,1,1,1])[o]?"on":""}" onclick="this.classList.toggle('on')" data-di="${o}">${t(e)}</div>`).join(""), document.getElementById("mpGear").value = o.gear || n?.gear || a.gear || "", document.getElementById("mpSpotify").value = o.spotify || n?.spotify || a.spotify_url || "", document.getElementById("mpApple").value = o.apple || n?.apple || a.apple_url || "", document.getElementById("mpYoutube").value = o.youtube || n?.youtube || a.youtube_url || "", document.getElementById("mpInstagram").value = o.instagram || n?.instagram || a.instagram_url || "", document.getElementById("mpFacebook").value = o.facebook || n?.facebook || a.facebook_url || "", document.getElementById("mpWebsite").value = o.website || n?.website || a.website_url || "", renderMpReadViews(), ["personal", "music", "avail", "links"].forEach(e => mpCancel(e))
     }
 
@@ -11630,6 +11776,7 @@
       a.length ? (n.style.display = "", o.innerHTML = a.map(e => `<div style="display:inline-flex;align-items:center;gap:5px;padding:5px 11px;border-radius:99px;background:var(--a2);border:1.5px solid rgba(108,99,255,.25);font-size:var(--t-sm);font-weight:600;color:var(--a)"><span>${instIcon(e)}</span><span>${e}</span></div>`).join("")) : n.style.display = "none"
     }
     document.addEventListener("DOMContentLoaded", () => {
+      populateInstrumentSelects();
       window.RSVP_ONECLICK ? renderRsvpOneClick() : document.querySelectorAll(".mov").forEach(e => {
         const t = e.id,
           n = e.querySelector(".mod");
@@ -12250,11 +12397,12 @@
       <div class="mott" style="margin-bottom:16px" data-i18n="Share Feedback">Report a Bug / Give Feedback</div>
       <div class="fg">
         <label><span data-i18n="Category">Category</span> <span style="color:var(--r)">*</span></label>
-        <select id="fbCat">
-          <option value="bug" data-i18n="Bug">🐛 Bug</option>
-          <option value="feedback" data-i18n="Feedback">💬 Feedback</option>
-          <option value="suggestion" data-i18n="Suggestion">💡 Suggestion</option>
-        </select>
+        <input type="hidden" id="fbCat" value="bug">
+        <div class="fb-seg" id="fbCatSeg">
+          <button type="button" class="fb-seg-btn on" data-v="bug" onclick="pickFbCat('bug')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="13.5" r="5.5"/><path d="M12 8v11M8.6 6.5l1.6 2M15.4 6.5l-1.6 2M3.8 11l3 1M20.2 11l-3 1M4.5 18l2.7-1.6M19.5 18l-2.7-1.6"/></svg><span data-i18n="Bug">Bug</span></button>
+          <button type="button" class="fb-seg-btn" data-v="feedback" onclick="pickFbCat('feedback')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.5 11.5a8 8 0 0 1-11.6 7.2L4 20l1.3-4.9a8 8 0 1 1 15.2-3.6z"/><circle cx="8.8" cy="11.7" r="1.1" fill="currentColor" stroke="none"/><circle cx="12.5" cy="11.7" r="1.1" fill="currentColor" stroke="none"/><circle cx="16.2" cy="11.7" r="1.1" fill="currentColor" stroke="none"/></svg><span data-i18n="Feedback">Feedback</span></button>
+          <button type="button" class="fb-seg-btn" data-v="suggestion" onclick="pickFbCat('suggestion')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18h6M10 21h4"/><path d="M12 3a6 6 0 0 0-3.5 10.9c.8.6 1.2 1.3 1.4 2.1h4.2c.2-.8.6-1.5 1.4-2.1A6 6 0 0 0 12 3z"/><circle cx="12" cy="9" r="1.3" fill="currentColor" stroke="none"/></svg><span data-i18n="Suggestion">Suggestion</span></button>
+        </div>
       </div>
       <div class="fg">
         <label><span data-i18n="Description">Description</span> <span style="color:var(--r)">*</span></label>
