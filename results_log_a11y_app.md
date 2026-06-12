@@ -21,3 +21,5 @@ all 11 pages must render or INVALID.
 | # | Hypothesis / change | Before | After | Kept? |
 |---|---|---|---|---|
 | — | _baseline established_ | — | 9,888 | — |
+| R1 | Landmarks: `role=main` on `.mc`, `role=heading` lvl-1 on `#pgT` (sidebar already `<nav>`) | 9,888 | **7,628** | ✅ KEPT (−2,260: all region/landmark/h1 cleared) |
+| R2 | aria-label all 14 per-row song-sheet fields (with song-title context) | 7,628 | **2,828** | ✅ KEPT (−4,800: library 6,655 → 151) |
