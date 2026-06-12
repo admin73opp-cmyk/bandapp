@@ -78,7 +78,9 @@ select option{background:var(--w);color:var(--ink)}
 @media(max-width:420px){.fr{grid-template-columns:1fr}}
 select option{background:var(--w)}
 .btn{padding:10px 18px;border:none;border-radius:var(--rad);font-family:var(--font);font-size:.845rem;font-weight:600;cursor:pointer;transition:all .14s;display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
-.btn-p{background:var(--a);color:#fff}.btn-p:hover{background:#5851e0;transform:translateY(-1px);box-shadow:0 4px 12px rgba(108,99,255,.3)}
+.btn-p{background:var(--a);color:#fff}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]) .btn-p,:root:not([data-theme="light"]) .stb.on{background:#685FF6;border-color:#685FF6}}
+html[data-theme="dark"] .btn-p,html[data-theme="dark"] .stb.on{background:#685FF6;border-color:#685FF6}.btn-p:hover{background:#5851e0;transform:translateY(-1px);box-shadow:0 4px 12px rgba(108,99,255,.3)}
 .btn-g{background:transparent;color:var(--ink2);border:1.5px solid var(--bd)}.btn-g:hover{border-color:var(--a);color:var(--a);background:var(--a2)}
 .btn-sm{padding:6px 13px;font-size:.78rem}.btn-xs{padding:4px 8px;font-size:.71rem}
 .btn-fw{width:100%;justify-content:center}
