@@ -26,3 +26,5 @@ all 11 pages must render or INVALID.
 | R3 | `--ink3` #9A9AB0 → #6B6B85 light theme (4.8:1 white, 4.4+ on bg; also fixes opacity-composited grays) | 2,828 | **1,903** | ✅ KEPT (−925) |
 | R4 | `--g` #16A34A → #15803D (4.57 on `--g2` tint, 5.02 under white) | 1,903 | **1,288** | ✅ KEPT (−615) |
 | R5 | `--amb` #D97706 → #B45309 (5.02 on white) | 1,288 | **1,203** | ✅ KEPT (−85) |
+| R6 | `.pp` pill text #5246E0 in light theme (5.38 on `--a2`); dark keeps `var(--a)` | 1,203 | **1,148** | ✅ KEPT (−55) |
+| R7 | Mute past/cancelled/hidden cards via `grayscale` filter instead of opacity (preserves luminance contrast) | 1,148 | **788** | ✅ KEPT (−360) |

@@ -86,7 +86,7 @@ html[data-theme="dark"] .btn-p,html[data-theme="dark"] .stb.on{background:#685FF
 .btn-fw{width:100%;justify-content:center}
 .btn-ic{width:30px;height:30px;padding:0;justify-content:center;border-radius:7px;background:transparent;border:1.5px solid var(--bd);color:var(--ink2)}.btn-ic:hover{border-color:var(--a);color:var(--a);background:var(--a2)}
 .pill{display:inline-flex;align-items:center;padding:3px 9px;border-radius:99px;font-size:.69rem;font-weight:600}
-.pp{background:var(--a2);color:var(--a)}.pg{background:var(--g2);color:var(--g)}.pr{background:var(--r2);color:var(--r)}.pamb{background:var(--amb2);color:var(--amb)}.pbl{background:var(--bl2);color:var(--bl)}.pgray{background:var(--bg2);color:var(--ink2);border:1px solid var(--bd)}
+.pp{background:var(--a2);color:#5246E0}html[data-theme="dark"] .pp{color:var(--a)}@media(prefers-color-scheme:dark){:root:not([data-theme="light"]) .pp{color:var(--a)}}.pg{background:var(--g2);color:var(--g)}.pr{background:var(--r2);color:var(--r)}.pamb{background:var(--amb2);color:var(--amb)}.pbl{background:var(--bl2);color:var(--bl)}.pgray{background:var(--bg2);color:var(--ink2);border:1px solid var(--bd)}
 .chip{display:inline-flex;align-items:center;padding:5px 12px;border-radius:99px;font-size:.76rem;font-weight:500;background:var(--w);color:var(--ink2);border:1.5px solid var(--bd);cursor:pointer;transition:all .12s;font-family:var(--font)}
 .chip.on{background:var(--a);border-color:var(--a);color:#fff;font-weight:600}.chip:hover:not(.on){border-color:var(--a);color:var(--a)}
 .card{background:var(--w);border:1px solid var(--bd);border-radius:var(--radl);padding:18px;box-shadow:var(--sh)}
@@ -160,7 +160,7 @@ html[data-theme="dark"] .btn-p,html[data-theme="dark"] .stb.on{background:#685FF
 .sh-resize:hover,.sh-resize.active{background:var(--a);opacity:.45}
 .sh-row td{padding:0;border-bottom:1px solid var(--bd);vertical-align:middle}
 .sh-row:hover td{background:var(--bg)}
-.sh-row.hidden-row td{opacity:.5;background:var(--bg2)}
+.sh-row.hidden-row td{filter:grayscale(1);background:var(--bg2)}
 .sh-cell{width:100%;padding:7px 8px;border:none;background:transparent;font-family:var(--font);font-size:.8rem;color:var(--ink);outline:none;min-width:80px;box-sizing:border-box}
 .sh-dur::-webkit-outer-spin-button,.sh-dur::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
 .sh-dur{-moz-appearance:textfield}
@@ -247,7 +247,7 @@ html[data-theme="dark"] .btn-p,html[data-theme="dark"] .stb.on{background:#685FF
 .slcard-note{font-size:.71rem;color:var(--ink3);margin-top:4px;font-style:italic}
 .slcard-actions{display:flex;flex-direction:column;gap:4px;flex-shrink:0}
 .songcard:hover{border-color:var(--a);box-shadow:0 4px 14px rgba(108,99,255,.1)}
-.songcard.hidden-song{background:var(--bg2);border-color:var(--bd);opacity:.55;filter:grayscale(1)}
+.songcard.hidden-song{background:var(--bg2);border-color:var(--bd);filter:grayscale(1)}
 .songcard.hidden-song:hover{border-color:var(--ink3);box-shadow:none;filter:grayscale(.8)}
 .sc-actions{position:absolute;bottom:10px;right:10px;display:flex;gap:5px;opacity:0;transition:opacity .15s}
 .songcard:hover .sc-actions{opacity:1}
@@ -342,8 +342,8 @@ html[data-theme="dark"] .btn-p,html[data-theme="dark"] .stb.on{background:#685FF
 .fbc{padding:4px 10px;border-radius:99px;background:var(--g2);border:1.5px solid var(--g);font-size:.71rem;font-weight:600;color:var(--g);cursor:pointer;transition:all .12s}.fbc:hover{background:var(--g);color:#fff;border-color:var(--g)}
 .clist{display:flex;flex-direction:column;gap:9px}
 .ccrd{background:var(--w);border:1px solid var(--bd);border-radius:var(--radl);padding:15px;display:grid;grid-template-columns:62px 1fr auto;gap:13px;align-items:center;box-shadow:var(--sh);transition:border-color .13s,transform .13s;cursor:pointer}.ccrd:hover{border-color:var(--a);transform:translateY(-1px)}
-.ccrd.past{opacity:.65;background:var(--bg);box-shadow:none}.ccrd.past:hover{opacity:.85;transform:none}
-.ccrd.cancelled{opacity:.5;background:var(--bg2);box-shadow:none;border-style:dashed}.ccrd.cancelled:hover{opacity:.7;transform:none}
+.ccrd.past{filter:grayscale(.7);background:var(--bg);box-shadow:none}.ccrd.past:hover{opacity:.85;transform:none}
+.ccrd.cancelled{filter:grayscale(1);background:var(--bg2);box-shadow:none;border-style:dashed}.ccrd.cancelled:hover{filter:grayscale(.5);transform:none}
 .ccrd.cancelled .ctitle{text-decoration:line-through;color:var(--ink2)}
 .concert-photos{display:flex;gap:5px;flex-wrap:wrap;margin-top:8px}
 .concert-thumb{width:48px;height:48px;border-radius:6px;object-fit:cover;border:1.5px solid var(--bd);cursor:pointer;transition:transform .12s}.concert-thumb:hover{transform:scale(1.08)}
