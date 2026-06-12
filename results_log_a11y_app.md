@@ -31,3 +31,10 @@ all 11 pages must render or INVALID.
 | R8 | New `--aTxt` accent-on-tint text var (light #5246E0 / dark #8B84FF) for `.ni.on`, `.pp`, 6 inline pills | 788 | **633** | ✅ KEPT (−155) |
 | R9 | `_ink()` luminance-aware text on the 7 member-colour chip sites (user colours are data; probe caught #111118 at 4.35 → use #000 at 4.87) | 633 | — | ✅ (with R10) |
 | R10 | `.cd-past` muting via grayscale+opacity(.82) filter instead of opacity .38 | 633 | **373** | ✅ KEPT (−260 w/ R9) |
+| R11 | Name every control: month-nav + blackout icon buttons, 7 selects, join-code input; `--ink3`→#696983, `--bl`→#1D4ED8, WhatsApp btn text #0B3D20 | 373 | **68** | ✅ KEPT (−305) |
+| R12 | `.uav` luminance ink, date chips → `--aTxt`, visually-hidden text for the 3 empty table headers (aria-label on `<th>` doesn't satisfy axe) | 68 | **0** | ✅ KEPT 🎯 |
+
+**Final: 0 weighted violations across all 11 logged-in pages — STRETCH GOAL REACHED**
+(baseline 9,888). Cross-verified after finish: landing a11y light **0**, dark **0**,
+landing 23-check gate green, logged-in speed gate green with **no perf regression**
+(~610 ms vs ~766 baseline — fluctuation in our favor, not a claimed win).
