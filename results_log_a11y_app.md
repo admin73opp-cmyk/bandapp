@@ -28,3 +28,6 @@ all 11 pages must render or INVALID.
 | R5 | `--amb` #D97706 → #B45309 (5.02 on white) | 1,288 | **1,203** | ✅ KEPT (−85) |
 | R6 | `.pp` pill text #5246E0 in light theme (5.38 on `--a2`); dark keeps `var(--a)` | 1,203 | **1,148** | ✅ KEPT (−55) |
 | R7 | Mute past/cancelled/hidden cards via `grayscale` filter instead of opacity (preserves luminance contrast) | 1,148 | **788** | ✅ KEPT (−360) |
+| R8 | New `--aTxt` accent-on-tint text var (light #5246E0 / dark #8B84FF) for `.ni.on`, `.pp`, 6 inline pills | 788 | **633** | ✅ KEPT (−155) |
+| R9 | `_ink()` luminance-aware text on the 7 member-colour chip sites (user colours are data; probe caught #111118 at 4.35 → use #000 at 4.87) | 633 | — | ✅ (with R10) |
+| R10 | `.cd-past` muting via grayscale+opacity(.82) filter instead of opacity .38 | 633 | **373** | ✅ KEPT (−260 w/ R9) |
