@@ -1,5 +1,5 @@
 # Ritovo — Auto Research Engineer Report
-### Overnight run · 7 assets (+1 bonus) · 2026-06-11
+### Overnight run · 9 assets (+1 bonus) · 2026-06-11 → 06-12
 
 > The deal: pick ONE thing, turn "is it good?" into a single honest number, then change it —
 > keep what wins, trash what loses, and **never touch or game the measuring stick.**
@@ -18,10 +18,14 @@
 | 6 | SEO / social meta | failed checks (`score_seo.py`) | 11 → **0** | **target hit 🎯** |
 | 7 | i18n coverage | missing translations (`score_i18n.py`) | 132 → **0** | **target hit 🎯** |
 | 7b | Accessibility (dark) | axe violations (`score_a11y_dark.py`) | 10 → **0** | **target hit 🎯** |
+| 8 | A11y, logged-in app (light) | weighted axe, 11 pages (`score_a11y_app.py`) | 9,888 → **0** | **stretch goal hit 🎯** |
+| 9 | A11y, logged-in app (dark) | weighted axe, 11 pages (`score_a11y_app_dark.py`) | 1,400 → **0** | **target hit 🎯** |
 
-Seven constitutions (`instructions*.md`, human-owned), eight locked scorers (read-only to the AI,
-each with a correctness/safety gate), seven logs (`results_log*.md`). Everything committed and
-pushed to `claude/auto-research-engineer-j3e5jv`. **Five targets fully reached.**
+Nine constitutions (`instructions*.md`, human-owned), ten locked scorers (read-only to the AI,
+each with a correctness/safety gate), nine logs (`results_log*.md`). Everything committed and
+pushed to `claude/auto-research-engineer-j3e5jv`. **Seven targets fully reached — and all four
+accessibility scorers (landing + app, light + dark) read 0 simultaneously: every surface of
+Ritovo, in both themes, is axe-clean.**
 
 ---
 
@@ -67,6 +71,24 @@ pushed to `claude/auto-research-engineer-j3e5jv`. **Five targets fully reached.*
 - ✅ dark-mode override so primary buttons use a 4.61:1 purple; light theme re-verified (no
   regression). Landing page now WCAG-AA in **both** themes.
 
+**Asset 8 — logged-in app accessibility, light** · *kept 12 rounds, 9,888 → 0 (stretch goal)*
+- The biggest asset: the app itself (11 pages, realistic data) had never been scored.
+- ~9,000 of the weighted score collapsed from a handful of root causes: one unlabeled
+  spreadsheet row template (480 nodes), one `opacity:.65` muting rule (~100 nodes),
+  a few palette variables repeated across every row.
+- Design-level fixes, not patches: **grayscale muting** instead of opacity (keeps the faded
+  look AND the contrast), **`_ink()` luminance-aware text** on member-colour chips (member
+  colours are user data — the app now adapts to any colour), an **`--aTxt`** accent-on-tint
+  text variable, and visually-hidden header text where axe rejects `aria-label` on `<th>`.
+
+**Asset 9 — logged-in app accessibility, dark** · *kept 2 rounds, 1,400 → 0*
+- Asset 8 in dark mode: three root causes only. Dark `--ink3` was 2.5:1 (→ #8A8AA6 at 5.0:1,
+  text hierarchy intact), and dark accents (#8B84FF, #60A5FA) are *light* colours that need
+  dark text — encoded once in a new **`--onA`** "text-on-accent" variable, including four
+  inline JS `"#fff"` assignments that would have silently beaten any CSS override.
+- Probes that died honestly along the way: console errors (0), mobile tap-targets on landing
+  AND app (0), security headers (already excellent) — no fake assets were lined up.
+
 ---
 
 ## Methodology notes (the honest bits)
@@ -78,6 +100,12 @@ pushed to `claude/auto-research-engineer-j3e5jv`. **Five targets fully reached.*
 - **Integrity:** no scorer was ever edited to score better; round 3 (asset 1) was reverted rather
   than logged as a 585-byte "win"; asset-1 lever B and the asset-5 dataset change were surfaced to
   the human rather than slipped in.
+- **Cross-asset accounting:** asset 6's meta tags cost asset 2's metric +378 gz bytes — logged as a
+  legitimate trade, not hidden. After assets 8/9, all four a11y scorers plus the landing-speed and
+  logged-in-speed gates were re-run green before closing.
+- **Pre-merge follow-ups for the human:** native spot-check of the 132 AI translations (asset 7);
+  eyeball the palette nudges (light+dark) on a Vercel preview; redeploy the three edge functions
+  from a machine with Supabase CLI auth (asset 4's email change).
 
 ## Open levers (need a human decision / different setup)
 - True post-login JS split (asset 1) and locale key-dedup (asset 2) — bigger payoffs, real risk.
