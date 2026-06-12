@@ -315,7 +315,6 @@ window.IT = {
 
   /* ── REHEARSALS PAGE ──────────────────────────────────── */
   'Past Rehearsals': 'Prove passate',
-  '🚫 Cancelled': '🚫 Annullata',
   'No upcoming rehearsals — click + New Rehearsal to schedule one.': 'Nessuna prova in programma — clicca su + Nuova prova per pianificarne una.',
   'No past rehearsals yet.': 'Nessuna prova passata ancora.',
   'New Rehearsal': 'Nuova prova',
@@ -350,7 +349,6 @@ window.IT = {
   'Link Concert to Set List': 'Collega concerto alla setlist',
   'Concert View': 'Vista concerto',
   'Delete concert?': 'Eliminare il concerto?',
-  '🚫 Cancel': '🚫 Annulla',
   '♩ Link Set List': '♩ Collega setlist',
   'Concert': 'Concerto',
   'Free': 'Gratuito',
@@ -382,7 +380,7 @@ window.IT = {
   'No members yet. Invite someone to join!': 'Nessun membro ancora. Invita qualcuno!',
   'No full-group days this month': 'Nessun giorno con tutta la group questo mese',
   'Showing best partial availability — no full-group days found.': 'Migliore disponibilità parziale — nessun giorno con tutta la group trovato.',
-  '⚡ Best day': '⚡ Giorno migliore',
+  'Best day': '⚡ Giorno migliore',
   '2nd choice': '2ª scelta',
   '3rd choice': '3ª scelta',
   'available': 'disponibili',
@@ -428,7 +426,7 @@ window.IT = {
   'Individual days can still be blocked separately on the calendar.': 'I giorni singoli possono ancora essere bloccati separatamente nel calendario.',
 
   /* ── CALENDAR PAGE ────────────────────────────────────── */
-  '⚡ Best Rehearsal Days': '⚡ Migliori giorni di prova',
+  'Best Rehearsal Days': '⚡ Migliori giorni di prova',
   'Top available days this month, excluding blackouts and booked events.': 'Migliori giorni disponibili questo mese, esclusi i periodi bloccati e gli eventi prenotati.',
   'Full': 'Completo',
   'Compact': 'Compatto',
@@ -437,8 +435,6 @@ window.IT = {
   'Full group': 'Tutta la group',
   'Blackout': 'Periodo bloccato',
   'Cross-group conflict ⊘': 'Conflitto tra group ⊘',
-  'Full group ⚡': 'Tutta la group ⚡',
-  '⚡ Full group:': '⚡ Tutta la group:',
   'No blackouts': 'Nessun periodo bloccato',
   'blackout period': 'periodo bloccato',
   'blackout periods': 'periodi bloccati',

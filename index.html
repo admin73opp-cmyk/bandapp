@@ -17,7 +17,7 @@
   <meta name="twitter:card" content="summary_large_image">
   <meta name="theme-color" content="#685FF6">
   <link rel="apple-touch-icon" href="/logo/apple-touch-icon.png">
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='16' fill='%236C63FF'/><text x='16' y='22' text-anchor='middle' font-size='18' fill='white'>♪</text></svg>">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%236C63FF'/><line x1='10' y1='9' x2='10' y2='23' stroke='white' stroke-width='1.6' stroke-linecap='round'/><text x='12.3' y='22.6' font-family='Garamond,Georgia,serif' font-size='15' font-weight='300' fill='white'>r</text><circle cx='23' cy='9.6' r='1.7' fill='white'/></svg>">
   <title>Ritovo</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="js/supabase-client.js"></script>
@@ -1533,6 +1533,8 @@
     }
 
     .nav-sheet-btn .nb-ico {
+      display: inline-flex;
+      align-items: center;
       font-size: 1.15rem;
       line-height: 1;
       flex-shrink: 0
@@ -1631,18 +1633,23 @@
     }
 
     .lb2 {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
       background: none;
       border: none;
       color: var(--ink3);
       cursor: pointer;
       font-size: .82rem;
-      padding: 2px 4px;
-      border-radius: 4px;
-      transition: color .11s
+      padding: 3px 5px;
+      border-radius: 5px;
+      transition: color .11s, background .11s;
+      vertical-align: middle
     }
 
     .lb2:hover {
-      color: var(--a)
+      color: var(--a);
+      background: var(--a2)
     }
 
     .nc {
@@ -1843,6 +1850,10 @@
     }
 
     .svb {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      text-decoration: none;
       padding: 4px 9px;
       border-radius: 6px;
       font-size: .69rem;
@@ -1973,13 +1984,17 @@
     }
 
     .sc-licon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
       background: none;
       border: none;
       font-size: 1.1rem;
       line-height: 1;
-      padding: 2px;
+      padding: 3px;
       cursor: pointer;
-      text-decoration: none
+      text-decoration: none;
+      color: var(--ink2)
     }
 
     .calhdr {
@@ -2522,6 +2537,9 @@
     }
 
     .fbc {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
       padding: 4px 10px;
       border-radius: 99px;
       background: var(--g2);
@@ -3336,6 +3354,21 @@
       font-size: .79rem
     }
 
+    .es-mark {
+      width: 58px;
+      height: 58px;
+      margin: 0 auto 14px;
+      color: var(--ink3);
+      opacity: .6;
+      display: block
+    }
+
+    .es-mark svg {
+      width: 100%;
+      height: 100%;
+      display: block
+    }
+
     @media(max-width:768px) {
       .sb {
         transform: translateX(-100%)
@@ -3717,6 +3750,10 @@
     }
 
     .rsvp-opt {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
       padding: 5px 11px;
       border-radius: 8px;
       border: 1.5px solid var(--bd);
@@ -3908,66 +3945,27 @@
       <div class="sb-nav">
         <div class="ns">
           <div class="nsl" data-i18n="Main">Main</div>
-          <div class="ni on" onclick="nav('dashboard')" data-label="Dashboard" data-i18n="Dashboard"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
-              <rect x="1" y="1" width="6" height="6" rx="1.5" />
-              <rect x="9" y="1" width="6" height="6" rx="1.5" />
-              <rect x="1" y="9" width="6" height="6" rx="1.5" />
-              <rect x="9" y="9" width="6" height="6" rx="1.5" />
-            </svg><span class="sb-label">Dashboard</span></div>
-          <div class="ni" onclick="nav('calendar')" data-label="Calendar" data-i18n="Calendar"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
-              <rect x="1" y="2" width="14" height="13" rx="2" />
-              <path d="M1 6h14M5 1v2M11 1v2" />
-            </svg><span class="sb-label">Calendar</span></div>
-          <div class="ni" onclick="nav('rehearsals')" data-label="Rehearsals" data-i18n="Rehearsals"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
-              <circle cx="8" cy="8" r="6" />
-              <path d="M6 6l5 2-5 2V6z" />
-            </svg><span class="sb-label">Rehearsals</span><span class="nb" id="sbRehCount" style="display:none">0</span></div>
-          <div class="ni" onclick="nav('concerts')" data-label="Concerts" data-i18n="Concerts"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
-              <path d="M8 1l2.4 4.9 5.4.8-3.9 3.8.9 5.3L8 13.3l-4.8 2.5.9-5.3L.2 6.7l5.4-.8L8 1z" />
-            </svg><span class="sb-label">Concerts</span><span class="nb" id="sbConCount" style="display:none">0</span></div>
+          <div class="ni on" onclick="nav('dashboard')" data-label="Dashboard" data-i18n="Dashboard"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="6.5" height="6.5" rx="2"/><rect x="13.5" y="4" width="6.5" height="6.5" rx="2"/><rect x="4" y="13.5" width="6.5" height="6.5" rx="2"/><rect x="13.5" y="13.5" width="6.5" height="6.5" rx="2"/></svg><span class="sb-label">Dashboard</span></div>
+          <div class="ni" onclick="nav('calendar')" data-label="Calendar" data-i18n="Calendar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="15.5" rx="2.5"/><path d="M3.5 9.5h17M8 3v3.5M16 3v3.5"/><circle cx="12" cy="15" r="1.5" fill="currentColor" stroke="none"/></svg><span class="sb-label">Calendar</span></div>
+          <div class="ni" onclick="nav('rehearsals')" data-label="Rehearsals" data-i18n="Rehearsals"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M9.4 4.2h5.2l2.9 15.8H6.5z"/><path d="M7.7 14h8.6"/><path d="M12 18 14.4 8"/><circle cx="14.6" cy="7.5" r="1.5" fill="currentColor" stroke="none"/></svg><span class="sb-label">Rehearsals</span><span class="nb" id="sbRehCount" style="display:none">0</span></div>
+          <div class="ni" onclick="nav('concerts')" data-label="Concerts" data-i18n="Concerts"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M6 11a6 6 0 0 0 12 0"/><path d="M12 17v3.5M8.5 20.5h7"/></svg><span class="sb-label">Concerts</span><span class="nb" id="sbConCount" style="display:none">0</span></div>
         </div>
         <div class="ns">
           <div class="nsl" data-i18n="Music">Music</div>
-          <div class="ni" onclick="nav('setlists')" data-label="Set Lists" data-i18n="Set Lists"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
-              <path d="M2 4h12M2 8h8M2 12h10" />
-            </svg><span class="sb-label">Set Lists</span><span class="nb" id="sbSlCount" style="display:none">0</span></div>
-          <div class="ni" onclick="nav('library')" data-label="Song Library" data-i18n="Song Library"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
-              <circle cx="5" cy="12" r="2" />
-              <circle cx="13" cy="11" r="2" />
-              <path d="M7 12V4l8-2v8" />
-            </svg><span class="sb-label">Song Library</span><span class="nb" id="sbLibCount" style="background:var(--bl)">0</span></div>
+          <div class="ni" onclick="nav('setlists')" data-label="Set Lists" data-i18n="Set Lists"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6.5h11M9 12h11M9 17.5h7"/><circle cx="4.5" cy="6.5" r="1.4" fill="currentColor" stroke="none"/><circle cx="4.5" cy="12" r="1.4" fill="currentColor" stroke="none"/><circle cx="4.5" cy="17.5" r="1.4" fill="currentColor" stroke="none"/></svg><span class="sb-label">Set Lists</span><span class="nb" id="sbSlCount" style="display:none">0</span></div>
+          <div class="ni" onclick="nav('library')" data-label="Song Library" data-i18n="Song Library"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M10 18V5.5l7-1.8V15.5"/><circle cx="7.6" cy="18" r="2.5" fill="currentColor" stroke="none"/><circle cx="14.6" cy="15.5" r="2.5" fill="currentColor" stroke="none"/></svg><span class="sb-label">Song Library</span><span class="nb" id="sbLibCount" style="background:var(--bl)">0</span></div>
         </div>
         <div class="ns">
           <div class="nsl" data-i18n="Group">Group</div>
-          <div class="ni" onclick="nav('members')" data-label="Members" data-i18n="Members"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
-              <circle cx="6" cy="5" r="2.5" />
-              <path d="M1 14c0-3 2.2-5 5-5s5 2 5 5" />
-              <circle cx="12" cy="5" r="2" />
-              <path d="M14 13c0-2.4-1.5-4-4-4" />
-            </svg><span class="sb-label">Members</span><span class="nb" id="sbMemCount" style="display:none">0</span></div>
-          <div class="ni" onclick="nav('guestdir')" data-label="Guest Directory" data-i18n="Guest Directory"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
-              <circle cx="8" cy="5" r="3" />
-              <path d="M2 14c0-3.3 2.7-5 6-5s6 1.7 6 5" />
-              <path d="M12 8l2 2-2 2" stroke-linecap="round" />
-            </svg><span class="sb-label">Guest Directory</span><span class="nb" id="sbGuestCount" style="display:none">0</span></div>
-          <div class="ni" onclick="nav('bandprofile')" data-label="Group Profile" data-i18n="Group Profile"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
-              <circle cx="8" cy="6" r="4" />
-              <path d="M1 14c0-4 3-6 7-6s7 2 7 6" />
-            </svg><span class="sb-label">Group Profile</span></div>
+          <div class="ni" onclick="nav('members')" data-label="Members" data-i18n="Members"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 19.5a5.5 5.5 0 0 1 11 0"/><path d="M15.5 5.2a3.2 3.2 0 0 1 0 6"/><path d="M16.2 14.4a5.5 5.5 0 0 1 4.3 5.1"/></svg><span class="sb-label">Members</span><span class="nb" id="sbMemCount" style="display:none">0</span></div>
+          <div class="ni" onclick="nav('guestdir')" data-label="Guest Directory" data-i18n="Guest Directory"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="8.5" r="3.4"/><path d="M3.8 20a6.2 6.2 0 0 1 12.4 0"/><circle cx="18.5" cy="6" r="2" fill="currentColor" stroke="none"/></svg><span class="sb-label">Guest Directory</span><span class="nb" id="sbGuestCount" style="display:none">0</span></div>
+          <div class="ni" onclick="nav('bandprofile')" data-label="Group Profile" data-i18n="Group Profile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M9.5 8v8"/><circle cx="14.5" cy="8.6" r="1.5" fill="currentColor" stroke="none"/></svg><span class="sb-label">Group Profile</span></div>
         </div>
         <div class="ns">
           <div class="nsl" data-i18n="Account">Account</div>
-          <div class="ni" onclick="nav('myprofile')" data-label="My Profile" data-i18n="My Profile"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
-              <circle cx="8" cy="5" r="3" />
-              <path d="M2 14c0-3.3 2.7-5 6-5s6 1.7 6 5" />
-            </svg><span class="sb-label">My Profile</span></div>
-          <div class="ni" onclick="nav('settings')" data-label="Settings" data-i18n="Settings"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
-              <circle cx="8" cy="8" r="2.2" />
-              <path d="M8 1.5v1M8 13.5v1M1.5 8h1M13.5 8h1M3.4 3.4l.7.7M11.9 11.9l.7.7M3.4 12.6l.7-.7M11.9 4.1l.7-.7" />
-            </svg><span class="sb-label">Settings</span></div>
-          <div class="ni" onclick="doLogout()" style="color:var(--r)" onmouseover="this.style.background='var(--r2)'" onmouseout="this.style.background='transparent'" data-label="Log Out" data-i18n="Log Out"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
-              <path d="M6 2H3a1 1 0 00-1 1v10a1 1 0 001 1h3M10 11l3-3-3-3M13 8H6" />
-            </svg><span class="sb-label">Log Out</span></div>
+          <div class="ni" onclick="nav('myprofile')" data-label="My Profile" data-i18n="My Profile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.6"/><path d="M5.5 20a6.5 6.5 0 0 1 13 0"/></svg><span class="sb-label">My Profile</span></div>
+          <div class="ni" onclick="nav('settings')" data-label="Settings" data-i18n="Settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h8M16 8h4M4 16h4M12 16h8"/><circle cx="14" cy="8" r="2.2" fill="currentColor" stroke="none"/><circle cx="9" cy="16" r="2.2" fill="currentColor" stroke="none"/></svg><span class="sb-label">Settings</span></div>
+          <div class="ni" onclick="doLogout()" style="color:var(--r)" onmouseover="this.style.background='var(--r2)'" onmouseout="this.style.background='transparent'" data-label="Log Out" data-i18n="Log Out"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8"/><path d="M11 12h8.5M16 8.5l3.5 3.5-3.5 3.5"/></svg><span class="sb-label">Log Out</span></div>
         </div>
       </div>
       <div class="sb-foot">
@@ -3993,9 +3991,7 @@
           <button class="btn btn-p btn-sm tb-icon-btn" onclick="openNewConcert();nav('concerts')" title="+ Concert" data-i18n-title="+ Concert">
             <span class="tb-btn-label" data-i18n="+ Concert">+ Concert</span>
             <span class="tb-btn-icon">
-              <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
-                <path d="M8 1l2.4 4.9 5.4.8-3.9 3.8.9 5.3L8 13.3l-4.8 2.5.9-5.3L.2 6.7l5.4-.8L8 1z" />
-              </svg>
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M6 11a6 6 0 0 0 12 0"/><path d="M12 17v3.5M8.5 20.5h7"/></svg>
               <svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.5">
                 <path d="M8 2v12M2 8h12" />
               </svg>
@@ -4071,13 +4067,13 @@
           <button class="btn btn-p btn-sm" onclick="openSlMod()" data-i18n="Create Set List">+ Set List</button>
         </div>
         <div id="slEmptyNoSongs" style="display:none;text-align:center;padding:50px 20px">
-          <div style="font-size:2rem;margin-bottom:10px">🎵</div>
+          <div class="es-mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 18V5.5l7-1.8V15.5"/><circle cx="7.6" cy="18" r="2.5" fill="currentColor" stroke="none"/><circle cx="14.6" cy="15.5" r="2.5" fill="currentColor" stroke="none"/></svg></div>
           <div style="font-weight:700;font-size:1rem;margin-bottom:8px" data-i18n="No songs in library yet">No songs in library yet</div>
           <p style="font-size:.84rem;color:var(--ink2);margin-bottom:18px" data-i18n="Start by adding songs to your library.">Add songs to the library first, then you can build set lists.</p>
           <button class="btn btn-p btn-sm" onclick="nav('library')" data-i18n="Go to Song Library →">Go to Song Library →</button>
         </div>
         <div id="slEmptyNoLists" style="display:none;text-align:center;padding:50px 20px">
-          <div style="font-size:2rem;margin-bottom:10px">📋</div>
+          <div class="es-mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6.5h11M9 12h11M9 17.5h7"/><circle cx="4.5" cy="6.5" r="1.4" fill="currentColor" stroke="none"/><circle cx="4.5" cy="12" r="1.4" fill="currentColor" stroke="none"/><circle cx="4.5" cy="17.5" r="1.4" fill="currentColor" stroke="none"/></svg></div>
           <div style="font-weight:700;font-size:1rem;margin-bottom:8px" data-i18n="No set lists yet">No set lists yet</div>
           <p style="font-size:.84rem;color:var(--ink2);margin-bottom:18px">You have songs in the library — create your first set list!</p>
           <button class="btn btn-p btn-sm" onclick="openSlMod()">+ Create Set List</button>
@@ -4237,7 +4233,7 @@
       <div class="pg-area" id="pg-calendar">
 
         <div id="calNoGroup" style="display:none;text-align:center;padding:60px 20px">
-          <div style="font-size:2.5rem;margin-bottom:12px">🎸</div>
+          <div class="es-mark"><svg viewBox="0 0 120 120" fill="none" aria-hidden="true"><line x1="34" y1="32" x2="34" y2="88" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><text x="44" y="86" font-family="'Garamond','Georgia','Times New Roman',serif" font-size="56" font-weight="300" fill="currentColor">r</text><circle cx="88" cy="32" r="4.5" fill="currentColor"/></svg></div>
           <div style="font-size:1.1rem;font-weight:700;margin-bottom:8px" data-i18n="No Group Yet">No Group Yet</div>
           <p style="font-size:.84rem;color:var(--ink2);margin-bottom:20px" data-i18n="Start by creating a group.">Start by creating a group.</p>
           <button class="btn btn-p btn-sm" onclick="openNewBand()" data-i18n="+ Create a Group">+ Create a Group</button>
@@ -4274,7 +4270,7 @@
 
           <div id="calViewFull">
             <div class="bp2">
-              <div class="bpt" data-i18n="⚡ Best Rehearsal Days">⚡ Best Rehearsal Days</div>
+              <div class="bpt"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px" aria-hidden="true"><path d="M13.2 2.5 5 13.7h5.2L10.8 21.5 19 10.3h-5.2z"/></svg> <span data-i18n="Best Rehearsal Days">Best Rehearsal Days</span></div>
               <div class="bps" id="bestSub" data-i18n="Top available days this month, excluding blackouts and booked events.">Top available days this month, excluding blackouts and booked events.</div>
               <div class="bpl" id="bestList"></div>
             </div>
@@ -4299,14 +4295,14 @@
                 <div class="li" data-i18n="Cross-group conflict ⊘">
                   <div class="ld2" style="background:var(--amb);opacity:.7;border:1.5px solid var(--amb)"></div>Cross-group conflict ⊘
                 </div>
-                <div class="li" data-i18n="Full group ⚡">
-                  <div class="ld2" style="background:var(--g);box-shadow:0 0 0 2px #86EFAC"></div>Full group ⚡
+                <div class="li" data-i18n="Full group">
+                  <div class="ld2" style="background:var(--g);box-shadow:0 0 0 2px #86EFAC"></div>Full group
                 </div>
               </div>
             </div>
             <div id="calChangelogSection" style="margin-top:18px">
               <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;flex-wrap:wrap">
-                <div style="font-size:.82rem;font-weight:700;letter-spacing:-.01em">📋 Change Log</div>
+                <div style="font-size:.82rem;font-weight:700;letter-spacing:-.01em;display:inline-flex;align-items:center;gap:5px"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6.5h11M9 12h11M9 17.5h7"/><circle cx="4.5" cy="6.5" r="1.4" fill="currentColor" stroke="none"/><circle cx="4.5" cy="12" r="1.4" fill="currentColor" stroke="none"/><circle cx="4.5" cy="17.5" r="1.4" fill="currentColor" stroke="none"/></svg>Change Log</div>
                 <select id="clDaysFilter" aria-label="Filter by days" class="sb2" style="font-size:.74rem;padding:4px 8px" onchange="renderCalChangelog()">
                   <option value="10">Last 10 days</option>
                   <option value="30">Last 30 days</option>
@@ -4315,7 +4311,7 @@
                 <select id="clOwnerFilter" aria-label="Filter by member" class="sb2" style="font-size:.74rem;padding:4px 8px;min-width:120px" onchange="renderCalChangelog()">
                   <option value="">All members</option>
                 </select>
-                <button id="clCleanupBtn" class="btn btn-g btn-sm" style="display:none;font-size:.72rem" onclick="cleanupChangelog()" title="Remove all entries older than 60 days">🗑 Clean up &gt;60 days</button>
+                <button id="clCleanupBtn" class="btn btn-g btn-sm" style="display:none;font-size:.72rem" onclick="cleanupChangelog()" title="Remove all entries older than 60 days"><svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M2 4h12M5 4V2h6v2M6 7v5M10 7v5M3 4l1 10h8l1-10"/></svg> Clean up &gt;60 days</button>
                 <div style="margin-left:auto;font-size:.69rem;color:var(--ink3)">ℹ Entries kept for 60 days</div>
               </div>
               <div id="clList" style="display:flex;flex-direction:column;gap:4px"></div>
@@ -4349,7 +4345,7 @@
                 </table>
               </div>
               <div class="fbchips">
-                <div class="t1" style="align-self:center;white-space:nowrap" data-i18n="⚡ Full group:">⚡ Full group:</div>
+                <div class="t1" style="align-self:center;white-space:nowrap;display:inline-flex;align-items:center;gap:3px"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13.2 2.5 5 13.7h5.2L10.8 21.5 19 10.3h-5.2z"/></svg><span data-i18n="Full group">Full group</span>:</div>
                 <div id="fbChips" style="display:flex;gap:5px;flex-wrap:wrap"></div>
               </div>
             </div>
@@ -4361,7 +4357,7 @@
 
       <div class="pg-area" id="pg-rehearsals">
         <div id="rehearsalsNoGroup" style="display:none;text-align:center;padding:60px 20px">
-          <div style="font-size:2.5rem;margin-bottom:12px">🎸</div>
+          <div class="es-mark"><svg viewBox="0 0 120 120" fill="none" aria-hidden="true"><line x1="34" y1="32" x2="34" y2="88" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><text x="44" y="86" font-family="'Garamond','Georgia','Times New Roman',serif" font-size="56" font-weight="300" fill="currentColor">r</text><circle cx="88" cy="32" r="4.5" fill="currentColor"/></svg></div>
           <div style="font-size:1.1rem;font-weight:700;margin-bottom:8px" data-i18n="No Group Yet">No Group Yet</div>
           <p style="font-size:.84rem;color:var(--ink2);margin-bottom:20px" data-i18n="Start by creating a group.">Start by creating a group.</p>
           <button class="btn btn-p btn-sm" onclick="openNewBand()" data-i18n="+ Create a Group">+ Create a Group</button>
@@ -4386,7 +4382,7 @@
           </div>
           <div id="cancelledRehearsalSection" style="margin-top:24px;display:none">
             <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
-              <div style="font-size:.78rem;font-weight:700;color:var(--r);text-transform:uppercase;letter-spacing:.07em" data-i18n="🚫 Cancelled">🚫 Cancelled</div>
+              <div style="font-size:.78rem;font-weight:700;color:var(--r);text-transform:uppercase;letter-spacing:.07em" data-i18n="Cancelled">Cancelled</div>
               <div style="flex:1;height:1px;background:var(--r2)"></div>
             </div>
             <div class="clist" id="rehearsalListCancelled"></div>
@@ -4395,7 +4391,7 @@
       </div>
       <div class="pg-area" id="pg-concerts">
         <div id="concertsNoGroup" style="display:none;text-align:center;padding:60px 20px">
-          <div style="font-size:2.5rem;margin-bottom:12px">🎸</div>
+          <div class="es-mark"><svg viewBox="0 0 120 120" fill="none" aria-hidden="true"><line x1="34" y1="32" x2="34" y2="88" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><text x="44" y="86" font-family="'Garamond','Georgia','Times New Roman',serif" font-size="56" font-weight="300" fill="currentColor">r</text><circle cx="88" cy="32" r="4.5" fill="currentColor"/></svg></div>
           <div style="font-size:1.1rem;font-weight:700;margin-bottom:8px">No Group Yet</div>
           <p style="font-size:.84rem;color:var(--ink2);margin-bottom:20px">Start by creating a group.</p>
           <button class="btn btn-p btn-sm" onclick="openNewBand()">+ Create a Group</button>
@@ -4420,7 +4416,7 @@
           </div>
           <div id="cancelledConcertSection" style="margin-top:24px;display:none">
             <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
-              <div style="font-size:.78rem;font-weight:700;color:var(--r);text-transform:uppercase;letter-spacing:.07em" data-i18n="🚫 Cancelled">🚫 Cancelled</div>
+              <div style="font-size:.78rem;font-weight:700;color:var(--r);text-transform:uppercase;letter-spacing:.07em" data-i18n="Cancelled">Cancelled</div>
               <div style="flex:1;height:1px;background:var(--r2)"></div>
             </div>
             <div class="clist" id="concertListCancelled"></div>
@@ -4430,7 +4426,7 @@
 
       <div class="pg-area" id="pg-members">
         <div id="membersNoGroup" style="display:none;text-align:center;padding:60px 20px">
-          <div style="font-size:2.5rem;margin-bottom:12px">🎸</div>
+          <div class="es-mark"><svg viewBox="0 0 120 120" fill="none" aria-hidden="true"><line x1="34" y1="32" x2="34" y2="88" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><text x="44" y="86" font-family="'Garamond','Georgia','Times New Roman',serif" font-size="56" font-weight="300" fill="currentColor">r</text><circle cx="88" cy="32" r="4.5" fill="currentColor"/></svg></div>
           <div style="font-size:1.1rem;font-weight:700;margin-bottom:8px">No Group Yet</div>
           <p style="font-size:.84rem;color:var(--ink2);margin-bottom:20px">Start by creating your first group to manage members.</p>
           <button class="btn btn-p btn-sm" onclick="openNewBand()">+ Create a Group</button>
@@ -4452,7 +4448,7 @@
 
       <div class="pg-area" id="pg-guestdir">
         <div id="guestDirNoGroup" style="display:none;text-align:center;padding:60px 20px">
-          <div style="font-size:2.5rem;margin-bottom:12px">🎸</div>
+          <div class="es-mark"><svg viewBox="0 0 120 120" fill="none" aria-hidden="true"><line x1="34" y1="32" x2="34" y2="88" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><text x="44" y="86" font-family="'Garamond','Georgia','Times New Roman',serif" font-size="56" font-weight="300" fill="currentColor">r</text><circle cx="88" cy="32" r="4.5" fill="currentColor"/></svg></div>
           <div style="font-size:1.1rem;font-weight:700;margin-bottom:8px">No Group Yet</div>
           <p style="font-size:.84rem;color:var(--ink2);margin-bottom:20px">Start by creating your first group to manage guest musicians.</p>
           <button class="btn btn-p btn-sm" onclick="openNewBand()">+ Create a Group</button>
@@ -4483,7 +4479,7 @@
       <div class="pg-area" id="pg-bandprofile">
 
         <div id="bpEmpty" style="display:none;text-align:center;padding:60px 20px">
-          <div style="font-size:2.5rem;margin-bottom:12px">🎸</div>
+          <div class="es-mark"><svg viewBox="0 0 120 120" fill="none" aria-hidden="true"><line x1="34" y1="32" x2="34" y2="88" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><text x="44" y="86" font-family="'Garamond','Georgia','Times New Roman',serif" font-size="56" font-weight="300" fill="currentColor">r</text><circle cx="88" cy="32" r="4.5" fill="currentColor"/></svg></div>
           <div style="font-size:1.1rem;font-weight:700;margin-bottom:8px">No Group Yet</div>
           <p style="font-size:.84rem;color:var(--ink2);margin-bottom:20px">You're not part of any group. Create one to get started.</p>
           <button class="btn btn-p btn-sm" onclick="openNewBand()">+ Create a Group</button>
@@ -4653,7 +4649,7 @@
 
             <div class="card" id="bpLyricsCard" style="grid-column:1/-1;display:none">
               <div class="ch">
-                <div class="ct" style="display:flex;align-items:center;gap:7px"><span style="font-size:1.05rem">📄</span> Lyrics / Sheet Music Repository</div>
+                <div class="ct" style="display:flex;align-items:center;gap:7px"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="color:var(--a)" aria-hidden="true"><path d="M6.5 3h8l4 4v14h-12z"/><path d="M14 3v4.5h4.5"/><path d="M9.5 12h5.5M9.5 15.5h4"/></svg> Lyrics / Sheet Music Repository</div>
               </div>
               <div style="font-size:.75rem;color:var(--ink2);margin-bottom:13px">Set the preferred storage location for song lyrics and sheet music. Members will see this as a hint when adding files to a song.</div>
               <select id="bpLyricsRepo" aria-label="Lyrics repository" class="sb2" style="max-width:320px;margin-bottom:12px">
@@ -5303,7 +5299,7 @@
 
   <div class="mov" id="rehMod" style="display:none" onclick="closeMB(event,'rehMod')">
     <div class="mod" style="max-width:415px">
-      <div class="aib">⚡ Great day for rehearsal</div>
+      <div class="aib"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13.2 2.5 5 13.7h5.2L10.8 21.5 19 10.3h-5.2z"/></svg>Great day for rehearsal</div>
       <div class="mott" id="rmTt">Schedule Rehearsal</div>
       <div class="most" id="rmSub">All 5 members are available.</div>
       <div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:13px" id="rmMem"></div>
@@ -5408,6 +5404,34 @@
       return songs.find(t => t.id === e || t.legacy_id === e)
     }
     const TODAY_STR = (new Date).toLocaleDateString("en-CA");
+    // ── Ritovo icon family — shared inline-SVG snippets for JS templates.
+    // Same geometry as the sidebar set: 24-grid, 1.75 stroke, round caps/joins,
+    // with the brand "downbeat dot" as filled-circle accents.
+    const _RIC = {
+      play: '<path d="M8.5 5.8v12.4a.6.6 0 0 0 .92.5l9.6-6.2a.6.6 0 0 0 0-1l-9.6-6.2a.6.6 0 0 0-.92.5z" fill="currentColor" stroke="none"/>',
+      lyrics: '<path d="M6.5 3h8l4 4v14h-12z"/><path d="M14 3v4.5h4.5"/><path d="M9.5 12h5.5M9.5 15.5h4"/>',
+      sheet: '<path d="M10 18V5.5l7-1.8V15.5"/><circle cx="7.6" cy="18" r="2.5" fill="currentColor" stroke="none"/><circle cx="14.6" cy="15.5" r="2.5" fill="currentColor" stroke="none"/>',
+      list: '<path d="M9 6.5h11M9 12h11M9 17.5h7"/><circle cx="4.5" cy="6.5" r="1.4" fill="currentColor" stroke="none"/><circle cx="4.5" cy="12" r="1.4" fill="currentColor" stroke="none"/><circle cx="4.5" cy="17.5" r="1.4" fill="currentColor" stroke="none"/>',
+      people: '<circle cx="9" cy="8" r="3.2"/><path d="M3.5 19.5a5.5 5.5 0 0 1 11 0"/><path d="M15.5 5.2a3.2 3.2 0 0 1 0 6"/><path d="M16.2 14.4a5.5 5.5 0 0 1 4.3 5.1"/>',
+      camera: '<path d="M3 8.5A1.5 1.5 0 0 1 4.5 7H7l1.6-2.5h6.8L17 7h2.5A1.5 1.5 0 0 1 21 8.5v9a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 17.5z"/><circle cx="12" cy="13" r="3.4"/>',
+      bolt: '<path d="M13.2 2.5 5 13.7h5.2L10.8 21.5 19 10.3h-5.2z"/>',
+      check: '<path d="M4.5 12.5 9.8 18 19.5 6.5"/>',
+      x: '<path d="M6 6l12 12M18 6 6 18"/>',
+      q: '<path d="M8.6 9.2a3.4 3.4 0 1 1 4.9 3c-1 .55-1.5 1.1-1.5 2.3"/><circle cx="12" cy="18.2" r="1.4" fill="currentColor" stroke="none"/>',
+      chevU: '<path d="M5 14.5 12 8l7 6.5"/>',
+      chevD: '<path d="M5 9.5 12 16l7-6.5"/>',
+      cal: '<rect x="3.5" y="5" width="17" height="15.5" rx="2.5"/><path d="M3.5 9.5h17M8 3v3.5M16 3v3.5"/><circle cx="12" cy="15" r="1.5" fill="currentColor" stroke="none"/>',
+      clock: '<circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3.5 2"/>',
+      search: '<circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 21 21"/>',
+      upload: '<path d="M12 16V4.5M7.5 8.5 12 4l4.5 4.5"/><path d="M4.5 19.5h15"/>',
+      pin: '<path d="M12 21s-6.5-6.1-6.5-11a6.5 6.5 0 0 1 13 0c0 4.9-6.5 11-6.5 11z"/><circle cx="12" cy="9.8" r="2.3"/>',
+      navArrow: '<path d="M12 3.5 19.5 20.5l-7.5-4.5-7.5 4.5z" fill="currentColor" stroke="none"/>',
+      compass: '<circle cx="12" cy="12" r="8.5"/><path d="m15.2 8.8-2 4.6-4.6 2 2-4.6z" fill="currentColor" stroke="none"/>'
+    };
+
+    function ricon(name, size = 13, style = '') {
+      return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;flex-shrink:0${style?';'+style:''}" aria-hidden="true">${_RIC[name]||''}</svg>`;
+    }
     let members = [],
       guestDirectory = [];
     async function loadMembers() {
@@ -5589,11 +5613,11 @@
       const o = "past" === n,
         a = "cancelled" === n,
         s = (e.photos || []).slice(0, 4),
-        i = s.length ? `<div class="concert-photos">${s.map((t,n)=>`<img class="concert-thumb" src="${t.url}" alt="Photo ${n+1}" onclick="event.stopPropagation();openRehPhotoLightbox('${e.id}',${n})">`).join("")}${a?"":`<label class="concert-thumb-add" onclick="event.stopPropagation()"><input type="file" accept="image/*" style="display:none" onchange="addRehPhoto(event,'${e.id}')">+</label>`}</div>` : a ? "" : `<div class="concert-photos"><label class="concert-thumb-add" onclick="event.stopPropagation()"><input type="file" accept="image/*" style="display:none" onchange="addRehPhoto(event,'${e.id}')">📷</label></div>`,
+        i = s.length ? `<div class="concert-photos">${s.map((t,n)=>`<img class="concert-thumb" src="${t.url}" alt="Photo ${n+1}" onclick="event.stopPropagation();openRehPhotoLightbox('${e.id}',${n})">`).join("")}${a?"":`<label class="concert-thumb-add" onclick="event.stopPropagation()"><input type="file" accept="image/*" style="display:none" onchange="addRehPhoto(event,'${e.id}')">+</label>`}</div>` : a ? "" : `<div class="concert-photos"><label class="concert-thumb-add" onclick="event.stopPropagation()"><input type="file" accept="image/*" style="display:none" onchange="addRehPhoto(event,'${e.id}')">${ricon("camera",18)}</label></div>`,
         l = e.setlistId && _setlistMap[e.setlistId] || null,
         r = a ? `<span style="margin-left:8px;font-size:.66rem;padding:2px 7px;border-radius:99px;background:var(--r2);color:var(--r);font-weight:600;vertical-align:middle">${t("Cancelled")}</span>` : o ? `<span style="margin-left:8px;font-size:.66rem;padding:2px 7px;border-radius:99px;background:var(--bg2);color:var(--ink3);font-weight:600;vertical-align:middle">${t("Past")}</span>` : "",
         d = a || o ? `<button class="btn btn-g btn-sm" data-action="view">${t("View")}</button>` : `<button class="btn btn-g btn-sm" style="color:var(--amb);border-color:var(--amb2)" data-action="cancel">${t("Cancel")}</button>\n      <button class="btn btn-g btn-sm" data-action="view">${t("View")}</button>`;
-      return `<div class="ccrd${o?" past":""}${a?" cancelled":""}" data-rid="${e.id}" onclick="handleRehCardClick(event,'${e.id}')">\n    <div class="cdb">\n      <div class="cdmo">${t(e.month)}</div>\n      <div class="cddy" style="${o||a?"color:var(--ink3)":""}">${e.day}</div>\n      <div class="cdyr">${e.year}</div>\n    </div>\n    <div>\n      <div class="ctitle">${esc(e.title)}${r}</div>\n      <div class="cmeta">\n        ${e.location?`<span class="cmi"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 2C5.8 2 4 3.8 4 6c0 3.5 4 8 4 8s4-4.5 4-8c0-2.2-1.8-4-4-4z"/><circle cx="8" cy="6" r="1.5"/></svg>${mapAddr(e.location)}</span>`:""}\n        <span class="cmi"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M8 4v4l3 2"/></svg>${e.start}–${e.end}</span>\n      </div>\n      <div class="cbadges">\n        <span class="pill ${a?"pr":"pg"}">${a?t("🚫 Cancelled"):t("Rehearsal")}</span>\n        ${l&&!a?`<span class="pill pp" style="cursor:pointer;display:inline-flex;align-items:center;gap:4px" data-action="setlist" data-slid="${e.setlistId}" title="Open Set List">♩ ${esc(l.name)} <svg width="9" height="9" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 8h8M9 5l3 3-3 3"/></svg></span>`:""}\n      </div>\n      ${rsvpCardHtml(e,o,a)}\n      ${i}\n    </div>\n    <div class="cactions">${d}</div>\n  </div>`
+      return `<div class="ccrd${o?" past":""}${a?" cancelled":""}" data-rid="${e.id}" onclick="handleRehCardClick(event,'${e.id}')">\n    <div class="cdb">\n      <div class="cdmo">${t(e.month)}</div>\n      <div class="cddy" style="${o||a?"color:var(--ink3)":""}">${e.day}</div>\n      <div class="cdyr">${e.year}</div>\n    </div>\n    <div>\n      <div class="ctitle">${esc(e.title)}${r}</div>\n      <div class="cmeta">\n        ${e.location?`<span class="cmi"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 2C5.8 2 4 3.8 4 6c0 3.5 4 8 4 8s4-4.5 4-8c0-2.2-1.8-4-4-4z"/><circle cx="8" cy="6" r="1.5"/></svg>${mapAddr(e.location)}</span>`:""}\n        <span class="cmi"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M8 4v4l3 2"/></svg>${e.start}–${e.end}</span>\n      </div>\n      <div class="cbadges">\n        <span class="pill ${a?"pr":"pg"}">${a?t("Cancelled"):t("Rehearsal")}</span>\n        ${l&&!a?`<span class="pill pp" style="cursor:pointer;display:inline-flex;align-items:center;gap:4px" data-action="setlist" data-slid="${e.setlistId}" title="Open Set List">♩ ${esc(l.name)} <svg width="9" height="9" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 8h8M9 5l3 3-3 3"/></svg></span>`:""}\n      </div>\n      ${rsvpCardHtml(e,o,a)}\n      ${i}\n    </div>\n    <div class="cactions">${d}</div>\n  </div>`
     }
 
     function handleRehCardClick(e, t) {
@@ -5612,10 +5636,10 @@
       if (o) return "";
       const a = "admin" === currentUser.role,
         s = rehAttendance(e),
-        i = a && s.total ? `<span class="rsvp-summary" data-action="rsvp-breakdown" title="${t("View attendance")}">👥 ${s.yes} / ${s.total} ${t("confirmed")}${s.pending?` · ${s.pending} ${t("pending")}`:""}</span>` : "";
+        i = a && s.total ? `<span class="rsvp-summary" data-action="rsvp-breakdown" title="${t("View attendance")}">${ricon("people",12)} ${s.yes} / ${s.total} ${t("confirmed")}${s.pending?` · ${s.pending} ${t("pending")}`:""}</span>` : "";
       if (n) return i;
       const l = e.myRsvp?.status || null;
-      return i + `<div class="rsvp-mine" onclick="event.stopPropagation()">\n      <button type="button" class="rsvp-opt${"yes"===l?" on-yes":""}" onclick="setMyRsvp('${e.id}','yes')">✅ ${t("Yes")}</button>\n      <button type="button" class="rsvp-opt${"no"===l?" on-no":""}" onclick="setMyRsvp('${e.id}','no')">❌ ${t("No")}</button>\n      <button type="button" class="rsvp-opt${"maybe"===l?" on-maybe":""}" onclick="setMyRsvp('${e.id}','maybe')">❓ ${t("Maybe")}</button>\n      <input type="text" class="rsvp-note" maxlength="120" placeholder="${t("Add a note (optional)")}" value="${esc(e.myRsvp?.note||"")}" onclick="event.stopPropagation()" onchange="setMyRsvpNote('${e.id}',this.value)">\n    </div>`
+      return i + `<div class="rsvp-mine" onclick="event.stopPropagation()">\n      <button type="button" class="rsvp-opt${"yes"===l?" on-yes":""}" onclick="setMyRsvp('${e.id}','yes')">${ricon("check",12)} ${t("Yes")}</button>\n      <button type="button" class="rsvp-opt${"no"===l?" on-no":""}" onclick="setMyRsvp('${e.id}','no')">${ricon("x",12)} ${t("No")}</button>\n      <button type="button" class="rsvp-opt${"maybe"===l?" on-maybe":""}" onclick="setMyRsvp('${e.id}','maybe')">${ricon("q",12)} ${t("Maybe")}</button>\n      <input type="text" class="rsvp-note" maxlength="120" placeholder="${t("Add a note (optional)")}" value="${esc(e.myRsvp?.note||"")}" onclick="event.stopPropagation()" onchange="setMyRsvpNote('${e.id}',this.value)">\n    </div>`
     }
     async function setMyRsvp(e, n) {
       const o = rehearsals.find(t => t.id === e);
@@ -5666,7 +5690,7 @@
         i = o.map(e => {
           const n = a[e.id],
             o = n ? n.status : null,
-            s = "yes" === o ? `<span style="color:var(--g);font-weight:700">✅ ${t("Yes")}</span>` : "no" === o ? `<span style="color:var(--r);font-weight:700">❌ ${t("No")}</span>` : "maybe" === o ? `<span style="color:var(--amb);font-weight:700">❓ ${t("Maybe")}</span>` : `<span style="color:var(--ink3);font-weight:600">⏳ ${t("Pending")}</span>`,
+            s = "yes" === o ? `<span style="color:var(--g);font-weight:700">${ricon("check",12)} ${t("Yes")}</span>` : "no" === o ? `<span style="color:var(--r);font-weight:700">${ricon("x",12)} ${t("No")}</span>` : "maybe" === o ? `<span style="color:var(--amb);font-weight:700">${ricon("q",12)} ${t("Maybe")}</span>` : `<span style="color:var(--ink3);font-weight:600">${ricon("clock",12)} ${t("Pending")}</span>`,
             i = n && n.note ? `<div style="font-size:.72rem;color:var(--ink3);margin-top:2px">“${esc(n.note)}”</div>` : "",
             l = memberPhotos[members.indexOf(e)] || null;
           return `<div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--bd)">\n      <div class="mav2" style="background:${e.color};color:${_ink(e.color)};${l?`background-image:url(${l});background-size:cover;background-position:center`:""}">${l?"":esc(e.init)}</div>\n      <div style="flex:1;min-width:0"><div style="font-weight:600;font-size:.85rem">${esc(e.name)}</div>${i}</div>\n      <div style="font-size:.8rem;white-space:nowrap">${s}</div>\n    </div>`
@@ -5674,7 +5698,7 @@
         l = document.createElement("div");
       l.style.cssText = "position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9000;display:flex;align-items:center;justify-content:center;padding:20px", l.onclick = e => {
         e.target === l && document.body.removeChild(l)
-      }, l.innerHTML = `<div style="background:var(--w);border-radius:var(--radl);max-width:440px;width:100%;max-height:80vh;overflow:auto;padding:22px 24px;box-shadow:var(--shl)">\n    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">\n      <div style="font-weight:700;font-size:1rem">${esc(n.title)}</div>\n      <button class="rsvpbd-x" style="background:none;border:none;font-size:1.1rem;cursor:pointer;color:var(--ink3)">✕</button>\n    </div>\n    <div style="font-size:.78rem;color:var(--ink2);margin-bottom:14px">✅ ${s.yes} ${t("yes")} · ❓ ${s.maybe} ${t("maybe")} · ❌ ${s.no} ${t("no")} · ⏳ ${s.pending} ${t("pending")}</div>\n    ${i||`<div style="color:var(--ink3);font-size:.82rem">${t("No members yet.")}</div>`}\n  </div>`, document.body.appendChild(l), l.querySelector(".rsvpbd-x").onclick = () => l.remove()
+      }, l.innerHTML = `<div style="background:var(--w);border-radius:var(--radl);max-width:440px;width:100%;max-height:80vh;overflow:auto;padding:22px 24px;box-shadow:var(--shl)">\n    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">\n      <div style="font-weight:700;font-size:1rem">${esc(n.title)}</div>\n      <button class="rsvpbd-x" style="background:none;border:none;font-size:1.1rem;cursor:pointer;color:var(--ink3)">✕</button>\n    </div>\n    <div style="font-size:.78rem;color:var(--ink2);margin-bottom:14px"><span style="color:var(--g)">${ricon("check",11)}</span> ${s.yes} ${t("yes")} · <span style="color:var(--amb)">${ricon("q",11)}</span> ${s.maybe} ${t("maybe")} · <span style="color:var(--r)">${ricon("x",11)}</span> ${s.no} ${t("no")} · <span style="color:var(--ink3)">${ricon("clock",11)}</span> ${s.pending} ${t("pending")}</div>\n    ${i||`<div style="color:var(--ink3);font-size:.82rem">${t("No members yet.")}</div>`}\n  </div>`, document.body.appendChild(l), l.querySelector(".rsvpbd-x").onclick = () => l.remove()
     }
     async function renderRsvpOneClick() {
       const e = window.RSVP_ONECLICK;
@@ -5704,7 +5728,7 @@
         }).then(null, () => {}).catch(() => {})), o
       }, d = e => s(`<div style="text-align:center"><div style="font-size:2.2rem;margin-bottom:10px">⚠️</div><div style="font-weight:700;font-size:1.05rem;margin-bottom:8px">Link not valid</div><div style="font-size:.85rem;color:var(--ink2);line-height:1.5">${e}</div><div style="margin-top:22px"><a href="/" style="color:var(--a);font-weight:600;text-decoration:none">Open Ritovo →</a></div></div>`), c = () => {
         const e = (e, t) => `<button type="button" class="rsvp-opt${i===t?" on-"+t:""}" style="flex:1;padding:10px" onclick="window._rsvpOcPick('${t}')">${e}</button>`;
-        s(`\n      <div style="text-align:center;margin-bottom:6px;font-weight:700;font-size:1.15rem">${"yes"===i?"You’re in! ✅":"no"===i?"Got it — you can’t make it ❌":"maybe"===i?"Marked as maybe ❓":"Will you be there?"}</div>\n      <div style="text-align:center;font-size:.9rem;color:var(--ink2);margin-bottom:4px">${esc(l?.rehearsal_title||"Rehearsal")}</div>\n      <div style="text-align:center;font-size:.82rem;color:var(--ink3);margin-bottom:20px">${esc(l?.band_name||"")}${l?.rehearsal_date?" · "+(e=>e?new Date(e+"T00:00:00").toLocaleDateString(void 0,{weekday:"long",month:"long",day:"numeric"}):"")(l.rehearsal_date):""}${l?.rehearsal_start?" · "+esc(l.rehearsal_start):""}</div>\n      <div style="display:flex;gap:8px;margin-bottom:14px">${e("✅ Yes","yes")}${e("❌ No","no")}${e("❓ Maybe","maybe")}</div>\n      <input id="rsvpOcNote" type="text" class="rsvp-note" maxlength="120" placeholder="Add a note (optional — e.g. ‘15 min late’)" value="${esc(l?.note||"")}" style="width:100%;box-sizing:border-box;margin-bottom:12px;padding:9px 11px">\n      <button type="button" class="btn btn-p btn-fw" onclick="window._rsvpOcSaveNote()">Save note</button>\n      <div id="rsvpOcMsg" style="text-align:center;font-size:.78rem;color:var(--g);margin-top:12px;min-height:1em"></div>\n      <div style="text-align:center;margin-top:14px"><a href="/" style="color:var(--a);font-weight:600;text-decoration:none;font-size:.85rem">Open Ritovo →</a></div>`)
+        s(`\n      <div style="text-align:center;margin-bottom:6px;font-weight:700;font-size:1.15rem">${"yes"===i?"You’re in! ✅":"no"===i?"Got it — you can’t make it ❌":"maybe"===i?"Marked as maybe ❓":"Will you be there?"}</div>\n      <div style="text-align:center;font-size:.9rem;color:var(--ink2);margin-bottom:4px">${esc(l?.rehearsal_title||"Rehearsal")}</div>\n      <div style="text-align:center;font-size:.82rem;color:var(--ink3);margin-bottom:20px">${esc(l?.band_name||"")}${l?.rehearsal_date?" · "+(e=>e?new Date(e+"T00:00:00").toLocaleDateString(void 0,{weekday:"long",month:"long",day:"numeric"}):"")(l.rehearsal_date):""}${l?.rehearsal_start?" · "+esc(l.rehearsal_start):""}</div>\n      <div style="display:flex;gap:8px;margin-bottom:14px">${e(ricon("check",13)+" Yes","yes")}${e(ricon("x",13)+" No","no")}${e(ricon("q",13)+" Maybe","maybe")}</div>\n      <input id="rsvpOcNote" type="text" class="rsvp-note" maxlength="120" placeholder="Add a note (optional — e.g. ‘15 min late’)" value="${esc(l?.note||"")}" style="width:100%;box-sizing:border-box;margin-bottom:12px;padding:9px 11px">\n      <button type="button" class="btn btn-p btn-fw" onclick="window._rsvpOcSaveNote()">Save note</button>\n      <div id="rsvpOcMsg" style="text-align:center;font-size:.78rem;color:var(--g);margin-top:12px;min-height:1em"></div>\n      <div style="text-align:center;margin-top:14px"><a href="/" style="color:var(--a);font-weight:600;text-decoration:none;font-size:.85rem">Open Ritovo →</a></div>`)
       };
       if (window._rsvpOcPick = async e => {
           const t = (document.getElementById("rsvpOcNote") || {}).value || "",
@@ -5753,7 +5777,7 @@
       document.getElementById("rvPhotos").innerHTML = i.length ? i.map((e, t) => `<img src="${e.url}" style="width:72px;height:72px;border-radius:8px;object-fit:cover;border:1.5px solid var(--bd);cursor:pointer" onclick="openRehPhotoLightbox('${n.id}',${t})">`).join("") : '<span style="font-size:.76rem;color:var(--ink3)">No photos yet</span>';
       const l = document.getElementById("rvActions"),
         r = "admin" === currentUser.role;
-      n.cancelled ? l.innerHTML = '<button class="btn btn-g" onclick="closeMod(\'reViewMod\')">Close</button>' + (r ? `<button class="btn btn-g btn-sm" style="color:var(--red,#e53935);border-color:var(--red,#e53935)" onclick="deleteRehearsal('${n.id}')">🗑 Delete</button>` : "") : l.innerHTML = o ? '<button class="btn btn-g" onclick="closeMod(\'reViewMod\')">Close</button>' : `\n      <button class="btn btn-g" onclick="closeMod('reViewMod')">Close</button>\n      <button class="btn btn-g btn-sm" style="color:var(--amb);border-color:var(--amb2)" onclick="closeMod('reViewMod');promptCancel('rehearsal','${n.id}')">🚫 Cancel</button>\n      <button class="btn btn-g btn-sm" onclick="closeMod('reViewMod');openRehEdit('${n.id}')">Edit</button>\n      <button class="btn btn-p btn-sm" onclick="closeMod('reViewMod');shareRehearsal('${n.id}')">Share</button>`, showMod("reViewMod")
+      n.cancelled ? l.innerHTML = '<button class="btn btn-g" onclick="closeMod(\'reViewMod\')">Close</button>' + (r ? `<button class="btn btn-g btn-sm" style="color:var(--red,#e53935);border-color:var(--red,#e53935)" onclick="deleteRehearsal('${n.id}')">🗑 Delete</button>` : "") : l.innerHTML = o ? '<button class="btn btn-g" onclick="closeMod(\'reViewMod\')">Close</button>' : `\n      <button class="btn btn-g" onclick="closeMod('reViewMod')">Close</button>\n      <button class="btn btn-g btn-sm" style="color:var(--amb);border-color:var(--amb2)" onclick="closeMod('reViewMod');promptCancel('rehearsal','${n.id}')">${t("Cancel")}</button>\n      <button class="btn btn-g btn-sm" onclick="closeMod('reViewMod');openRehEdit('${n.id}')">Edit</button>\n      <button class="btn btn-p btn-sm" onclick="closeMod('reViewMod');shareRehearsal('${n.id}')">Share</button>`, showMod("reViewMod")
     }
     async function deleteRehearsal(e) {
       const t = rehearsals.find(t => t.id === e);
@@ -5822,7 +5846,7 @@
         n = document.getElementById("rePhotoArea");
       if (!n) return;
       const o = t && t.photos || [];
-      n.innerHTML = o.map((t, n) => `<div style="position:relative;display:inline-block"><img src="${t.url}" style="width:64px;height:64px;border-radius:8px;object-fit:cover;border:1.5px solid var(--bd)"><button onclick="removeRehPhoto('${e}',${n})" style="position:absolute;top:-6px;right:-6px;width:18px;height:18px;border-radius:50%;background:var(--r);border:2px solid var(--w);color:#fff;font-size:.55rem;cursor:pointer;display:flex;align-items:center;justify-content:center">✕</button></div>`).join("") + `<label style="width:64px;height:64px;border-radius:8px;border:2px dashed var(--bd);display:inline-flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;color:var(--ink3);font-size:.65rem;gap:3px" onmouseover="this.style.borderColor='var(--a)'" onmouseout="this.style.borderColor='var(--bd)'"><span style="font-size:1.3rem">📷</span>Add photo<input type="file" accept="image/*" style="display:none" onchange="addRehPhoto(event,'${e||editingRehId||""}')"></label>`
+      n.innerHTML = o.map((t, n) => `<div style="position:relative;display:inline-block"><img src="${t.url}" style="width:64px;height:64px;border-radius:8px;object-fit:cover;border:1.5px solid var(--bd)"><button onclick="removeRehPhoto('${e}',${n})" style="position:absolute;top:-6px;right:-6px;width:18px;height:18px;border-radius:50%;background:var(--r);border:2px solid var(--w);color:#fff;font-size:.55rem;cursor:pointer;display:flex;align-items:center;justify-content:center">✕</button></div>`).join("") + `<label style="width:64px;height:64px;border-radius:8px;border:2px dashed var(--bd);display:inline-flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;color:var(--ink3);font-size:.65rem;gap:3px" onmouseover="this.style.borderColor='var(--a)'" onmouseout="this.style.borderColor='var(--bd)'">${ricon("camera",18)}Add photo<input type="file" accept="image/*" style="display:none" onchange="addRehPhoto(event,'${e||editingRehId||""}')"></label>`
     }
     async function removeRehPhoto(e, t) {
       const n = rehearsals.find(t => t.id === e);
@@ -7183,12 +7207,12 @@
             const o = songByAnyId(t);
             if (!o) return "";
             const a = [];
-            return o.lyrics && a.push(`<a class="svb svb-ly" href="${esc(o.lyrics)}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">📄 Lyrics</a>`), o.sheet_music && a.push(`<a class="svb svb-ly" href="${esc(o.sheet_music)}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">🎵 Sheet</a>`), o.spotify && a.push(`<button class="svb svb-sp" data-url="${esc(o.spotify)}" onclick="event.stopPropagation();openMediaUrl(this)">Spotify</button>`), o.youtube && a.push(`<button class="svb svb-yt" data-url="${esc(o.youtube)}" onclick="event.stopPropagation();openMediaUrl(this)">YouTube</button>`), o.apple && a.push(`<button class="svb" data-url="${esc(o.apple)}" onclick="event.stopPropagation();openMediaUrl(this)">Apple</button>`), `<div class="slcard">\n          <div class="slcard-num">${String(n+1).padStart(2,"0")}</div>\n          <div class="slcard-body">\n            <div class="slcard-title">${esc(o.title)}</div>\n            <div class="slcard-artist">${esc(o.artist)}</div>\n            <div class="slcard-meta">\n              ${o.key?`<span class="kp">${esc(o.key)}</span>`:""}\n              ${o.dur?`<span style="font-family:var(--mono);font-size:.71rem;color:var(--ink2)">${fmtDur(o.dur)}</span>`:""}\n            </div>\n            ${a.length?`<div class="sclinks" style="margin-top:5px">${a.join("")}</div>`:""}\n            ${o.note?`<div class="slcard-note">${esc(o.note)}</div>`:""}\n          </div>\n          <div class="slcard-actions">\n            <button class="btn-ic btn" style="width:26px;height:26px;padding:0" onclick="slMoveUp(${n})" title="Move up" ${0===n?"disabled":""}>▲</button>\n            <button class="btn-ic btn" style="width:26px;height:26px;padding:0" onclick="slMoveDown(${n})" title="Move down" ${n===e-1?"disabled":""}>▼</button>\n            <button class="btn-ic btn" style="width:26px;height:26px;padding:0;color:var(--r);border-color:var(--r)" onclick="removeSongFromSL('${t}')" title="Remove">✕</button>\n          </div>\n        </div>`
+            return o.lyrics && a.push(`<a class="svb svb-ly" href="${esc(o.lyrics)}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">${ricon("lyrics",11)} Lyrics</a>`), o.sheet_music && a.push(`<a class="svb svb-ly" href="${esc(o.sheet_music)}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">${ricon("sheet",11)} Sheet</a>`), o.spotify && a.push(`<button class="svb svb-sp" data-url="${esc(o.spotify)}" onclick="event.stopPropagation();openMediaUrl(this)">Spotify</button>`), o.youtube && a.push(`<button class="svb svb-yt" data-url="${esc(o.youtube)}" onclick="event.stopPropagation();openMediaUrl(this)">YouTube</button>`), o.apple && a.push(`<button class="svb" data-url="${esc(o.apple)}" onclick="event.stopPropagation();openMediaUrl(this)">Apple</button>`), `<div class="slcard">\n          <div class="slcard-num">${String(n+1).padStart(2,"0")}</div>\n          <div class="slcard-body">\n            <div class="slcard-title">${esc(o.title)}</div>\n            <div class="slcard-artist">${esc(o.artist)}</div>\n            <div class="slcard-meta">\n              ${o.key?`<span class="kp">${esc(o.key)}</span>`:""}\n              ${o.dur?`<span style="font-family:var(--mono);font-size:.71rem;color:var(--ink2)">${fmtDur(o.dur)}</span>`:""}\n            </div>\n            ${a.length?`<div class="sclinks" style="margin-top:5px">${a.join("")}</div>`:""}\n            ${o.note?`<div class="slcard-note">${esc(o.note)}</div>`:""}\n          </div>\n          <div class="slcard-actions">\n            <button class="btn-ic btn" style="width:26px;height:26px;padding:0" onclick="slMoveUp(${n})" title="Move up" ${0===n?"disabled":""}>${ricon("chevU",12)}</button>\n            <button class="btn-ic btn" style="width:26px;height:26px;padding:0" onclick="slMoveDown(${n})" title="Move down" ${n===e-1?"disabled":""}>${ricon("chevD",12)}</button>\n            <button class="btn-ic btn" style="width:26px;height:26px;padding:0;color:var(--r);border-color:var(--r)" onclick="removeSongFromSL('${t}')" title="Remove">${ricon("x",12)}</button>\n          </div>\n        </div>`
           }).join("")
         }
       } else t && (t.style.display = ""), n && (n.style.display = "none"), document.getElementById("slBody").innerHTML = getSlS().map((e, t) => {
         const n = songByAnyId(e);
-        return n ? `<tr draggable="true" data-id="${e}" ondragover="dov(event)" ondrop="ddrop(event)" ondragleave="this.classList.remove('dov')">\n        <td class="dh" style="cursor:grab;touch-action:none" draggable="true" ondragstart="ds(event)" ontouchstart="tStart(event)" ontouchmove="tMove(event)" ontouchend="tEnd(event)">⠿</td>\n        <td class="snum">${String(t+1).padStart(2,"0")}</td>\n        <td class="stitle">${esc(n.title)}</td>\n        <td class="sartist" style="color:var(--ink2);font-size:.75rem">${esc(n.artist)}</td>\n        <td><span class="kp">${esc(n.key)}</span></td>\n        <td style="font-family:var(--mono);font-size:.72rem;color:var(--ink2);white-space:nowrap">${n.dur?fmtDur(n.dur):"—"}</td>\n        <td class="lkcol" style="white-space:nowrap">${openSongMedia(n,t)}${n.lyrics?`<a class="lb2" href="${esc(n.lyrics)}" target="_blank" rel="noopener noreferrer" title="Lyrics" style="color:var(--a);text-decoration:none;font-size:.82rem">📄</a>`:""}${n.sheet_music?`<a class="lb2" href="${esc(n.sheet_music)}" target="_blank" rel="noopener noreferrer" title="Sheet Music" style="color:var(--a);text-decoration:none;font-size:.82rem">🎵</a>`:""}</td>\n        <td class="nc">${esc(n.note)}</td>\n        <td><button class="btn btn-xs btn-g" onclick="removeSongFromSL('${e}')">✕</button></td>\n      </tr>` : ""
+        return n ? `<tr draggable="true" data-id="${e}" ondragover="dov(event)" ondrop="ddrop(event)" ondragleave="this.classList.remove('dov')">\n        <td class="dh" style="cursor:grab;touch-action:none" draggable="true" ondragstart="ds(event)" ontouchstart="tStart(event)" ontouchmove="tMove(event)" ontouchend="tEnd(event)">⠿</td>\n        <td class="snum">${String(t+1).padStart(2,"0")}</td>\n        <td class="stitle">${esc(n.title)}</td>\n        <td class="sartist" style="color:var(--ink2);font-size:.75rem">${esc(n.artist)}</td>\n        <td><span class="kp">${esc(n.key)}</span></td>\n        <td style="font-family:var(--mono);font-size:.72rem;color:var(--ink2);white-space:nowrap">${n.dur?fmtDur(n.dur):"—"}</td>\n        <td class="lkcol" style="white-space:nowrap">${openSongMedia(n,t)}${n.lyrics?`<a class="lb2" href="${esc(n.lyrics)}" target="_blank" rel="noopener noreferrer" title="Lyrics" style="color:var(--a);text-decoration:none">${ricon("lyrics",14)}</a>`:""}${n.sheet_music?`<a class="lb2" href="${esc(n.sheet_music)}" target="_blank" rel="noopener noreferrer" title="Sheet Music" style="color:var(--a);text-decoration:none">${ricon("sheet",14)}</a>`:""}</td>\n        <td class="nc">${esc(n.note)}</td>\n        <td><button class="btn btn-xs btn-g" onclick="removeSongFromSL('${e}')">✕</button></td>\n      </tr>` : ""
       }).join("")
     }
 
@@ -7206,43 +7230,40 @@
       s ? (s.document.write(a), s.document.close(), s.focus(), setTimeout(() => s.print(), 300)) : toast2("Allow pop-ups to print / save PDF", "w")
     }
 
+    function songMediaLinks(e) {
+      // streaming-only links (lyrics/sheet music rendered separately as icons)
+      const t = [];
+      return e.spotify && t.push({
+        label: "Spotify",
+        url: e.spotify,
+        color: "#1DB954"
+      }), e.youtube && t.push({
+        label: "YouTube",
+        url: e.youtube,
+        color: "var(--r)"
+      }), e.apple && t.push({
+        label: "Apple Music",
+        url: e.apple,
+        color: "var(--ink2)"
+      }), e.amazon && t.push({
+        label: "Amazon Music",
+        url: e.amazon,
+        color: "#FF9900"
+      }), t
+    }
+
     function openSongMedia(e, t) {
-      const n = [];
-      return e.spotify && n.push({
-        label: "🎵 Spotify",
-        url: e.spotify
-      }), e.youtube && n.push({
-        label: "▶ YouTube",
-        url: e.youtube
-      }), e.apple && n.push({
-        label: "🍎 Apple Music",
-        url: e.apple
-      }), e.amazon && n.push({
-        label: "🎵 Amazon Music",
-        url: e.amazon
-      }), n.length ? 1 === n.length ? `<button class="lb2" title="${n[0].label}" data-url="${n[0].url}" onclick="openMediaUrl(this)">▶</button>` : `<button class="lb2" title="Open media links" onclick="openMediaPicker(${t})">▶</button>` : ""
+      const n = songMediaLinks(e);
+      return n.length ? 1 === n.length ? `<button class="lb2" title="${n[0].label}" data-url="${n[0].url}" onclick="openMediaUrl(this)">${ricon("play",14)}</button>` : `<button class="lb2" title="Open media links" onclick="openMediaPicker(${t})">${ricon("play",14)}</button>` : ""
     }
 
     function openMediaPicker(e) {
       const t = songByAnyId(slS[e]);
       if (!t) return;
-      const n = [];
-      t.spotify && n.push({
-        label: "🎵 Spotify",
-        url: t.spotify
-      }), t.youtube && n.push({
-        label: "▶ YouTube",
-        url: t.youtube
-      }), t.apple && n.push({
-        label: "🍎 Apple Music",
-        url: t.apple
-      }), t.amazon && n.push({
-        label: "🎵 Amazon Music",
-        url: t.amazon
-      });
-      const o = document.getElementById("mediaPickerTitle"),
+      const n = songMediaLinks(t),
+        o = document.getElementById("mediaPickerTitle"),
         a = document.getElementById("mediaPickerList");
-      o && (o.textContent = t.title), a && (a.innerHTML = n.map(e => `<button class="btn btn-g btn-fw" style="justify-content:flex-start;gap:10px;font-size:.88rem;padding:12px 16px" data-url="${e.url}" onclick="openMediaUrl(this);closeMod('mediaPicker')">${esc(e.label)}</button>`).join("")), showMod("mediaPicker")
+      o && (o.textContent = t.title), a && (a.innerHTML = n.map(e => `<button class="btn btn-g btn-fw" style="justify-content:flex-start;gap:10px;font-size:.88rem;padding:12px 16px" data-url="${e.url}" onclick="openMediaUrl(this);closeMod('mediaPicker')"><span style="color:${e.color};display:inline-flex">${ricon("play",15)}</span>${esc(e.label)}</button>`).join("")), showMod("mediaPicker")
     }
 
     function openMediaUrl(e) {
@@ -7550,14 +7571,14 @@
       const e = document.getElementById("libGrid"),
         n = getLibFiltered();
       if (!n.length) {
-        const n = songs.length ? `<div class="es" style="grid-column:1/-1"><div class="es-ico">🔍</div><h3>${t("No songs found")}</h3><p>${t("Try another filter or search term.")}</p></div>` : `<div class="es" style="grid-column:1/-1"><div class="es-ico">🎵</div><h3>${t("No songs in library yet")}</h3><p>${t("Start by adding songs to your library.")}</p></div>`;
+        const n = songs.length ? `<div class="es" style="grid-column:1/-1"><div class="es-ico">${ricon("search",34)}</div><h3>${t("No songs found")}</h3><p>${t("Try another filter or search term.")}</p></div>` : `<div class="es" style="grid-column:1/-1"><div class="es-ico">${ricon("sheet",34)}</div><h3>${t("No songs in library yet")}</h3><p>${t("Start by adding songs to your library.")}</p></div>`;
         return void(e.innerHTML = n)
       }
       e.innerHTML = n.map(e => isMobile() ? mobileSongCard(e) : desktopSongCard(e)).join(""), isMobile() && wireCardSwipe()
     }
 
     function desktopSongCard(e) {
-      return `\n    <div class="songcard${e.hidden?" hidden-song":""}" onclick="openSongEdit('${e.id}')">\n      ${e.hidden?`<div style="position:absolute;top:10px;right:10px;font-size:.62rem;font-weight:700;color:var(--ink3);background:var(--bg2);border:1px solid var(--bd);border-radius:99px;padding:2px 7px;letter-spacing:.04em">${t("HIDDEN")}</div>`:""}\n      <div class="sctt" style="padding-right:${e.hidden?"52px":"0"}">${e.title}</div>\n      <div class="scar">${e.artist}${e.dur?`<span style="float:right;font-family:var(--mono);font-size:.72rem;color:var(--ink3)">${fmtDur(e.dur)}</span>`:""}</div>\n      <div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:2px">\n        <span class="pill pbl" style="font-size:.66rem">${e.genre}</span>\n        <span class="kp">${e.key}</span>\n      </div>\n      <div class="sclinks">\n        ${e.lyrics?`<a class="svb svb-ly" href="${e.lyrics}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">📄 Lyrics</a>`:""}\n        ${e.sheet_music?`<a class="svb svb-ly" href="${e.sheet_music}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">🎵 Sheet</a>`:""}\n        ${e.spotify?`<button class="svb svb-sp" data-url="${e.spotify}" onclick="event.stopPropagation();openMediaUrl(this)">Spotify</button>`:""}\n        ${e.youtube?`<button class="svb svb-yt" data-url="${e.youtube}" onclick="event.stopPropagation();openMediaUrl(this)">YouTube</button>`:""}\n        ${e.apple?`<button class="svb" data-url="${e.apple}" onclick="event.stopPropagation();openMediaUrl(this)">Apple</button>`:""}\n        ${e.amazon?`<button class="svb svb-am" data-url="${e.amazon}" onclick="event.stopPropagation();openMediaUrl(this)">Amazon</button>`:""}\n      </div>\n      \x3c!-- corner action buttons — visible on hover --\x3e\n      <div class="sc-actions" onclick="event.stopPropagation()">\n        <div class="sc-act-btn" onclick="toggleHideSong('${e.id}')" title="${e.hidden?"Unhide":"Hide"} song">\n          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">\n            ${e.hidden?'<path d="M1 8s2.5-5 7-5 7 5 7 5-2.5 5-7 5-7-5-7-5z"/><circle cx="8" cy="8" r="2"/>':'<path d="M1 8s2.5-5 7-5 7 5 7 5-2.5 5-7 5-7-5-7-5z"/><circle cx="8" cy="8" r="2"/><path d="M2 2l12 12" stroke-linecap="round"/>'}\n          </svg>\n        </div>\n        ${"admin"===currentUser.role?`<div class="sc-act-btn del" onclick="deleteSong('${e.id}')" title="Delete song">\n          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">\n            <path d="M2 4h12M5 4V2h6v2M6 7v5M10 7v5M3 4l1 10h8l1-10"/>\n          </svg>\n        </div>`:""}\n      </div>\n    </div>`
+      return `\n    <div class="songcard${e.hidden?" hidden-song":""}" onclick="openSongEdit('${e.id}')">\n      ${e.hidden?`<div style="position:absolute;top:10px;right:10px;font-size:.62rem;font-weight:700;color:var(--ink3);background:var(--bg2);border:1px solid var(--bd);border-radius:99px;padding:2px 7px;letter-spacing:.04em">${t("HIDDEN")}</div>`:""}\n      <div class="sctt" style="padding-right:${e.hidden?"52px":"0"}">${e.title}</div>\n      <div class="scar">${e.artist}${e.dur?`<span style="float:right;font-family:var(--mono);font-size:.72rem;color:var(--ink3)">${fmtDur(e.dur)}</span>`:""}</div>\n      <div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:2px">\n        <span class="pill pbl" style="font-size:.66rem">${e.genre}</span>\n        <span class="kp">${e.key}</span>\n      </div>\n      <div class="sclinks">\n        ${e.lyrics?`<a class="svb svb-ly" href="${e.lyrics}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">${ricon("lyrics",11)} Lyrics</a>`:""}\n        ${e.sheet_music?`<a class="svb svb-ly" href="${e.sheet_music}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">${ricon("sheet",11)} Sheet</a>`:""}\n        ${e.spotify?`<button class="svb svb-sp" data-url="${e.spotify}" onclick="event.stopPropagation();openMediaUrl(this)">Spotify</button>`:""}\n        ${e.youtube?`<button class="svb svb-yt" data-url="${e.youtube}" onclick="event.stopPropagation();openMediaUrl(this)">YouTube</button>`:""}\n        ${e.apple?`<button class="svb" data-url="${e.apple}" onclick="event.stopPropagation();openMediaUrl(this)">Apple</button>`:""}\n        ${e.amazon?`<button class="svb svb-am" data-url="${e.amazon}" onclick="event.stopPropagation();openMediaUrl(this)">Amazon</button>`:""}\n      </div>\n      \x3c!-- corner action buttons — visible on hover --\x3e\n      <div class="sc-actions" onclick="event.stopPropagation()">\n        <div class="sc-act-btn" onclick="toggleHideSong('${e.id}')" title="${e.hidden?"Unhide":"Hide"} song">\n          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">\n            ${e.hidden?'<path d="M1 8s2.5-5 7-5 7 5 7 5-2.5 5-7 5-7-5-7-5z"/><circle cx="8" cy="8" r="2"/>':'<path d="M1 8s2.5-5 7-5 7 5 7 5-2.5 5-7 5-7-5-7-5z"/><circle cx="8" cy="8" r="2"/><path d="M2 2l12 12" stroke-linecap="round"/>'}\n          </svg>\n        </div>\n        ${"admin"===currentUser.role?`<div class="sc-act-btn del" onclick="deleteSong('${e.id}')" title="Delete song">\n          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">\n            <path d="M2 4h12M5 4V2h6v2M6 7v5M10 7v5M3 4l1 10h8l1-10"/>\n          </svg>\n        </div>`:""}\n      </div>\n    </div>`
     }
     const _GENRE_PILLS = ["pp", "pg", "pbl", "pamb", "pr", "pgray"];
 
@@ -7570,7 +7591,7 @@
 
     function mobileSongCard(e) {
       const t = (e, t, n, o) => e ? `<a class="sc-licon" href="${e}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()" title="${t}"${o?` style="color:${o}"`:""}>${n}</a>` : "",
-        n = [t(e.lyrics, "Lyrics", "📄"), t(e.sheet_music, "Sheet Music", "🎼"), t(e.spotify, "Spotify", "🎵", "#1DB954"), t(e.youtube, "YouTube", "▶", "var(--r)"), t(e.apple, "Apple Music", "🍎"), t(e.amazon, "Amazon Music", "🛒", "#FF9900")].join("");
+        n = [t(e.lyrics, "Lyrics", ricon("lyrics", 15), "var(--a)"), t(e.sheet_music, "Sheet Music", ricon("sheet", 15), "var(--a)"), t(e.spotify, "Spotify", ricon("play", 15), "#1DB954"), t(e.youtube, "YouTube", ricon("play", 15), "var(--r)"), t(e.apple, "Apple Music", ricon("play", 15)), t(e.amazon, "Amazon Music", ricon("play", 15), "#FF9900")].join("");
       return `<div class="swipe-wrap">\n    <div class="swipe-actions">\n      <button class="swipe-act add" onclick="event.stopPropagation();quickAddToSetlist('${e.id}')" data-i18n="＋ Setlist">＋ Setlist</button>\n      ${"admin"===currentUser.role?`<button class="swipe-act del" onclick="event.stopPropagation();deleteSong('${e.id}')" data-i18n="Delete">Delete</button>`:""}\n    </div>\n    <div class="songcard mcard${e.hidden?" hidden-song":""}" onclick="openSongEdit('${e.id}')">\n      <div class="mcard-top">\n        <span class="mcard-title">${e.title}</span>\n        ${e.genre?`<span class="pill ${genrePillClass(e.genre)} mcard-genre">${e.genre}</span>`:""}\n      </div>\n      <div class="mcard-artist">${e.artist||""}</div>\n      <div class="mcard-bot">\n        ${e.key?`<span class="kp">${e.key}</span>`:""}\n        ${e.dur?`<span class="mcard-dur">${fmtDur(e.dur)}</span>`:""}\n        ${n?`<span class="mcard-links">${n}</span>`:""}\n      </div>\n    </div>\n  </div>`
     }
     let _cardSwipeWired = !1;
@@ -7988,17 +8009,17 @@
         case "note":
           return `<td><input class="sh-cell" style="min-width:140px" aria-label="Notes — ${esc(e.title)}" value="${esc(e.note||"")}" data-field="note" data-id="${e.id}" onchange="sheetEdit(this)" onkeydown="sheetKeyDown(event,this)"></td>`;
         case "lyrics":
-          return `<td style="white-space:nowrap;padding:4px 6px"><div style="display:flex;align-items:center;gap:4px">\n        <input class="sh-cell" style="flex:1;min-width:100px;font-size:.72rem" aria-label="Lyrics link — ${esc(e.title)}" value="${esc(e.lyrics||"")}" placeholder="Paste link or upload →" data-field="lyrics" data-id="${e.id}" onchange="sheetEdit(this)" onkeydown="sheetKeyDown(event,this)" title="Lyrics URL">\n        <label style="cursor:pointer;padding:3px 6px;border-radius:5px;border:1.5px solid var(--bd);background:var(--bg);font-size:.68rem;color:var(--ink2);flex-shrink:0;line-height:1.5" title="Upload lyrics file">⬆<input type="file" accept=".pdf,.png,.jpg,.jpeg,.gif,.mxl,.xml" style="display:none" onchange="handleSheetFileUpload(event,'${e.id}','lyrics')"></label>\n        ${e.lyrics?`<a href="${esc(e.lyrics)}" target="_blank" rel="noopener noreferrer" style="font-size:.8rem;text-decoration:none;flex-shrink:0" title="View Lyrics">📄</a>`:""}\n      </div></td>`;
+          return `<td style="white-space:nowrap;padding:4px 6px"><div style="display:flex;align-items:center;gap:4px">\n        <input class="sh-cell" style="flex:1;min-width:100px;font-size:.72rem" aria-label="Lyrics link — ${esc(e.title)}" value="${esc(e.lyrics||"")}" placeholder="Paste link or upload →" data-field="lyrics" data-id="${e.id}" onchange="sheetEdit(this)" onkeydown="sheetKeyDown(event,this)" title="Lyrics URL">\n        <label style="cursor:pointer;padding:3px 6px;border-radius:5px;border:1.5px solid var(--bd);background:var(--bg);font-size:.68rem;color:var(--ink2);flex-shrink:0;line-height:1.5" title="Upload lyrics file">${ricon("upload",11)}<input type="file" accept=".pdf,.png,.jpg,.jpeg,.gif,.mxl,.xml" style="display:none" onchange="handleSheetFileUpload(event,'${e.id}','lyrics')"></label>\n        ${e.lyrics?`<a href="${esc(e.lyrics)}" target="_blank" rel="noopener noreferrer" style="text-decoration:none;flex-shrink:0;color:var(--a);display:inline-flex" title="View Lyrics">${ricon("lyrics",14)}</a>`:""}\n      </div></td>`;
         case "sheet_music":
-          return `<td style="white-space:nowrap;padding:4px 6px"><div style="display:flex;align-items:center;gap:4px">\n        <input class="sh-cell" style="flex:1;min-width:100px;font-size:.72rem" aria-label="Sheet music link — ${esc(e.title)}" value="${esc(e.sheet_music||"")}" placeholder="Paste link or upload →" data-field="sheet_music" data-id="${e.id}" onchange="sheetEdit(this)" onkeydown="sheetKeyDown(event,this)" title="Sheet Music URL">\n        <label style="cursor:pointer;padding:3px 6px;border-radius:5px;border:1.5px solid var(--bd);background:var(--bg);font-size:.68rem;color:var(--ink2);flex-shrink:0;line-height:1.5" title="Upload sheet music file">⬆<input type="file" accept=".pdf,.png,.jpg,.jpeg,.gif,.mxl,.xml" style="display:none" onchange="handleSheetFileUpload(event,'${e.id}','sheet_music')"></label>\n        ${e.sheet_music?`<a href="${esc(e.sheet_music)}" target="_blank" rel="noopener noreferrer" style="font-size:.8rem;text-decoration:none;flex-shrink:0" title="View Sheet Music">🎵</a>`:""}\n      </div></td>`;
+          return `<td style="white-space:nowrap;padding:4px 6px"><div style="display:flex;align-items:center;gap:4px">\n        <input class="sh-cell" style="flex:1;min-width:100px;font-size:.72rem" aria-label="Sheet music link — ${esc(e.title)}" value="${esc(e.sheet_music||"")}" placeholder="Paste link or upload →" data-field="sheet_music" data-id="${e.id}" onchange="sheetEdit(this)" onkeydown="sheetKeyDown(event,this)" title="Sheet Music URL">\n        <label style="cursor:pointer;padding:3px 6px;border-radius:5px;border:1.5px solid var(--bd);background:var(--bg);font-size:.68rem;color:var(--ink2);flex-shrink:0;line-height:1.5" title="Upload sheet music file">${ricon("upload",11)}<input type="file" accept=".pdf,.png,.jpg,.jpeg,.gif,.mxl,.xml" style="display:none" onchange="handleSheetFileUpload(event,'${e.id}','sheet_music')"></label>\n        ${e.sheet_music?`<a href="${esc(e.sheet_music)}" target="_blank" rel="noopener noreferrer" style="text-decoration:none;flex-shrink:0;color:var(--a);display:inline-flex" title="View Sheet Music">${ricon("sheet",14)}</a>`:""}\n      </div></td>`;
         case "spotify":
-          return `<td style="white-space:nowrap;padding:4px 6px"><div style="display:flex;align-items:center;gap:3px"><input class="sh-cell" style="flex:1;min-width:120px;font-size:.72rem" aria-label="Spotify URL — ${esc(e.title)}" value="${esc(e.spotify||"")}" placeholder="Spotify URL" data-field="spotify" data-id="${e.id}" onchange="sheetEdit(this)" onkeydown="sheetKeyDown(event,this)">${e.spotify?`<a href="${esc(e.spotify)}" target="_blank" rel="noopener noreferrer" style="font-size:.82rem;text-decoration:none;flex-shrink:0;color:#1DB954" title="Open Spotify">🎵</a>`:""}</div></td>`;
+          return `<td style="white-space:nowrap;padding:4px 6px"><div style="display:flex;align-items:center;gap:3px"><input class="sh-cell" style="flex:1;min-width:120px;font-size:.72rem" aria-label="Spotify URL — ${esc(e.title)}" value="${esc(e.spotify||"")}" placeholder="Spotify URL" data-field="spotify" data-id="${e.id}" onchange="sheetEdit(this)" onkeydown="sheetKeyDown(event,this)">${e.spotify?`<a href="${esc(e.spotify)}" target="_blank" rel="noopener noreferrer" style="text-decoration:none;flex-shrink:0;color:#1DB954;display:inline-flex" title="Open Spotify">${ricon("play",13)}</a>`:""}</div></td>`;
         case "youtube":
-          return `<td style="white-space:nowrap;padding:4px 6px"><div style="display:flex;align-items:center;gap:3px"><input class="sh-cell" style="flex:1;min-width:120px;font-size:.72rem" aria-label="YouTube URL — ${esc(e.title)}" value="${esc(e.youtube||"")}" placeholder="YouTube URL" data-field="youtube" data-id="${e.id}" onchange="sheetEdit(this)" onkeydown="sheetKeyDown(event,this)">${e.youtube?`<a href="${esc(e.youtube)}" target="_blank" rel="noopener noreferrer" style="font-size:.82rem;text-decoration:none;flex-shrink:0;color:var(--r)" title="Open YouTube">▶</a>`:""}</div></td>`;
+          return `<td style="white-space:nowrap;padding:4px 6px"><div style="display:flex;align-items:center;gap:3px"><input class="sh-cell" style="flex:1;min-width:120px;font-size:.72rem" aria-label="YouTube URL — ${esc(e.title)}" value="${esc(e.youtube||"")}" placeholder="YouTube URL" data-field="youtube" data-id="${e.id}" onchange="sheetEdit(this)" onkeydown="sheetKeyDown(event,this)">${e.youtube?`<a href="${esc(e.youtube)}" target="_blank" rel="noopener noreferrer" style="text-decoration:none;flex-shrink:0;color:var(--r);display:inline-flex" title="Open YouTube">${ricon("play",13)}</a>`:""}</div></td>`;
         case "apple":
-          return `<td style="white-space:nowrap;padding:4px 6px"><div style="display:flex;align-items:center;gap:3px"><input class="sh-cell" style="flex:1;min-width:120px;font-size:.72rem" aria-label="Apple Music URL — ${esc(e.title)}" value="${esc(e.apple||"")}" placeholder="Apple Music URL" data-field="apple" data-id="${e.id}" onchange="sheetEdit(this)" onkeydown="sheetKeyDown(event,this)">${e.apple?`<a href="${esc(e.apple)}" target="_blank" rel="noopener noreferrer" style="font-size:.82rem;text-decoration:none;flex-shrink:0;color:var(--ink2)" title="Open Apple Music">🍎</a>`:""}</div></td>`;
+          return `<td style="white-space:nowrap;padding:4px 6px"><div style="display:flex;align-items:center;gap:3px"><input class="sh-cell" style="flex:1;min-width:120px;font-size:.72rem" aria-label="Apple Music URL — ${esc(e.title)}" value="${esc(e.apple||"")}" placeholder="Apple Music URL" data-field="apple" data-id="${e.id}" onchange="sheetEdit(this)" onkeydown="sheetKeyDown(event,this)">${e.apple?`<a href="${esc(e.apple)}" target="_blank" rel="noopener noreferrer" style="text-decoration:none;flex-shrink:0;color:var(--ink2);display:inline-flex" title="Open Apple Music">${ricon("play",13)}</a>`:""}</div></td>`;
         case "amazon":
-          return `<td style="white-space:nowrap;padding:4px 6px"><div style="display:flex;align-items:center;gap:3px"><input class="sh-cell" style="flex:1;min-width:120px;font-size:.72rem" aria-label="Amazon Music URL — ${esc(e.title)}" value="${esc(e.amazon||"")}" placeholder="Amazon Music URL" data-field="amazon" data-id="${e.id}" onchange="sheetEdit(this)" onkeydown="sheetKeyDown(event,this)">${e.amazon?`<a href="${esc(e.amazon)}" target="_blank" rel="noopener noreferrer" style="font-size:.82rem;text-decoration:none;flex-shrink:0;color:#FF9900" title="Open Amazon Music">🎵</a>`:""}</div></td>`;
+          return `<td style="white-space:nowrap;padding:4px 6px"><div style="display:flex;align-items:center;gap:3px"><input class="sh-cell" style="flex:1;min-width:120px;font-size:.72rem" aria-label="Amazon Music URL — ${esc(e.title)}" value="${esc(e.amazon||"")}" placeholder="Amazon Music URL" data-field="amazon" data-id="${e.id}" onchange="sheetEdit(this)" onkeydown="sheetKeyDown(event,this)">${e.amazon?`<a href="${esc(e.amazon)}" target="_blank" rel="noopener noreferrer" style="text-decoration:none;flex-shrink:0;color:#FF9900;display:inline-flex" title="Open Amazon Music">${ricon("play",13)}</a>`:""}</div></td>`;
         case "hidden":
           return `<td><div class="sh-chk"><input type="checkbox"${e.hidden?" checked":""} aria-label="Hide song — ${esc(e.title)}" style="accent-color:var(--a);width:15px;height:15px;cursor:pointer" data-field="hidden" data-id="${e.id}" onchange="sheetEdit(this)"></div></td>`;
         default:
@@ -8037,15 +8058,15 @@
       const n = encodeURIComponent(e),
         o = [{
           label: "Google Maps",
-          ico: "🗺️",
+          ico: ricon("pin", 16),
           url: `https://www.google.com/maps/search/?api=1&query=${n}`
         }, {
           label: "Waze",
-          ico: "🚗",
+          ico: ricon("navArrow", 16),
           url: `https://waze.com/ul?q=${n}&navigate=yes`
         }, {
           label: "Apple Maps",
-          ico: "🧭",
+          ico: ricon("compass", 16),
           url: `https://maps.apple.com/?q=${n}`
         }],
         a = document.createElement("div");
@@ -8053,7 +8074,7 @@
         e.target === a && closeMapsChooser()
       });
       const s = document.createElement("div");
-      s.style.cssText = "background:var(--w);border:1px solid var(--bd);border-radius:var(--radl) var(--radl) 0 0;box-shadow:var(--shl);width:100%;max-width:440px;padding:18px 16px calc(16px + env(safe-area-inset-bottom))", s.innerHTML = `<div style="font-weight:700;font-size:.95rem;margin-bottom:3px">${t("Get directions")}</div><div style="font-size:.8rem;color:var(--ink2);margin-bottom:15px">📍 ${esc(e)}</div>`, o.forEach(e => {
+      s.style.cssText = "background:var(--w);border:1px solid var(--bd);border-radius:var(--radl) var(--radl) 0 0;box-shadow:var(--shl);width:100%;max-width:440px;padding:18px 16px calc(16px + env(safe-area-inset-bottom))", s.innerHTML = `<div style="font-weight:700;font-size:.95rem;margin-bottom:3px">${t("Get directions")}</div><div style="font-size:.8rem;color:var(--ink2);margin-bottom:15px">${ricon("pin",12)} ${esc(e)}</div>`, o.forEach(e => {
         const t = document.createElement("button");
         t.className = "btn btn-g nav-sheet-btn", t.innerHTML = `<span class="nb-ico">${e.ico}</span> ${e.label}`, t.addEventListener("click", () => {
           window.open(e.url, "_blank", "noopener,noreferrer"), closeMapsChooser()
@@ -8751,7 +8772,7 @@
           let y = "cd";
           r && (y += " cto"), p && (y += " cd-past"), d ? y += " cbo" : l.includes("concert") ? y += " ccon" : c ? y += g.length ? " creh-warn" : " creh" : u ? y += " cfb" : m && (y += " cd-xgroup");
           let v = `<div class="cdn">${t}</div>`;
-          if (u && (v += '<div class="cltn">⚡</div>'), d && (v += `<div class="cbol">${d}</div>`), g.length) {
+          if (u && (v += '<div class="cltn">' + ricon("bolt", 9) + "</div>"), d && (v += `<div class="cbol">${d}</div>`), g.length) {
             const e = g.slice(0, 2).join(", ") + (g.length > 2 ? "…" : "");
             v += `<div class="creh-warn-lbl">⚠ ${e}</div>`
           }
@@ -8905,7 +8926,7 @@
         });
       r.innerHTML = d.length ? d.map(o => {
         const a = t(DN[new Date(e, n, o).getDay()]);
-        return `<div class="fbc" onclick="openRehMod(${o},'${e}-${String(n+1).padStart(2,"0")}-${String(o).padStart(2,"0")}',true)">⚡ ${a} ${o} ${t(MAb[n])}</div>`
+        return `<div class="fbc" onclick="openRehMod(${o},'${e}-${String(n+1).padStart(2,"0")}-${String(o).padStart(2,"0")}',true)">${ricon("bolt",10)} ${a} ${o} ${t(MAb[n])}</div>`
       }).join("") : `<span style="font-size:.74rem;color:var(--ink3)">${t("No full-group days this month")}</span>`
     }
 
@@ -8935,11 +8956,11 @@
       document.getElementById("bestSub").textContent = i > 0 ? `${i} day${i>1?"s":""} where all ${members.length} members are free this month.` : t("Showing best partial availability — no full-group days found.");
       const l = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
         r = ["bc1", "", ""],
-        d = [t("⚡ Best day"), t("2nd choice"), t("3rd choice")];
+        d = [ricon("bolt", 10) + " " + t("Best day"), t("2nd choice"), t("3rd choice")];
       document.getElementById("bestList").innerHTML = s.map((o, a) => {
         const s = l[new Date(e, n, o.d).getDay()],
           i = members.map((e, t) => `<div class="bcav" style="background:${o.avs[t]?e.color:"#CCC"}">${e.init}</div>`).join("");
-        return `<div class="bcard ${r[a]}" onclick="openRehMod(${o.d},'${o.key}',${o.full})"><div class="bcrk">${o.full?"⚡ ":""}${d[a]}</div><div class="bcdt">${t(s)} ${o.d}</div><div class="bcdw">${t(MAb[n])} ${e}</div><div class="bcavs">${i}</div><div class="bccnt"><strong>${o.cnt}/${members.length}</strong> ${t("available")}</div><button class="bcbtn" onclick="event.stopPropagation();openRehMod(${o.d},'${o.key}',${o.full})">${t("Set as rehearsal →")}</button></div>`
+        return `<div class="bcard ${r[a]}" onclick="openRehMod(${o.d},'${o.key}',${o.full})"><div class="bcrk">${o.full&&a>0?ricon("bolt",10)+" ":""}${d[a]}</div><div class="bcdt">${t(s)} ${o.d}</div><div class="bcdw">${t(MAb[n])} ${e}</div><div class="bcavs">${i}</div><div class="bccnt"><strong>${o.cnt}/${members.length}</strong> ${t("available")}</div><button class="bcbtn" onclick="event.stopPropagation();openRehMod(${o.d},'${o.key}',${o.full})">${t("Set as rehearsal →")}</button></div>`
       }).join("")
     }
     let pendKey = null;
@@ -9087,10 +9108,10 @@
       const o = "past" === n,
         a = "cancelled" === n,
         s = (e.photos || []).slice(0, 4),
-        i = s.length ? `<div class="concert-photos">${s.map((t,n)=>`<img class="concert-thumb" src="${t.url}" alt="Concert photo ${n+1}" onclick="event.stopPropagation();openPhotoLightbox('${e.id}',${n})">`).join("")}${a?"":`<label class="concert-thumb-add" onclick="event.stopPropagation()"><input type="file" accept="image/*" style="display:none" onchange="addConcertPhoto(event,'${e.id}')">+</label>`}</div>` : a ? "" : `<div class="concert-photos"><label class="concert-thumb-add" onclick="event.stopPropagation()"><input type="file" accept="image/*" style="display:none" onchange="addConcertPhoto(event,'${e.id}')">📷</label></div>`,
+        i = s.length ? `<div class="concert-photos">${s.map((t,n)=>`<img class="concert-thumb" src="${t.url}" alt="Concert photo ${n+1}" onclick="event.stopPropagation();openPhotoLightbox('${e.id}',${n})">`).join("")}${a?"":`<label class="concert-thumb-add" onclick="event.stopPropagation()"><input type="file" accept="image/*" style="display:none" onchange="addConcertPhoto(event,'${e.id}')">+</label>`}</div>` : a ? "" : `<div class="concert-photos"><label class="concert-thumb-add" onclick="event.stopPropagation()"><input type="file" accept="image/*" style="display:none" onchange="addConcertPhoto(event,'${e.id}')">${ricon("camera",18)}</label></div>`,
         l = a ? `<span style="margin-left:8px;font-size:.66rem;padding:2px 7px;border-radius:99px;background:var(--r2);color:var(--r);font-weight:600;vertical-align:middle">${t("Cancelled")}</span>` : o ? `<span style="margin-left:8px;font-size:.66rem;padding:2px 7px;border-radius:99px;background:var(--bg2);color:var(--ink3);font-weight:600;vertical-align:middle">${t("Past")}</span>` : "",
         r = a || o ? `<button class="btn btn-g btn-sm" data-action="view">${t("View")}</button>` : `<button class="btn btn-g btn-sm" style="color:var(--amb);border-color:var(--amb2)" data-action="cancel">${t("Cancel")}</button>\n      <button class="btn btn-g btn-sm" data-action="view">${t("View")}</button>`;
-      return `<div class="ccrd${o?" past":""}${a?" cancelled":""}" data-cid="${e.id}" onclick="handleConcertCardClick(event,'${e.id}')">\n    <div class="cdb">\n      <div class="cdmo">${t(e.month)}</div>\n      <div class="cddy" style="${o||a?"color:var(--ink3)":""}">${e.day}</div>\n      <div class="cdyr">${e.year}</div>\n    </div>\n    <div>\n      <div class="ctitle">${esc(e.title)}${l}</div>\n      <div class="cmeta">\n        <span class="cmi"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 2C5.8 2 4 3.8 4 6c0 3.5 4 8 4 8s4-4.5 4-8c0-2.2-1.8-4-4-4z"/><circle cx="8" cy="6" r="1.5"/></svg>${mapAddr(e.venue)}</span>\n        <span class="cmi"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M8 4v4l3 2"/></svg>${esc(e.time)} · ${esc(e.duration)}min</span>\n        <span class="cmi"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 14s1-3 6-3 6 3 6 3M8 8a3 3 0 100-6 3 3 0 000 6z"/></svg>~${esc(e.audience)}</span>\n      </div>\n      <div class="cbadges">\n        <span class="pill ${a?"pr":"pp"}">${a?t("🚫 Cancelled"):t("Concert")}</span>\n        ${!a&&e.paid?`<span class="pill pg">€ ${e.total}</span><span class="pill pgray">${e.price}</span>`:a?"":`<span class="pill pgray">${t("Free")}</span>`}\n        ${(e.setlistIds||[]).map(e=>{const t=_setlistMap[e];return t?`<span class="pill pp" style="cursor:pointer" data-action="setlist" data-slid="${e}">♩ ${esc(t.name)}</span>`:""}).join("")}\n\n      </div>\n      ${i}\n    </div>\n    <div class="cactions">${r}</div>\n  </div>`
+      return `<div class="ccrd${o?" past":""}${a?" cancelled":""}" data-cid="${e.id}" onclick="handleConcertCardClick(event,'${e.id}')">\n    <div class="cdb">\n      <div class="cdmo">${t(e.month)}</div>\n      <div class="cddy" style="${o||a?"color:var(--ink3)":""}">${e.day}</div>\n      <div class="cdyr">${e.year}</div>\n    </div>\n    <div>\n      <div class="ctitle">${esc(e.title)}${l}</div>\n      <div class="cmeta">\n        <span class="cmi"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 2C5.8 2 4 3.8 4 6c0 3.5 4 8 4 8s4-4.5 4-8c0-2.2-1.8-4-4-4z"/><circle cx="8" cy="6" r="1.5"/></svg>${mapAddr(e.venue)}</span>\n        <span class="cmi"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M8 4v4l3 2"/></svg>${esc(e.time)} · ${esc(e.duration)}min</span>\n        <span class="cmi"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 14s1-3 6-3 6 3 6 3M8 8a3 3 0 100-6 3 3 0 000 6z"/></svg>~${esc(e.audience)}</span>\n      </div>\n      <div class="cbadges">\n        <span class="pill ${a?"pr":"pp"}">${a?t("Cancelled"):t("Concert")}</span>\n        ${!a&&e.paid?`<span class="pill pg">€ ${e.total}</span><span class="pill pgray">${e.price}</span>`:a?"":`<span class="pill pgray">${t("Free")}</span>`}\n        ${(e.setlistIds||[]).map(e=>{const t=_setlistMap[e];return t?`<span class="pill pp" style="cursor:pointer" data-action="setlist" data-slid="${e}">♩ ${esc(t.name)}</span>`:""}).join("")}\n\n      </div>\n      ${i}\n    </div>\n    <div class="cactions">${r}</div>\n  </div>`
     }
 
     function handleConcertCardClick(e, t) {
@@ -9300,7 +9321,7 @@
         n = document.getElementById("cePhotoArea");
       if (!n) return;
       const o = t && t.photos || [];
-      n.innerHTML = o.map((t, n) => `\n    <div style="position:relative;display:inline-block">\n      <img src="${t.url}" style="width:64px;height:64px;border-radius:8px;object-fit:cover;border:1.5px solid var(--bd)">\n      <button onclick="removeConcertPhoto('${e}',${n})" style="position:absolute;top:-6px;right:-6px;width:18px;height:18px;border-radius:50%;background:var(--r);border:2px solid var(--w);color:#fff;font-size:.55rem;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1">✕</button>\n    </div>`).join("") + `<label style="width:64px;height:64px;border-radius:8px;border:2px dashed var(--bd);display:inline-flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;color:var(--ink3);font-size:.65rem;gap:3px;transition:border-color .12s" onmouseover="this.style.borderColor='var(--a)'" onmouseout="this.style.borderColor='var(--bd)'">\n      <span style="font-size:1.3rem">📷</span>Add photo\n      <input type="file" accept="image/*" style="display:none" onchange="addConcertPhoto(event,'${e||editingConcertId||""}')">\n    </label>`
+      n.innerHTML = o.map((t, n) => `\n    <div style="position:relative;display:inline-block">\n      <img src="${t.url}" style="width:64px;height:64px;border-radius:8px;object-fit:cover;border:1.5px solid var(--bd)">\n      <button onclick="removeConcertPhoto('${e}',${n})" style="position:absolute;top:-6px;right:-6px;width:18px;height:18px;border-radius:50%;background:var(--r);border:2px solid var(--w);color:#fff;font-size:.55rem;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1">✕</button>\n    </div>`).join("") + `<label style="width:64px;height:64px;border-radius:8px;border:2px dashed var(--bd);display:inline-flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;color:var(--ink3);font-size:.65rem;gap:3px;transition:border-color .12s" onmouseover="this.style.borderColor='var(--a)'" onmouseout="this.style.borderColor='var(--bd)'">\n      ${ricon("camera",18)}Add photo\n      <input type="file" accept="image/*" style="display:none" onchange="addConcertPhoto(event,'${e||editingConcertId||""}')">\n    </label>`
     }
     async function removeConcertPhoto(e, t) {
       const n = concerts.find(t => t.id === e);
@@ -10328,16 +10349,16 @@
       l.style.background = t.color || "#9A9AB0", i ? (l.style.backgroundImage = `url(${i})`, l.style.backgroundSize = "cover", l.style.backgroundPosition = "center", l.textContent = "") : (l.style.backgroundImage = "", l.textContent = t.init || t.name.slice(0, 2).toUpperCase()), document.getElementById("gdName").textContent = t.name, document.getElementById("gdFlag").innerHTML = s, document.getElementById("gdInstrument").textContent = `${instIcon(t.instrument)} ${t.instrument}${t.inst2?" · "+instIcon(t.inst2)+" "+t.inst2:""}`, document.getElementById("gdGroup").textContent = t.band || "The Jazz Cats", document.getElementById("gdDates").textContent = `${t.guestStart} → ${t.guestEnd} (${a} days)`, document.getElementById("gdBio").textContent = o.bio || "No bio available.", document.getElementById("gdGear").textContent = o.gear || "—", document.getElementById("gdGearRow").style.display = o.gear ? "" : "none";
       const r = [];
       o.spotify && r.push({
-        label: "🎵 Spotify",
+        label: "Spotify",
         url: o.spotify
       }), o.youtube && r.push({
-        label: "▶ YouTube",
+        label: "YouTube",
         url: o.youtube
       }), o.instagram && r.push({
-        label: "📸 Instagram",
+        label: "Instagram",
         url: o.instagram
       }), o.website && r.push({
-        label: "🌐 Website",
+        label: "Website",
         url: o.website
       });
       const d = document.getElementById("gdLinksRow"),
@@ -10821,7 +10842,7 @@
       _dshTargetSlId = y ? y.id : null;
       const v = () => {
         if (!a) return;
-        if (!p) return void(a.innerHTML = `<div class="card dne-empty"><div style="font-size:1.7rem;margin-bottom:6px">📅</div><div style="font-weight:700;margin-bottom:4px">${t("No events scheduled")}</div><p style="font-size:.8rem;color:var(--ink2);margin-bottom:14px">${t("Plan your next rehearsal to get the group together.")}</p><button class="btn btn-p btn-sm" onclick="openNewRehearsal()">+ ${t("Schedule Rehearsal")}</button></div>`);
+        if (!p) return void(a.innerHTML = `<div class="card dne-empty"><div style="margin-bottom:6px;color:var(--ink3);opacity:.6">${ricon("cal",28)}</div><div style="font-weight:700;margin-bottom:4px">${t("No events scheduled")}</div><p style="font-size:.8rem;color:var(--ink2);margin-bottom:14px">${t("Plan your next rehearsal to get the group together.")}</p><button class="btn btn-p btn-sm" onclick="openNewRehearsal()">+ ${t("Schedule Rehearsal")}</button></div>`);
         const e = p.raw,
           n = "rehearsal" === p.type,
           o = new Date(p.date + "T00:00:00"),
@@ -10846,7 +10867,7 @@
               maybe: "? " + t("Maybe")
             },
             a = e.myRsvp?.status ? o[e.myRsvp.status] : t("Not responded");
-          u += `<span class="dne-chip">👥 ${n.yes}/${n.total} ${t("going")}</span>`, u += `<span class="dne-chip" style="border-color:rgba(108,99,255,.3)">${t("You")}: ${a}</span>`
+          u += `<span class="dne-chip">${ricon("people",12)} ${n.yes}/${n.total} ${t("going")}</span>`, u += `<span class="dne-chip" style="border-color:rgba(108,99,255,.3)">${t("You")}: ${a}</span>`
         }
         const y = n ? `nav('rehearsals');openRehView('${e.id}')` : `nav('concerts');openConcertView('${e.id}')`;
         a.innerHTML = `<div class="dne" role="button" tabindex="0" onclick="${y}" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();${y}}">\n      <div class="dne-cal"><div class="m">${t(MAb[o.getMonth()])}</div><div class="d">${o.getDate()}</div><div class="dow">${t(_DOWS[o.getDay()])}</div></div>\n      <div class="dne-body">${s}<div class="dne-title">${esc(e.title||(n?"Rehearsal":"Concert"))}</div><div class="dne-meta">${c}</div>${u?`<div class="dne-chips">${u}</div>`:""}</div>\n      <div class="dne-cd">${_dshCountdown(p.date)}</div>\n    </div>`
@@ -11625,29 +11646,29 @@
       </div>
 
       <div style="height:1px;background:var(--bd);margin:4px 0 14px"></div>
-      <div style="font-size:.69rem;font-weight:700;color:var(--ink2);margin-bottom:6px;letter-spacing:.04em;text-transform:uppercase">📄 Lyrics / Sheet Music <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--ink3)">(optional)</span></div>
+      <div style="font-size:.69rem;font-weight:700;color:var(--ink2);margin-bottom:6px;letter-spacing:.04em;text-transform:uppercase"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px" aria-hidden="true"><path d="M6.5 3h8l4 4v14h-12z"/><path d="M14 3v4.5h4.5"/><path d="M9.5 12h5.5M9.5 15.5h4"/></svg> Lyrics / Sheet Music <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--ink3)">(optional)</span></div>
       <div id="seLyricsRepoHint" style="font-size:.72rem;color:var(--a);margin-bottom:8px;display:none"></div>
       <div style="display:flex;gap:7px;align-items:center;margin-bottom:8px">
         <input id="seLyrics" style="flex:1;padding:9px 13px;background:var(--bg);border:1.5px solid var(--bd);border-radius:var(--rad);color:var(--ink);font-family:var(--font);font-size:.83rem;outline:none;transition:border-color .13s" placeholder="Paste Google Drive, Dropbox, OneDrive… link, or upload below" onfocus="this.style.borderColor='var(--a)'" onblur="this.style.borderColor='var(--bd)'" oninput="document.getElementById('seLyricsViewBtn').style.display=this.value?'':'none'">
-        <button id="seLyricsViewBtn" onclick="openMediaUrl(document.getElementById('seLyrics'))" style="display:none;padding:8px 12px;border-radius:var(--rad);border:1.5px solid var(--a);background:var(--a2);color:var(--aTxt);font-family:var(--font);font-size:.8rem;font-weight:600;cursor:pointer;white-space:nowrap">📄 View</button>
+        <button id="seLyricsViewBtn" onclick="openMediaUrl(document.getElementById('seLyrics'))" style="display:none;padding:8px 12px;border-radius:var(--rad);border:1.5px solid var(--a);background:var(--a2);color:var(--aTxt);font-family:var(--font);font-size:.8rem;font-weight:600;cursor:pointer;white-space:nowrap"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px" aria-hidden="true"><path d="M6.5 3h8l4 4v14h-12z"/><path d="M14 3v4.5h4.5"/><path d="M9.5 12h5.5M9.5 15.5h4"/></svg> View</button>
       </div>
       <div style="display:flex;align-items:center;gap:9px;margin-bottom:4px">
         <label class="btn btn-g btn-sm" style="cursor:pointer;font-size:.75rem;padding:6px 12px">
-          ⬆ Upload file
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 16V4.5M7.5 8.5 12 4l4.5 4.5"/><path d="M4.5 19.5h15"/></svg> Upload file
           <input type="file" id="seLyricsUpload" accept=".pdf,.png,.jpg,.jpeg,.gif,.mxl,.xml" style="display:none" onchange="handleSongFileUpload(event)">
         </label>
         <span id="seLyricsUploadStatus" style="font-size:.72rem;color:var(--ink3)"></span>
       </div>
       <div style="font-size:.69rem;color:var(--ink3);margin-bottom:4px">Accepted: PDF, PNG, JPG, GIF, MXL, XML &nbsp;·&nbsp; Max 10 MB &nbsp;·&nbsp; Stored in Ritovo</div>
 
-      <div style="font-size:.69rem;font-weight:700;color:var(--ink2);margin-bottom:6px;margin-top:14px;letter-spacing:.04em;text-transform:uppercase">🎵 Sheet Music <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--ink3)">(optional)</span></div>
+      <div style="font-size:.69rem;font-weight:700;color:var(--ink2);margin-bottom:6px;margin-top:14px;letter-spacing:.04em;text-transform:uppercase"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px" aria-hidden="true"><path d="M10 18V5.5l7-1.8V15.5"/><circle cx="7.6" cy="18" r="2.5" fill="currentColor" stroke="none"/><circle cx="14.6" cy="15.5" r="2.5" fill="currentColor" stroke="none"/></svg> Sheet Music <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--ink3)">(optional)</span></div>
       <div style="display:flex;gap:7px;align-items:center;margin-bottom:8px">
         <input id="seSheetMusic" style="flex:1;padding:9px 13px;background:var(--bg);border:1.5px solid var(--bd);border-radius:var(--rad);color:var(--ink);font-family:var(--font);font-size:.83rem;outline:none;transition:border-color .13s" placeholder="Paste link or upload →" onfocus="this.style.borderColor='var(--a)'" onblur="this.style.borderColor='var(--bd)'" oninput="document.getElementById('seSheetMusicViewBtn').style.display=this.value?'':'none'">
-        <button id="seSheetMusicViewBtn" onclick="openMediaUrl(document.getElementById('seSheetMusic'))" style="display:none;padding:8px 12px;border-radius:var(--rad);border:1.5px solid var(--a);background:var(--a2);color:var(--aTxt);font-family:var(--font);font-size:.8rem;font-weight:600;cursor:pointer;white-space:nowrap">🎵 View</button>
+        <button id="seSheetMusicViewBtn" onclick="openMediaUrl(document.getElementById('seSheetMusic'))" style="display:none;padding:8px 12px;border-radius:var(--rad);border:1.5px solid var(--a);background:var(--a2);color:var(--aTxt);font-family:var(--font);font-size:.8rem;font-weight:600;cursor:pointer;white-space:nowrap"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px" aria-hidden="true"><path d="M10 18V5.5l7-1.8V15.5"/><circle cx="7.6" cy="18" r="2.5" fill="currentColor" stroke="none"/><circle cx="14.6" cy="15.5" r="2.5" fill="currentColor" stroke="none"/></svg> View</button>
       </div>
       <div style="display:flex;align-items:center;gap:9px;margin-bottom:4px">
         <label class="btn btn-g btn-sm" style="cursor:pointer;font-size:.75rem;padding:6px 12px">
-          ⬆ Upload file
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 16V4.5M7.5 8.5 12 4l4.5 4.5"/><path d="M4.5 19.5h15"/></svg> Upload file
           <input type="file" id="seSheetMusicUpload" accept=".pdf,.png,.jpg,.jpeg,.gif,.mxl,.xml" style="display:none" onchange="handleSongSheetMusicUpload(event)">
         </label>
         <span id="seSheetMusicStatus" style="font-size:.72rem;color:var(--ink3)"></span>
@@ -11841,7 +11862,7 @@
           <div style="font-size:.69rem;font-weight:700;color:var(--a);text-transform:uppercase;letter-spacing:.07em;margin-bottom:4px" data-i18n="Concert View">Concert View</div>
           <div class="mott" id="cvTitle" style="margin-bottom:6px"></div>
           <div style="display:flex;gap:5px;flex-wrap:wrap">
-            <span id="cvCancelledBadge" class="pill pr" style="display:none" data-i18n="🚫 Cancelled">🚫 Cancelled</span>
+            <span id="cvCancelledBadge" class="pill pr" style="display:none" data-i18n="Cancelled">Cancelled</span>
             <span id="cvPastBadge" class="pill pgray" style="display:none" data-i18n="Past">Past</span>
           </div>
         </div>
@@ -11886,7 +11907,7 @@
 
   <div class="mov" id="cancelMod" style="display:none" onclick="closeMB(event,'cancelMod')">
     <div class="mod" style="max-width:400px">
-      <div style="font-size:2rem;text-align:center;margin-bottom:10px">🚫</div>
+      <div style="text-align:center;margin-bottom:10px;color:var(--r)"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M6 6l12 12"/></svg></div>
       <div class="mott" style="text-align:center" data-i18n="Cancel Event">Cancel Event</div>
       <div class="most" style="text-align:center">Are you sure you want to cancel <strong id="cancelItemName"></strong>? The event will move to the Cancelled section.</div>
       <div style="background:var(--amb2);border:1px solid rgba(217,119,6,.3);border-radius:var(--rad);padding:11px 14px;margin-bottom:16px">

@@ -315,7 +315,6 @@ window.PT_BR = {
 
   /* ── REHEARSALS PAGE ──────────────────────────────────── */
   'Past Rehearsals': 'Ensaios Passados',
-  '🚫 Cancelled': '🚫 Cancelado',
   'No upcoming rehearsals — click + New Rehearsal to schedule one.': 'Nenhum ensaio próximo — clique em + Novo Ensaio para agendar.',
   'No past rehearsals yet.': 'Nenhum ensaio passado ainda.',
   'New Rehearsal': 'Novo Ensaio',
@@ -350,7 +349,6 @@ window.PT_BR = {
   'Link Concert to Set List': 'Vincular Show à Setlist',
   'Concert View': 'Visualizar Show',
   'Delete concert?': 'Excluir show?',
-  '🚫 Cancel': '🚫 Cancelar',
   '♩ Link Set List': '♩ Vincular Setlist',
   'Concert': 'Show',
   'Free': 'Gratuito',
@@ -382,7 +380,7 @@ window.PT_BR = {
   'No members yet. Invite someone to join!': 'Nenhum membro ainda. Convide alguém para entrar!',
   'No full-group days this month': 'Nenhum dia com a grupo completa este mês',
   'Showing best partial availability — no full-group days found.': 'Mostrando a melhor disponibilidade parcial — nenhum dia com a grupo completa encontrado.',
-  '⚡ Best day': '⚡ Melhor dia',
+  'Best day': '⚡ Melhor dia',
   '2nd choice': '2ª opção',
   '3rd choice': '3ª opção',
   'available': 'disponíveis',
@@ -428,7 +426,7 @@ window.PT_BR = {
   'Individual days can still be blocked separately on the calendar.': 'Dias individuais ainda podem ser bloqueados separadamente no calendário.',
 
   /* ── CALENDAR PAGE ────────────────────────────────────── */
-  '⚡ Best Rehearsal Days': '⚡ Melhores Dias de Ensaio',
+  'Best Rehearsal Days': '⚡ Melhores Dias de Ensaio',
   'Top available days this month, excluding blackouts and booked events.': 'Melhores dias disponíveis este mês, excluindo bloqueios e eventos agendados.',
   'Full': 'Completo',
   'Compact': 'Compacto',
@@ -437,8 +435,6 @@ window.PT_BR = {
   'Full group': 'Grupo completa',
   'Blackout': 'Bloqueio',
   'Cross-group conflict ⊘': 'Conflito entre grupos ⊘',
-  'Full group ⚡': 'Grupo completa ⚡',
-  '⚡ Full group:': '⚡ Grupo completa:',
   'No blackouts': 'Nenhum bloqueio',
   'blackout period': 'período de bloqueio',
   'blackout periods': 'períodos de bloqueio',

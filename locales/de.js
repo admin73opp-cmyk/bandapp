@@ -315,7 +315,6 @@ window.DE = {
 
   /* ── REHEARSALS PAGE ──────────────────────────────────── */
   'Past Rehearsals': 'Vergangene Proben',
-  '🚫 Cancelled': '🚫 Abgesagt',
   'No upcoming rehearsals — click + New Rehearsal to schedule one.': 'Keine bevorstehenden Proben — klicke auf + Neue Probe, um eine zu planen.',
   'No past rehearsals yet.': 'Noch keine vergangenen Proben.',
   'New Rehearsal': 'Neue Probe',
@@ -350,7 +349,6 @@ window.DE = {
   'Link Concert to Set List': 'Konzert mit Setlist verknüpfen',
   'Concert View': 'Konzertansicht',
   'Delete concert?': 'Konzert löschen?',
-  '🚫 Cancel': '🚫 Absagen',
   '♩ Link Set List': '♩ Setlist verknüpfen',
   'Concert': 'Konzert',
   'Free': 'Kostenlos',
@@ -382,7 +380,7 @@ window.DE = {
   'No members yet. Invite someone to join!': 'Noch keine Mitglieder. Lade jemanden ein!',
   'No full-group days this month': 'Keine Tage mit der ganzen Group diesen Monat',
   'Showing best partial availability — no full-group days found.': 'Beste Teilverfügbarkeit wird angezeigt — keine Tage mit der ganzen Group gefunden.',
-  '⚡ Best day': '⚡ Bester Tag',
+  'Best day': '⚡ Bester Tag',
   '2nd choice': '2. Wahl',
   '3rd choice': '3. Wahl',
   'available': 'verfügbar',
@@ -428,7 +426,7 @@ window.DE = {
   'Individual days can still be blocked separately on the calendar.': 'Einzelne Tage können im Kalender noch separat blockiert werden.',
 
   /* ── CALENDAR PAGE ────────────────────────────────────── */
-  '⚡ Best Rehearsal Days': '⚡ Beste Probetage',
+  'Best Rehearsal Days': '⚡ Beste Probetage',
   'Top available days this month, excluding blackouts and booked events.': 'Beste verfügbare Tage diesen Monat, ohne Sperrzeiten und gebuchte Termine.',
   'Full': 'Vollständig',
   'Compact': 'Kompakt',
@@ -437,8 +435,6 @@ window.DE = {
   'Full group': 'Ganze Group',
   'Blackout': 'Sperrzeit',
   'Cross-group conflict ⊘': 'Groupübergreifender Konflikt ⊘',
-  'Full group ⚡': 'Ganze Group ⚡',
-  '⚡ Full group:': '⚡ Ganze Group:',
   'No blackouts': 'Keine Sperrzeiten',
   'blackout period': 'Sperrzeit',
   'blackout periods': 'Sperrzeiten',
