@@ -125,8 +125,13 @@ const CORRECTNESS = () => {
       try{ currentUser.lang='nl'; }catch(e){}
       if(typeof applyI18n==='function') applyI18n();
       // UI text only (exclude trailing <script> text)
-      const a=document.getElementById('authScreen'), b=document.getElementById('app');
-      const txt=((a?a.textContent:'')+' '+(b?b.textContent:''));
+      // UI text from the WHOLE document (body-level modals included), minus
+      // <script>/<style> text. (Corrected 2026-06-12: the earlier snapshot used
+      // only #app + #authScreen and so mis-counted correctly-translated
+      // body-level modals as misses — a false negative, not a gaming vector.)
+      const clone=document.body.cloneNode(true);
+      clone.querySelectorAll('script,style').forEach(e=>e.remove());
+      const txt=clone.textContent;
       let miss=[];
       for(const k of canary){
         const nl=(window.NL||{})[k];
