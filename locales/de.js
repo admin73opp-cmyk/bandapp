@@ -862,4 +862,5 @@ window.DE = {
   '— Select —': '— Auswählen —',
   '✕ Clear': '✕ Leeren',
   '＋ Setlist': '＋ Setlist',
+  '(all optional)': '(alle optional)',
 };

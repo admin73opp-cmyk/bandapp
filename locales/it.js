@@ -862,4 +862,5 @@ window.IT = {
   '— Select —': '— Seleziona —',
   '✕ Clear': '✕ Cancella',
   '＋ Setlist': '＋ Setlist',
+  '(all optional)': '(tutti facoltativi)',
 };

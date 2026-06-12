@@ -862,4 +862,5 @@ window.PT_BR = {
   '— Select —': '— Selecionar —',
   '✕ Clear': '✕ Limpar',
   '＋ Setlist': '＋ Setlist',
+  '(all optional)': '(todos opcionais)',
 };

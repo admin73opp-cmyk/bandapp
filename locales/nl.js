@@ -862,4 +862,5 @@ window.NL = {
   '— Select —': '— Selecteer —',
   '✕ Clear': '✕ Wissen',
   '＋ Setlist': '＋ Setlist',
+  '(all optional)': '(allemaal optioneel)',
 };

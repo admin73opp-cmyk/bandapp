@@ -862,4 +862,5 @@ window.ES = {
   '— Select —': '— Seleccionar —',
   '✕ Clear': '✕ Limpiar',
   '＋ Setlist': '＋ Setlist',
+  '(all optional)': '(todos opcionales)',
 };

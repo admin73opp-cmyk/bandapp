@@ -511,9 +511,9 @@ html[data-theme="dark"] .sb-group-name{color:var(--ink)!important}
         <div style="font-weight:700;color:var(--a);margin-bottom:2px" data-i18n="You've been invited!">You've been invited!</div>
         <div style="color:var(--ink2)"><span data-i18n="Sign up to join">Sign up to join</span> <strong id="sf-invite-group">the group</strong></div>
       </div>
-      <div class="fr" data-i18n="First name" data-i18n="Last name"><div class="fg"><label>First name</label><input id="signupFirst" placeholder="Marco" autocomplete="given-name"></div><div class="fg"><label>Last name</label><input id="signupLast" placeholder="Rossi" autocomplete="family-name"></div></div>
+      <div class="fr"><div class="fg"><label data-i18n="First name">First name</label><input id="signupFirst" placeholder="Marco" autocomplete="given-name"></div><div class="fg"><label data-i18n="Last name">Last name</label><input id="signupLast" placeholder="Rossi" autocomplete="family-name"></div></div>
       <div class="fg" data-i18n="Email"><label>Email</label><input id="signupEmail" type="email" placeholder="you@email.com" autocomplete="email"></div>
-      <div class="fg" data-i18n="Password" data-i18n="(min. 8 chars)"><label>Password <span style="font-weight:400;color:var(--ink3)">(min. 8 chars)</span></label><input id="signupPassword" type="password" placeholder="••••••••" autocomplete="new-password"></div>
+      <div class="fg"><label><span data-i18n="Password">Password</span> <span style="font-weight:400;color:var(--ink3)" data-i18n="(min. 8 chars)">(min. 8 chars)</span></label><input id="signupPassword" type="password" placeholder="••••••••" autocomplete="new-password"></div>
       <div class="fg" id="sfGroupField" data-i18n="Group name (optional)"><label>Group name (optional)</label><input id="signupGroup" placeholder="The Jazz Cats"></div>
       <div id="signupErr" class="auth-err" style="display:none"><span class="auth-err-msg"></span><button class="auth-err-x" onclick="clearAuthErr('signupErr')" aria-label="Dismiss">✕</button></div>
       <button class="btn btn-p btn-fw" onclick="doSignUp()" data-i18n="Create account">Create account</button>
@@ -521,7 +521,7 @@ html[data-theme="dark"] .sb-group-name{color:var(--ink)!important}
     <div id="sf-confirm" style="display:none;text-align:center;padding:8px 0">
       <div style="font-size:2.2rem;margin-bottom:10px">📧</div>
       <div style="font-weight:700;font-size:1.05rem;margin-bottom:8px" data-i18n="Check your inbox">Check your inbox</div>
-      <p style="font-size:.84rem;color:var(--ink2);margin-bottom:18px" data-i18n="We sent a confirmation link to" data-i18n="Click it to activate your account, then sign in.">We sent a confirmation link to <strong id="sf-confirm-email"></strong>. Click it to activate your account, then sign in.</p>
+      <p style="font-size:.84rem;color:var(--ink2);margin-bottom:18px"><span data-i18n="We sent a confirmation link to">We sent a confirmation link to</span> <strong id="sf-confirm-email"></strong>. <span data-i18n="Click it to activate your account, then sign in.">Click it to activate your account, then sign in.</span></p>
       <button class="btn btn-g btn-fw" onclick="switchTab('login')" data-i18n="Back to sign in">Back to sign in</button>
     </div>
     <div id="ff" style="display:none">
@@ -537,13 +537,13 @@ html[data-theme="dark"] .sb-group-name{color:var(--ink)!important}
     <div id="ff-sent" style="display:none;text-align:center;padding:8px 0">
       <div style="font-size:2.2rem;margin-bottom:10px">✉️</div>
       <div style="font-weight:700;font-size:1.05rem;margin-bottom:8px" data-i18n="Link sent!">Link sent!</div>
-      <p style="font-size:.84rem;color:var(--ink2);margin-bottom:18px" data-i18n="Check your inbox at" data-i18n="and click the link to reset your password.">Check your inbox at <strong id="ff-sent-email"></strong> and click the link to reset your password.</p>
+      <p style="font-size:.84rem;color:var(--ink2);margin-bottom:18px"><span data-i18n="Check your inbox at">Check your inbox at</span> <strong id="ff-sent-email"></strong> <span data-i18n="and click the link to reset your password.">and click the link to reset your password.</span></p>
       <button class="btn btn-g btn-fw" onclick="switchTab('login')" data-i18n="Back to sign in">Back to sign in</button>
     </div>
     <div id="reset-pw-form" style="display:none">
       <div style="font-weight:600;font-size:.9rem;margin-bottom:6px" data-i18n="Set a new password">Set a new password</div>
       <p style="font-size:.81rem;color:var(--ink2);margin-bottom:14px" data-i18n="Choose a new password for your account.">Choose a new password for your account.</p>
-      <div class="fg" data-i18n="New password" data-i18n="(min. 8 chars)"><label>New password <span style="font-weight:400;color:var(--ink3)">(min. 8 chars)</span></label><input id="resetNewPw" type="password" placeholder="••••••••" autocomplete="new-password"></div>
+      <div class="fg"><label><span data-i18n="New password">New password</span> <span style="font-weight:400;color:var(--ink3)" data-i18n="(min. 8 chars)">(min. 8 chars)</span></label><input id="resetNewPw" type="password" placeholder="••••••••" autocomplete="new-password"></div>
       <div class="fg" data-i18n="Confirm new password"><label>Confirm new password</label><input id="resetConfirmPw" type="password" placeholder="••••••••" autocomplete="new-password"></div>
       <div id="resetErr" class="auth-err" style="display:none"><span class="auth-err-msg"></span><button class="auth-err-x" onclick="clearAuthErr('resetErr')" aria-label="Dismiss">✕</button></div>
       <button class="btn btn-p btn-fw" onclick="doResetPassword()" data-i18n="Set new password">Set new password</button>
@@ -710,13 +710,13 @@ html[data-theme="dark"] .sb-group-name{color:var(--ink)!important}
           <button class="stb on" onclick="switchV('main',this)" data-i18n="Main_tab">Main</button>
           <button class="stb" id="myViewBtn" onclick="switchV('my',this)">My View</button>
         </div>
-        <div id="vMain" data-i18n="Title" data-i18n="Artist" data-i18n="Key" data-i18n="Time" data-i18n="Links" data-i18n="Notes"><div style="overflow-x:auto"><table class="slt" id="slTbl"><thead><tr><th style="width:28px"><span style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap">Reorder</span></th><th style="width:32px">#</th><th>Title</th><th>Artist</th><th style="width:60px">Key</th><th style="width:60px">Time</th><th class="lkcol">Links</th><th>Notes</th><th style="width:60px"><span style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap">Actions</span></th></tr></thead><tbody id="slBody"></tbody></table></div><div id="slCards" style="display:none"></div></div>
+        <div id="vMain"><div style="overflow-x:auto"><table class="slt" id="slTbl"><thead><tr><th style="width:28px"><span style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap">Reorder</span></th><th style="width:32px">#</th><th data-i18n="Title">Title</th><th data-i18n="Artist">Artist</th><th style="width:60px" data-i18n="Key">Key</th><th style="width:60px" data-i18n="Time">Time</th><th class="lkcol" data-i18n="Links">Links</th><th data-i18n="Notes">Notes</th><th style="width:60px"><span style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap">Actions</span></th></tr></thead><tbody id="slBody"></tbody></table></div><div id="slCards" style="display:none"></div></div>
         <div id="vMy" style="display:none">
           <div style="padding:10px 12px;background:var(--a2);border-radius:var(--rad);margin-bottom:12px;border:1px solid rgba(108,99,255,.2)">
             <div id="pvHeader" style="font-size:.77rem;font-weight:600;color:var(--a);margin-bottom:2px">✦ Personal view</div>
             <div style="font-size:.71rem;color:var(--ink2)" data-i18n="Your notes are private. Stays in sync with the main list.">Your notes are private. Stays in sync with the main list.</div>
           </div>
-          <div style="overflow-x:auto" data-i18n="Title" data-i18n="Artist" data-i18n="Key" data-i18n="Group Notes"><table class="slt"><thead><tr><th>#</th><th>Title</th><th>Artist</th><th>Key</th><th>Group Notes</th><th>My Notes</th></tr></thead><tbody id="myBody"></tbody></table></div>
+          <div style="overflow-x:auto"><table class="slt"><thead><tr><th>#</th><th data-i18n="Title">Title</th><th data-i18n="Artist">Artist</th><th data-i18n="Key">Key</th><th data-i18n="Group Notes">Group Notes</th><th>My Notes</th></tr></thead><tbody id="myBody"></tbody></table></div>
         </div>
         <div style="padding-top:10px;border-top:1px solid var(--bd);margin-top:6px;display:flex;justify-content:space-between">
           <span style="font-size:.72rem;color:var(--ink2)">12 songs · ~84 min</span>
@@ -1085,7 +1085,7 @@ html[data-theme="dark"] .sb-group-name{color:var(--ink)!important}
                 </div>
               </div>
             </div>
-            <div style="display:flex;gap:6px;flex-shrink:0;flex-wrap:wrap" id="bpAdminActions" style="display:none">
+            <div style="display:none;gap:6px;flex-shrink:0;flex-wrap:wrap" id="bpAdminActions">
               <button class="btn btn-g btn-sm" id="bpEditBtn" onclick="toggleGroupEdit(true)" data-i18n="Edit Profile">Edit Profile</button>
               <button class="btn btn-p btn-sm" id="bpSaveBtn" onclick="saveBandEditInline()" style="display:none" data-i18n="Save Changes">Save Changes</button>
               <button class="btn btn-g btn-sm" id="bpCancelBtn" onclick="toggleGroupEdit(false)" style="display:none" data-i18n="Cancel">Cancel</button>
@@ -1107,16 +1107,16 @@ html[data-theme="dark"] .sb-group-name{color:var(--ink)!important}
           <div class="dtogs" id="dtogs"></div>
         </div>
         <div class="card" style="grid-column:1/-1">
-          <div class="ch" data-i18n="Blackout Periods & Closures" data-i18n="+ Add Period"><div class="ct">Blackout Periods &amp; Closures</div><button class="btn btn-p btn-sm" onclick="openAddBO()">+ Add Period</button></div>
+          <div class="ch"><div class="ct" data-i18n="Blackout Periods & Closures">Blackout Periods &amp; Closures</div><button class="btn btn-p btn-sm" onclick="openAddBO()" data-i18n="+ Add Period">+ Add Period</button></div>
           <div style="font-size:.75rem;color:var(--ink2);margin-bottom:12px;line-height:1.6" data-i18n="Block any date range — holidays, festivals, school breaks, or individual absences. Excluded from rehearsal suggestions.">Block any date range — holidays, festivals, school breaks, or individual absences. Excluded from rehearsal suggestions.</div>
           <div style="display:flex;gap:13px;margin-bottom:12px;flex-wrap:wrap">
-            <div style="display:flex;align-items:center;gap:5px;font-size:.71rem;color:var(--ink2)" data-i18n="Whole group" data-i18n="blocks everyone"><div style="width:3px;height:12px;border-radius:2px;background:var(--r)"></div><strong>Whole group</strong> — blocks everyone</div>
-            <div style="display:flex;align-items:center;gap:5px;font-size:.71rem;color:var(--ink2)" data-i18n="Specific members" data-i18n="selected people only"><div style="width:3px;height:12px;border-radius:2px;background:var(--bl)"></div><strong>Specific members</strong> — selected people only</div>
+            <div style="display:flex;align-items:center;gap:5px;font-size:.71rem;color:var(--ink2)"><div style="width:3px;height:12px;border-radius:2px;background:var(--r)"></div><strong data-i18n="Whole group">Whole group</strong> — <span data-i18n="blocks everyone">blocks everyone</span></div>
+            <div style="display:flex;align-items:center;gap:5px;font-size:.71rem;color:var(--ink2)"><div style="width:3px;height:12px;border-radius:2px;background:var(--bl)"></div><strong data-i18n="Specific members">Specific members</strong> — <span data-i18n="selected people only">selected people only</span></div>
           </div>
           <div id="boList" style="display:flex;flex-direction:column;gap:7px"></div>
         </div>
         <div class="card">
-          <div class="ch" data-i18n="Group Photos" data-i18n="+ Add Photo"><div class="ct">Group Photos</div><div id="bpPhotosAdminBtn" style="display:none"><label class="btn btn-p btn-sm" style="cursor:pointer"><input type="file" accept="image/*" style="display:none" onchange="addGroupPhoto(event)">+ Add Photo</label></div></div>
+          <div class="ch"><div class="ct" data-i18n="Group Photos">Group Photos</div><div id="bpPhotosAdminBtn" style="display:none"><label class="btn btn-p btn-sm" style="cursor:pointer"><input type="file" accept="image/*" style="display:none" onchange="addGroupPhoto(event)" data-i18n="+ Add Photo">+ Add Photo</label></div></div>
           <div id="bpPhotosGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(90px,1fr));gap:8px"></div>
           <div id="bpPhotosEmpty" style="font-size:.78rem;color:var(--ink3);padding:8px 0" data-i18n="No group photos yet.">No group photos yet.</div>
         </div>
@@ -1261,8 +1261,8 @@ html[data-theme="dark"] .sb-group-name{color:var(--ink)!important}
               </div>
             </div>
             <div class="fr">
-              <div class="fg" data-i18n="Email" data-i18n="(cannot be changed here)"><label>Email <span style="font-weight:400;color:var(--ink3)">(cannot be changed here)</span></label><input type="email" id="mpEmail" readonly style="opacity:.7;cursor:default"></div>
-              <div class="fg" data-i18n="Country of Residence" data-i18n="— Select country —"><label>Country of Residence</label><select id="mpCountry"><option value="">— Select country —</option></select></div>
+              <div class="fg"><label><span data-i18n="Email">Email</span> <span style="font-weight:400;color:var(--ink3)" data-i18n="(cannot be changed here)">(cannot be changed here)</span></label><input type="email" id="mpEmail" readonly style="opacity:.7;cursor:default"></div>
+              <div class="fg"><label data-i18n="Country of Residence">Country of Residence</label><select id="mpCountry"><option value="" data-i18n="— Select country —">— Select country —</option></select></div>
             </div>
             <div class="fg">
               <label data-i18n="WhatsApp / Phone">WhatsApp / Phone</label>
@@ -1299,12 +1299,12 @@ html[data-theme="dark"] .sb-group-name{color:var(--ink)!important}
           </div>
           <div id="mpe-music" style="display:none">
             <div class="fr">
-              <div class="fg" data-i18n="Main Instrument" data-i18n="— Select —"><label>Main Instrument</label><select id="mpInst1" onchange="renderMpInstPreview()"><option value="">— Select —</option></select></div>
-              <div class="fg" data-i18n="Secondary" data-i18n="(optional)" data-i18n="None"><label>Secondary <span style="font-weight:400;color:var(--ink3)">(optional)</span></label><select id="mpInst2" onchange="renderMpInstPreview()"><option value="">None</option></select></div>
+              <div class="fg"><label data-i18n="Main Instrument">Main Instrument</label><select id="mpInst1" onchange="renderMpInstPreview()"><option value="" data-i18n="— Select —">— Select —</option></select></div>
+              <div class="fg"><label><span data-i18n="Secondary">Secondary</span> <span style="font-weight:400;color:var(--ink3)" data-i18n="(optional)">(optional)</span></label><select id="mpInst2" onchange="renderMpInstPreview()"><option value="" data-i18n="None">None</option></select></div>
             </div>
             <div id="mpInstPreview" style="display:none;margin-bottom:10px" data-i18n="Preview"><div style="font-size:.72rem;color:var(--ink3);margin-bottom:5px">Preview</div><div id="mpInstPills" style="display:flex;gap:6px;flex-wrap:wrap"></div></div>
             <div class="fg"><label data-i18n="Vocals">Vocals</label><select id="mpVocals"><option value="None" data-i18n="No vocals">No vocals</option><option value="Lead" data-i18n="Lead vocals">Lead vocals</option><option value="Backing" data-i18n="Backing vocals">Backing vocals</option><option value="Both" data-i18n="Lead &amp; backing">Lead &amp; backing</option></select></div>
-            <div class="fg" data-i18n="Equipment & Gear" data-i18n="(optional)"><label>Equipment &amp; Gear <span style="font-weight:400;color:var(--ink3)">(optional)</span></label><textarea id="mpGear" style="min-height:60px" placeholder="e.g. Fender Stratocaster, Boss pedalboard…"></textarea></div>
+            <div class="fg"><label><span data-i18n="Equipment & Gear">Equipment &amp; Gear</span> <span style="font-weight:400;color:var(--ink3)" data-i18n="(optional)">(optional)</span></label><textarea id="mpGear" style="min-height:60px" placeholder="e.g. Fender Stratocaster, Boss pedalboard…"></textarea></div>
           </div>
         </div>
 
@@ -1403,7 +1403,7 @@ html[data-theme="dark"] .sb-group-name{color:var(--ink)!important}
           <div class="ct" style="margin-bottom:4px" data-i18n="Change Password">Change Password</div>
           <div style="font-size:.75rem;color:var(--ink3);margin-bottom:14px" data-i18n="Set a new password for your account.">Set a new password for your account.</div>
           <div class="fg" style="max-width:280px">
-            <label data-i18n="New password" data-i18n="(min. 8 chars)">New password <span style="font-weight:400;color:var(--ink3)">(min. 8 chars)</span></label>
+            <label><span data-i18n="New password">New password</span> <span style="font-weight:400;color:var(--ink3)" data-i18n="(min. 8 chars)">(min. 8 chars)</span></label>
             <input id="settNewPw" type="password" placeholder="••••••••" autocomplete="new-password">
           </div>
           <div class="fg" style="max-width:280px">
@@ -1662,7 +1662,7 @@ html[data-theme="dark"] .sb-group-name{color:var(--ink)!important}
     <div class="fg" data-i18n="Label"><label>Label</label><input id="boLab" placeholder="Carnival, School Holiday, Antoine on tour…"></div>
     <div class="fg" data-i18n="From"><label>From</label><input type="date" id="boFr"></div>
     <div class="fg" data-i18n="To (leave blank for single day)"><label>To <span style="font-weight:400;color:var(--ink3)">(leave blank for single day)</span></label><input type="date" id="boTo"></div>
-    <div class="fg" data-i18n="Who does this affect?" data-i18n="Whole group" data-i18n="Specific members only"><label>Who does this affect?</label><select id="boSc" onchange="togBOM()"><option value="group">Whole group</option><option value="members">Specific members only</option></select></div>
+    <div class="fg"><label data-i18n="Who does this affect?">Who does this affect?</label><select id="boSc" onchange="togBOM()"><option value="group" data-i18n="Whole group">Whole group</option><option value="members" data-i18n="Specific members only">Specific members only</option></select></div>
     <div id="boMR" style="display:none;margin-bottom:12px" data-i18n="Select affected members"><div style="font-size:.71rem;color:var(--ink2);margin-bottom:7px">Select affected members</div><div style="display:flex;flex-wrap:wrap;gap:6px" id="boMC"></div></div>
   </div>
   <div style="padding:13px 25px 20px;border-top:1px solid var(--bd);display:flex;gap:7px;justify-content:flex-end;background:var(--w);flex-shrink:0">
@@ -1806,7 +1806,7 @@ html[data-theme="dark"] .sb-group-name{color:var(--ink)!important}
 
 
   <div style="height:1px;background:var(--bd);margin:4px 0 14px"></div>
-  <div style="font-size:.69rem;font-weight:700;color:var(--ink2);margin-bottom:9px;letter-spacing:.04em;text-transform:uppercase" data-i18n="Set Lists" data-i18n="(optional)">Links &amp; Social <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--ink3)">(all optional)</span></div>
+  <div style="font-size:.69rem;font-weight:700;color:var(--ink2);margin-bottom:9px;letter-spacing:.04em;text-transform:uppercase"><span data-i18n="Links & Social">Links &amp; Social</span> <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--ink3)" data-i18n="(all optional)">(all optional)</span></div>
   <div class="fg"><label>Spotify</label><input id="pfSpotify" placeholder="https://open.spotify.com/artist/…"></div>
   <div class="fg"><label>Apple Music</label><input id="pfApple" placeholder="https://music.apple.com/…"></div>
   <div class="fg"><label>YouTube</label><input id="pfYoutube" placeholder="https://youtube.com/@…"></div>
@@ -1969,7 +1969,7 @@ html[data-theme="dark"] .sb-group-name{color:var(--ink)!important}
     </div>
 
     <div style="height:1px;background:var(--bd);margin:4px 0 14px"></div>
-    <div class="fg" data-i18n="Notes" data-i18n="(optional)"><label>Notes <span style="font-weight:400;color:var(--ink3)">(optional)</span></label>
+    <div class="fg"><label><span data-i18n="Notes">Notes</span> <span style="font-weight:400;color:var(--ink3)" data-i18n="(optional)">(optional)</span></label>
       <textarea id="ceNotes" style="min-height:60px" placeholder="Logistics, special requests, setlist notes…" data-i18n-placeholder="Logistics, special requests, setlist notes…"></textarea>
     </div>
 
@@ -2169,7 +2169,7 @@ html[data-theme="dark"] .sb-group-name{color:var(--ink)!important}
       <div class="fg" data-i18n="End Time"><label>End Time</label><input type="time" id="reEnd" value="22:00"></div>
     </div>
     <div class="fg" data-i18n="Location"><label>Location</label><input id="reLocation" placeholder="Studio De Muziek, Brussels"></div>
-    <div class="fg" data-i18n="Notes" data-i18n="(optional)"><label>Notes <span style="font-weight:400;color:var(--ink3)">(optional)</span></label>
+    <div class="fg"><label><span data-i18n="Notes">Notes</span> <span style="font-weight:400;color:var(--ink3)" data-i18n="(optional)">(optional)</span></label>
       <textarea id="reNotes" style="min-height:60px" placeholder="Focus areas, what to bring…" data-i18n-placeholder="Focus areas, what to bring…"></textarea>
     </div>
     <div class="fg"><label>Set List <span style="font-weight:400;color:var(--ink3)">(optional)</span></label>
@@ -2191,7 +2191,7 @@ html[data-theme="dark"] .sb-group-name{color:var(--ink)!important}
 <div class="mov" id="invMsgMod" style="display:none" onclick="closeMB(event,'invMsgMod')">
 <div class="mod" style="max-width:480px">
   <div class="mott" data-i18n="Review Invitation Message">Review Invitation Message</div>
-  <div class="most" data-i18n="Edit the message before sending via" data-i18n="All changes are for this send only.">Edit the message before sending via <strong id="invMsgChannel">Email</strong>. All changes are for this send only.</div>
+  <div class="most"><span data-i18n="Edit the message before sending via">Edit the message before sending via</span> <strong id="invMsgChannel">Email</strong>. <span data-i18n="All changes are for this send only.">All changes are for this send only.</span></div>
   <textarea id="invMsgText" style="width:100%;min-height:160px;padding:13px;background:var(--bg);border:1.5px solid var(--bd);border-radius:var(--rad);color:var(--ink);font-family:var(--font);font-size:.84rem;line-height:1.65;outline:none;resize:vertical;box-sizing:border-box;transition:border-color .13s" onfocus="this.style.borderColor='var(--a)'" onblur="this.style.borderColor='var(--bd)'"></textarea>
   <div style="font-size:.72rem;color:var(--ink3);margin-top:6px;margin-bottom:14px" data-i18n="You can personalise this message before sending. The recipient will receive exactly what you see above.">You can personalise this message before sending. The recipient will receive exactly what you see above.</div>
   <div class="moft">
@@ -2284,7 +2284,7 @@ html[data-theme="dark"] .sb-group-name{color:var(--ink)!important}
 <div class="mov" id="guestConvertMod" style="display:none" onclick="closeMB(event,'guestConvertMod')">
 <div class="mod" style="max-width:400px">
   <div class="mott" id="gcModalTitle" data-i18n="Convert to Guest">Convert to Guest</div>
-  <div class="most" data-i18n="Set the active date range for" data-i18n="They'll have full member access during this period and move to the Guest Directory after.">Set the active date range for <strong id="gcName"></strong>. They'll have full member access during this period and move to the Guest Directory after.</div>
+  <div class="most"><span data-i18n="Set the active date range for">Set the active date range for</span> <strong id="gcName"></strong>. <span data-i18n="They'll have full member access during this period and move to the Guest Directory after.">They'll have full member access during this period and move to the Guest Directory after.</span></div>
   <div class="fr">
     <div class="fg" data-i18n="Start Date"><label>Start Date</label><input type="date" id="gcStart"></div>
     <div class="fg" data-i18n="End Date"><label>End Date</label><input type="date" id="gcEnd"></div>
