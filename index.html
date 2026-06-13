@@ -2932,13 +2932,13 @@
     }
 
     .dtogs {
-      display: flex;
-      gap: 5px;
-      flex-wrap: wrap
+      display: grid;
+      grid-template-columns: repeat(7, minmax(0, 1fr));
+      gap: 5px
     }
 
     .dtog {
-      padding: 6px 11px;
+      padding: 6px 4px;
       border-radius: 8px;
       border: 1.5px solid var(--bd);
       background: var(--bg);
@@ -2947,7 +2947,8 @@
       font-weight: 600;
       cursor: pointer;
       transition: all .11s;
-      font-family: var(--font)
+      font-family: var(--font);
+      text-align: center
     }
 
     .dtog.on {
