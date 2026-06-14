@@ -5225,7 +5225,7 @@
             <div class="ct" style="margin-bottom:4px" data-i18n="Integrations">Integrations</div>
             <div style="display:flex;align-items:flex-start;gap:9px;padding:11px 13px;background:var(--bl2);border:1px solid rgba(96,165,250,.25);border-radius:var(--rad);font-size:var(--t-sm);color:var(--bl);margin-top:10px">
               <span style="flex-shrink:0;color:var(--bl);display:inline-flex"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15.5" rx="2.5"/><path d="M3.5 9.5h17M8 3v3.5M16 3v3.5"/><circle cx="12" cy="15" r="1.5" fill="currentColor" stroke="none"/></svg></span>
-              <span><strong>Google Calendar sync</strong> — connect your Google Calendar so rehearsals and concerts appear automatically. <span style="text-decoration:underline;cursor:pointer" onclick="toast2(t('Google Calendar sync coming soon'))">Set up →</span></span>
+              <span><strong>Calendar sync</strong> — subscribe in Google Calendar, Apple Calendar, or Outlook and your rehearsals and concerts appear automatically. <span style="text-decoration:underline;cursor:pointer" onclick="openCalFeed()">Set up →</span></span>
             </div>
           </div>
 
@@ -5250,23 +5250,37 @@
 
       <div id="slConcertPreview" style="display:none;padding:10px 13px;background:var(--a2);border:1.5px solid rgba(108,99,255,.25);border-radius:var(--rad);font-size:var(--t-sm);color:var(--a);margin-top:-6px;margin-bottom:4px"></div>
 
-      <div style="height:1px;background:var(--bd);margin:8px 0 14px"></div>
-      <div style="font-size:var(--t-xs);font-weight:700;color:var(--ink2);margin-bottom:9px;letter-spacing:.04em;text-transform:uppercase" data-i18n="How do you want to build it?">How do you want to build it?</div>
-      <div style="display:flex;gap:8px">
-        <div class="popt on" id="slModeManual" onclick="selSlMode('manual')" style="flex:1">
-          <div class="poi" data-i18n="Manual"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20l.9-3.8L16.2 4.9a1.8 1.8 0 0 1 2.6 0l.3.3a1.8 1.8 0 0 1 0 2.6L7.8 19.1z"/></svg></div>
-          <div class="pol">Manual</div>
-        </div>
-        <div class="popt" id="slModeAI" onclick="selSlMode('ai')" style="flex:1">
-          <div class="poi" data-i18n="AI Suggestion">✦</div>
-          <div class="pol">AI Suggestion</div>
-        </div>
-      </div>
-      <div id="slModeNote" style="font-size:var(--t-sm);color:var(--ink3);margin-top:8px" data-i18n="Takes you straight to the set list editor to add songs manually.">Takes you straight to the set list editor to add songs manually.</div>
-
       <div class="moft">
         <button class="btn btn-g" onclick="closeMod('slMod')" data-i18n="Cancel">Cancel</button>
         <button class="btn btn-p" id="slCreateBtn" onclick="createNewSetList()" data-i18n="Create Set List">Create Set List</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="mov" id="calMod" style="display:none" onclick="closeMB(event,'calMod')">
+    <div class="mod" style="max-width:480px">
+      <div class="mott" data-i18n="Calendar sync">Calendar sync</div>
+      <div class="most" data-i18n="Subscribe once and this group's rehearsals and concerts show up in your calendar automatically — and stay up to date. Works with Google Calendar, Apple Calendar, Outlook, and any app that supports calendar subscriptions.">Subscribe once and this group's rehearsals and concerts show up in your calendar automatically — and stay up to date. Works with Google Calendar, Apple Calendar, Outlook, and any app that supports calendar subscriptions.</div>
+
+      <div class="fg">
+        <label data-i18n="Your calendar feed link">Your calendar feed link</label>
+        <input id="calFeedUrl" readonly onclick="this.select()" style="font-family:var(--mono);font-size:var(--t-sm)" value="">
+      </div>
+
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:2px">
+        <button class="btn btn-p btn-sm" onclick="openCalGoogle()" data-i18n="Add to Google Calendar">Add to Google Calendar</button>
+        <button class="btn btn-g btn-sm" onclick="openCalApple()" data-i18n="Apple / Outlook">Apple / Outlook</button>
+        <button class="btn btn-g btn-sm" onclick="copyCalUrl()" data-i18n="Copy link">Copy link</button>
+      </div>
+
+      <div style="font-size:var(--t-xs);color:var(--ink3);margin-top:14px;line-height:1.55" data-i18n="Subscribed calendars refresh on their own schedule (Google every few hours, sometimes up to a day), so new events may take a little while to appear. Keep this link private — anyone with it can see this group's schedule."><strong>Note:</strong> Subscribed calendars refresh on their own schedule (Google every few hours, sometimes up to a day), so new events may take a little while to appear. Keep this link private — anyone with it can see this group's schedule.</div>
+
+      <div id="calRotateRow" style="display:none;margin-top:12px">
+        <span style="font-size:var(--t-xs);color:var(--r);text-decoration:underline;cursor:pointer" onclick="rotateCalFeed()" data-i18n="Reset link (disconnects existing subscriptions)">Reset link (disconnects existing subscriptions)</span>
+      </div>
+
+      <div class="moft">
+        <button class="btn btn-p" onclick="closeMod('calMod')" data-i18n="Done">Done</button>
       </div>
     </div>
   </div>
@@ -7739,21 +7753,12 @@
       if (!activeBandId) return void toast2("Create a group first before adding set lists", "w");
       const e = document.getElementById("slNewConcert"),
         t = concerts.filter(e => !isPast(e) && !e.cancelled).sort((e, t) => concertDate(e) - concertDate(t));
-      e.innerHTML = '<option value="">— No concert yet —</option>' + t.map(e => `<option value="${e.id}">${esc(e.title)}${e.date?" — "+esc(e.date):""}</option>`).join(""), document.getElementById("slNewTitle").value = "", document.getElementById("slConcertPreview").style.display = "none", slCreateMode = "manual", selSlMode("manual"), e.onchange = () => {
+      e.innerHTML = '<option value="">— No concert yet —</option>' + t.map(e => `<option value="${e.id}">${esc(e.title)}${e.date?" — "+esc(e.date):""}</option>`).join(""), document.getElementById("slNewTitle").value = "", document.getElementById("slConcertPreview").style.display = "none", e.onchange = () => {
         const t = e.value,
           n = concerts.find(e => e.id === t),
           o = document.getElementById("slConcertPreview");
         n && t ? (o.style.display = "", o.innerHTML = `${ricon("pin",11)} ${esc(n.venue)} · ${esc(n.time)} · ~${esc(String(n.audience))} people`) : o.style.display = "none"
       }, showMod("slMod")
-    }
-    let slCreateMode = "manual";
-
-    function selSlMode(e) {
-      slCreateMode = e, document.getElementById("slModeManual").classList.toggle("on", "manual" === e), document.getElementById("slModeAI").classList.toggle("on", "ai" === e);
-      document.getElementById("slModeNote").textContent = {
-        manual: "Takes you straight to the set list editor to add songs manually.",
-        ai: "✦ AI will suggest songs from your library based on the concert details."
-      } [e], document.getElementById("slCreateBtn").textContent = "ai" === e ? "✦ Generate Set List" : "Create Set List"
     }
     async function createNewSetList() {
       const e = document.getElementById("slNewTitle").value.trim();
@@ -7778,7 +7783,7 @@
       } catch (e) {
         return toast2(e.message || "Failed to create set list", "w"), void console.error("[bandapp] createNewSetList error:", e)
       }
-      o && (slSongs[o.id] = [], t && await ConcertsDB.linkSetlist(t, o.id), await loadSetlists(), t && await loadConcerts(), closeMod("slMod"), activeSetlistId = o.id, slS = getSlS(), renderSLDropdown(), document.getElementById("slName").textContent = e, renderSlMeta(), renderSL(), nav("setlists"), "ai" === slCreateMode ? (toast2("✦ Generating set list…"), setTimeout(() => toast2("AI set list ready — review and reorder songs."), 1500)) : toast2(`"${e}" created — add songs to get started.`))
+      o && (slSongs[o.id] = [], t && await ConcertsDB.linkSetlist(t, o.id), await loadSetlists(), t && await loadConcerts(), closeMod("slMod"), activeSetlistId = o.id, slS = getSlS(), renderSLDropdown(), document.getElementById("slName").textContent = e, renderSlMeta(), renderSL(), nav("setlists"), toast2(`"${e}" created — add songs to get started.`))
     }
     let aG = "All";
 
@@ -11050,6 +11055,62 @@
       t && (e.select(), navigator.clipboard && window.isSecureContext ? navigator.clipboard.writeText(t).then(() => toast2("Group code copied!")).catch(() => {
         document.execCommand("copy"), toast2("Group code copied!")
       }) : (document.execCommand("copy"), toast2("Group code copied!")))
+    }
+    let _calFeedToken = null;
+
+    function calFeedUrlFor(e) {
+      return `${SUPABASE_URL}/functions/v1/calendar-feed?token=${e}`
+    }
+    async function openCalFeed() {
+      if (!activeBandId) return void toast2("Select a group first", "w");
+      _calFeedToken = null;
+      const e = document.getElementById("calFeedUrl");
+      e.value = t("Loading…"), document.getElementById("calRotateRow").style.display = "admin" === currentUser.role ? "" : "none", showMod("calMod");
+      try {
+        const {
+          data: t,
+          error: n
+        } = await supabase.rpc("get_or_create_calendar_feed", {
+          p_band: activeBandId
+        });
+        if (n) throw n;
+        _calFeedToken = t, e.value = calFeedUrlFor(t)
+      } catch (t) {
+        console.error("[bandapp] openCalFeed error:", t), e.value = "", toast2(t.message || "Couldn't load calendar link", "w")
+      }
+    }
+    function openCalGoogle() {
+      if (!_calFeedToken) return void toast2("Calendar link not ready yet", "w");
+      const e = calFeedUrlFor(_calFeedToken).replace(/^https?:/, "webcal:");
+      window.open("https://calendar.google.com/calendar/render?cid=" + encodeURIComponent(e), "_blank", "noopener")
+    }
+    function openCalApple() {
+      if (!_calFeedToken) return void toast2("Calendar link not ready yet", "w");
+      window.location.href = calFeedUrlFor(_calFeedToken).replace(/^https?:/, "webcal:")
+    }
+    function copyCalUrl() {
+      const e = document.getElementById("calFeedUrl"),
+        t = e?.value || "";
+      if (!t || !_calFeedToken) return void toast2("Calendar link not ready yet", "w");
+      e.select(), navigator.clipboard && window.isSecureContext ? navigator.clipboard.writeText(t).then(() => toast2("Calendar link copied!")).catch(() => {
+        document.execCommand("copy"), toast2("Calendar link copied!")
+      }) : (document.execCommand("copy"), toast2("Calendar link copied!"))
+    }
+    async function rotateCalFeed() {
+      if (!activeBandId) return;
+      if (!confirm(t("Reset the calendar link? Anyone already subscribed will stop getting updates and will need the new link."))) return;
+      try {
+        const {
+          data: e,
+          error: t
+        } = await supabase.rpc("rotate_calendar_feed", {
+          p_band: activeBandId
+        });
+        if (t) throw t;
+        _calFeedToken = e, document.getElementById("calFeedUrl").value = calFeedUrlFor(e), toast2("Calendar link reset")
+      } catch (e) {
+        console.error("[bandapp] rotateCalFeed error:", e), toast2(e.message || "Couldn't reset link", "w")
+      }
     }
     let _dshGen = 0,
       _dshTargetSlId = null;
