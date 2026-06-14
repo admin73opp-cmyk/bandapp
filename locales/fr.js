@@ -388,10 +388,10 @@ window.FR = {
   'Go to Song Library →': 'Aller à la bibliothèque →',
   'Invite a Musician': 'Inviter un musicien',
   'Guest access expires on the end date and they move to the Guest Directory.': 'L\'accès invité expire à la date de fin et ils sont déplacés vers le répertoire des invités.',
-  'No Bandapp account found for this email. Use the invite form below to send them a signup link.': 'Aucun compte Bandapp trouvé pour cet e-mail. Utilisez le formulaire d\'invitation ci-dessous pour envoyer un lien d\'inscription.',
+  'No Ritovo account found for this email. Use the invite form below to send them a signup link.': 'Aucun compte Ritovo trouvé pour cet e-mail. Utilisez le formulaire d\'invitation ci-dessous pour envoyer un lien d\'inscription.',
   'Invite Link': 'Lien d\'invitation',
-  'Already have a Bandapp account? Use this group code to join directly': 'Vous avez déjà un compte Bandapp ? Utilisez ce code de groupe pour rejoindre directement',
-  'Bandapp account found': 'Compte Bandapp trouvé',
+  'Already have a Ritovo account? Use this group code to join directly': 'Vous avez déjà un compte Ritovo ? Utilisez ce code de groupe pour rejoindre directement',
+  'Ritovo account found': 'Compte Ritovo trouvé',
   'Your profile': 'Votre profil',
   'Guest Detail': 'Détails de l\'invité',
   'No bio available.': 'Aucune bio disponible.',
@@ -554,7 +554,7 @@ window.FR = {
   'Cancellation sent by email ✉️': 'Annulation envoyée par e-mail ✉️',
   'WhatsApp notification sent 💬': 'Notification WhatsApp envoyée 💬',
   'Cancellation sent by email + WhatsApp 📣': 'Annulation envoyée par e-mail + WhatsApp 📣',
-  '🚫 Event cancelled. Please check Bandapp for updates.': '🚫 Événement annulé. Consultez Bandapp pour les mises à jour.',
+  '🚫 Event cancelled. Please check Ritovo for updates.': '🚫 Événement annulé. Consultez Ritovo pour les mises à jour.',
   'Blackout added': 'Période bloquée ajoutée',
   'Blackout updated': 'Période bloquée mise à jour',
   'Blackout removed': 'Période bloquée supprimée',
@@ -629,7 +629,7 @@ window.FR = {
   /* ── INVITE MESSAGE ───────────────────────────────────── */
   'Dear': 'Cher/Chère',
   'I am very happy to invite you to join group': 'J\'ai le plaisir de vous inviter à rejoindre le groupe',
-  'on Bandapp.': 'sur Bandapp.',
+  'on Ritovo.': 'sur Ritovo.',
   'Click the link below to sign up — your details will be pre-filled:': 'Cliquez sur le lien ci-dessous pour vous inscrire — vos informations seront pré-remplies :',
   'Cheers,': 'Cordialement,',
   'Musician': 'Musicien',
@@ -739,7 +739,7 @@ window.FR = {
 
   /* ── FEEDBACK ───────────────────────────────────────── */
   'Share Feedback': 'Donner son avis',
-  'Help us improve Bandapp': 'Aidez-nous à améliorer Bandapp',
+  'Help us improve Ritovo': 'Aidez-nous à améliorer Ritovo',
   'Category': 'Catégorie',
   'Bug': 'Bug',
   'Feedback': 'Avis',
@@ -784,7 +784,7 @@ window.FR = {
   'Lyrics / Sheet Music': 'Paroles / Partitions',
   'Lyrics / Sheet Music Repository': 'Dépôt paroles / partitions',
   'Any — members choose per song': 'Libre — les membres choisissent par chanson',
-  'Bandapp (in-app upload)': 'Bandapp (téléversement en app)',
+  'Ritovo (in-app upload)': 'Ritovo (téléversement en app)',
 
   /* ── CALENDAR CHANGE LOG ────────────────────────────────── */
   'Change Log': 'Journal des modifications',
