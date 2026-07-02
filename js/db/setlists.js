@@ -42,8 +42,28 @@ const SetlistsDB = {
     if (error) { handleDbError(error); }
   },
 
-  // Replace the full ordered song list for a setlist (used after any reorder)
-  async saveSongs(setlistId, songIds) {
+  // Replace the full ordered song list for a setlist (used after any reorder).
+  // Delete-then-insert against unique(setlist_id, position) means two
+  // concurrent saves interleave and can leave the DB with a partial or empty
+  // setlist. Serialize writes per setlist; because every save carries the
+  // complete list, queued calls coalesce to the latest snapshot.
+  _saveChains: {},
+  _pendingSongs: {},
+
+  saveSongs(setlistId, songIds) {
+    this._pendingSongs[setlistId] = songIds.slice();
+    const prev = this._saveChains[setlistId] || Promise.resolve();
+    const run = prev.then(async () => {
+      const ids = this._pendingSongs[setlistId];
+      if (!ids) return; // a later queued call already flushed this snapshot
+      delete this._pendingSongs[setlistId];
+      await this._saveSongsNow(setlistId, ids);
+    });
+    this._saveChains[setlistId] = run.catch(() => {});
+    return run;
+  },
+
+  async _saveSongsNow(setlistId, songIds) {
     const { error: delErr } = await supabase
       .from('setlist_songs')
       .delete()
@@ -56,7 +76,16 @@ const SetlistsDB = {
       position:   i + 1,
     }));
     const { error } = await supabase.from('setlist_songs').insert(rows);
-    if (error) { handleDbError(error); }
+    if (error) {
+      handleDbError(error);
+      // The DB may now hold a partial list — re-sync the local cache to what
+      // actually persisted so the UI doesn't show an order that will vanish.
+      const actual = await this.fetchSongs(setlistId);
+      if (typeof slSongs !== 'undefined') {
+        slSongs[setlistId] = actual;
+        if (typeof renderSL === 'function') try { renderSL(); } catch (e) {}
+      }
+    }
   },
 
   async addSong(setlistId, songId) {
