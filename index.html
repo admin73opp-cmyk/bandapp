@@ -4266,6 +4266,13 @@
       </div>
 
       <div class="pg-area on" id="pg-dashboard">
+        <div id="dshNoGroup" style="display:none;text-align:center;padding:60px 20px;max-width:480px;margin:0 auto">
+          <div class="es-mark"><svg viewBox="0 0 120 120" fill="none" aria-hidden="true"><line x1="34" y1="32" x2="34" y2="88" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><text x="44" y="86" font-family="'Garamond','Georgia','Times New Roman',serif" font-size="56" font-weight="300" fill="currentColor">r</text><circle cx="88" cy="32" r="4.5" fill="currentColor"/></svg></div>
+          <div style="font-size:var(--t-2xl);font-weight:700;letter-spacing:-.03em;margin-bottom:10px" data-i18n="Welcome to Ritovo">Welcome to Ritovo</div>
+          <p style="font-size:var(--t-md);color:var(--ink2);margin-bottom:22px" data-i18n="Create your group to manage rehearsals, set lists, songs and your bandmates — all in one place.">Create your group to manage rehearsals, set lists, songs and your bandmates — all in one place.</p>
+          <button class="btn btn-p" onclick="showOnboardingWizard()" data-i18n="Create Your Group">Create Your Group</button>
+        </div>
+        <div id="dshMain">
         <div style="margin-bottom:17px">
           <div style="display:flex;align-items:center;gap:8px">
             <h2 id="dshG" style="font-size:var(--t-3xl);font-weight:700;letter-spacing:-.03em">Good evening 👋</h2>
@@ -4306,6 +4313,7 @@
             <div id="dshQuickActions"></div>
           </div>
         </div>
+        </div>
       </div>
 
       <div class="pg-area" id="pg-setlists">
@@ -4328,9 +4336,9 @@
         </div>
         <div id="slEmptyNoLists" style="display:none;text-align:center;padding:50px 20px">
           <div class="es-mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6.5h11M9 12h11M9 17.5h7"/><circle cx="4.5" cy="6.5" r="1.4" fill="currentColor" stroke="none"/><circle cx="4.5" cy="12" r="1.4" fill="currentColor" stroke="none"/><circle cx="4.5" cy="17.5" r="1.4" fill="currentColor" stroke="none"/></svg></div>
-          <div style="font-weight:700;font-size:var(--t-xl);margin-bottom:8px" data-i18n="No set lists yet">No set lists yet</div>
-          <p style="font-size:var(--t-md);color:var(--ink2);margin-bottom:18px">You have songs in the library — create your first set list!</p>
-          <button class="btn btn-p btn-sm" onclick="openSlMod()">+ Create Set List</button>
+          <div style="font-weight:700;font-size:var(--t-xl);margin-bottom:8px" data-i18n="No setlists yet.">No setlists yet.</div>
+          <p style="font-size:var(--t-md);color:var(--ink2);margin-bottom:18px" data-i18n="Build your first one from the library.">Build your first one from the library.</p>
+          <button class="btn btn-p btn-sm" onclick="openSlMod()" data-i18n="+ Create Set List">+ Create Set List</button>
         </div>
         <div id="slContent">
           <div style="display:flex;gap:9px;align-items:center;margin-bottom:14px;flex-wrap:wrap">
@@ -5229,6 +5237,14 @@
             </div>
           </div>
 
+          <div class="card" id="settDemoCard" style="display:none;border-color:var(--r2)">
+            <div class="ct" style="margin-bottom:4px" data-i18n="Sample Data">Sample Data</div>
+            <div style="font-size:var(--t-sm);color:var(--ink3);margin-bottom:14px" data-i18n="This group was created from sample data. Clear it to remove all demo songs, set lists, rehearsals and concerts.">This group was created from sample data. Clear it to remove all demo songs, set lists, rehearsals and concerts.</div>
+            <div style="margin-top:4px">
+              <button class="btn btn-sm" style="color:var(--r);border:1.5px solid var(--r2);background:transparent" onclick="clearDemoData()" data-i18n="Clear demo data">Clear demo data</button>
+            </div>
+          </div>
+
         </div>
       </div>
     </div>
@@ -5453,6 +5469,104 @@
       <div class="fg"><label>Confirm Password</label><input type="password" id="onboardingPwConfirm" placeholder="Repeat password" autocomplete="new-password"></div>
       <div style="margin-top:4px">
         <button class="btn btn-p btn-fw" id="onboardingSaveBtn" onclick="saveOnboardingPassword()">Set Password &amp; Continue →</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="mov" id="obwMod" style="display:none">
+    <div class="mod" style="max-width:540px;display:flex;flex-direction:column;max-height:92vh;padding:0;overflow:hidden">
+      <div style="padding:20px 24px 14px;border-bottom:1px solid var(--bd);flex-shrink:0">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
+          <div style="flex:1;font-size:var(--t-xs);font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--ink3)"><span data-i18n="Step">Step</span> <span id="obwStepNum">1</span> <span data-i18n="of">of</span> 4</div>
+          <select id="obwLang" onchange="obwSetLang(this.value)" aria-label="Language" style="padding:5px 9px;background:var(--bg);border:1.5px solid var(--bd);border-radius:var(--rad);color:var(--ink);font-family:var(--font);font-size:var(--t-sm);cursor:pointer;outline:none">
+            <option value="en">🇬🇧 English</option>
+            <option value="nl">🇳🇱 Nederlands</option>
+            <option value="fr">🇫🇷 Français</option>
+            <option value="pt">🇧🇷 Português</option>
+            <option value="es">🇪🇸 Español</option>
+            <option value="de">🇩🇪 Deutsch</option>
+            <option value="it">🇮🇹 Italiano</option>
+          </select>
+          <button id="obwClose" onclick="obwDismiss()" title="Close" style="display:none;background:none;border:none;font-size:20px;cursor:pointer;color:var(--ink3);line-height:1;padding:0 2px">✕</button>
+        </div>
+        <div style="height:5px;background:var(--bg2);border-radius:99px;overflow:hidden"><div id="obwBar" style="height:100%;width:25%;background:var(--a);border-radius:99px;transition:width .25s"></div></div>
+      </div>
+
+      <div style="padding:22px 24px;overflow-y:auto;flex:1">
+        <div id="obwStep1" class="obw-step">
+          <div class="mott" style="margin-bottom:4px" data-i18n="Create your group">Create your group</div>
+          <div class="most" data-i18n="You'll be the admin. You can change any of this later.">You'll be the admin. You can change any of this later.</div>
+          <div class="fg" data-i18n="Group name"><label>Group Name</label><input id="obwName" placeholder="e.g. Brussels Funk Collective"></div>
+          <div class="fr">
+            <div class="fg" data-i18n="City"><label>City</label><input id="obwCity" placeholder="Brussels"></div>
+            <div class="fg" data-i18n="Country"><label>Country</label><select id="obwCountry"><option value="">— Select country —</option></select></div>
+          </div>
+          <div class="fg" data-i18n="Genre / Style"><label>Genre / Style</label>
+            <select id="obwGenre">
+              <option>Jazz</option><option>Funk</option><option>Soul</option><option>Blues</option><option>Rock</option><option>Hard-Rock</option><option>Country</option><option>Folk</option><option>Pop</option><option>Latin</option><option>R&amp;B</option><option>Reggae</option><option>Samba</option><option>Bossa Nova</option><option>MPB</option><option>Pagode</option><option>Forró</option><option>Choro</option><option>Sertanejo</option><option>Brazilian Funk</option><option>Classical</option><option>Mixed / Other</option>
+            </select>
+          </div>
+          <div style="margin-top:8px;text-align:center">
+            <span onclick="obwSeedDemo()" style="font-size:var(--t-sm);color:var(--a);cursor:pointer;text-decoration:underline" data-i18n="Want to explore with sample data instead? →">Want to explore with sample data instead? →</span>
+          </div>
+        </div>
+
+        <div id="obwStep2" class="obw-step" style="display:none">
+          <div class="mott" style="margin-bottom:4px" data-i18n="Tell us about you">Tell us about you</div>
+          <div class="most" data-i18n="This helps your group see who plays what.">This helps your group see who plays what.</div>
+          <div class="fr">
+            <div class="fg"><label data-i18n="Main instrument">Main instrument</label><select id="obwInst1"></select></div>
+            <div class="fg"><label data-i18n="Secondary instrument">Secondary instrument</label><select id="obwInst2"></select></div>
+          </div>
+          <div class="fg" style="max-width:240px"><label data-i18n="Vocals">Vocals</label><select id="obwVocals">
+            <option value="None" data-i18n="No vocals">No vocals</option>
+            <option value="Lead" data-i18n="Lead vocals">Lead vocals</option>
+            <option value="Backing" data-i18n="Backing vocals">Backing vocals</option>
+            <option value="Both" data-i18n="Lead &amp; backing">Lead &amp; backing</option>
+          </select></div>
+          <div class="fg"><label data-i18n="Which days are you usually free?">Which days are you usually free?</label>
+            <div id="obwAvail" style="display:flex;gap:6px;flex-wrap:wrap"></div>
+          </div>
+        </div>
+
+        <div id="obwStep3" class="obw-step" style="display:none">
+          <div class="mott" style="margin-bottom:4px" data-i18n="Invite your bandmates">Invite your bandmates</div>
+          <div class="most" data-i18n="Send an email invite — they set a password and land straight in your group. You can skip and do this anytime.">Send an email invite — they set a password and land straight in your group. You can skip and do this anytime.</div>
+          <div class="fr">
+            <div class="fg"><label data-i18n="First Name">First Name</label><input id="obwInvFirst" placeholder="Sophie"></div>
+            <div class="fg"><label data-i18n="Last Name">Last Name</label><input id="obwInvLast" placeholder="Vandenberghe"></div>
+          </div>
+          <div class="fg"><label data-i18n="Email">Email</label><input type="email" id="obwInvEmail" placeholder="sophie@email.com"></div>
+          <div class="fg" style="max-width:200px"><label data-i18n="Role">Role</label><select id="obwInvRole"><option>Member</option><option>Admin</option><option>Guest</option></select></div>
+        </div>
+
+        <div id="obwStep4" class="obw-step" style="display:none">
+          <div class="mott" style="margin-bottom:4px" data-i18n="Add your first song">Add your first song</div>
+          <div class="most" data-i18n="Start your library. We'll also create a set list named after your group.">Start your library. We'll also create a set list named after your group.</div>
+          <div class="fr">
+            <div class="fg"><label data-i18n="Song Title">Song Title</label><input id="obwSongTitle" placeholder="Autumn Leaves"></div>
+            <div class="fg"><label data-i18n="Artist">Artist</label><input id="obwSongArtist" placeholder="Miles Davis"></div>
+          </div>
+          <div class="fr">
+            <div class="fg" data-i18n="Genre"><label>Genre</label>
+              <select id="obwSongGenre">
+                <option>Jazz</option><option>Funk</option><option>Soul</option><option>Blues</option><option>Pop</option><option>Rock</option><option>Hard-Rock</option><option>Country</option><option>Folk</option><option>Latin</option><option>R&amp;B</option><option>Reggae</option><option>Classical</option><option>Samba</option><option>Bossa Nova</option><option>MPB</option><option>Pagode</option><option>Forró</option><option>Choro</option><option>Sertanejo</option><option>Brazilian Funk</option><option>Other</option>
+              </select>
+            </div>
+            <div class="fg" data-i18n="Key"><label>Key</label>
+              <select id="obwSongKey">
+                <option>Am</option><option>C</option><option>G</option><option>D</option><option>Dm</option><option>F</option><option>Bb</option><option>Eb</option><option>Gm</option><option>Em</option><option>A</option><option>E</option><option>Fm</option><option>Cm</option><option>Bm</option><option>Ab</option><option>Db</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style="padding:14px 24px 18px;border-top:1px solid var(--bd);display:flex;gap:8px;align-items:center;flex-shrink:0">
+        <button id="obwBack" class="btn btn-g" onclick="obwBack()" style="display:none" data-i18n="← Back">← Back</button>
+        <div style="flex:1"></div>
+        <button id="obwSkip" class="btn btn-g" onclick="obwSkip()" style="display:none" data-i18n="Skip for now">Skip for now</button>
+        <button id="obwPrimary" class="btn btn-p" onclick="obwPrimary()" data-i18n="Create Group →">Create Group →</button>
       </div>
     </div>
   </div>
@@ -5871,7 +5985,7 @@
         s = a.filter(e => !isRehPast(e)).sort((e, t) => e._ts - t._ts),
         i = a.filter(e => isRehPast(e)).sort((e, t) => t._ts - e._ts),
         l = document.getElementById("rehearsalCount");
-      l && (l.textContent = `${s.length} ${t("upcoming")} · ${i.length} ${t("past")}${o.length?` · ${o.length} ${t("cancelled")}`:""}`), document.getElementById("rehearsalListUpcoming").innerHTML = s.length ? s.map(e => rehearsalCard(e, "upcoming")).join("") : `<div style="padding:20px;text-align:center;font-size:var(--t-md);color:var(--ink3)">${t("No upcoming rehearsals — click + New Rehearsal to schedule one.")}</div>`, document.getElementById("rehearsalListPast").innerHTML = i.length ? i.map(e => rehearsalCard(e, "past")).join("") : `<div style="padding:12px;font-size:var(--t-sm);color:var(--ink3)">${t("No past rehearsals yet.")}</div>`;
+      l && (l.textContent = `${s.length} ${t("upcoming")} · ${i.length} ${t("past")}${o.length?` · ${o.length} ${t("cancelled")}`:""}`), document.getElementById("rehearsalListUpcoming").innerHTML = s.length ? s.map(e => rehearsalCard(e, "upcoming")).join("") : `<div class="es" style="padding:34px 20px"><div class="es-ico">${ricon("cal",30)}</div><h3>${t("No rehearsals scheduled yet.")}</h3><button class="btn btn-p btn-sm" style="margin-top:12px" onclick="openNewRehearsal()">+ ${t("Schedule Rehearsal")}</button></div>`, document.getElementById("rehearsalListPast").innerHTML = i.length ? i.map(e => rehearsalCard(e, "past")).join("") : `<div style="padding:12px;font-size:var(--t-sm);color:var(--ink3)">${t("No past rehearsals yet.")}</div>`;
       const r = document.getElementById("pastRehearsalSection");
       r && (r.style.display = i.length ? "" : "none");
       const d = document.getElementById("rehearsalListCancelled");
@@ -7841,7 +7955,7 @@
       const e = document.getElementById("libGrid"),
         n = getLibFiltered();
       if (!n.length) {
-        const n = songs.length ? `<div class="es" style="grid-column:1/-1"><div class="es-ico">${ricon("search",34)}</div><h3>${t("No songs found")}</h3><p>${t("Try another filter or search term.")}</p></div>` : `<div class="es" style="grid-column:1/-1"><div class="es-ico">${ricon("sheet",34)}</div><h3>${t("No songs in library yet")}</h3><p>${t("Start by adding songs to your library.")}</p></div>`;
+        const n = songs.length ? `<div class="es" style="grid-column:1/-1"><div class="es-ico">${ricon("search",34)}</div><h3>${t("No songs found")}</h3><p>${t("Try another filter or search term.")}</p></div>` : `<div class="es" style="grid-column:1/-1"><div class="es-ico">${ricon("sheet",34)}</div><h3>${t("Your band's musical DNA lives here.")}</h3><p>${t("Add songs to build your library, set lists and rehearsals.")}</p><button class="btn btn-p btn-sm" style="margin-top:12px" onclick="openAddSong()">+ ${t("Add First Song")}</button></div>`;
         return void(e.innerHTML = n)
       }
       e.innerHTML = n.map(e => isMobile() ? mobileSongCard(e) : desktopSongCard(e)).join(""), isMobile() && wireCardSwipe()
@@ -10407,7 +10521,7 @@
 
     function populateCountrySelects() {
       const e = ISO_COUNTRIES.map(e => `<option value="${e.c}">${e.n}</option>`).join("");
-      ["pfNat", "pfCountry", "mpNat", "mpCountry", "nbCountry"].forEach(t => {
+      ["pfNat", "pfCountry", "mpNat", "mpCountry", "nbCountry", "obwCountry"].forEach(t => {
         const n = document.getElementById(t);
         n && (n.innerHTML = `<option value="">— Select —</option>${e}`)
       })
@@ -10558,7 +10672,7 @@
         i = a.filter(e => "guest" === e.role);
       s && (s.textContent = `${a.filter(e=>"guest"!==e.role).length} members${i.length?` · ${i.length} guest${i.length>1?"s":""}`:""}`);
       const l = "Admin" === getActiveBand()?.role;
-      document.getElementById("memGrid").innerHTML = a.map((e, n) => {
+      const _memCards = a.map((e, n) => {
         const a = members.indexOf(e),
           s = extraData[a] || {},
           i = s.nat ? isoFlag(s.nat) : "",
@@ -10569,7 +10683,8 @@
           m = c ? "border:1.5px dashed var(--amb);" : "",
           p = e.vocals && "None" !== e.vocals ? `${t("Vocals")}: ${t({Lead:"Lead vocals",Backing:"Backing vocals",None:"No vocals",Both:"Lead & backing"}[e.vocals]||e.vocals)}` : "";
         return `<div class="memcard" style="${m}">\n      <div class="mctop">\n        <div class="mcav" style="background:${e.color};color:${_ink(e.color)};cursor:pointer;${memberPhotos[a]?`background-image:url(${memberPhotos[a]});background-size:cover;background-position:center`:""}" onclick="openProfile(${a})">${memberPhotos[a]?"":e.init}</div>\n        <div style="flex:1">\n          <div class="mcn" style="display:flex;align-items:center;gap:6px">\n            ${esc(e.name)}${i?`<span title="${esc(isoName(s.nat))}" style="font-size:var(--t-lg);line-height:1">${i}</span>`:""}\n          </div>\n          <div class="mci" style="display:flex;align-items:center;gap:5px;flex-wrap:wrap;margin-top:3px">\n            <span style="display:inline-flex;align-items:center;gap:3px">${r} ${esc(t(e.instrument))}</span>\n            ${e.inst2?`<span style="color:var(--bd)">·</span><span style="display:inline-flex;align-items:center;gap:3px;color:var(--ink3)">${d} ${esc(t(e.inst2))}</span>`:""}\n          </div>\n          <div style="margin-top:4px;display:flex;align-items:center;gap:5px;flex-wrap:wrap">${u}</div>\n        </div>\n      </div>\n      <div class="t1" style="margin-bottom:6px">${t("Available days")}</div>\n      <div class="mcdays">${e.avail.map((e,t)=>`<div class="mcd ${e?"y":"n"}">${o[t]}</div>`).join("")}</div>\n      ${p?`<div style="font-size:var(--t-xs);color:var(--ink2);margin-top:9px">${p}</div>`:""}\n      <div class="mcfoot">\n        <button class="btn btn-g btn-sm" onclick="openProfile(${a})">${t("View Profile")}</button>\n        ${l&&"admin"!==e.role?`<button class="btn btn-g btn-sm" onclick="openChangeRoleModal(${a})">${t(c?"Make Member":"Make Guest")}</button>`:""}\n        ${l&&"admin"!==e.role&&a!==currentUser.memberIdx?`<button class="btn btn-g btn-sm" style="color:var(--a);border-color:rgba(12,110,106,.35)" onclick="makeAdmin(${a})">${ricon("star",11)} ${t("Make Admin")}</button>`:""}\n        ${l&&a!==currentUser.memberIdx?`<button class="btn btn-g btn-sm" style="color:var(--r);border-color:var(--r2)" onclick="removeMember(${a})" title="${t("Remove")}">${t("Remove")}</button>`:""}\n      </div>\n    </div>`
-      }).join(""), renderGuestDir()
+      }).join("");
+      document.getElementById("memGrid").innerHTML = _memCards + (a.length <= 1 ? `<div class="memcard" style="display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;border:1.5px dashed var(--bd)"><div style="color:var(--ink3);font-size:var(--t-md);margin-bottom:10px">${t("It's lonely here. Invite your bandmates.")}</div><button class="btn btn-p btn-sm" onclick="openInvMod()">+ ${t("Invite Member")}</button></div>` : ""), renderGuestDir()
     }
 
     function renderGuestDir() {
@@ -11140,11 +11255,15 @@
         c = e => Array.from({
           length: e
         }).map(() => '<div class="skl"></div>').join("");
+      const _dshNg = document.getElementById("dshNoGroup"),
+        _dshMn = document.getElementById("dshMain");
       if (!activeBandId || !n) {
+        _dshNg && (_dshNg.style.display = ""), _dshMn && (_dshMn.style.display = "none");
         o && (o.textContent = t("Create or join a group to get started.")), a && (a.innerHTML = "");
         const e = document.getElementById("dshNextConcert");
         return e && (e.innerHTML = ""), s && (s.innerHTML = d(t("No group selected."))), i && (i.innerHTML = d(t("No group selected."))), l && (l.innerHTML = d(t("No group selected."))), void(r && (r.innerHTML = ""))
       }
+      _dshNg && (_dshNg.style.display = "none"), _dshMn && (_dshMn.style.display = "");
       const u = TODAY_STR,
         m = u.slice(0, 7);
       if (o) {
@@ -11232,7 +11351,7 @@
             r = `<div class="ad ${(e.avail||[])[(new Date).getDay()]?"on":"off"}"></div>`
           }
           return `<div class="mr2"><div class="mav2" style="background:${e.color};color:${_ink(e.color)};${i?`background-image:url(${i});background-size:cover;background-position:center`:""}">${i?"":e.init}</div><div style="flex:1"><div class="mn">${esc(e.name)}</div><div class="mi">${esc(l)}</div></div>${r}</div>`
-        }).join(""), e.length < 3 && (i.innerHTML += `<div class="cl" style="margin-top:10px;cursor:pointer" onclick="openInvMod()">${t("Invite more members")} →</div>`)) : i.innerHTML = d(t("No members yet. Invite someone to join!"))
+        }).join(""), e.length < 3 && (i.innerHTML += `<div class="cl" style="margin-top:10px;cursor:pointer" onclick="openInvMod()">${t("Invite more members")} →</div>`)) : i.innerHTML = `<div style="text-align:center;padding:8px 4px"><div style="color:var(--ink3);font-size:var(--t-md);margin-bottom:10px">${t("It's lonely here. Invite your bandmates.")}</div><button class="btn btn-p btn-sm" onclick="openInvMod()">+ ${t("Invite Member")}</button></div>`
       }
       if (r) {
         const e = {
@@ -11285,7 +11404,7 @@
     }
     async function initApp() {
       populateCountrySelects(), populateInstrumentSelects(), await loadBands(), syncCurrentUserToUI(), renderBandList();
-      nav(!currentUser._memberships?.length ? "myprofile" : localStorage.getItem("defaultView") || "dashboard");
+      nav(currentUser._memberships?.length ? localStorage.getItem("defaultView") || "dashboard" : "dashboard");
       const e = activeBandId;
       if (await Promise.all([loadSongs(), loadSetlists(), loadConcerts(), loadRehearsals(), loadMembers(), loadBlackouts()]), activeBandId !== e) {
         const e = document.getElementById("appLoader");
@@ -11293,7 +11412,7 @@
       }
       renderBandList(), syncCurrentUserToUI(), renderDashboard(), updateLibCount(), updateSidebarCounts();
       const t = document.getElementById("appLoader");
-      t && (t.style.display = "none");
+      t && (t.style.display = "none"), maybeShowOnboarding();
       (window.requestIdleCallback || function(f) {
         return setTimeout(f, 1)
       })(function() {
@@ -11901,7 +12020,10 @@
       const e = document.getElementById("settDefaultView");
       e && (e.value = localStorage.getItem("defaultView") || "dashboard");
       const t = document.getElementById("settAppearance");
-      t && (t.value = localStorage.getItem("appearance") || "default")
+      t && (t.value = localStorage.getItem("appearance") || "default"), _obwUserMeta().then(e => {
+        const t = document.getElementById("settDemoCard");
+        t && (t.style.display = e.demo_band_id ? "" : "none")
+      })
     }
     async function saveSettings() {
       const e = document.getElementById("settLang").value,
@@ -11913,6 +12035,333 @@
       a && await MembersDB.upsertProfile(a.id, {
         lang: e
       }), changeLang(e), toast2("Settings saved!")
+    }
+
+    // ── New-user onboarding wizard ─────────────────────────────
+    let _obwStep = 1,
+      _obwHasGroup = !1;
+
+    function _obwDate(offsetDays) {
+      const d = new Date;
+      return d.setDate(d.getDate() + offsetDays), d.toLocaleDateString("en-CA")
+    }
+    async function _obwUserMeta() {
+      try {
+        const {
+          data: {
+            session: e
+          }
+        } = await supabase.auth.getSession();
+        return e?.user?.user_metadata || {}
+      } catch (e) {
+        return {}
+      }
+    }
+    async function maybeShowOnboarding() {
+      try {
+        if (currentUser._memberships?.length) return;
+        const e = await _obwUserMeta();
+        e.onboarded || e.needs_onboarding || showOnboardingWizard()
+      } catch (e) {
+        console.warn("[bandapp] maybeShowOnboarding failed", e)
+      }
+    }
+    function _obwInstOptions() {
+      return '<option value="">—</option>' + INSTRUMENTS.map(e => `<option value="${esc(e.v)}">${esc(t(e.label))}</option>`).join("")
+    }
+    function showOnboardingWizard() {
+      _obwHasGroup = !1;
+      ["obwName", "obwCity", "obwInvFirst", "obwInvLast", "obwInvEmail", "obwSongTitle", "obwSongArtist"].forEach(e => {
+        const t = document.getElementById(e);
+        t && (t.value = "")
+      }), populateCountrySelects();
+      const e = currentUser._profile || {},
+        n = document.getElementById("obwInst1"),
+        o = document.getElementById("obwInst2");
+      n && (n.innerHTML = _obwInstOptions(), n.value = e.instrument || currentUser.instrument || ""), o && (o.innerHTML = _obwInstOptions(), o.value = e.instrument2 || "");
+      const a = document.getElementById("obwVocals");
+      a && (a.value = e.vocals || "None");
+      const s = e.availability || currentUser.avail || [1, 1, 1, 1, 1, 1, 1],
+        i = document.getElementById("obwAvail");
+      i && (i.innerHTML = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((e, n) => `<div class="dtog ${s[n]?"on":""}" onclick="this.classList.toggle('on')" data-di="${n}">${t(e)}</div>`).join(""));
+      const l = document.getElementById("obwLang");
+      l && (l.value = currentUser.lang || "en"), obwSetStep(1), showMod("obwMod")
+    }
+    function obwSetStep(e) {
+      _obwStep = e;
+      for (let t = 1; t <= 4; t++) {
+        const n = document.getElementById("obwStep" + t);
+        n && (n.style.display = t === e ? "" : "none")
+      }
+      document.getElementById("obwStepNum").textContent = e, document.getElementById("obwBar").style.width = 25 * e + "%";
+      const bk = document.getElementById("obwBack"),
+        n = document.getElementById("obwSkip"),
+        o = document.getElementById("obwPrimary"),
+        a = document.getElementById("obwClose");
+      bk.style.display = e > 1 ? "" : "none", n.style.display = 3 === e || 4 === e ? "" : "none", a.style.display = _obwHasGroup ? "" : "none";
+      const s = {
+        1: "Create Group →",
+        2: "Save & Continue →",
+        3: "Send Invite →",
+        4: "Finish →"
+      } [e];
+      o.setAttribute("data-i18n", s), o.textContent = t(s)
+    }
+    function obwSetLang(e) {
+      changeLang(e), ["obwInst1", "obwInst2"].forEach(e => {
+        const t = document.getElementById(e);
+        if (t) {
+          const n = t.value;
+          t.innerHTML = _obwInstOptions(), t.value = n
+        }
+      }), obwSetStep(_obwStep), currentUser.id && MembersDB.upsertProfile(currentUser.id, {
+        lang: e
+      }).catch(() => {})
+    }
+    function obwBack() {
+      _obwStep > 1 && obwSetStep(_obwStep - 1)
+    }
+    function obwSkip() {
+      3 === _obwStep ? obwSetStep(4) : 4 === _obwStep && obwFinish()
+    }
+    function obwPrimary() {
+      1 === _obwStep ? obwCreateGroup() : 2 === _obwStep ? obwSaveProfile() : 3 === _obwStep ? obwSendInvite() : obwAddSongAndFinish()
+    }
+    async function obwMarkOnboarded() {
+      try {
+        await supabase.auth.updateUser({
+          data: {
+            onboarded: !0
+          }
+        })
+      } catch (e) {
+        console.warn("[bandapp] onboarded flag failed", e)
+      }
+    }
+    async function obwDismiss() {
+      await obwMarkOnboarded(), closeMod("obwMod"), nav("dashboard")
+    }
+    async function obwFinish() {
+      await obwMarkOnboarded(), closeMod("obwMod");
+      try {
+        syncCurrentUserToUI(), renderDashboard(), updateSidebarCounts()
+      } catch (e) {}
+      nav("dashboard"), toast2(t("You're all set! 🎉"))
+    }
+    async function obwCreateGroup() {
+      const e = document.getElementById("obwName").value.trim();
+      if (!e) return void toast2(t("Please enter a group name"), "w");
+      const n = document.getElementById("obwPrimary");
+      n.disabled = !0, n.textContent = t("Creating…");
+      try {
+        const cc = document.getElementById("obwCountry").value,
+          o = cc ? ISO_COUNTRIES.find(e => e.c === cc)?.n || cc : "",
+          a = e.split(" ").filter(Boolean).map(e => e[0]).join("").toUpperCase().slice(0, 2) || e.slice(0, 2).toUpperCase(),
+          s = ["#16A34A", "#DC2626", "#0C6E6A", "#D97706", "#0891B2"],
+          i = s[BANDS.length % s.length],
+          l = await BandsDB.upsert({
+            name: e,
+            initials: a,
+            color: i,
+            city: document.getElementById("obwCity").value.trim(),
+            country: o,
+            genre: document.getElementById("obwGenre").value,
+            bio: ""
+          });
+        if (!l) return;
+        await BandsDB.addMember(l.id, currentUser.id, "admin"), await loadBands(), activeBandId = l.id, localStorage.setItem("activeBandId", l.id), currentUser.role = "admin", await Promise.all([loadSongs(), loadSetlists(), loadConcerts(), loadRehearsals(), loadMembers(), loadBlackouts()]), _obwHasGroup = !0, renderBandList(), syncCurrentUserToUI(), toast2(`"${e}" ${t("created!")}`), obwSetStep(2)
+      } catch (e) {
+        console.error("[bandapp] obwCreateGroup error:", e), toast2(t("Something went wrong creating the group"), "w")
+      } finally {
+        n.disabled = !1, obwSetStep(_obwStep)
+      }
+    }
+    async function obwSaveProfile() {
+      const e = document.getElementById("obwPrimary");
+      e.disabled = !0;
+      try {
+        const e = [...document.querySelectorAll("#obwAvail .dtog")].map(e => e.classList.contains("on") ? 1 : 0);
+        await MembersDB.upsertProfile(currentUser.id, {
+          instrument: document.getElementById("obwInst1").value,
+          instrument2: document.getElementById("obwInst2").value,
+          vocals: document.getElementById("obwVocals").value || "None",
+          availability: e
+        }), currentUser.avail = e, await loadMembers(), syncCurrentUserToUI(), obwSetStep(3)
+      } catch (e) {
+        console.error("[bandapp] obwSaveProfile error:", e), toast2(t("Couldn't save your profile — please try again"), "w")
+      } finally {
+        e.disabled = !1, obwSetStep(_obwStep)
+      }
+    }
+    async function obwSendInvite() {
+      const e = (document.getElementById("obwInvEmail").value || "").trim();
+      if (!e) return void toast2(t("Email address is required"), "w");
+      if (!activeBandId) return void toast2(t("Create your group first"), "w");
+      const n = document.getElementById("obwPrimary");
+      n.disabled = !0, n.textContent = t("Sending…");
+      const o = new AbortController,
+        a = setTimeout(() => o.abort(), 2e4);
+      try {
+        const {
+          data: {
+            session: s
+          }
+        } = await supabase.auth.getSession(), i = await fetch(`${SUPABASE_URL}/functions/v1/invite-member`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${s?.access_token||""}`
+          },
+          body: JSON.stringify({
+            band_id: activeBandId,
+            email: e,
+            first_name: (document.getElementById("obwInvFirst").value || "").trim(),
+            last_name: (document.getElementById("obwInvLast").value || "").trim(),
+            instrument: "",
+            role: (document.getElementById("obwInvRole").value || "member").toLowerCase()
+          }),
+          signal: o.signal
+        }), l = await i.json();
+        if (clearTimeout(a), !i.ok) return void toast2(l.message || l.error || t("Failed to send invite"), "w");
+        await loadMembers(), toast2(`${t("Invite sent to")} ${e}! 🎉`), obwSetStep(4)
+      } catch (e) {
+        clearTimeout(a), toast2("AbortError" === e?.name ? t("Request timed out — please try again") : e?.message || t("Something went wrong sending the invite"), "w")
+      } finally {
+        clearTimeout(a), n.disabled = !1, obwSetStep(_obwStep)
+      }
+    }
+    async function obwAddSongAndFinish() {
+      const e = document.getElementById("obwSongTitle").value.trim();
+      if (!e) return void obwFinish();
+      const n = document.getElementById("obwPrimary");
+      n.disabled = !0, n.textContent = t("Saving…");
+      try {
+        await SongsDB.upsert({
+          band_id: activeBandId,
+          title: e,
+          artist: document.getElementById("obwSongArtist").value.trim(),
+          genre: document.getElementById("obwSongGenre").value,
+          key: document.getElementById("obwSongKey").value,
+          hidden: !1
+        });
+        const o = getActiveBand();
+        await SetlistsDB.upsert({
+          band_id: activeBandId,
+          name: (o?.name || "My Group") + " — Set List"
+        }), await Promise.all([loadSongs(), loadSetlists()]);
+        try {
+          renderLib(), updateLibCount(), renderSLDropdown(), renderSL()
+        } catch (e) {}
+      } catch (e) {
+        console.error("[bandapp] obwAddSong error:", e), toast2(t("Couldn't add the song — finishing setup"), "w")
+      } finally {
+        n.disabled = !1
+      }
+      obwFinish()
+    }
+    async function obwSeedDemo() {
+      const e = document.getElementById("obwPrimary");
+      e.disabled = !0, e.textContent = t("Building sample data…");
+      try {
+        const n = await BandsDB.upsert({
+          name: "The Riverside Band",
+          initials: "RB",
+          color: "#0C6E6A",
+          city: "Austin",
+          country: "United States",
+          genre: "Jazz",
+          bio: "A sample group to explore Ritovo. Clear it anytime from Settings."
+        });
+        if (!n) throw new Error("band create failed");
+        await BandsDB.addMember(n.id, currentUser.id, "admin");
+        const o = [
+            ["Autumn Leaves", "Joseph Kosma", "Jazz", "Em"],
+            ["So What", "Miles Davis", "Jazz", "Dm"],
+            ["Take Five", "Dave Brubeck", "Jazz", "Em"],
+            ["Blue Bossa", "Kenny Dorham", "Jazz", "Cm"],
+            ["Cantaloupe Island", "Herbie Hancock", "Jazz", "Fm"],
+            ["Chameleon", "Herbie Hancock", "Funk", "Bm"],
+            ["Pick Up the Pieces", "Average White Band", "Funk", "Eb"],
+            ["Cissy Strut", "The Meters", "Funk", "C"],
+            ["Superstition", "Stevie Wonder", "Funk", "Eb"],
+            ["Sex Machine", "James Brown", "Funk", "D"],
+            ["What's Going On", "Marvin Gaye", "Soul", "E"],
+            ["Ain't No Sunshine", "Bill Withers", "Soul", "Am"],
+            ["I Heard It Through the Grapevine", "Marvin Gaye", "Soul", "Em"],
+            ["Stand by Me", "Ben E. King", "Soul", "A"],
+            ["Sittin' On the Dock of the Bay", "Otis Redding", "Soul", "G"]
+          ],
+          a = [];
+        for (const [e, t, s, i] of o) {
+          const o = await SongsDB.upsert({
+            band_id: n.id,
+            title: e,
+            artist: t,
+            genre: s,
+            key: i,
+            hidden: !1
+          });
+          o && a.push(o)
+        }
+        const s = await SetlistsDB.upsert({
+            band_id: n.id,
+            name: "Friday Night at The Riverside"
+          }),
+          i = await SetlistsDB.upsert({
+            band_id: n.id,
+            name: "Sunday Jazz Brunch"
+          });
+        s && a.length && await SetlistsDB.saveSongs(s.id, a.slice(0, 8).map(e => e.id)), i && a.length && await SetlistsDB.saveSongs(i.id, a.slice(7).map(e => e.id)), await RehearsalsDB.upsert({
+          band_id: n.id,
+          title: "Full Group Rehearsal",
+          location: "Riverside Studio B",
+          date: _obwDate(-14),
+          start: "19:00",
+          end: "21:30",
+          setlistId: s?.id || null
+        }), await RehearsalsDB.upsert({
+          band_id: n.id,
+          title: "Pre-Gig Run-Through",
+          location: "Riverside Studio B",
+          date: _obwDate(7),
+          start: "19:00",
+          end: "22:00",
+          setlistId: s?.id || null
+        }), await ConcertsDB.upsert({
+          band_id: n.id,
+          title: "Live at The Blue Room",
+          venue: "The Blue Room, Austin",
+          date: _obwDate(21),
+          time: "20:30"
+        }), await supabase.auth.updateUser({
+          data: {
+            demo_band_id: n.id,
+            onboarded: !0
+          }
+        }), await loadBands(), closeMod("obwMod"), await switchBand(n.id), toast2(t("Sample data ready — explore away! 🎷"))
+      } catch (n) {
+        console.error("[bandapp] obwSeedDemo error:", n), toast2(t("Couldn't create sample data — please try again"), "w"), e.disabled = !1, obwSetStep(_obwStep)
+      }
+    }
+    async function clearDemoData() {
+      const e = (await _obwUserMeta()).demo_band_id;
+      if (!e) return void toast2(t("No sample data to clear"), "w");
+      if (!confirm(t("Delete the sample group and all its demo songs, set lists, rehearsals and concerts? This cannot be undone."))) return;
+      try {
+        await BandsDB.delete(e), await supabase.auth.updateUser({
+          data: {
+            demo_band_id: null
+          }
+        }), activeBandId === e && (activeBandId = null, localStorage.removeItem("activeBandId")), await loadBands();
+        try {
+          await Promise.all([loadSongs(), loadSetlists(), loadConcerts(), loadRehearsals(), loadMembers(), loadBlackouts()])
+        } catch (e) {}
+        renderBandList(), syncCurrentUserToUI(), renderSLDropdown(), renderSL(), renderSlMeta(), renderLib(), updateLibCount(), updateSidebarCounts(), renderRehearsals(), renderConcerts(), renderMembers(), renderGuestDir(), renderBP(), renderDashboard(), nav("dashboard");
+        const n = document.getElementById("settDemoCard");
+        n && (n.style.display = "none"), toast2(t("Sample data cleared"))
+      } catch (e) {
+        console.error("[bandapp] clearDemoData error:", e), toast2(t("Couldn't clear sample data — please try again"), "w")
+      }
     }
   </script>
 
