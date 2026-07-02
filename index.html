@@ -5273,7 +5273,7 @@
 
       <div class="moft">
         <button class="btn btn-g" onclick="closeMod('slMod')" data-i18n="Cancel">Cancel</button>
-        <button class="btn btn-p" id="slCreateBtn" onclick="createNewSetList()" data-i18n="Create Set List">Create Set List</button>
+        <button class="btn btn-p" id="slCreateBtn" onclick="const _b=this;_b.disabled=!0;createNewSetList().finally(()=>_b.disabled=!1)" data-i18n="Create Set List">Create Set List</button>
       </div>
     </div>
   </div>
@@ -5399,7 +5399,7 @@
 
       <div class="moft">
         <button class="btn btn-g" onclick="closeMod('alsMod')" data-i18n="Cancel">Cancel</button>
-        <button class="btn btn-p" onclick="addSong()" data-i18n="Add">Add</button>
+        <button class="btn btn-p" onclick="const _b=this;_b.disabled=!0;addSong().finally(()=>_b.disabled=!1)" data-i18n="Add">Add</button>
       </div>
     </div>
   </div>
@@ -5676,7 +5676,7 @@
       </div>
       <div style="padding:13px 25px 20px;border-top:1px solid var(--bd);display:flex;gap:7px;justify-content:flex-end;background:var(--w);flex-shrink:0">
         <button class="btn btn-g" onclick="closeMod('boMod')" data-i18n="Cancel">Cancel</button>
-        <button class="btn btn-p" onclick="savBO()" data-i18n="Save">Save Period</button>
+        <button class="btn btn-p" onclick="const _b=this;_b.disabled=!0;savBO().finally(()=>_b.disabled=!1)" data-i18n="Save">Save Period</button>
       </div>
     </div>
   </div>
@@ -7942,7 +7942,7 @@
       } catch (e) {
         return toast2(e.message || "Failed to create set list", "w"), void console.error("[bandapp] createNewSetList error:", e)
       }
-      o && (slSongs[o.id] = [], t && await ConcertsDB.linkSetlist(t, o.id), await loadSetlists(), t && await loadConcerts(), closeMod("slMod"), activeSetlistId = o.id, slS = getSlS(), renderSLDropdown(), document.getElementById("slName").textContent = e, renderSlMeta(), renderSL(), nav("setlists"), toast2(`"${e}" created — add songs to get started.`))
+      o && (slSongs[o.id] = [], t && await ConcertsDB.linkSetlist(t, o.id).catch(() => toast2("Set list created, but linking the concert failed", "w")), await loadSetlists(), t && await loadConcerts(), closeMod("slMod"), activeSetlistId = o.id, slS = getSlS(), renderSLDropdown(), document.getElementById("slName").textContent = e, renderSlMeta(), renderSL(), nav("setlists"), toast2(`"${e}" created — add songs to get started.`))
     }
     let aG = "All";
 
@@ -8625,10 +8625,16 @@
     async function saveSheetEdits() {
       if (!songs.length) return void toast2("Nothing to save", "w");
       toast2("Saving…");
-      (await Promise.all(songs.map(e => SongsDB.upsert(e)))).every(Boolean) && (await loadSongs(), renderSheet(), updateLibCount(), toast2("Library saved ✓"))
+      try {
+        (await Promise.all(songs.map(e => SongsDB.upsert(e)))).every(Boolean) && (await loadSongs(), renderSheet(), updateLibCount(), toast2("Library saved ✓"))
+      } catch (e) {
+        console.error("[bandapp] saveSheetEdits:", e), toast2("Some songs failed to save — check your connection and try again", "w")
+      }
     }
     async function addSheetRow() {
-      if (!await SongsDB.upsert({
+      let _row = null;
+      try {
+        _row = await SongsDB.upsert({
           band_id: activeBandId,
           title: "",
           artist: "",
@@ -8639,7 +8645,11 @@
           spotify: "",
           youtube: "",
           apple: ""
-        })) return;
+        })
+      } catch (e) {
+        console.error("[bandapp] addSheetRow:", e), toast2("Couldn't add a row — please try again", "w")
+      }
+      if (!_row) return;
       await loadSongs(), renderSheet(), updateLibCount();
       const e = document.querySelectorAll("#sheetBody tr");
       if (e.length) {
@@ -9526,7 +9536,12 @@
       t.innerHTML = setlists.map(t => `\n    <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--bg);border:1.5px solid var(--bd);border-radius:var(--rad);cursor:pointer;transition:border-color .13s" onclick="linkConcertToSetlist('${e}','${t.id}')" onmouseover="this.style.borderColor='var(--a)'" onmouseout="this.style.borderColor='var(--bd)'">\n      <div style="flex:1"><div style="font-weight:600;font-size:var(--t-md)">${esc(t.name)}</div><div style="font-size:var(--t-xs);color:var(--ink2)">${esc(t.type)}${t.date?" · "+new Date(t.date+"T12:00:00").toLocaleDateString("en-US",{month:"short",day:"numeric",year:"numeric"}):""}</div></div>\n      ${o.includes(t.id)?'<span class="pill pg" style="font-size:var(--t-2xs)">✓ Linked</span>':""}\n    </div>`).join("")
     }
     async function linkConcertToSetlist(e, t) {
-      await ConcertsDB.linkSetlist(e, t), closeMod("concertLinkMod"), toast2("Concert linked to set list!"), loadConcerts().then(() => {
+      try {
+        await ConcertsDB.linkSetlist(e, t)
+      } catch (e) {
+        return void toast2("Linking failed — please try again", "w")
+      }
+      closeMod("concertLinkMod"), toast2("Concert linked to set list!"), loadConcerts().then(() => {
         renderConcerts(), renderSlMeta()
       }).catch(() => {})
     }
@@ -9738,7 +9753,11 @@
       editingConcertId && (i.id = editingConcertId);
       const l = await ConcertsDB.upsert(i);
       if (!l) return;
-      s && !(l.setlistIds || []).includes(s) && await ConcertsDB.linkSetlist(l.id, s);
+      if (s && !(l.setlistIds || []).includes(s)) try {
+        await ConcertsDB.linkSetlist(l.id, s)
+      } catch (e) {
+        toast2("Concert saved, but linking the set list failed", "w")
+      }
       const r = editingConcertId ? "updated" : "created",
         d = `Concert "${t}"${e?" on "+e:""} ${r}${i.venue?" @ "+i.venue:""}`;
       logCalChange(r, "concert", l.id, d, !0), closeMod("ceMod"), toast2(editingConcertId ? "Concert updated!" : "Concert added!"), syncCrossGroupBlackouts(l), loadConcerts().then(() => {
@@ -11629,7 +11648,7 @@
 
       <div class="moft" id="profFooter">
         <button class="btn btn-g" onclick="closeMod('profMod')" data-i18n="Cancel">Cancel</button>
-        <button class="btn btn-p" onclick="saveProfile()" data-i18n="Save">Save Profile</button>
+        <button class="btn btn-p" onclick="const _b=this;_b.disabled=!0;saveProfile().finally(()=>_b.disabled=!1)" data-i18n="Save">Save Profile</button>
       </div>
     </div>
   </div>
@@ -11797,7 +11816,7 @@
       r.forEach(e => e.style.display = a ? "" : "none"), m.forEach(e => e.style.display = a ? "none" : "");
       document.querySelectorAll("#profMod input, #profMod select, #profMod textarea").forEach(e => {
         e.disabled = !a, e.closest(".phone-cc-wrap") || (e.style.opacity = a ? "" : "1"), e.style.cursor = a ? "" : "default", e.style.background = a ? "" : "transparent", e.style.borderColor = a ? "" : "transparent"
-      }), document.getElementById("profFooter").innerHTML = a ? '<button class="btn btn-g" onclick="closeMod(\'profMod\')">Cancel</button><button class="btn btn-p" onclick="saveProfile()">Save Profile</button>' : '<button class="btn btn-p" onclick="closeMod(\'profMod\')">Close</button>', document.getElementById("profModalTitle").textContent = a ? "Edit My Profile" : n.name.split(" ")[0] + "'s Profile", populateCountrySelects();
+      }), document.getElementById("profFooter").innerHTML = a ? '<button class="btn btn-g" onclick="closeMod(\'profMod\')">Cancel</button><button class="btn btn-p" onclick="const _b=this;_b.disabled=!0;saveProfile().finally(()=>_b.disabled=!1)">Save Profile</button>' : '<button class="btn btn-p" onclick="closeMod(\'profMod\')">Close</button>', document.getElementById("profModalTitle").textContent = a ? "Edit My Profile" : n.name.split(" ")[0] + "'s Profile", populateCountrySelects();
       const [d, ...u] = n.name.split(" ");
       document.getElementById("pfFirst").value = d, document.getElementById("pfLast").value = u.join(" "), document.getElementById("pfBday").value = o.bday || "", document.getElementById("pfNat").value = o.nat || "", document.getElementById("pfEmail").value = a ? currentUser.email || o.email || "" : o.email || "", initPhoneField("pfPhoneCc", "pfPhoneNum", o.phone || ""), document.getElementById("pfCountry").value = o.country || "", document.getElementById("pfBio").value = o.bio || "", renderPfNatFlag(), populateInstrumentSelects(), document.getElementById("pfInst1").value = n.instrument || "", renderInstPicker("pfInst1"), document.getElementById("pfInst2").value = n.inst2 || "", renderInstPicker("pfInst2"), renderPfInstIcons(), document.getElementById("pfVocals").value = n.vocals || "None";
       document.getElementById("pfAvailDays").innerHTML = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((e, o) => `\n    <div class="dtog ${n.avail[o]?"on":""}" ${a?"onclick=\"this.classList.toggle('on')\"":'style="pointer-events:none;opacity:.8"'} data-di="${o}">${t(e)}</div>\n  `).join(""), document.getElementById("pfGear").value = o.gear || "", document.getElementById("pfSpotify").value = o.spotify || "", document.getElementById("pfApple").value = o.apple || "", document.getElementById("pfYoutube").value = o.youtube || "", document.getElementById("pfInstagram").value = o.instagram || "", document.getElementById("pfFacebook").value = o.facebook || "", document.getElementById("pfWebsite").value = o.website || "", renderPfLinkPreview(), attachPfLinkListeners(), showMod("profMod")
@@ -12532,7 +12551,7 @@
 
       <div class="moft">
         <button class="btn btn-g" onclick="cancelSongEdit()" data-i18n="Cancel">Cancel</button>
-        <button class="btn btn-p" onclick="saveSongEdit()" data-i18n="Save">Save Changes</button>
+        <button class="btn btn-p" onclick="const _b=this;_b.disabled=!0;saveSongEdit().finally(()=>_b.disabled=!1)" data-i18n="Save">Save Changes</button>
       </div>
     </div>
   </div>
@@ -12620,7 +12639,7 @@
       </div>
       <div style="padding:13px 25px 20px;border-top:1px solid var(--bd);display:flex;gap:7px;justify-content:flex-end;align-items:center;background:var(--w);flex-shrink:0">
         <button class="btn btn-g" onclick="closeMod('ceMod')" data-i18n="Cancel">Cancel</button>
-        <button class="btn btn-p" onclick="saveConcertEdit()" data-i18n="Save">Save Concert</button>
+        <button class="btn btn-p" onclick="const _b=this;_b.disabled=!0;saveConcertEdit().finally(()=>_b.disabled=!1)" data-i18n="Save">Save Concert</button>
       </div>
     </div>
   </div>
@@ -12848,7 +12867,7 @@
       </div>
       <div style="padding:13px 25px 20px;border-top:1px solid var(--bd);display:flex;gap:7px;justify-content:flex-end;background:var(--w);flex-shrink:0">
         <button class="btn btn-g" onclick="closeMod('reMod')" data-i18n="Cancel">Cancel</button>
-        <button class="btn btn-p" onclick="saveRehEdit()" data-i18n="Save Rehearsal">Save Rehearsal</button>
+        <button class="btn btn-p" onclick="const _b=this;_b.disabled=!0;saveRehEdit().finally(()=>_b.disabled=!1)" data-i18n="Save Rehearsal">Save Rehearsal</button>
       </div>
     </div>
   </div>
