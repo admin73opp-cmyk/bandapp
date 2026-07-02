@@ -7793,11 +7793,6 @@
       const n = setlists.find(e => e.id === t);
       document.getElementById("slName").textContent = n ? n.name : "Set List", renderSlMeta(), renderSL()
     }
-    async function selSL(e, t) {
-      activeSetlistId = t, await loadSetlistSongs(t), slS = getSlS();
-      const n = setlists.find(e => e.id === t);
-      document.getElementById("slName").textContent = n ? n.name : "Set List", renderSlMeta(), renderSL(), renderSLDropdown()
-    }
     async function deleteActiveSetlist() {
       const e = setlists.find(e => e.id === activeSetlistId);
       if (!e) return;
@@ -7822,10 +7817,13 @@
       myC[e] = t, t ? await SongsDB.upsertNote(e, t) : await SongsDB.deleteNote(e), toast2("Note saved")
     }
 
-    function selSL(e, t) {
-      document.querySelectorAll(".stabs .stb").forEach(e => e.classList.remove("on")), e.classList.add("on"), activeSetlistId = t;
+    async function selSL(e, t) {
+      // Merged from the former duplicate definition: highlight the tab AND load
+      // the setlist's songs — the old sync version skipped loadSetlistSongs, so
+      // a setlist opened via a concert preview showed the previous list's songs.
+      document.querySelectorAll(".stabs .stb").forEach(e => e.classList.remove("on")), e && e.classList && e.classList.add("on"), activeSetlistId = t, await loadSetlistSongs(t), slS = getSlS();
       const n = setlists.find(e => e.id === t);
-      document.getElementById("slName").textContent = n ? n.name : "Set List", renderSlMeta(), renderSL()
+      document.getElementById("slName").textContent = n ? n.name : "Set List", renderSlMeta(), renderSL(), renderSLDropdown()
     }
 
     function renderSlMeta() {
@@ -9482,10 +9480,13 @@
     }
     let slSourceConcertId = null;
 
-    function openSetlistFromConcert(e) {
+    async function openSetlistFromConcert(e) {
       if (!e) return void toast2("No set list linked to this concert yet", "w");
       const t = setlists.find(t => t.id === e);
       if (!t) return void toast2("Set list not found", "w");
+      // Load THIS setlist's songs — getSlS() returns the currently active
+      // setlist, which showed the wrong songs under this setlist's title.
+      const _ids = slSongs[e] || (slSongs[e] = await SetlistsDB.fetchSongs(e));
       document.getElementById("slPopTitle").textContent = t.name;
       const n = "Wedding" === t.type ? "pamb" : "Practice" === t.type ? "pgray" : "pp",
         o = t.date ? new Date(t.date + "T12:00:00").toLocaleDateString("en-US", {
@@ -9493,9 +9494,9 @@
           day: "numeric",
           year: "numeric"
         }) : "";
-      document.getElementById("slPopMeta").innerHTML = `\n    <span class="pill ${n}">${t.type||"Concert"}</span>\n    ${o?`<span class="pill pgray">${o}</span>`:""}\n    ${t.venue?`<span class="pill pgray">${esc(t.venue)}</span>`:""}\n    ${t.duration?`<span class="pill pgray">${t.duration} min</span>`:""}\n    ${t.paid?`<span class="pill pg">💰 ${esc(t.total||"Paid")}</span>`:""}`, document.getElementById("slPopSongs").innerHTML = getSlS().map((e, t) => {
+      document.getElementById("slPopMeta").innerHTML = `\n    <span class="pill ${n}">${t.type||"Concert"}</span>\n    ${o?`<span class="pill pgray">${o}</span>`:""}\n    ${t.venue?`<span class="pill pgray">${esc(t.venue)}</span>`:""}\n    ${t.duration?`<span class="pill pgray">${t.duration} min</span>`:""}\n    ${t.paid?`<span class="pill pg">💰 ${esc(t.total||"Paid")}</span>`:""}`, document.getElementById("slPopSongs").innerHTML = _ids.map((e, t) => {
         const n = songByAnyId(e);
-        return n ? `<tr>\n      <td style="padding:7px 10px;font-family:var(--mono);font-size:var(--t-xs);color:var(--ink3);border-bottom:1px solid var(--bd)">${String(t+1).padStart(2,"0")}</td>\n      <td style="padding:7px 10px;border-bottom:1px solid var(--bd)"><div style="font-weight:600;font-size:var(--t-md)">${n.title}</div><div style="font-size:var(--t-xs);color:var(--ink2)">${n.artist}</div></td>\n      <td style="padding:7px 10px;border-bottom:1px solid var(--bd)"><span class="kp">${n.key}</span></td>\n      <td style="padding:7px 10px;border-bottom:1px solid var(--bd);font-size:var(--t-sm);color:var(--ink2);font-style:italic">${n.note||""}</td>\n    </tr>` : ""
+        return n ? `<tr>\n      <td style="padding:7px 10px;font-family:var(--mono);font-size:var(--t-xs);color:var(--ink3);border-bottom:1px solid var(--bd)">${String(t+1).padStart(2,"0")}</td>\n      <td style="padding:7px 10px;border-bottom:1px solid var(--bd)"><div style="font-weight:600;font-size:var(--t-md)">${esc(n.title)}</div><div style="font-size:var(--t-xs);color:var(--ink2)">${esc(n.artist)}</div></td>\n      <td style="padding:7px 10px;border-bottom:1px solid var(--bd)"><span class="kp">${esc(n.key)}</span></td>\n      <td style="padding:7px 10px;border-bottom:1px solid var(--bd);font-size:var(--t-sm);color:var(--ink2);font-style:italic">${esc(n.note||"")}</td>\n    </tr>` : ""
       }).join(""), document.getElementById("slPopOpenFull").onclick = () => {
         nav("setlists"), selSL(document.querySelectorAll(".stabs .stb")[setlists.findIndex(t => t.id === e)], e), closeMod("slPreviewMod")
       }, showMod("slPreviewMod")
@@ -11958,7 +11959,7 @@
       if (!t) return;
       const n = new FileReader;
       n.onload = async e => {
-        const t = e.target.result,
+        const t = await compressImage(e.target.result, 1400, .82),
           n = document.getElementById("mpCover");
         n && (n.style.backgroundImage = `url(${t})`, n.style.backgroundSize = "cover", n.style.backgroundPosition = "center");
         try {
@@ -11975,7 +11976,9 @@
       if (!t) return;
       const n = new FileReader;
       n.onload = async e => {
-        const t = e.target.result,
+        // Compress before storing — raw phone photos are 5-10 MB of base64 in
+        // the profiles row and get re-downloaded by every member on every load.
+        const t = await compressImage(e.target.result, 1024, .75),
           n = currentUser.memberIdx;
         memberPhotos[n] = t;
         try {
