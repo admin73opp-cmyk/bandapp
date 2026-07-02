@@ -861,4 +861,22 @@ window.PT_BR = {
   '✕ Clear': '✕ Limpar',
   '＋ Setlist': '＋ Setlist',
   '(all optional)': '(todos opcionais)',
+
+  /* ── CONFIRM DIALOGS + AUTH (added 2026-07-02) ── */
+  'This cannot be undone.': 'Esta ação não pode ser desfeita.',
+  'The setlist will be permanently deleted and all links to rehearsals and concerts will disappear.': 'A setlist será excluída permanentemente e todos os vínculos com ensaios e shows desaparecerão.',
+  'is already in this set list.': 'já está nesta setlist.',
+  'Add it again anyway?': 'Adicionar de novo mesmo assim?',
+  'Delete all calendar log entries older than 60 days? This cannot be undone.': 'Excluir todos os registros do calendário com mais de 60 dias? Esta ação não pode ser desfeita.',
+  'Remove this guest? They will be moved to the Guest Directory.': 'Remover este convidado? Ele será movido para o diretório de convidados.',
+  'Remove from the group? This cannot be undone.': 'Remover do grupo? Esta ação não pode ser desfeita.',
+  'Convert from Guest to full Member? Guest expiry dates will be removed.': 'Converter de convidado para membro efetivo? As datas de expiração serão removidas.',
+  'Make this musician an admin? Admins can manage members, songs, and all group settings.': 'Tornar este músico um admin? Admins gerenciam membros, músicas e todas as configurações do grupo.',
+  'Promote to full Member?': 'Promover a membro efetivo?',
+  'song(s) to your existing library': 'música(s) à sua biblioteca existente',
+  'song(s) into your library?': 'música(s) para a sua biblioteca?',
+  'Have a group code? Join an existing group →': 'Tem um código de grupo? Entre em um grupo existente →',
+  'Resend email': 'Reenviar e-mail',
+  'No email after a few minutes? Check your spam folder, or resend it.': 'Sem e-mail depois de alguns minutos? Verifique o spam ou reenvie.',
+  "Click the link and you'll be signed in automatically.": 'Clique no link e você entrará automaticamente.',
 };

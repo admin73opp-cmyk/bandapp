@@ -861,4 +861,22 @@ window.NL = {
   '✕ Clear': '✕ Wissen',
   '＋ Setlist': '＋ Setlist',
   '(all optional)': '(allemaal optioneel)',
+
+  /* ── CONFIRM DIALOGS + AUTH (added 2026-07-02) ── */
+  'This cannot be undone.': 'Dit kan niet ongedaan worden gemaakt.',
+  'The setlist will be permanently deleted and all links to rehearsals and concerts will disappear.': 'De setlist wordt permanent verwijderd en alle koppelingen met repetities en concerten verdwijnen.',
+  'is already in this set list.': 'staat al in deze setlist.',
+  'Add it again anyway?': 'Toch nog een keer toevoegen?',
+  'Delete all calendar log entries older than 60 days? This cannot be undone.': 'Alle logboekitems ouder dan 60 dagen verwijderen? Dit kan niet ongedaan worden gemaakt.',
+  'Remove this guest? They will be moved to the Guest Directory.': 'Deze gast verwijderen? Hij/zij wordt verplaatst naar de gastenlijst.',
+  'Remove from the group? This cannot be undone.': 'Uit de groep verwijderen? Dit kan niet ongedaan worden gemaakt.',
+  'Convert from Guest to full Member? Guest expiry dates will be removed.': 'Van gast naar volwaardig lid omzetten? De vervaldatums worden verwijderd.',
+  'Make this musician an admin? Admins can manage members, songs, and all group settings.': 'Deze muzikant admin maken? Admins beheren leden, nummers en alle groepsinstellingen.',
+  'Promote to full Member?': 'Promoveren tot volwaardig lid?',
+  'song(s) to your existing library': 'nummer(s) aan je bestaande bibliotheek',
+  'song(s) into your library?': 'nummer(s) in je bibliotheek importeren?',
+  'Have a group code? Join an existing group →': 'Heb je een groepscode? Sluit je aan bij een bestaande groep →',
+  'Resend email': 'E-mail opnieuw versturen',
+  'No email after a few minutes? Check your spam folder, or resend it.': 'Geen e-mail na een paar minuten? Controleer je spammap of verstuur opnieuw.',
+  "Click the link and you'll be signed in automatically.": 'Klik op de link en je wordt automatisch aangemeld.',
 };

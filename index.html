@@ -6201,7 +6201,7 @@
     }
     async function deleteRehearsal(e) {
       const t = rehearsals.find(t => t.id === e);
-      t && confirm(`Delete "${t.title}"? This cannot be undone.`) && (await RehearsalsDB.delete(e), logCalChange("deleted", "rehearsal", e, `Rehearsal "${t.title}"${t.date?" on "+t.date:""} deleted`, !0), await loadRehearsals(), closeMod("reViewMod"), renderRehearsals(), toast2("Rehearsal deleted", "w"))
+      t && confirm(`${window.t("Delete")} "${t.title}"? ${window.t("This cannot be undone.")}`) && (await RehearsalsDB.delete(e), logCalChange("deleted", "rehearsal", e, `Rehearsal "${t.title}"${t.date?" on "+t.date:""} deleted`, !0), await loadRehearsals(), closeMod("reViewMod"), renderRehearsals(), toast2("Rehearsal deleted", "w"))
     }
 
     function _populateSlSelect(e, t) {
@@ -7808,7 +7808,7 @@
     async function deleteActiveSetlist() {
       const e = setlists.find(e => e.id === activeSetlistId);
       if (!e) return;
-      if (!confirm(`⚠ Delete "${e.name}"?\n\nThe setlist will be permanently deleted and all links to rehearsals and concerts will disappear. This cannot be undone.`)) return;
+      if (!confirm(`⚠ ${window.t("Delete")} "${e.name}"?\n\n${window.t("The setlist will be permanently deleted and all links to rehearsals and concerts will disappear.")} ${window.t("This cannot be undone.")}`)) return;
       await SetlistsDB.delete(activeSetlistId), delete slSongs[activeSetlistId], await loadSetlists(), renderSLDropdown();
       const t = setlists.find(e => e.id === activeSetlistId);
       document.getElementById("slName").textContent = t ? t.name : "No set lists", renderSlMeta(), renderSL(), renderConcerts(), renderRehearsals(), toast2("Set list deleted", "w")
@@ -8672,7 +8672,7 @@
       const t = songByAnyId(e);
       if (!t) return;
       const n = await songUsedInSetlists(t.id);
-      n.length ? toast2(`Song can't be deleted as it is being used by Set List "${n.join('", "')}". Please first remove it from the setlist(s).`, "w") : confirm(`Delete "${t.title}"?`) && (await SongsDB.delete(t.id), await loadSongs(), renderSheet(), renderLib(), updateLibCount(), toast2("Song deleted", "w"))
+      n.length ? toast2(`Song can't be deleted as it is being used by Set List "${n.join('", "')}". Please first remove it from the setlist(s).`, "w") : confirm(`${window.t("Delete")} "${t.title}"?`) && (await SongsDB.delete(t.id), await loadSongs(), renderSheet(), renderLib(), updateLibCount(), toast2("Song deleted", "w"))
     }
 
     function exportExcel() {
@@ -8741,7 +8741,7 @@
             });
           if (!n.length) return void toast2("No songs found in file", "w");
           const o = songs.length,
-            a = o ? `Add ${n.length} song${1!==n.length?"s":""} to your existing library (${o} song${1!==o?"s":""})?` : `Import ${n.length} song${1!==n.length?"s":""} into your library?`;
+            a = o ? `${window.t("Add")} ${n.length} ${window.t("song(s) to your existing library")} (${o})?` : `${window.t("Import")} ${n.length} ${window.t("song(s) into your library?")}`;
           confirm(a) && (await Promise.all(n.map(e => SongsDB.upsert({
             band_id: activeBandId,
             ...e,
@@ -8979,7 +8979,7 @@
       const t = songByAnyId(e);
       if (!t) return;
       const n = await songUsedInSetlists(t.id);
-      n.length ? toast2(`Song can't be deleted as it is being used by Set List "${n.join('", "')}". Please first remove it from the setlist(s).`, "w") : confirm(`Delete "${t.title}"? This cannot be undone.`) && (await SongsDB.delete(t.id), editingSongId === t.id && closeMod("seMod"), await loadSongs(), renderLib(), toast2("Song deleted", "w"))
+      n.length ? toast2(`Song can't be deleted as it is being used by Set List "${n.join('", "')}". Please first remove it from the setlist(s).`, "w") : confirm(`${window.t("Delete")} "${t.title}"? ${window.t("This cannot be undone.")}`) && (await SongsDB.delete(t.id), editingSongId === t.id && closeMod("seMod"), await loadSongs(), renderLib(), toast2("Song deleted", "w"))
     }
 
     function openAsMod() {
@@ -9014,7 +9014,7 @@
         if (!getSlS().includes(e)) {
           if ("true" === n.dataset.dup) {
             const t = songByAnyId(e);
-            if (!confirm(`"${t?.title}"${t?.artist?" by "+t.artist:""} is already in this set list.\n\nAdd it again anyway?`)) continue
+            if (!confirm(`"${t?.title}"${t?.artist?" by "+t.artist:""} ${window.t("is already in this set list.")}\n\n${window.t("Add it again anyway?")}`)) continue
           }
           t.push(e)
         }
@@ -9335,7 +9335,7 @@
     }
     async function cleanupChangelog() {
       if (!activeBandId || "admin" !== currentUser.role) return;
-      if (!confirm("Delete all calendar log entries older than 60 days? This cannot be undone.")) return;
+      if (!confirm(window.t("Delete all calendar log entries older than 60 days? This cannot be undone."))) return;
       await ChangelogDB.deleteOlderThan60Days(activeBandId) && (toast2("Old log entries deleted", "w"), renderCalChangelog())
     }
 
@@ -9677,7 +9677,7 @@
     }
     async function deleteConcert(e) {
       const t = concerts.find(t => t.id === e);
-      t && confirm(`Delete "${t.title}"? This cannot be undone.`) && (await ConcertsDB.delete(e), logCalChange("deleted", "concert", e, `Concert "${t.title}"${t.date?" on "+t.date:""} deleted`, !0), closeMod("cvMod"), toast2("Concert deleted", "w"), loadConcerts().then(() => {
+      t && confirm(`${window.t("Delete")} "${t.title}"? ${window.t("This cannot be undone.")}`) && (await ConcertsDB.delete(e), logCalChange("deleted", "concert", e, `Concert "${t.title}"${t.date?" on "+t.date:""} deleted`, !0), closeMod("cvMod"), toast2("Concert deleted", "w"), loadConcerts().then(() => {
         renderConcerts(), renderCal(), updateSidebarCounts()
       }).catch(() => {}))
     }
@@ -10812,7 +10812,7 @@
       const t = members[e];
       if (!t) return;
       const n = "guest" === t.role,
-        o = n ? `Remove guest "${t.name}" from the group? They will be moved to the Guest Directory.` : `Remove "${t.name}" from the group? This cannot be undone.`;
+        o = n ? `${t.name}: ${window.t("Remove this guest? They will be moved to the Guest Directory.")}` : `${t.name}: ${window.t("Remove from the group? This cannot be undone.")}`;
       confirm(o) && (await MembersDB.removeBandMember(activeBandId, t.id, n)) && (await loadMembers(), renderMembers(), renderGuestDir(), toast2(`${t.name.split(" ")[0]} removed from group`, "w"))
     }
 
@@ -10823,7 +10823,7 @@
       const t = members[e];
       if (t)
         if ("guest" === t.role) {
-          if (!confirm(`Convert ${t.name} from Guest to full Member? Their guest expiry dates will be removed.`)) return;
+          if (!confirm(`${t.name}: ${window.t("Convert from Guest to full Member? Guest expiry dates will be removed.")}`)) return;
           (await MembersDB.upsertBandMember(activeBandId, t.id, {
             role: "member",
             guest_start: null,
@@ -10835,7 +10835,7 @@
       const t = members[e];
       if (!t || "admin" === t.role) return;
       const n = getActiveBand();
-      n && "Admin" === n.role && confirm(`Make ${t.name} an admin of ${n.name}? Admins can manage members, songs, and all group settings.`) && (await MembersDB.upsertBandMember(activeBandId, t.id, {
+      n && "Admin" === n.role && confirm(`${t.name} (${n.name}): ${window.t("Make this musician an admin? Admins can manage members, songs, and all group settings.")}`) && (await MembersDB.upsertBandMember(activeBandId, t.id, {
         role: "admin"
       })) && (await loadMembers(), renderMembers(), toast2(`${t.name.split(" ")[0]} is now an Admin!`))
     }
@@ -10855,7 +10855,7 @@
     async function promoteGuestToMember(e, t) {
       if (e >= 0) {
         const t = members[e];
-        if (!confirm(`Promote ${t.name} to full Member?`)) return;
+        if (!confirm(`${t.name}: ${window.t("Promote to full Member?")}`)) return;
         (await MembersDB.upsertBandMember(activeBandId, t.id, {
           role: "member",
           guest_start: null,
@@ -10865,7 +10865,7 @@
       } else {
         const e = guestDirectory.find(e => e.name === t);
         if (!e) return void toast2(`${t} is not in the archive — invite them again`, "w");
-        if (!confirm(`Promote ${e.name} to full Member?`)) return;
+        if (!confirm(`${e.name}: ${window.t("Promote to full Member?")}`)) return;
         (await MembersDB.upsertBandMember(activeBandId, e.id, {
           role: "member",
           guest_start: null,

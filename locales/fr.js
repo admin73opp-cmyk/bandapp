@@ -861,4 +861,22 @@ window.FR = {
   '✕ Clear': '✕ Effacer',
   '＋ Setlist': '＋ Setlist',
   '(all optional)': '(tous facultatifs)',
+
+  /* ── CONFIRM DIALOGS + AUTH (added 2026-07-02) ── */
+  'This cannot be undone.': 'Cette action est irréversible.',
+  'The setlist will be permanently deleted and all links to rehearsals and concerts will disappear.': 'La setlist sera définitivement supprimée et tous les liens vers les répétitions et concerts disparaîtront.',
+  'is already in this set list.': 'est déjà dans cette setlist.',
+  'Add it again anyway?': 'L\'ajouter quand même une nouvelle fois ?',
+  'Delete all calendar log entries older than 60 days? This cannot be undone.': 'Supprimer toutes les entrées du journal de plus de 60 jours ? Cette action est irréversible.',
+  'Remove this guest? They will be moved to the Guest Directory.': 'Retirer cet invité ? Il sera déplacé vers le répertoire des invités.',
+  'Remove from the group? This cannot be undone.': 'Retirer du groupe ? Cette action est irréversible.',
+  'Convert from Guest to full Member? Guest expiry dates will be removed.': 'Convertir d\'invité en membre à part entière ? Les dates d\'expiration seront supprimées.',
+  'Make this musician an admin? Admins can manage members, songs, and all group settings.': 'Faire de ce musicien un admin ? Les admins gèrent les membres, les morceaux et tous les réglages du groupe.',
+  'Promote to full Member?': 'Promouvoir membre à part entière ?',
+  'song(s) to your existing library': 'morceau(x) à votre bibliothèque existante',
+  'song(s) into your library?': 'morceau(x) dans votre bibliothèque ?',
+  'Have a group code? Join an existing group →': 'Vous avez un code de groupe ? Rejoindre un groupe existant →',
+  'Resend email': 'Renvoyer l\'e-mail',
+  'No email after a few minutes? Check your spam folder, or resend it.': 'Pas d\'e-mail après quelques minutes ? Vérifiez vos spams ou renvoyez-le.',
+  "Click the link and you'll be signed in automatically.": 'Cliquez sur le lien et vous serez connecté automatiquement.',
 };

@@ -861,4 +861,22 @@ window.DE = {
   '✕ Clear': '✕ Leeren',
   '＋ Setlist': '＋ Setlist',
   '(all optional)': '(alle optional)',
+
+  /* ── CONFIRM DIALOGS + AUTH (added 2026-07-02) ── */
+  'This cannot be undone.': 'Das kann nicht rückgängig gemacht werden.',
+  'The setlist will be permanently deleted and all links to rehearsals and concerts will disappear.': 'Die Setlist wird dauerhaft gelöscht und alle Verknüpfungen zu Proben und Konzerten verschwinden.',
+  'is already in this set list.': 'ist bereits in dieser Setlist.',
+  'Add it again anyway?': 'Trotzdem noch einmal hinzufügen?',
+  'Delete all calendar log entries older than 60 days? This cannot be undone.': 'Alle Kalender-Logeinträge löschen, die älter als 60 Tage sind? Das kann nicht rückgängig gemacht werden.',
+  'Remove this guest? They will be moved to the Guest Directory.': 'Diesen Gast entfernen? Er wird ins Gästeverzeichnis verschoben.',
+  'Remove from the group? This cannot be undone.': 'Aus der Gruppe entfernen? Das kann nicht rückgängig gemacht werden.',
+  'Convert from Guest to full Member? Guest expiry dates will be removed.': 'Vom Gast zum vollwertigen Mitglied machen? Die Gast-Ablaufdaten werden entfernt.',
+  'Make this musician an admin? Admins can manage members, songs, and all group settings.': 'Diese Musikerin/diesen Musiker zum Admin machen? Admins können Mitglieder, Songs und alle Gruppeneinstellungen verwalten.',
+  'Promote to full Member?': 'Zum vollwertigen Mitglied befördern?',
+  'song(s) to your existing library': 'Song(s) zur bestehenden Bibliothek',
+  'song(s) into your library?': 'Song(s) in deine Bibliothek importieren?',
+  'Have a group code? Join an existing group →': 'Du hast einen Gruppencode? Einer bestehenden Gruppe beitreten →',
+  'Resend email': 'E-Mail erneut senden',
+  'No email after a few minutes? Check your spam folder, or resend it.': 'Keine E-Mail nach ein paar Minuten? Prüfe deinen Spam-Ordner oder sende sie erneut.',
+  "Click the link and you'll be signed in automatically.": 'Klicke auf den Link und du wirst automatisch angemeldet.',
 };
