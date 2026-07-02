@@ -81,66 +81,6 @@
       --shl: 0 8px 30px rgba(0,0,0,.12)
     }
 
-    @media(prefers-color-scheme:dark) {
-      :root {
-        --ink: #EEF0EC;
-        --ink2: #9AA39C;
-        --ink3: #889089;
-        --bg: #0E0F0E;
-        --bg2: #161816;
-        --w: #171917;
-        --bd: #272B28;
-        --a: #3FB3AE;
-        --aTxt: #3FB3AE;
-        --onA: #0E1413;
-        --a2: #12302E;
-        --g: #22C55E;
-        --g2: #0D2818;
-        --r: #F87171;
-        --r2: #2A0E0E;
-        --amb: #FBB85A;
-        --amb2: #2A1A00;
-        --bl: #60A5FA;
-        --bl2: #0D1E3A;
-        --sh: 0 1px 3px rgba(0,0,0,.3), 0 4px 14px rgba(0,0,0,.25);
-        --shl: 0 8px 30px rgba(0,0,0,.5);
-        color-scheme: dark
-      }
-
-      ::-webkit-scrollbar-thumb {
-        background: var(--bd)
-      }
-
-      select option {
-        background: var(--w);
-        color: var(--ink)
-      }
-
-      .sb-ov {
-        background: rgba(0,0,0,.55)
-      }
-
-      input:-webkit-autofill,
-      input:-webkit-autofill:focus {
-        -webkit-box-shadow: 0 0 0 100px var(--bg) inset;
-        -webkit-text-fill-color: var(--ink)
-      }
-
-      .toast {
-        background: var(--bd);
-        color: var(--ink)
-      }
-
-      .sb.minimized .ni:hover::after {
-        background: var(--bd);
-        color: var(--ink)
-      }
-
-      .sb-group-name {
-        color: var(--ink) !important
-      }
-    }
-
     *,
     *::before,
     *::after {
@@ -289,15 +229,6 @@
     .btn-p {
       background: var(--a);
       color: #fff
-    }
-
-    @media(prefers-color-scheme:dark) {
-
-      :root:not([data-theme="light"]) .btn-p,
-      :root:not([data-theme="light"]) .stb.on {
-        background: #0C6E6A;
-        border-color: #0C6E6A
-      }
     }
 
     html[data-theme="dark"] .btn-p,
@@ -3312,13 +3243,6 @@
       transition: all .27s cubic-bezier(.2,.8,.4,1)
     }
 
-    @media(prefers-color-scheme:dark) {
-      .toast {
-        background: #2A2A38;
-        color: #F0F0F8
-      }
-    }
-
     .bnav {
       display: none
     }
@@ -4099,8 +4023,15 @@
   </style>
   <script>
     ! function() {
-      const t = localStorage.getItem("appearance");
-      t && "default" !== t && document.documentElement.setAttribute("data-theme", t)
+      // Single source of truth for dark mode: data-theme. For "default" the
+      // system preference is applied here (and tracked live), which let the
+      // duplicated @media(prefers-color-scheme:dark) CSS blocks be removed.
+      const e = matchMedia("(prefers-color-scheme: dark)"),
+        n = () => {
+          const t = localStorage.getItem("appearance");
+          t && "default" !== t ? document.documentElement.setAttribute("data-theme", t) : e.matches ? document.documentElement.setAttribute("data-theme", "dark") : document.documentElement.removeAttribute("data-theme")
+        };
+      n(), e.addEventListener && e.addEventListener("change", n)
     }();
   </script>
 
@@ -12189,7 +12120,9 @@
     }
 
     function applyTheme(e) {
-      e && "default" !== e ? document.documentElement.setAttribute("data-theme", e) : document.documentElement.removeAttribute("data-theme")
+      // "default" now resolves the system preference here (the @media dark
+      // blocks were removed — data-theme is the single dark-mode switch).
+      e && "default" !== e ? document.documentElement.setAttribute("data-theme", e) : matchMedia("(prefers-color-scheme: dark)").matches ? document.documentElement.setAttribute("data-theme", "dark") : document.documentElement.removeAttribute("data-theme")
     }
 
     function populateSettingsPage() {
