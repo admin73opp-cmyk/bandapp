@@ -63,32 +63,56 @@ const MembersDB = {
     if (error) { handleDbError(error); }
   },
 
-  // Update role / guest dates on a band_members row
+  // Update role / guest dates on a band_members row.
+  // .update() reports no error when 0 rows match (missing row or RLS block),
+  // so select the affected rows and surface the silent no-op. Returns true on
+  // a real write, false otherwise.
   async upsertBandMember(bandId, userId, fields) {
-    const { error } = await supabase
+    const { data, error } = await supabase
       .from('band_members')
       .update(fields)
       .eq('band_id', bandId)
-      .eq('user_id', userId);
-    if (error) { handleDbError(error); }
+      .eq('user_id', userId)
+      .select('user_id');
+    if (error) { handleDbError(error); return false; }
+    if (!data || data.length === 0) {
+      console.error('[bandapp] upsertBandMember: 0 rows updated', bandId, userId, fields);
+      toast2("Change didn't save — membership not found or not permitted", 'w');
+      return false;
+    }
+    return true;
   },
 
   // Remove a member: guests are archived (guest_status='removed'); others are deleted
   async removeBandMember(bandId, userId, asArchive) {
     if (asArchive) {
-      const { error } = await supabase
+      const { data, error } = await supabase
         .from('band_members')
         .update({ guest_status: 'removed' })
         .eq('band_id', bandId)
-        .eq('user_id', userId);
-      if (error) { handleDbError(error); }
+        .eq('user_id', userId)
+        .select('user_id');
+      if (error) { handleDbError(error); return false; }
+      if (!data || data.length === 0) {
+        console.error('[bandapp] removeBandMember(archive): 0 rows updated', bandId, userId);
+        toast2("Change didn't save — membership not found or not permitted", 'w');
+        return false;
+      }
+      return true;
     } else {
-      const { error } = await supabase
+      const { data, error } = await supabase
         .from('band_members')
         .delete()
         .eq('band_id', bandId)
-        .eq('user_id', userId);
-      if (error) { handleDbError(error); }
+        .eq('user_id', userId)
+        .select('user_id');
+      if (error) { handleDbError(error); return false; }
+      if (!data || data.length === 0) {
+        console.error('[bandapp] removeBandMember(delete): 0 rows deleted', bandId, userId);
+        toast2("Removal didn't save — membership not found or not permitted", 'w');
+        return false;
+      }
+      return true;
     }
   },
 

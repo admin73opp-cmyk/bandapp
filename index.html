@@ -10780,7 +10780,7 @@
       if (!t) return;
       const n = "guest" === t.role,
         o = n ? `Remove guest "${t.name}" from the group? They will be moved to the Guest Directory.` : `Remove "${t.name}" from the group? This cannot be undone.`;
-      confirm(o) && (await MembersDB.removeBandMember(activeBandId, t.id, n), await loadMembers(), renderMembers(), renderGuestDir(), toast2(`${t.name.split(" ")[0]} removed from group`, "w"))
+      confirm(o) && (await MembersDB.removeBandMember(activeBandId, t.id, n)) && (await loadMembers(), renderMembers(), renderGuestDir(), toast2(`${t.name.split(" ")[0]} removed from group`, "w"))
     }
 
     function openReactivateAsGuest(e, t) {
@@ -10791,11 +10791,11 @@
       if (t)
         if ("guest" === t.role) {
           if (!confirm(`Convert ${t.name} from Guest to full Member? Their guest expiry dates will be removed.`)) return;
-          await MembersDB.upsertBandMember(activeBandId, t.id, {
+          (await MembersDB.upsertBandMember(activeBandId, t.id, {
             role: "member",
             guest_start: null,
             guest_end: null
-          }), await loadMembers(), renderMembers(), toast2(`${t.name.split(" ")[0]} is now a Member!`)
+          })) && (await loadMembers(), renderMembers(), toast2(`${t.name.split(" ")[0]} is now a Member!`))
         } else editingGuestConvertIdx = e, document.getElementById("gcName").textContent = t.name, document.getElementById("gcStart").value = TODAY_STR, document.getElementById("gcEnd").value = "", document.getElementById("gcModalTitle").textContent = "Convert to Guest", showMod("guestConvertMod")
     }
     async function makeAdmin(e) {
@@ -10804,7 +10804,7 @@
       const n = getActiveBand();
       n && "Admin" === n.role && confirm(`Make ${t.name} an admin of ${n.name}? Admins can manage members, songs, and all group settings.`) && (await MembersDB.upsertBandMember(activeBandId, t.id, {
         role: "admin"
-      }), await loadMembers(), renderMembers(), toast2(`${t.name.split(" ")[0]} is now an Admin!`))
+      })) && (await loadMembers(), renderMembers(), toast2(`${t.name.split(" ")[0]} is now an Admin!`))
     }
     let editingGuestConvertIdx = null;
     async function confirmGuestConvert() {
@@ -10817,28 +10817,28 @@
         guest_start: t,
         guest_end: n,
         guest_status: null
-      }), await loadMembers(), closeMod("guestConvertMod"), editingGuestConvertIdx = null, renderMembers(), renderGuestDir(), updateSidebarCounts(), toast2(`${e.name.split(" ")[0]} is now a Guest until ${n}`)) : toast2("Please set an end date", "w")
+      })) && (await loadMembers(), closeMod("guestConvertMod"), editingGuestConvertIdx = null, renderMembers(), renderGuestDir(), updateSidebarCounts(), toast2(`${e.name.split(" ")[0]} is now a Guest until ${n}`)) : toast2("Please set an end date", "w")
     }
     async function promoteGuestToMember(e, t) {
       if (e >= 0) {
         const t = members[e];
         if (!confirm(`Promote ${t.name} to full Member?`)) return;
-        await MembersDB.upsertBandMember(activeBandId, t.id, {
+        (await MembersDB.upsertBandMember(activeBandId, t.id, {
           role: "member",
           guest_start: null,
           guest_end: null,
           guest_status: null
-        }), await loadMembers(), renderMembers(), toast2(`${t.name.split(" ")[0]} is now a Member!`)
+        })) && (await loadMembers(), renderMembers(), toast2(`${t.name.split(" ")[0]} is now a Member!`))
       } else {
         const e = guestDirectory.find(e => e.name === t);
         if (!e) return void toast2(`${t} is not in the archive — invite them again`, "w");
         if (!confirm(`Promote ${e.name} to full Member?`)) return;
-        await MembersDB.upsertBandMember(activeBandId, e.id, {
+        (await MembersDB.upsertBandMember(activeBandId, e.id, {
           role: "member",
           guest_start: null,
           guest_end: null,
           guest_status: null
-        }), await loadMembers(), renderMembers(), renderGuestDir(), updateSidebarCounts(), toast2(`${e.name.split(" ")[0]} is now a Member!`)
+        })) && (await loadMembers(), renderMembers(), renderGuestDir(), updateSidebarCounts(), toast2(`${e.name.split(" ")[0]} is now a Member!`))
       }
     }
 
