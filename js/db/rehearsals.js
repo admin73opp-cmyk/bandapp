@@ -80,7 +80,8 @@ const RehearsalsDB = {
       .from('event_photos')
       .delete()
       .eq('id', photoId);
-    if (error) { console.error('[bandapp] removePhoto error:', error); }
+    if (error) { console.error('[bandapp] removePhoto error:', error); return false; }
+    return true;
   },
 
 };

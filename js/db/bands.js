@@ -82,7 +82,8 @@ const BandsDB = {
 
   async removePhoto(photoId) {
     const { error } = await supabase.from('event_photos').delete().eq('id', photoId);
-    if (error) { console.error('[bandapp] BandsDB.removePhoto error:', error); }
+    if (error) { console.error('[bandapp] removePhoto error:', error); return false; }
+    return true;
   },
 
 };

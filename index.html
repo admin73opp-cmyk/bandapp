@@ -5943,17 +5943,18 @@
       if (t) {
         const e = rehearsals.find(e => e.id === t);
         if (!e) return;
-        return await RehearsalsDB.upsert({
+        // upsert returns null on error — don't report success for a failed write
+        return (await RehearsalsDB.upsert({
           ...e,
           setlistId: null
-        }), await loadRehearsals(), renderSlMeta(), renderRehearsals(), void toast2("Rehearsal unlinked")
+        })) ? (await loadRehearsals(), renderSlMeta(), renderRehearsals(), void toast2("Rehearsal unlinked")) : void 0
       }
       if (!e) return;
       const n = rehearsals.find(t => t.id === e);
       n && (await RehearsalsDB.upsert({
         ...n,
         setlistId: activeSetlistId
-      }), await loadRehearsals(), renderSlMeta(), renderRehearsals(), toast2("Rehearsal linked!"), closeMod("slRehLinkMod"))
+      })) && (await loadRehearsals(), renderSlMeta(), renderRehearsals(), toast2("Rehearsal linked!"), closeMod("slRehLinkMod"))
     }
 
     function openSlRehLinkModal() {
@@ -6299,13 +6300,18 @@
         n = document.getElementById("rePhotoArea");
       if (!n) return;
       const o = t && t.photos || [];
-      n.innerHTML = o.map((t, n) => `<div style="position:relative;display:inline-block"><img src="${t.url}" style="width:64px;height:64px;border-radius:8px;object-fit:cover;border:1.5px solid var(--bd)"><button onclick="removeRehPhoto('${e}',${n})" style="position:absolute;top:-6px;right:-6px;width:18px;height:18px;border-radius:50%;background:var(--r);border:2px solid var(--w);color:#fff;font-size:.55rem;cursor:pointer;display:flex;align-items:center;justify-content:center">✕</button></div>`).join("") + `<label style="width:64px;height:64px;border-radius:8px;border:2px dashed var(--bd);display:inline-flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;color:var(--ink3);font-size:var(--t-2xs);gap:3px" onmouseover="this.style.borderColor='var(--a)'" onmouseout="this.style.borderColor='var(--bd)'">${ricon("camera",18)}Add photo<input type="file" accept="image/*" style="display:none" onchange="addRehPhoto(event,'${e||editingRehId||""}')"></label>`
+      n.innerHTML = o.map((t, n) => `<div style="position:relative;display:inline-block"><img src="${t.url}" style="width:64px;height:64px;border-radius:8px;object-fit:cover;border:1.5px solid var(--bd)"><button onclick="removeRehPhoto('${e}','${t.id||""}',${n})" style="position:absolute;top:-6px;right:-6px;width:18px;height:18px;border-radius:50%;background:var(--r);border:2px solid var(--w);color:#fff;font-size:.55rem;cursor:pointer;display:flex;align-items:center;justify-content:center">✕</button></div>`).join("") + `<label style="width:64px;height:64px;border-radius:8px;border:2px dashed var(--bd);display:inline-flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;color:var(--ink3);font-size:var(--t-2xs);gap:3px" onmouseover="this.style.borderColor='var(--a)'" onmouseout="this.style.borderColor='var(--bd)'">${ricon("camera",18)}Add photo<input type="file" accept="image/*" style="display:none" onchange="addRehPhoto(event,'${e||editingRehId||""}')"></label>`
     }
-    async function removeRehPhoto(e, t) {
+    async function removeRehPhoto(e, t, o) {
       const n = rehearsals.find(t => t.id === e);
       if (!n || !n.photos) return;
-      const o = n.photos[t];
-      o?.id && await RehearsalsDB.removePhoto(o.id), n.photos.splice(t, 1), renderRehPhotoArea(e), renderRehearsals(), toast2("Photo removed", "w")
+      // Prefer the photo id — indices baked into HTML go stale after a
+      // concurrent reload and would delete the wrong photo.
+      const a = t ? n.photos.findIndex(e => e.id === t) : o;
+      if (a < 0 || a === undefined || !n.photos[a]) return;
+      const s = n.photos[a];
+      if (s.id && !await RehearsalsDB.removePhoto(s.id)) return void toast2("Couldn't remove photo — try again", "w");
+      n.photos.splice(a, 1), renderRehPhotoArea(e), renderRehearsals(), toast2("Photo removed", "w")
     }
 
     function openRehPhotoLightbox(e, t) {
@@ -7155,6 +7161,8 @@
       o && (o.style.display = "none"), bandNotifPref[activeBandId] = e, localStorage.setItem(`bandNotifPref_${activeBandId}`, e), BandsDB.upsert({
         id: activeBandId,
         notif_pref: e
+      }).then(t => {
+        t || toast2("Preference saved on this device only — syncing to the group failed", "w")
       }), Object.entries(n).forEach(([t, n]) => {
         const o = document.getElementById(n);
         o && o.classList.toggle("on", t === e)
@@ -9862,13 +9870,16 @@
         n = document.getElementById("cePhotoArea");
       if (!n) return;
       const o = t && t.photos || [];
-      n.innerHTML = o.map((t, n) => `\n    <div style="position:relative;display:inline-block">\n      <img src="${t.url}" style="width:64px;height:64px;border-radius:8px;object-fit:cover;border:1.5px solid var(--bd)">\n      <button onclick="removeConcertPhoto('${e}',${n})" style="position:absolute;top:-6px;right:-6px;width:18px;height:18px;border-radius:50%;background:var(--r);border:2px solid var(--w);color:#fff;font-size:.55rem;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1">✕</button>\n    </div>`).join("") + `<label style="width:64px;height:64px;border-radius:8px;border:2px dashed var(--bd);display:inline-flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;color:var(--ink3);font-size:var(--t-2xs);gap:3px;transition:border-color .12s" onmouseover="this.style.borderColor='var(--a)'" onmouseout="this.style.borderColor='var(--bd)'">\n      ${ricon("camera",18)}Add photo\n      <input type="file" accept="image/*" style="display:none" onchange="addConcertPhoto(event,'${e||editingConcertId||""}')">\n    </label>`
+      n.innerHTML = o.map((t, n) => `\n    <div style="position:relative;display:inline-block">\n      <img src="${t.url}" style="width:64px;height:64px;border-radius:8px;object-fit:cover;border:1.5px solid var(--bd)">\n      <button onclick="removeConcertPhoto('${e}','${t.id||""}',${n})" style="position:absolute;top:-6px;right:-6px;width:18px;height:18px;border-radius:50%;background:var(--r);border:2px solid var(--w);color:#fff;font-size:.55rem;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1">✕</button>\n    </div>`).join("") + `<label style="width:64px;height:64px;border-radius:8px;border:2px dashed var(--bd);display:inline-flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;color:var(--ink3);font-size:var(--t-2xs);gap:3px;transition:border-color .12s" onmouseover="this.style.borderColor='var(--a)'" onmouseout="this.style.borderColor='var(--bd)'">\n      ${ricon("camera",18)}Add photo\n      <input type="file" accept="image/*" style="display:none" onchange="addConcertPhoto(event,'${e||editingConcertId||""}')">\n    </label>`
     }
-    async function removeConcertPhoto(e, t) {
+    async function removeConcertPhoto(e, t, o) {
       const n = concerts.find(t => t.id === e);
       if (!n || !n.photos) return;
-      const o = n.photos[t];
-      o?.id && await ConcertsDB.removePhoto(o.id), n.photos.splice(t, 1), renderConcertPhotoArea(e), renderConcerts(), toast2("Photo removed", "w")
+      const a = t ? n.photos.findIndex(e => e.id === t) : o;
+      if (a < 0 || a === undefined || !n.photos[a]) return;
+      const s = n.photos[a];
+      if (s.id && !await ConcertsDB.removePhoto(s.id)) return void toast2("Couldn't remove photo — try again", "w");
+      n.photos.splice(a, 1), renderConcertPhotoArea(e), renderConcerts(), toast2("Photo removed", "w")
     }
 
     function openPhotoLightbox(e, t) {
@@ -11012,6 +11023,9 @@
       n && (n.rehearsal_days = t), BandsDB.upsert({
         id: activeBandId,
         rehearsal_days: t
+      }).then(t => {
+        // Revert the optimistic toggle if the write didn't persist
+        t || (e.classList.toggle("on"), n && (n.rehearsal_days = [...document.querySelectorAll("#dtogs .dtog")].map(e => e.classList.contains("on") ? 1 : 0)))
       })
     }
     // Platform glyphs for link pills — neutral stroke marks in the brand
@@ -11119,7 +11133,7 @@
       if (!n) return;
       const a = "Admin" === e?.role;
       if (!t.length) return n.innerHTML = "", void(o && (o.style.display = ""));
-      o && (o.style.display = "none"), n.innerHTML = t.map((e, t) => `\n    <div style="position:relative;aspect-ratio:1">\n      <img src="${e.url}" style="width:100%;height:100%;object-fit:cover;border-radius:8px;cursor:pointer;border:1.5px solid var(--bd)" onclick="openGroupPhotoLightbox(${t})">\n      ${a?`<button onclick="removeBandPhoto(${t})" style="position:absolute;top:-5px;right:-5px;width:18px;height:18px;border-radius:50%;background:var(--r);border:2px solid var(--w);color:#fff;font-size:.5rem;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1">✕</button>`:""}\n    </div>`).join("")
+      o && (o.style.display = "none"), n.innerHTML = t.map((e, t) => `\n    <div style="position:relative;aspect-ratio:1">\n      <img src="${e.url}" style="width:100%;height:100%;object-fit:cover;border-radius:8px;cursor:pointer;border:1.5px solid var(--bd)" onclick="openGroupPhotoLightbox(${t})">\n      ${a?`<button onclick="removeBandPhoto('${e.id||""}',${t})" style="position:absolute;top:-5px;right:-5px;width:18px;height:18px;border-radius:50%;background:var(--r);border:2px solid var(--w);color:#fff;font-size:.5rem;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1">✕</button>`:""}\n    </div>`).join("")
     }
 
     function addGroupPhoto(e) {
@@ -11139,11 +11153,14 @@
         }
       }, o.readAsDataURL(t)
     }
-    async function removeBandPhoto(e) {
+    async function removeBandPhoto(e, o) {
       const t = getActiveBand();
       if (!t || !t.photos) return;
-      const n = t.photos[e];
-      n?.id && await BandsDB.removePhoto(n.id), t.photos.splice(e, 1), renderBandPhotos(), toast2("Photo removed", "w")
+      const a = "string" == typeof e && e ? t.photos.findIndex(t => t.id === e) : o !== undefined ? o : e;
+      if (a < 0 || a === undefined || !t.photos[a]) return;
+      const n = t.photos[a];
+      if (n.id && !await BandsDB.removePhoto(n.id)) return void toast2("Couldn't remove photo — try again", "w");
+      t.photos.splice(a, 1), renderBandPhotos(), toast2("Photo removed", "w")
     }
 
     function openGroupPhotoLightbox(e) {
