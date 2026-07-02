@@ -7303,7 +7303,7 @@
       if (!n) return !1;
       return getCrossGroupBlocks(n.name).has(t)
     }
-    let curMonth = new Date(2026, 4, 1),
+    let curMonth = (() => { const d = new Date(); d.setDate(1); d.setHours(0, 0, 0, 0); return d; })(),
       blackouts = [],
       _boGen = 0,
       _boMapCache = null,
