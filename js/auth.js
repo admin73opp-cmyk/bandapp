@@ -36,6 +36,8 @@ async function loadCurrentUser(uid, email) {
     console.error('[bandapp] profiles query failed — code:', error?.code, 'message:', error?.message);
     // Profile row missing (common for new users if RLS blocked the insert at signup).
     // Fall back to auth metadata and create the row now that the user is authenticated.
+    // The memberships query usually succeeded — a pre-enrolled invitee or code-joiner
+    // with a missing profile row still has real bands, so don't discard them.
     const { data: _authData } = await supabase.auth.getUser();
     const authUser = _authData?.user;
     const meta = authUser?.user_metadata || {};
@@ -43,19 +45,22 @@ async function loadCurrentUser(uid, email) {
     const ln = meta.last_name || '';
     currentUser.firstName = fn;
     currentUser.lastName  = ln;
-    currentUser._memberships = [];
+    currentUser._memberships = memberships || [];
     // Restore pending band from metadata if sessionStorage was cleared (e.g. after page refresh)
     if (meta.pending_band_id && !sessionStorage.getItem('pendingBandId')) {
       sessionStorage.setItem('pendingBandId', meta.pending_band_id);
     }
-    if (fn || ln) {
-      await supabase.from('profiles').upsert({
-        id:         uid,
-        first_name: fn,
-        last_name:  ln,
-        initials:   ((fn[0] || '') + (ln[0] || '')).toUpperCase(),
-      });
-    }
+    // Always create the row — a nameless signup without one gets '?' initials and
+    // a failing profiles query on every login. Default initials from the email.
+    await supabase.from('profiles').upsert({
+      id:         uid,
+      first_name: fn,
+      last_name:  ln,
+      initials:   (((fn[0] || '') + (ln[0] || '')).toUpperCase()) || (email || '?').slice(0, 2).toUpperCase(),
+    });
+    const savedBand = localStorage.getItem('activeBandId');
+    const validIds  = (memberships || []).map(m => m.band_id);
+    activeBandId = (savedBand && validIds.includes(savedBand)) ? savedBand : (validIds[0] || null);
     return;
   }
 
@@ -108,6 +113,19 @@ async function doLogin() {
   if (error) {
     _clearLoginTimer();
     _resetLoginBtn();
+    // Unconfirmed email is a recoverable dead end — send the user to the
+    // "Check your inbox" screen, which has the Resend button.
+    if (/email not confirmed/i.test(error.message)) {
+      const emailEl = document.getElementById('sf-confirm-email');
+      if (emailEl) emailEl.textContent = email;
+      const lf = document.getElementById('lf');
+      if (lf) lf.style.display = 'none';
+      const tabs = document.getElementById('auth-tabs');
+      if (tabs) tabs.style.display = 'none';
+      const confirmEl = document.getElementById('sf-confirm');
+      if (confirmEl) confirmEl.style.display = '';
+      return;
+    }
     showAuthErr('loginErr', error.message);
   }
   // onAuthStateChange handles the rest on success; it clears _loginSafetyTimer
@@ -186,6 +204,31 @@ async function doSignUp() {
     if (confirmEl) confirmEl.style.display = '';
   }
   // If session exists (email confirmation disabled), onAuthStateChange fires → app loads
+}
+
+// Resend the signup confirmation email (from the "Check your inbox" screen).
+// 30s cooldown so double-clicks don't burn the Supabase rate limit.
+async function doResendConfirmation() {
+  const email = (document.getElementById('sf-confirm-email')?.textContent || '').trim();
+  if (!email) return;
+  const btn = document.getElementById('resendConfirmBtn');
+  if (btn && btn.disabled) return;
+  if (btn) { btn.disabled = true; btn.textContent = 'Sending…'; }
+  const { error } = await supabase.auth.resend({ type: 'signup', email });
+  if (!btn) return;
+  if (error) {
+    btn.disabled = false;
+    btn.textContent = 'Resend email';
+    toast2(error.message, 'w');
+    return;
+  }
+  let s = 30;
+  btn.textContent = `Sent! Resend again in ${s}s`;
+  const iv = setInterval(() => {
+    s -= 1;
+    if (s <= 0) { clearInterval(iv); btn.disabled = false; btn.textContent = 'Resend email'; }
+    else btn.textContent = `Sent! Resend again in ${s}s`;
+  }, 1000);
 }
 
 async function doForgotPassword() {
@@ -457,6 +500,22 @@ const _initHash = window.location.hash;
     }
 
     document.getElementById('authScreen').style.display = 'flex';
+
+    // Surface auth errors Supabase sends back in the redirect (e.g. clicking an
+    // expired/used confirmation link → #error=access_denied&error_code=otp_expired).
+    // Without this the user lands on a bare sign-in form with no explanation.
+    const _hashParams = new URLSearchParams(_initHash.replace(/^#/, ''));
+    const _errCode = p.get('error_code') || _hashParams.get('error_code');
+    const _errDesc = p.get('error_description') || _hashParams.get('error_description');
+    if (_errCode || _errDesc) {
+      const msg = _errCode === 'otp_expired'
+        ? 'That link has expired or was already used. Sign in — or if your email isn\'t confirmed yet, sign up again to get a fresh link.'
+        : (_errDesc || 'Something went wrong with that link. Please sign in or try again.');
+      if (typeof switchTab === 'function') switchTab('login');
+      showAuthErr('loginErr', msg);
+      // Clean the error out of the URL so a refresh doesn't re-show it
+      try { history.replaceState(null, '', window.location.pathname + window.location.search.replace(/[?&]error[^&]*|[?&]error_code[^&]*|[?&]error_description[^&]*/g, '')); } catch (_) {}
+    }
 
     // Opaque invite token — look up all metadata server-side so no PII travels in the URL.
     if (p.get('invite')) {
