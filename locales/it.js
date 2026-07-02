@@ -882,4 +882,5 @@ window.IT = {
   "That doesn't look like a group code. Ask your admin to copy it from Group Profile → Group Code.": 'Non sembra un codice gruppo. Chiedi al tuo admin di copiarlo da Profilo gruppo → Codice gruppo.',
   "You're already in this group — switched to it.": 'Sei già in questo gruppo — ci siamo passati.',
   'Welcome to': 'Benvenuto in',
+  'One shared calendar': 'Un calendario condiviso',
 };

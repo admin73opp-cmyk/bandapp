@@ -882,4 +882,5 @@ window.NL = {
   "That doesn't look like a group code. Ask your admin to copy it from Group Profile → Group Code.": 'Dat ziet er niet uit als een groepscode. Vraag je admin om hem te kopiëren via Groepsprofiel → Groepscode.',
   "You're already in this group — switched to it.": 'Je zit al in deze groep — we zijn ernaar overgeschakeld.',
   'Welcome to': 'Welkom bij',
+  'One shared calendar': 'Eén gedeelde kalender',
 };

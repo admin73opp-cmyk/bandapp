@@ -58,7 +58,7 @@
       --mono: 'SF Mono', 'Fira Code', 'Fira Mono', 'Roboto Mono', Menlo, monospace;
       --ink: #16130E;
       --ink2: #6B6358;
-      --ink3: #837A6E;
+      --ink3: #6E665A;
       --bg: #F7F5EF;
       --bg2: #EFEDE6;
       --w: #FFFFFF;
@@ -151,6 +151,33 @@
 
     html {
       overflow-x: hidden
+    }
+
+    /* Keyboard focus: visible ring everywhere (21 components zero out
+       outline; only 3 defined a replacement). :focus-visible keeps mouse
+       clicks clean while giving keyboard users a ring. */
+    :focus-visible {
+      outline: 2px solid var(--a);
+      outline-offset: 2px
+    }
+
+    /* Sub-44px controls get an expanded invisible hit area on touch screens
+       (no layout change — the ::after overlay just widens the tap target). */
+    @media(max-width:768px) {
+
+      .mod-x,
+      .btn-ic,
+      .help-btn {
+        position: relative
+      }
+
+      .mod-x::after,
+      .btn-ic::after,
+      .help-btn::after {
+        content: "";
+        position: absolute;
+        inset: -9px
+      }
     }
 
     body {
@@ -3797,7 +3824,7 @@
     html[data-theme="light"] {
       --ink: #16130E;
       --ink2: #6B6358;
-      --ink3: #837A6E;
+      --ink3: #6E665A;
       --bg: #F7F5EF;
       --bg2: #EFEDE6;
       --w: #FFFFFF;
@@ -4085,7 +4112,12 @@
           <line x1="40" y1="28" x2="40" y2="92" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" /><text x="58" y="88" font-family="'Garamond','Georgia','Times New Roman',serif" font-size="58" font-weight="300" letter-spacing="12" fill="currentColor">ritovo</text>
           <circle cx="468" cy="28" r="4" fill="currentColor" />
         </svg></div>
-      <p style="font-size:var(--t-md);color:var(--ink2);margin-bottom:27px" data-i18n="Manage your music group, rehearsals & setlists">Manage your music group, rehearsals &amp; setlists</p>
+      <p style="font-size:var(--t-md);color:var(--ink2);margin-bottom:14px" data-i18n="Manage your music group, rehearsals & setlists">Manage your music group, rehearsals &amp; setlists</p>
+      <div style="display:flex;gap:14px;flex-wrap:wrap;margin-bottom:24px">
+        <span style="display:inline-flex;align-items:center;gap:5px;font-size:var(--t-sm);color:var(--ink3)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.4 4.2h5.2l2.9 15.8H6.5z"/><path d="M7.7 14h8.6"/><path d="M12 18 14.4 8"/><circle cx="14.6" cy="7.5" r="1.5" fill="currentColor" stroke="none"/></svg><span data-i18n="Rehearsals">Rehearsals</span></span>
+        <span style="display:inline-flex;align-items:center;gap:5px;font-size:var(--t-sm);color:var(--ink3)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6.5h11M9 12h11M9 17.5h7"/><circle cx="4.5" cy="6.5" r="1.4" fill="currentColor" stroke="none"/><circle cx="4.5" cy="12" r="1.4" fill="currentColor" stroke="none"/><circle cx="4.5" cy="17.5" r="1.4" fill="currentColor" stroke="none"/></svg><span data-i18n="Set Lists">Set Lists</span></span>
+        <span style="display:inline-flex;align-items:center;gap:5px;font-size:var(--t-sm);color:var(--ink3)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15.5" rx="2.5"/><path d="M3.5 9.5h17M8 3v3.5M16 3v3.5"/><circle cx="12" cy="15" r="1.5" fill="currentColor" stroke="none"/></svg><span data-i18n="One shared calendar">One shared calendar</span></span>
+      </div>
       <div id="authLoading" style="display:none;text-align:center;padding:32px 0">
         <svg class="rit-mark" width="40" height="40" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" style="margin:0 auto 14px;display:block;animation:rit-pulse 2.4s ease-in-out infinite" aria-hidden="true">
           <line x1="34" y1="32" x2="34" y2="88" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" /><text x="44" y="86" font-family="'Garamond','Georgia','Times New Roman',serif" font-size="56" font-weight="300" fill="currentColor">r</text>
@@ -4218,10 +4250,10 @@
         </div>
       </div>
       <div class="sb-foot">
-        <div class="uav" onclick="nav('myprofile')" style="cursor:pointer" title="My Profile">MR</div>
+        <div class="uav" onclick="nav('myprofile')" style="cursor:pointer" title="My Profile"></div>
         <div class="sbar-foot-text" style="flex:1;cursor:pointer" onclick="nav('myprofile')">
-          <div style="font-size:var(--t-md);font-weight:600">Marco Rossi</div>
-          <div style="font-size:var(--t-2xs);color:var(--ink3)">Guitar · Admin</div>
+          <div style="font-size:var(--t-md);font-weight:600"></div>
+          <div style="font-size:var(--t-2xs);color:var(--ink3)"></div>
         </div>
       </div>
     </nav>
@@ -4231,7 +4263,7 @@
       <button class="bn-item" data-pg="calendar" onclick="nav('calendar')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15.5" rx="2.5"/><path d="M3.5 9.5h17M8 3v3.5M16 3v3.5"/><circle cx="12" cy="15" r="1.5" fill="currentColor" stroke="none"/></svg><span data-i18n="Calendar">Calendar</span></button>
       <button class="bn-item" data-pg="rehearsals" onclick="nav('rehearsals')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.4 4.2h5.2l2.9 15.8H6.5z"/><path d="M7.7 14h8.6"/><path d="M12 18 14.4 8"/><circle cx="14.6" cy="7.5" r="1.5" fill="currentColor" stroke="none"/></svg><span data-i18n="Rehearsals">Rehearsals</span></button>
       <button class="bn-item" data-pg="concerts" onclick="nav('concerts')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M6 11a6 6 0 0 0 12 0"/><path d="M12 17v3.5M8.5 20.5h7"/></svg><span data-i18n="Concerts">Concerts</span></button>
-      <button class="bn-item" data-pg="library" onclick="nav('library')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 18V5.5l7-1.8V15.5"/><circle cx="7.6" cy="18" r="2.5" fill="currentColor" stroke="none"/><circle cx="14.6" cy="15.5" r="2.5" fill="currentColor" stroke="none"/></svg><span data-i18n="Songs">Songs</span></button>
+      <button class="bn-item" data-pg="setlists" onclick="nav('setlists')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6.5h11M9 12h11M9 17.5h7"/><circle cx="4.5" cy="6.5" r="1.4" fill="currentColor" stroke="none"/><circle cx="4.5" cy="12" r="1.4" fill="currentColor" stroke="none"/><circle cx="4.5" cy="17.5" r="1.4" fill="currentColor" stroke="none"/></svg><span data-i18n="Set Lists">Set Lists</span></button>
     </nav>
     <div class="mc" role="main">
       <div class="tb">
