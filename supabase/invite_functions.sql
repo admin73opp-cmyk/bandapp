@@ -1,6 +1,6 @@
 -- join_band_by_code: joins current user to a band by its UUID (used as the invite code)
 create or replace function join_band_by_code(p_code uuid)
-returns jsonb language plpgsql security definer as $$
+returns jsonb language plpgsql security definer set search_path = public, pg_temp as $$
 declare
   v_band bands%rowtype;
   v_uid  uuid := auth.uid();
@@ -33,7 +33,7 @@ $$;
 -- find_user_by_email: looks up a user by email address (for the "already on Bandapp?" lookup).
 -- Restricted to authenticated band admins to prevent open email enumeration.
 create or replace function find_user_by_email(p_email text)
-returns jsonb language plpgsql security definer as $$
+returns jsonb language plpgsql security definer set search_path = public, pg_temp as $$
 declare
   v_uid     uuid;
   v_profile profiles%rowtype;
@@ -78,7 +78,7 @@ create or replace function add_band_member_direct(
   p_guest_end   date   default null,
   p_guest_band  text   default null
 )
-returns jsonb language plpgsql security definer as $$
+returns jsonb language plpgsql security definer set search_path = public, pg_temp as $$
 declare
   v_caller_role text;
   v_profile     profiles%rowtype;

@@ -49,7 +49,7 @@ create policy "band_invites_update" on band_invites
 
 drop function if exists get_invite_by_token(uuid);
 create function get_invite_by_token(p_token uuid)
-returns jsonb language plpgsql security definer as $$
+returns jsonb language plpgsql security definer set search_path = public, pg_temp as $$
 declare
   v_invite    band_invites%rowtype;
   v_band_name text;
@@ -88,7 +88,7 @@ grant execute on function get_invite_by_token(uuid) to anon, authenticated;
 
 drop function if exists mark_invite_used(uuid);
 create function mark_invite_used(p_token uuid)
-returns void language sql security definer as $$
+returns void language sql security definer set search_path = public, pg_temp as $$
   update band_invites set used_at = now()
   where id = p_token and used_at is null;
 $$;

@@ -6,11 +6,11 @@
 -- ── Helper functions ─────────────────────────────────────────
 
 create or replace function is_band_member(bid uuid)
-returns bool language sql security definer as
+returns bool language sql security definer set search_path = public, pg_temp as
 $$select exists(select 1 from band_members where band_id = bid and user_id = auth.uid())$$;
 
 create or replace function is_band_admin(bid uuid)
-returns bool language sql security definer as
+returns bool language sql security definer set search_path = public, pg_temp as
 $$select exists(select 1 from band_members where band_id = bid and user_id = auth.uid() and role = 'admin')$$;
 
 -- ── Enable RLS on all tables ──────────────────────────────────
