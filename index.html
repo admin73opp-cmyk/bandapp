@@ -5767,17 +5767,26 @@
     }
     let slS = getSlS(),
       _setlistMap = {};
+    let _slGen = 0;
     async function loadSetlists() {
       if (!activeBandId) return setlists = [], slSongs = {}, slS = {}, _setlistMap = {}, void(activeSetlistId = null);
-      setlists = await SetlistsDB.fetch(activeBandId), _setlistMap = Object.fromEntries(setlists.map(e => [e.id, e])), setlists.find(e => e.id === activeSetlistId) || (activeSetlistId = setlists.length ? setlists[0].id : null), activeSetlistId && await loadSetlistSongs(activeSetlistId), slS = getSlS()
+      const n = ++_slGen;
+      const t = await SetlistsDB.fetch(activeBandId);
+      if (n !== _slGen) return; // superseded by a newer load (band switch)
+      setlists = t, _setlistMap = Object.fromEntries(setlists.map(e => [e.id, e])), setlists.find(e => e.id === activeSetlistId) || (activeSetlistId = setlists.length ? setlists[0].id : null), activeSetlistId && await loadSetlistSongs(activeSetlistId);
+      if (n !== _slGen) return;
+      slS = getSlS()
     }
     async function loadSetlistSongs(e) {
       slSongs[e] = await SetlistsDB.fetchSongs(e)
     }
     let myC = {};
+    let _songGen = 0;
     async function loadSongs() {
       if (!activeBandId) return songs = [], void(myC = {});
+      const n = ++_songGen;
       const [e, t] = await Promise.all([SongsDB.fetch(activeBandId), SongsDB.fetchNotes(activeBandId)]);
+      if (n !== _songGen) return; // a newer load (band switch) superseded this one
       songs = e.map(e => ({
         ...e,
         key: normalizeKey(e.key)
@@ -5826,8 +5835,11 @@
     function normColor(c) {
       return c && /^#(6C63FF|685FF6|8B84FF|5851E0|5246E0|9333EA)$/i.test(c) ? "#0C6E6A" : c
     }
+    let _memGen = 0;
     async function loadMembers() {
+      const n = ++_memGen;
       const e = await MembersDB.fetchAll(activeBandId);
+      if (n !== _memGen) return; // superseded by a newer load (band switch)
       e.forEach(m => m.color = normColor(m.color));
       members = e.filter(e => "removed" !== e.guestStatus), guestDirectory = e.filter(e => "removed" === e.guestStatus), extraData = members.map(e => ({
         bday: e.bday,
