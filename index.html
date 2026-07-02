@@ -12075,6 +12075,10 @@
         const t = document.getElementById(e);
         t && (t.value = "")
       }), populateCountrySelects();
+      try {
+        const _pgn = localStorage.getItem("pendingGroupName");
+        if (_pgn) { const _n = document.getElementById("obwName"); if (_n) _n.value = _pgn; localStorage.removeItem("pendingGroupName"); }
+      } catch (e) {}
       const e = currentUser._profile || {},
         n = document.getElementById("obwInst1"),
         o = document.getElementById("obwInst2");

@@ -118,6 +118,7 @@ async function doSignUp() {
   const lastName  = document.getElementById('signupLast').value.trim();
   const email     = document.getElementById('signupEmail').value.trim();
   const pw        = document.getElementById('signupPassword').value;
+  const groupName = (document.getElementById('signupGroup')?.value || '').trim();
 
   if (!email || !pw) { showAuthErr('signupErr', 'Enter email and password'); return; }
   if (pw.length < 8) { showAuthErr('signupErr', 'Password must be at least 8 characters'); return; }
@@ -142,6 +143,7 @@ async function doSignUp() {
         ...(pendingBandId     ? { pending_band_id:    pendingBandId }     : {}),
         ...(pendingPhone      ? { pending_phone:       pendingPhone }      : {}),
         ...(pendingInstrument ? { pending_instrument:  pendingInstrument } : {}),
+        ...(groupName         ? { pending_group_name:  groupName }         : {}),
       },
       emailRedirectTo: redirectTo,
     },
@@ -157,6 +159,11 @@ async function doSignUp() {
     showAuthErr('signupErr', 'An account with this email already exists — try signing in or resetting your password.');
     return;
   }
+
+  // Carry the optional group name to the onboarding wizard so a cold user isn't
+  // asked for it twice. Metadata covers cross-device confirm; localStorage
+  // prefills instantly in the same browser.
+  if (groupName) { try { localStorage.setItem('pendingGroupName', groupName); } catch (e) {} }
 
   // Create profile row immediately (trigger may also do this — belt-and-suspenders)
   if (data.user) {
