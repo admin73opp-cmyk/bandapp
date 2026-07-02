@@ -41,3 +41,10 @@ content_path = "./supabase/templates/password-changed.html"
 # and the logged-out one-click /rsvp page must both be able to reach it.
 [functions.rsvp-remind]
 verify_jwt = false
+
+# calendar-feed must stay public: Google/Apple/Outlook poll the ICS URL with
+# no auth — the per-band feed token in the URL is the secret. Without this a
+# config-driven redeploy re-enables JWT verification and 401s every
+# subscribed calendar. (Deployed manually with --no-verify-jwt until now.)
+[functions.calendar-feed]
+verify_jwt = false

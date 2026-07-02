@@ -336,6 +336,10 @@ let _inPasswordRecovery = (function () {
   return p.get('type') === 'recovery' || h.includes('type=recovery');
 }());
 
+// Duplicate-init guard state (see the SIGNED_IN/INITIAL_SESSION handler).
+let _authInitInFlight = false;
+let _authInitedUserId = null;
+
 supabase.auth.onAuthStateChange(async (event, session) => {
   // The one-click RSVP page (/rsvp?token=…) is fully self-contained and must
   // never be replaced by the app shell or sign-in screen, logged in or not.
@@ -358,6 +362,7 @@ supabase.auth.onAuthStateChange(async (event, session) => {
   }
 
   if (event === 'SIGNED_OUT') {
+    _authInitedUserId = null; // allow full re-init on next sign-in
     // Don't disrupt the reset-password form, and don't call switchTab('login')
     // while a token exchange is still in progress (?code= or #access_token in URL).
     if (_inPasswordRecovery) return;
@@ -390,6 +395,13 @@ supabase.auth.onAuthStateChange(async (event, session) => {
     document.getElementById('authScreen').style.display = 'flex';
     return;
   }
+
+  // Re-entrancy guard: SIGNED_IN and INITIAL_SESSION can both fire for the
+  // same session (and SIGNED_IN re-fires on tab refocus in some supabase-js
+  // versions). Running the full init twice races the loaders and yanks the
+  // user back to their default view mid-use.
+  if (_authInitInFlight || _authInitedUserId === session.user.id) return;
+  _authInitInFlight = true;
 
   // Snapshot metadata before the try block so the catch can use it for invited-user recovery
   const _sessionMeta = session.user.user_metadata || {};
@@ -460,6 +472,7 @@ supabase.auth.onAuthStateChange(async (event, session) => {
       const _el = document.getElementById('appLoader');
       if (_el) _el.style.display = 'none';
     }
+    _authInitedUserId = session.user.id;
   } catch (e) {
     console.error('[bandapp] sign-in error:', e);
     _clearLoginTimer();
@@ -483,6 +496,8 @@ supabase.auth.onAuthStateChange(async (event, session) => {
     const _errMsg = e?.message ? `Sign-in error: ${e.message}` : 'Sign-in error — please try again';
     if (typeof showAuthErr === 'function') showAuthErr('loginErr', _errMsg);
     else if (typeof toast2 === 'function') toast2(_errMsg, 'w');
+  } finally {
+    _authInitInFlight = false;
   }
 });
 
