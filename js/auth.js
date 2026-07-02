@@ -149,6 +149,15 @@ async function doSignUp() {
 
   if (error) { showAuthErr('signupErr', error.message); return; }
 
+  // Supabase returns a success response with an empty identities array when the
+  // email already belongs to an existing account (it avoids leaking existence).
+  // Detect that instead of showing a "check your inbox" screen for an email that
+  // will never arrive.
+  if (data.user && Array.isArray(data.user.identities) && data.user.identities.length === 0) {
+    showAuthErr('signupErr', 'An account with this email already exists — try signing in or resetting your password.');
+    return;
+  }
+
   // Create profile row immediately (trigger may also do this — belt-and-suspenders)
   if (data.user) {
     await supabase.from('profiles').upsert({
@@ -470,8 +479,8 @@ const _initHash = window.location.hash;
       if (p.get('email')) { const el = document.getElementById('signupEmail'); if (el) el.value = p.get('email'); }
       // Show invite banner with band name
       const _banner    = document.getElementById('sf-invite-banner');
-      const _bandEl    = document.getElementById('sf-invite-band');
-      const _bandField = document.getElementById('sfBandField');
+      const _bandEl    = document.getElementById('sf-invite-group');
+      const _bandField = document.getElementById('sfGroupField');
       const _bandName  = p.get('bandname') || '';
       if (_banner) _banner.style.display = '';
       if (_bandEl && _bandName) _bandEl.textContent = _bandName;
