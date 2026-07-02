@@ -139,7 +139,20 @@ async function doSignUp() {
   const groupName = (document.getElementById('signupGroup')?.value || '').trim();
 
   if (!email || !pw) { showAuthErr('signupErr', 'Enter email and password'); return; }
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) { showAuthErr('signupErr', 'That doesn\'t look like a valid email address'); return; }
   if (pw.length < 8) { showAuthErr('signupErr', 'Password must be at least 8 characters'); return; }
+
+  const signupBtn = document.getElementById('signupBtn');
+  if (signupBtn && signupBtn.disabled) return; // in flight — ignore double-click
+  const _resetSignupBtn = () => {
+    if (signupBtn) { signupBtn.disabled = false; signupBtn.textContent = 'Create account'; }
+  };
+  if (signupBtn) { signupBtn.disabled = true; signupBtn.textContent = 'Creating account…'; }
+  clearAuthErr('signupErr');
+  const _signupSafetyTimer = setTimeout(() => {
+    _resetSignupBtn();
+    showAuthErr('signupErr', 'Sign-up timed out — please try again');
+  }, 20000);
 
   const pendingBandId     = sessionStorage.getItem('pendingBandId')   || new URLSearchParams(window.location.search).get('band') || '';
   const pendingPhone      = sessionStorage.getItem('invitePhone')      || '';
@@ -166,6 +179,9 @@ async function doSignUp() {
       emailRedirectTo: redirectTo,
     },
   });
+
+  clearTimeout(_signupSafetyTimer);
+  _resetSignupBtn();
 
   if (error) { showAuthErr('signupErr', error.message); return; }
 

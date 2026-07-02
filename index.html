@@ -4113,14 +4113,14 @@
           <div style="color:var(--ink2)"><span data-i18n="Sign up to join">Sign up to join</span> <strong id="sf-invite-group">the group</strong></div>
         </div>
         <div class="fr">
-          <div class="fg"><label data-i18n="First name">First name</label><input id="signupFirst" placeholder="Marco" autocomplete="given-name"></div>
-          <div class="fg"><label data-i18n="Last name">Last name</label><input id="signupLast" placeholder="Rossi" autocomplete="family-name"></div>
+          <div class="fg"><label data-i18n="First name">First name</label><input id="signupFirst" placeholder="Marco" autocomplete="given-name" onkeydown="if(event.key==='Enter')doSignUp()"></div>
+          <div class="fg"><label data-i18n="Last name">Last name</label><input id="signupLast" placeholder="Rossi" autocomplete="family-name" onkeydown="if(event.key==='Enter')doSignUp()"></div>
         </div>
-        <div class="fg" data-i18n="Email"><label>Email</label><input id="signupEmail" type="email" placeholder="you@email.com" autocomplete="email"></div>
-        <div class="fg"><label><span data-i18n="Password">Password</span> <span style="font-weight:400;color:var(--ink3)" data-i18n="(min. 8 chars)">(min. 8 chars)</span></label><input id="signupPassword" type="password" placeholder="••••••••" autocomplete="new-password"></div>
-        <div class="fg" id="sfGroupField" data-i18n="Group name (optional)"><label>Group name (optional)</label><input id="signupGroup" placeholder="The Jazz Cats"></div>
+        <div class="fg" data-i18n="Email"><label>Email</label><input id="signupEmail" type="email" placeholder="you@email.com" autocomplete="email" onkeydown="if(event.key==='Enter')doSignUp()"></div>
+        <div class="fg"><label><span data-i18n="Password">Password</span> <span style="font-weight:400;color:var(--ink3)" data-i18n="(min. 8 chars)">(min. 8 chars)</span></label><input id="signupPassword" type="password" placeholder="••••••••" autocomplete="new-password" onkeydown="if(event.key==='Enter')doSignUp()"></div>
+        <div class="fg" id="sfGroupField" data-i18n="Group name (optional)"><label>Group name (optional)</label><input id="signupGroup" placeholder="The Jazz Cats" onkeydown="if(event.key==='Enter')doSignUp()"></div>
         <div id="signupErr" class="auth-err" style="display:none"><span class="auth-err-msg"></span><button class="auth-err-x" onclick="clearAuthErr('signupErr')" aria-label="Dismiss">✕</button></div>
-        <button class="btn btn-p btn-fw" onclick="doSignUp()" data-i18n="Create account">Create account</button>
+        <button id="signupBtn" class="btn btn-p btn-fw" onclick="doSignUp()" data-i18n="Create account">Create account</button>
       </div>
       <div id="sf-confirm" style="display:none;text-align:center;padding:8px 0">
         <div style="margin-bottom:10px;color:var(--a)"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5.5" width="18" height="13" rx="2.5"/><path d="m4.5 8 7.5 5.5L19.5 8"/></svg></div>
