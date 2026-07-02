@@ -22,7 +22,7 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="js/supabase-client.js"></script>
   <script src="js/capacitor-bridge.js"></script>
-  <script>addEventListener("load",function(){["nl","fr","es","de","it","pt-BR"].forEach(function(e){var n=document.createElement("script");n.src="locales/"+e+".js",document.head.appendChild(n)})});</script>
+  <script>addEventListener("load",function(){var c=0,l=["nl","fr","es","de","it","pt-BR"];l.forEach(function(e){var n=document.createElement("script");n.src="locales/"+e+".js",n.onload=n.onerror=function(){++c===l.length&&typeof applyI18n==="function"&&applyI18n()},document.head.appendChild(n)})});</script>
   <script src="js/i18n.js"></script>
   <script>
     // Contrast-aware ink for member-colour chips: member colours are user data,
@@ -7369,7 +7369,17 @@
       get color() {
         return members[this.memberIdx]?.color || "#0C6E6A"
       },
-      lang: "en"
+      // Pre-login language: last chosen (localStorage) or browser locale, so the
+      // auth screen isn't English-only for the 6 supported languages. The
+      // profile's lang overwrites this after sign-in.
+      lang: (() => {
+        try {
+          const e = localStorage.getItem("appLang");
+          if (e) return e
+        } catch (e) {}
+        const e = (navigator.language || "en").slice(0, 2).toLowerCase();
+        return ["en", "nl", "fr", "es", "de", "it", "pt"].includes(e) ? e : "en"
+      })()
     };
 
     function syncCurrentUserToUI() {
@@ -7501,7 +7511,11 @@
     }
 
     function changeLang(e) {
-      currentUser.lang = e, applyI18n(), renderDashboard(), renderRehearsals(), renderConcerts(), renderMembers(), renderBP(), renderCal(), renderLib(), renderSL(), renderSlMeta(), populateMpPage().catch(console.error);
+      currentUser.lang = e;
+      try {
+        localStorage.setItem("appLang", e)
+      } catch (t) {}
+      applyI18n(), renderDashboard(), renderRehearsals(), renderConcerts(), renderMembers(), renderBP(), renderCal(), renderLib(), renderSL(), renderSlMeta(), populateMpPage().catch(console.error);
       const n = document.querySelector(".pg-area.on");
       if (n) {
         const e = n.id.replace("pg-", ""),

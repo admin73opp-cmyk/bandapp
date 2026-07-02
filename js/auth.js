@@ -68,7 +68,7 @@ async function loadCurrentUser(uid, email) {
   currentUser.lastName   = profile.last_name   || '';
   currentUser.instrument = profile.instrument  || '';
   currentUser.color      = profile.color       || '#6C63FF';
-  currentUser.lang       = profile.lang        || 'en';
+  currentUser.lang       = profile.lang        || currentUser.lang || 'en';
   currentUser.avail      = profile.availability || [1,1,1,1,1,1,1];
   currentUser._profile   = profile; // full row — used as fallback in populateMpPage
 

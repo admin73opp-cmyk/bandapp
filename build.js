@@ -106,8 +106,8 @@ const fileMap = {}; // 'js/auth.js' → 'js/auth.a1b2c3d4.js'
     console.log(`  locales/*.js → dist/locales/all.${lh}.js (deduped, ${KEYS.length} keys)`);
 
     // rewrite the lazy-load injector to fetch the single deduped file
-    const INJ_OLD = '<script>addEventListener("load",function(){["nl","fr","es","de","it","pt-BR"].forEach(function(e){var n=document.createElement("script");n.src="locales/"+e+".js",document.head.appendChild(n)})});</script>';
-    const INJ_NEW = `<script>addEventListener("load",function(){var n=document.createElement("script");n.src="/locales/all.${lh}.js",document.head.appendChild(n)});</script>`;
+    const INJ_OLD = '<script>addEventListener("load",function(){var c=0,l=["nl","fr","es","de","it","pt-BR"];l.forEach(function(e){var n=document.createElement("script");n.src="locales/"+e+".js",n.onload=n.onerror=function(){++c===l.length&&typeof applyI18n==="function"&&applyI18n()},document.head.appendChild(n)})});</script>';
+    const INJ_NEW = `<script>addEventListener("load",function(){var n=document.createElement("script");n.src="/locales/all.${lh}.js",n.onload=function(){typeof applyI18n==="function"&&applyI18n()},document.head.appendChild(n)});</script>`;
     if (!html.includes(INJ_OLD)) { console.error('  ✗ locale injector not found — aborting (dist would not load locales)'); process.exit(1); }
     html = html.replace(INJ_OLD, INJ_NEW);
   }
