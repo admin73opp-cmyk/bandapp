@@ -5828,7 +5828,7 @@
     function songByAnyId(e) {
       return songs.find(t => t.id === e || t.legacy_id === e)
     }
-    const TODAY_STR = (new Date).toLocaleDateString("en-CA");
+    let TODAY_STR = (new Date).toLocaleDateString("en-CA");
     // ── Ritovo icon family — shared inline-SVG snippets for JS templates.
     // Same geometry as the sidebar set: 24-grid, 1.75 stroke, round caps/joins,
     // with the brand "downbeat dot" as filled-circle accents.
@@ -5923,9 +5923,7 @@
     }
 
     function buildCalEv() {
-      calEv = {
-        "2026-05-15": ["birthday"]
-      }, concerts.filter(e => !e.cancelled && e.date).forEach(e => {
+      calEv = {}, concerts.filter(e => !e.cancelled && e.date).forEach(e => {
         calEv[e.date] || (calEv[e.date] = []), calEv[e.date].includes("concert") || calEv[e.date].push("concert")
       }), rehearsals.filter(e => !e.cancelled && e.date).forEach(e => {
         calEv[e.date] || (calEv[e.date] = []), calEv[e.date].includes("rehearsal") || calEv[e.date].push("rehearsal")
@@ -5978,11 +5976,24 @@
         OCT: 9,
         NOV: 10,
         DEC: 11
-      },
-      TODAY = (() => {
-        const e = new Date;
-        return e.setHours(0, 0, 0, 0), e
-      })();
+      };
+    let TODAY = (() => {
+      const e = new Date;
+      return e.setHours(0, 0, 0, 0), e
+    })();
+    // TODAY/TODAY_STR are captured at page load; a tab left open past midnight
+    // (or waking from sleep) mis-classified past/upcoming until reload.
+    document.addEventListener("visibilitychange", () => {
+      if (document.hidden) return;
+      const e = (new Date).toLocaleDateString("en-CA");
+      if (e === TODAY_STR) return;
+      TODAY_STR = e;
+      const t = new Date;
+      t.setHours(0, 0, 0, 0), TODAY = t;
+      try {
+        buildCalEv(), renderCal(), renderRehearsals(), renderConcerts(), renderDashboard()
+      } catch (e) {}
+    });
     let rehearsals = [],
       _rehGen = 0;
     async function loadRehearsals() {
@@ -7327,27 +7338,12 @@
         t && (t.disabled = !1, t.textContent = "Create Group")
       }
     }
-    let calEv = {
-      "2026-05-15": ["birthday"]
-    };
-    const BAND_CAL_EVENTS = {
-        1: calEv,
-        2: {
-          "2026-06-14": ["concert"],
-          "2026-05-28": ["rehearsal"],
-          "2026-06-04": ["rehearsal"]
-        }
-      },
-      CROSS_GROUP_MEMBERS = {
-        "Marco Rossi": [{
-          bandId: 2,
-          bandName: "Brussels Funk Collective"
-        }],
-        "Antoine Blanchard": [{
-          bandId: 2,
-          bandName: "Brussels Funk Collective"
-        }]
-      };
+    let calEv = {};
+    const BAND_CAL_EVENTS = {},
+      // Cross-group conflicts: populated per real multi-band membership in a
+      // future release. The old hardcoded prototype entries gave any REAL
+      // member named "Marco Rossi" phantom conflicts.
+      CROSS_GROUP_MEMBERS = {};
 
     function getCrossGroupBlocks(e) {
       const t = CROSS_GROUP_MEMBERS[e] || [],
@@ -8060,7 +8056,16 @@
       s && (s.style.display = n || o || a || "All" !== aG ? "" : "none")
     }
 
+    // Debounced: each filter keystroke previously rebuilt the entire sheet
+    // (every row × 13 input cells) or card grid — hundreds of KB of innerHTML
+    // per keypress on a large library.
+    let _libFilterT = null;
+
     function applyLibFilters() {
+      clearTimeout(_libFilterT), _libFilterT = setTimeout(_applyLibFiltersNow, 150)
+    }
+
+    function _applyLibFiltersNow() {
       renderLibFilters(), "sheet" === libView ? renderSheet() : renderLib()
     }
 
@@ -10856,7 +10861,7 @@
           const n = Math.round((new Date(e.guestEnd) - new Date(e.guestStart)) / 864e5),
             o = members.indexOf(e),
             a = (o >= 0 ? memberPhotos[o] : null) || e.photo || null;
-          return `<div onclick="openGuestDetail(${t})" style="display:flex;align-items:center;gap:12px;padding:14px 16px;background:var(--w);border:1px solid var(--bd);border-radius:var(--radl);box-shadow:var(--sh);cursor:pointer;transition:border-color .13s,transform .13s" onmouseover="this.style.borderColor='var(--a)';this.style.transform='translateY(-1px)'" onmouseout="this.style.borderColor='var(--bd)';this.style.transform='none'">\n      <div style="width:42px;height:42px;border-radius:50%;background:${e.color||"#9A9AB0"};display:flex;align-items:center;justify-content:center;font-size:var(--t-sm);font-weight:700;color:#fff;flex-shrink:0;${a?`background-image:url(${esc(a)});background-size:cover;background-position:center`:""}">${a?"":esc(e.init||e.name.slice(0,2).toUpperCase())}</div>\n      <div style="flex:1;min-width:0">\n        <div style="font-weight:700;font-size:var(--t-lg)">${esc(e.name)}</div>\n        <div style="font-size:var(--t-sm);color:var(--ink2);margin-top:2px;display:flex;gap:10px;flex-wrap:wrap">\n          <span>${instIcon(e.instrument)} ${esc(e.instrument)}</span>\n          <span style="display:inline-flex;align-items:center;gap:4px">${ricon("cal",11)} ${e.guestStart} → ${e.guestEnd}</span>\n          <span style="display:inline-flex;align-items:center;gap:4px">${ricon("sheet",11)} ${esc(e.band||"The Jazz Cats")}</span>\n          <span style="color:var(--ink3)">${n} days</span>\n        </div>\n      </div>\n      <div style="display:flex;flex-direction:column;gap:6px;flex-shrink:0;width:100px">\n        <span style="display:block;width:100%;text-align:center;padding:6px 0;background:var(--bg2);border:1.5px solid var(--bd);border-radius:99px;font-size:var(--t-sm);font-weight:600;color:var(--ink3)">Expired</span>\n        <button style="width:100%;padding:7px 0;text-align:center;font-family:var(--font);font-size:var(--t-sm);font-weight:600;background:transparent;border:1.5px solid var(--bd);border-radius:99px;color:var(--ink);cursor:pointer;transition:border-color .13s,color .13s" onclick="event.stopPropagation();promoteGuestToMember(${members.indexOf(e)},'${esc(e.name.replace(/\\/g,"\\\\").replace(/'/g,"\\'"))}')" onmouseover="this.style.borderColor='var(--a)';this.style.color='var(--a)'" onmouseout="this.style.borderColor='var(--bd)';this.style.color='var(--ink)'">↑ Member</button>\n        <button style="width:100%;padding:7px 0;text-align:center;font-family:var(--font);font-size:var(--t-sm);font-weight:600;background:transparent;border:1.5px solid rgba(217,119,6,.4);border-radius:99px;color:var(--amb);cursor:pointer;transition:border-color .13s,background .13s" onclick="event.stopPropagation();openReactivateAsGuest(${members.indexOf(e)},'${esc(e.name.replace(/\\/g,"\\\\").replace(/'/g,"\\'"))}')" onmouseover="this.style.background='var(--amb2)'" onmouseout="this.style.background='transparent'">↑ Guest</button>\n      </div>\n    </div>`
+          return `<div onclick="openGuestDetail(${t})" style="display:flex;align-items:center;gap:12px;padding:14px 16px;background:var(--w);border:1px solid var(--bd);border-radius:var(--radl);box-shadow:var(--sh);cursor:pointer;transition:border-color .13s,transform .13s" onmouseover="this.style.borderColor='var(--a)';this.style.transform='translateY(-1px)'" onmouseout="this.style.borderColor='var(--bd)';this.style.transform='none'">\n      <div style="width:42px;height:42px;border-radius:50%;background:${e.color||"#9A9AB0"};display:flex;align-items:center;justify-content:center;font-size:var(--t-sm);font-weight:700;color:#fff;flex-shrink:0;${a?`background-image:url(${esc(a)});background-size:cover;background-position:center`:""}">${a?"":esc(e.init||e.name.slice(0,2).toUpperCase())}</div>\n      <div style="flex:1;min-width:0">\n        <div style="font-weight:700;font-size:var(--t-lg)">${esc(e.name)}</div>\n        <div style="font-size:var(--t-sm);color:var(--ink2);margin-top:2px;display:flex;gap:10px;flex-wrap:wrap">\n          <span>${instIcon(e.instrument)} ${esc(e.instrument)}</span>\n          <span style="display:inline-flex;align-items:center;gap:4px">${ricon("cal",11)} ${e.guestStart} → ${e.guestEnd}</span>\n          <span style="display:inline-flex;align-items:center;gap:4px">${ricon("sheet",11)} ${esc(e.band||"—")}</span>\n          <span style="color:var(--ink3)">${n} days</span>\n        </div>\n      </div>\n      <div style="display:flex;flex-direction:column;gap:6px;flex-shrink:0;width:100px">\n        <span style="display:block;width:100%;text-align:center;padding:6px 0;background:var(--bg2);border:1.5px solid var(--bd);border-radius:99px;font-size:var(--t-sm);font-weight:600;color:var(--ink3)">Expired</span>\n        <button style="width:100%;padding:7px 0;text-align:center;font-family:var(--font);font-size:var(--t-sm);font-weight:600;background:transparent;border:1.5px solid var(--bd);border-radius:99px;color:var(--ink);cursor:pointer;transition:border-color .13s,color .13s" onclick="event.stopPropagation();promoteGuestToMember(${members.indexOf(e)},'${esc(e.name.replace(/\\/g,"\\\\").replace(/'/g,"\\'"))}')" onmouseover="this.style.borderColor='var(--a)';this.style.color='var(--a)'" onmouseout="this.style.borderColor='var(--bd)';this.style.color='var(--ink)'">↑ Member</button>\n        <button style="width:100%;padding:7px 0;text-align:center;font-family:var(--font);font-size:var(--t-sm);font-weight:600;background:transparent;border:1.5px solid rgba(217,119,6,.4);border-radius:99px;color:var(--amb);cursor:pointer;transition:border-color .13s,background .13s" onclick="event.stopPropagation();openReactivateAsGuest(${members.indexOf(e)},'${esc(e.name.replace(/\\/g,"\\\\").replace(/'/g,"\\'"))}')" onmouseover="this.style.background='var(--amb2)'" onmouseout="this.style.background='transparent'">↑ Guest</button>\n      </div>\n    </div>`
         }).join("")
       }
     }
@@ -10870,7 +10875,7 @@
         s = o.nat ? isoFlag(o.nat) : "",
         i = (n >= 0 ? memberPhotos[n] : null) || t.photo || null,
         l = document.getElementById("gdAv");
-      l.style.background = t.color || "#9A9AB0", i ? (l.style.backgroundImage = `url(${i})`, l.style.backgroundSize = "cover", l.style.backgroundPosition = "center", l.textContent = "") : (l.style.backgroundImage = "", l.textContent = t.init || t.name.slice(0, 2).toUpperCase()), document.getElementById("gdName").textContent = t.name, document.getElementById("gdFlag").innerHTML = s, document.getElementById("gdInstrument").innerHTML = `${instIcon(t.instrument)} ${esc(t.instrument)}${t.inst2?" · "+instIcon(t.inst2)+" "+esc(t.inst2):""}`, document.getElementById("gdGroup").textContent = t.band || "The Jazz Cats", document.getElementById("gdDates").textContent = `${t.guestStart} → ${t.guestEnd} (${a} days)`, document.getElementById("gdBio").textContent = o.bio || "No bio available.", document.getElementById("gdGear").textContent = o.gear || "—", document.getElementById("gdGearRow").style.display = o.gear ? "" : "none";
+      l.style.background = t.color || "#9A9AB0", i ? (l.style.backgroundImage = `url(${i})`, l.style.backgroundSize = "cover", l.style.backgroundPosition = "center", l.textContent = "") : (l.style.backgroundImage = "", l.textContent = t.init || t.name.slice(0, 2).toUpperCase()), document.getElementById("gdName").textContent = t.name, document.getElementById("gdFlag").innerHTML = s, document.getElementById("gdInstrument").innerHTML = `${instIcon(t.instrument)} ${esc(t.instrument)}${t.inst2?" · "+instIcon(t.inst2)+" "+esc(t.inst2):""}`, document.getElementById("gdGroup").textContent = t.band || "—", document.getElementById("gdDates").textContent = `${t.guestStart} → ${t.guestEnd} (${a} days)`, document.getElementById("gdBio").textContent = o.bio || "No bio available.", document.getElementById("gdGear").textContent = o.gear || "—", document.getElementById("gdGearRow").style.display = o.gear ? "" : "none";
       const r = [];
       o.spotify && r.push({
         label: "Spotify",
