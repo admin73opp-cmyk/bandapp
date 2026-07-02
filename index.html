@@ -11102,8 +11102,13 @@
       e && (e.style.display = "none", e.innerHTML = ""), showMod("joinGroupMod")
     }
     async function joinGroupByCode() {
-      const e = document.getElementById("joinGroupCode").value.trim();
+      const e = document.getElementById("joinGroupCode").value.trim(),
+        a = document.getElementById("joinGroupResult"),
+        s = e => a && (a.style.display = "", a.innerHTML = `<div style="font-size:var(--t-sm);color:var(--r);padding:8px 10px;background:var(--r2);border-radius:var(--rad)">${esc(e)}</div>`);
       if (!e) return void toast2("Paste a group code first", "w");
+      // Group codes are band UUIDs — catch non-UUID input before it becomes a
+      // raw Postgres cast error ("invalid input syntax for type uuid").
+      if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(e)) return void s(window.t("That doesn't look like a group code. Ask your admin to copy it from Group Profile → Group Code."));
       const t = document.getElementById("joinGroupBtn");
       t && (t.disabled = !0, t.textContent = "Joining…");
       const {
@@ -11113,8 +11118,10 @@
         p_code: e
       });
       t && (t.disabled = !1, t.textContent = "Join Group");
-      const a = document.getElementById("joinGroupResult");
-      !o && n ? n.error ? a && (a.style.display = "", a.innerHTML = `<div style="font-size:var(--t-sm);color:var(--r);padding:8px 10px;background:var(--r2);border-radius:var(--rad)">${n.message||n.error}</div>`) : (closeMod("joinGroupMod"), await loadBands(), await switchBand(n.band_id), toast2(`Welcome to ${n.band_name}! 🎉`)) : a && (a.style.display = "", a.innerHTML = `<div style="font-size:var(--t-sm);color:var(--r);padding:8px 10px;background:var(--r2);border-radius:var(--rad)">${o?.message||"Something went wrong"}</div>`)
+      if (o || !n) return void s(o?.message || "Something went wrong");
+      if (!n.success) return void s(n.message || n.error || "Something went wrong");
+      // already_member is success-shaped: switch to the band instead of erroring
+      closeMod("joinGroupMod"), await loadBands(), await switchBand(n.band_id), toast2("already_member" === n.error ? window.t("You're already in this group — switched to it.") : `${window.t("Welcome to")} ${n.band_name}! 🎉`)
     }
     async function lookupInvitee() {
       const e = document.getElementById("invLookupEmail").value.trim();

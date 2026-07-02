@@ -879,4 +879,7 @@ window.NL = {
   'Resend email': 'E-mail opnieuw versturen',
   'No email after a few minutes? Check your spam folder, or resend it.': 'Geen e-mail na een paar minuten? Controleer je spammap of verstuur opnieuw.',
   "Click the link and you'll be signed in automatically.": 'Klik op de link en je wordt automatisch aangemeld.',
+  "That doesn't look like a group code. Ask your admin to copy it from Group Profile → Group Code.": 'Dat ziet er niet uit als een groepscode. Vraag je admin om hem te kopiëren via Groepsprofiel → Groepscode.',
+  "You're already in this group — switched to it.": 'Je zit al in deze groep — we zijn ernaar overgeschakeld.',
+  'Welcome to': 'Welkom bij',
 };

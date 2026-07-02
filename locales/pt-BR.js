@@ -879,4 +879,7 @@ window.PT_BR = {
   'Resend email': 'Reenviar e-mail',
   'No email after a few minutes? Check your spam folder, or resend it.': 'Sem e-mail depois de alguns minutos? Verifique o spam ou reenvie.',
   "Click the link and you'll be signed in automatically.": 'Clique no link e você entrará automaticamente.',
+  "That doesn't look like a group code. Ask your admin to copy it from Group Profile → Group Code.": 'Isso não parece um código de grupo. Peça ao seu admin para copiá-lo em Perfil do grupo → Código do grupo.',
+  "You're already in this group — switched to it.": 'Você já está neste grupo — mudamos para ele.',
+  'Welcome to': 'Bem-vindo ao',
 };
