@@ -4271,6 +4271,9 @@
           <div style="font-size:var(--t-2xl);font-weight:700;letter-spacing:-.03em;margin-bottom:10px" data-i18n="Welcome to Ritovo">Welcome to Ritovo</div>
           <p style="font-size:var(--t-md);color:var(--ink2);margin-bottom:22px" data-i18n="Create your group to manage rehearsals, set lists, songs and your bandmates — all in one place.">Create your group to manage rehearsals, set lists, songs and your bandmates — all in one place.</p>
           <button class="btn btn-p" onclick="showOnboardingWizard()" data-i18n="Create Your Group">Create Your Group</button>
+          <div style="margin-top:14px">
+            <span onclick="openJoinGroupMod()" style="font-size:var(--t-sm);color:var(--a);cursor:pointer;text-decoration:underline" data-i18n="Have a group code? Join an existing group →">Have a group code? Join an existing group →</span>
+          </div>
         </div>
         <div id="dshMain">
         <div style="margin-bottom:17px">
@@ -5507,6 +5510,9 @@
             </select>
           </div>
           <div style="margin-top:8px;text-align:center">
+            <span onclick="obwJoinInstead()" style="font-size:var(--t-sm);color:var(--a);cursor:pointer;text-decoration:underline" data-i18n="Have a group code? Join an existing group →">Have a group code? Join an existing group →</span>
+          </div>
+          <div style="margin-top:6px;text-align:center">
             <span onclick="obwSeedDemo()" style="font-size:var(--t-sm);color:var(--a);cursor:pointer;text-decoration:underline" data-i18n="Want to explore with sample data instead? →">Want to explore with sample data instead? →</span>
           </div>
         </div>
@@ -12109,7 +12115,7 @@
         n = document.getElementById("obwSkip"),
         o = document.getElementById("obwPrimary"),
         a = document.getElementById("obwClose");
-      bk.style.display = e > 1 ? "" : "none", n.style.display = 3 === e || 4 === e ? "" : "none", a.style.display = _obwHasGroup ? "" : "none";
+      bk.style.display = e > 1 ? "" : "none", n.style.display = 3 === e || 4 === e ? "" : "none", a.style.display = _obwHasGroup || 1 === e ? "" : "none";
       const s = {
         1: "Create Group →",
         2: "Save & Continue →",
@@ -12151,6 +12157,11 @@
     }
     async function obwDismiss() {
       await obwMarkOnboarded(), closeMod("obwMod"), nav("dashboard")
+    }
+    function obwJoinInstead() {
+      // Joining an existing group is its own onboarding — don't mark onboarded
+      // so the wizard reappears if the join is cancelled and no group exists.
+      closeMod("obwMod"), openJoinGroupMod()
     }
     async function obwFinish() {
       await obwMarkOnboarded(), closeMod("obwMod");
