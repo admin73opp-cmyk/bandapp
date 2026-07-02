@@ -6153,7 +6153,22 @@
         o = !!bandWaLinks[activeBandId];
       if (("whatsapp" === n || "both" === n) && !o) return void toast2("No WhatsApp group linked. Go to Group Profile → WhatsApp Group first.", "w");
       const a = `🎵 Rehearsal: ${t.title}\n📅 ${t.day} ${t.month} ${t.year} · ${t.start}–${t.end}\n📍 ${t.location}${t.notes?"\n📝 "+t.notes:""}`;
-      "email" === n ? toast2("Rehearsal shared by email ✉️") : "whatsapp" === n ? (window.open(`https://wa.me/?text=${encodeURIComponent(a)}`, "_blank"), toast2("Opening WhatsApp… 💬")) : (window.open(`https://wa.me/?text=${encodeURIComponent(a)}`, "_blank"), toast2("Shared by email + WhatsApp 📣"))
+      ("email" === n || "both" === n) && supabase.functions.invoke("notify-rehearsal", {
+        body: {
+          band_id: activeBandId,
+          title: t.title,
+          date: t.date,
+          start: t.start,
+          end: t.end,
+          location: t.location,
+          notes: t.notes,
+          setlist: t.setlistId && _setlistMap[t.setlistId]?.name || void 0,
+          rehearsal_id: t.id
+        }
+      }).then(e => {
+        e.error && console.error("[bandapp] notify-rehearsal:", e.error)
+      }).catch(e => console.error("[bandapp] notify-rehearsal:", e));
+      "email" === n ? toast2("Rehearsal shared by email ✉️") : "whatsapp" === n ? (window.open(`https://wa.me/?text=${encodeURIComponent(a)}`, "_blank"), toast2("Opening WhatsApp… 💬")) : (window.open(`https://wa.me/?text=${encodeURIComponent(a)}`, "_blank"), toast2("Email sent + WhatsApp opening 📣"))
     }
 
     function openRehView(e) {
@@ -7563,9 +7578,16 @@
         else if (n) {
           const e = n.replace(/\D/g, "");
           window.open(`https://wa.me/${e}?text=${encodeURIComponent(t)}`, "_blank", "noopener,noreferrer")
-        } else window.open(`https://wa.me/?text=${encodeURIComponent(t)}`, "_blank", "noopener,noreferrer")
+        } else window.open(`https://wa.me/?text=${encodeURIComponent(t)}`, "_blank", "noopener,noreferrer");
+        closeMod("invMsgMod"), toast2("Opening WhatsApp — press send to deliver 💬")
+      } else {
+        // Email channel: open the user's mail client with the reviewed message.
+        // Nothing is sent server-side from this manual-review flow.
+        const o = (document.getElementById("invEmail")?.value || "").trim(),
+          a = getActiveBand();
+        window.open(`mailto:${encodeURIComponent(o)}?subject=${encodeURIComponent(`Join ${a?a.name:"our group"} on Ritovo`)}&body=${encodeURIComponent(t)}`, "_blank");
+        closeMod("invMsgMod"), toast2("Opening your email app — press send to deliver ✉️")
       }
-      closeMod("invMsgMod"), toast2("Invitation sent! 🎉")
     }
     let toastT, payT = "free";
 
@@ -9596,7 +9618,7 @@
       if (!s) return;
       const i = getBandNotifPref(),
         l = !!bandWaLinks[activeBandId];
-      e ? "email" === i ? toast2("Cancellation sent by email ✉️") : "whatsapp" === i && l ? (window.open(`https://wa.me/?text=${encodeURIComponent(a)}`, "_blank"), toast2("WhatsApp notification sent 💬")) : "both" === i && l ? (window.open(`https://wa.me/?text=${encodeURIComponent(a)}`, "_blank"), toast2("Cancellation sent by email + WhatsApp 📣")) : toast2("Cancellation sent by email ✉️") : toast2("Marked as cancelled — members not notified")
+      e ? ("whatsapp" === i || "both" === i) && l ? (window.open(`https://wa.me/?text=${encodeURIComponent(a)}`, "_blank"), toast2("Event cancelled — WhatsApp opening, press send to notify 💬")) : toast2("Event cancelled — email notices aren't supported yet, tell members directly", "w") : toast2("Marked as cancelled — members not notified")
     }
 
     function openConcertView(e) {
