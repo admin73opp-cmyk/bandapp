@@ -6200,6 +6200,7 @@
     }
 
     function openNewRehearsal() {
+      if (!activeBandId) return void toast2("Create a group first before scheduling rehearsals", "w");
       editingRehId = null, document.getElementById("reModalTitle").textContent = "New Rehearsal", ["reTitle", "reLocation", "reNotes"].forEach(e => {
         const t = document.getElementById(e);
         t && (t.value = "")
@@ -11047,6 +11048,7 @@
     }
 
     function openInvMod() {
+      if (!activeBandId) return void toast2("Create a group first before inviting musicians", "w");
       const e = document.getElementById("invInstrument");
       e && (e.value = "", populateInstrumentSelects()), ["invFirstName", "invLastName", "invEmail"].forEach(e => {
         const t = document.getElementById(e);
