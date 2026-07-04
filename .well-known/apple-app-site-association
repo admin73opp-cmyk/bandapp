@@ -1,0 +1,12 @@
+{
+  "applinks": {
+    "details": [
+      {
+        "appIDs": ["L2898ZW7WP.com.ritovo.app"],
+        "components": [
+          { "/": "/*" }
+        ]
+      }
+    ]
+  }
+}
