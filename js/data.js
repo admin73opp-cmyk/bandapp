@@ -1,0 +1,1500 @@
+// ── Static data tables (extracted from index.html) ──────────
+// Pure constants, zero logic. Loaded in <head> BEFORE the inline app
+// script so these globals exist before any consumer runs. Names must NOT
+// be mangled by the build (build.js keeps toplevel mangle off).
+
+const DIAL_CODES = [{
+  c: "AF",
+  name: "Afghanistan",
+  dial: "+93"
+}, {
+  c: "AL",
+  name: "Albania",
+  dial: "+355"
+}, {
+  c: "DZ",
+  name: "Algeria",
+  dial: "+213"
+}, {
+  c: "AD",
+  name: "Andorra",
+  dial: "+376"
+}, {
+  c: "AO",
+  name: "Angola",
+  dial: "+244"
+}, {
+  c: "AG",
+  name: "Antigua & Barbuda",
+  dial: "+1-268"
+}, {
+  c: "AR",
+  name: "Argentina",
+  dial: "+54"
+}, {
+  c: "AM",
+  name: "Armenia",
+  dial: "+374"
+}, {
+  c: "AU",
+  name: "Australia",
+  dial: "+61"
+}, {
+  c: "AT",
+  name: "Austria",
+  dial: "+43"
+}, {
+  c: "AZ",
+  name: "Azerbaijan",
+  dial: "+994"
+}, {
+  c: "BS",
+  name: "Bahamas",
+  dial: "+1-242"
+}, {
+  c: "BH",
+  name: "Bahrain",
+  dial: "+973"
+}, {
+  c: "BD",
+  name: "Bangladesh",
+  dial: "+880"
+}, {
+  c: "BY",
+  name: "Belarus",
+  dial: "+375"
+}, {
+  c: "BE",
+  name: "Belgium",
+  dial: "+32"
+}, {
+  c: "BZ",
+  name: "Belize",
+  dial: "+501"
+}, {
+  c: "BJ",
+  name: "Benin",
+  dial: "+229"
+}, {
+  c: "BT",
+  name: "Bhutan",
+  dial: "+975"
+}, {
+  c: "BO",
+  name: "Bolivia",
+  dial: "+591"
+}, {
+  c: "BA",
+  name: "Bosnia & Herzegovina",
+  dial: "+387"
+}, {
+  c: "BW",
+  name: "Botswana",
+  dial: "+267"
+}, {
+  c: "BR",
+  name: "Brazil",
+  dial: "+55"
+}, {
+  c: "BN",
+  name: "Brunei",
+  dial: "+673"
+}, {
+  c: "BG",
+  name: "Bulgaria",
+  dial: "+359"
+}, {
+  c: "BF",
+  name: "Burkina Faso",
+  dial: "+226"
+}, {
+  c: "BI",
+  name: "Burundi",
+  dial: "+257"
+}, {
+  c: "CV",
+  name: "Cabo Verde",
+  dial: "+238"
+}, {
+  c: "KH",
+  name: "Cambodia",
+  dial: "+855"
+}, {
+  c: "CM",
+  name: "Cameroon",
+  dial: "+237"
+}, {
+  c: "CA",
+  name: "Canada",
+  dial: "+1"
+}, {
+  c: "CF",
+  name: "Central African Republic",
+  dial: "+236"
+}, {
+  c: "TD",
+  name: "Chad",
+  dial: "+235"
+}, {
+  c: "CL",
+  name: "Chile",
+  dial: "+56"
+}, {
+  c: "CN",
+  name: "China",
+  dial: "+86"
+}, {
+  c: "CO",
+  name: "Colombia",
+  dial: "+57"
+}, {
+  c: "KM",
+  name: "Comoros",
+  dial: "+269"
+}, {
+  c: "CG",
+  name: "Congo",
+  dial: "+242"
+}, {
+  c: "CR",
+  name: "Costa Rica",
+  dial: "+506"
+}, {
+  c: "HR",
+  name: "Croatia",
+  dial: "+385"
+}, {
+  c: "CU",
+  name: "Cuba",
+  dial: "+53"
+}, {
+  c: "CY",
+  name: "Cyprus",
+  dial: "+357"
+}, {
+  c: "CZ",
+  name: "Czech Republic",
+  dial: "+420"
+}, {
+  c: "DK",
+  name: "Denmark",
+  dial: "+45"
+}, {
+  c: "DJ",
+  name: "Djibouti",
+  dial: "+253"
+}, {
+  c: "DM",
+  name: "Dominica",
+  dial: "+1-767"
+}, {
+  c: "DO",
+  name: "Dominican Republic",
+  dial: "+1-809"
+}, {
+  c: "EC",
+  name: "Ecuador",
+  dial: "+593"
+}, {
+  c: "EG",
+  name: "Egypt",
+  dial: "+20"
+}, {
+  c: "SV",
+  name: "El Salvador",
+  dial: "+503"
+}, {
+  c: "GQ",
+  name: "Equatorial Guinea",
+  dial: "+240"
+}, {
+  c: "ER",
+  name: "Eritrea",
+  dial: "+291"
+}, {
+  c: "EE",
+  name: "Estonia",
+  dial: "+372"
+}, {
+  c: "SZ",
+  name: "Eswatini",
+  dial: "+268"
+}, {
+  c: "ET",
+  name: "Ethiopia",
+  dial: "+251"
+}, {
+  c: "FJ",
+  name: "Fiji",
+  dial: "+679"
+}, {
+  c: "FI",
+  name: "Finland",
+  dial: "+358"
+}, {
+  c: "FR",
+  name: "France",
+  dial: "+33"
+}, {
+  c: "GA",
+  name: "Gabon",
+  dial: "+241"
+}, {
+  c: "GM",
+  name: "Gambia",
+  dial: "+220"
+}, {
+  c: "GE",
+  name: "Georgia",
+  dial: "+995"
+}, {
+  c: "DE",
+  name: "Germany",
+  dial: "+49"
+}, {
+  c: "GH",
+  name: "Ghana",
+  dial: "+233"
+}, {
+  c: "GR",
+  name: "Greece",
+  dial: "+30"
+}, {
+  c: "GD",
+  name: "Grenada",
+  dial: "+1-473"
+}, {
+  c: "GT",
+  name: "Guatemala",
+  dial: "+502"
+}, {
+  c: "GN",
+  name: "Guinea",
+  dial: "+224"
+}, {
+  c: "GW",
+  name: "Guinea-Bissau",
+  dial: "+245"
+}, {
+  c: "GY",
+  name: "Guyana",
+  dial: "+592"
+}, {
+  c: "HT",
+  name: "Haiti",
+  dial: "+509"
+}, {
+  c: "HN",
+  name: "Honduras",
+  dial: "+504"
+}, {
+  c: "HU",
+  name: "Hungary",
+  dial: "+36"
+}, {
+  c: "IS",
+  name: "Iceland",
+  dial: "+354"
+}, {
+  c: "IN",
+  name: "India",
+  dial: "+91"
+}, {
+  c: "ID",
+  name: "Indonesia",
+  dial: "+62"
+}, {
+  c: "IR",
+  name: "Iran",
+  dial: "+98"
+}, {
+  c: "IQ",
+  name: "Iraq",
+  dial: "+964"
+}, {
+  c: "IE",
+  name: "Ireland",
+  dial: "+353"
+}, {
+  c: "IL",
+  name: "Israel",
+  dial: "+972"
+}, {
+  c: "IT",
+  name: "Italy",
+  dial: "+39"
+}, {
+  c: "JM",
+  name: "Jamaica",
+  dial: "+1-876"
+}, {
+  c: "JP",
+  name: "Japan",
+  dial: "+81"
+}, {
+  c: "JO",
+  name: "Jordan",
+  dial: "+962"
+}, {
+  c: "KZ",
+  name: "Kazakhstan",
+  dial: "+7"
+}, {
+  c: "KE",
+  name: "Kenya",
+  dial: "+254"
+}, {
+  c: "KI",
+  name: "Kiribati",
+  dial: "+686"
+}, {
+  c: "KW",
+  name: "Kuwait",
+  dial: "+965"
+}, {
+  c: "KG",
+  name: "Kyrgyzstan",
+  dial: "+996"
+}, {
+  c: "LA",
+  name: "Laos",
+  dial: "+856"
+}, {
+  c: "LV",
+  name: "Latvia",
+  dial: "+371"
+}, {
+  c: "LB",
+  name: "Lebanon",
+  dial: "+961"
+}, {
+  c: "LS",
+  name: "Lesotho",
+  dial: "+266"
+}, {
+  c: "LR",
+  name: "Liberia",
+  dial: "+231"
+}, {
+  c: "LY",
+  name: "Libya",
+  dial: "+218"
+}, {
+  c: "LI",
+  name: "Liechtenstein",
+  dial: "+423"
+}, {
+  c: "LT",
+  name: "Lithuania",
+  dial: "+370"
+}, {
+  c: "LU",
+  name: "Luxembourg",
+  dial: "+352"
+}, {
+  c: "MG",
+  name: "Madagascar",
+  dial: "+261"
+}, {
+  c: "MW",
+  name: "Malawi",
+  dial: "+265"
+}, {
+  c: "MY",
+  name: "Malaysia",
+  dial: "+60"
+}, {
+  c: "MV",
+  name: "Maldives",
+  dial: "+960"
+}, {
+  c: "ML",
+  name: "Mali",
+  dial: "+223"
+}, {
+  c: "MT",
+  name: "Malta",
+  dial: "+356"
+}, {
+  c: "MH",
+  name: "Marshall Islands",
+  dial: "+692"
+}, {
+  c: "MR",
+  name: "Mauritania",
+  dial: "+222"
+}, {
+  c: "MU",
+  name: "Mauritius",
+  dial: "+230"
+}, {
+  c: "MX",
+  name: "Mexico",
+  dial: "+52"
+}, {
+  c: "FM",
+  name: "Micronesia",
+  dial: "+691"
+}, {
+  c: "MD",
+  name: "Moldova",
+  dial: "+373"
+}, {
+  c: "MC",
+  name: "Monaco",
+  dial: "+377"
+}, {
+  c: "MN",
+  name: "Mongolia",
+  dial: "+976"
+}, {
+  c: "ME",
+  name: "Montenegro",
+  dial: "+382"
+}, {
+  c: "MA",
+  name: "Morocco",
+  dial: "+212"
+}, {
+  c: "MZ",
+  name: "Mozambique",
+  dial: "+258"
+}, {
+  c: "MM",
+  name: "Myanmar",
+  dial: "+95"
+}, {
+  c: "NA",
+  name: "Namibia",
+  dial: "+264"
+}, {
+  c: "NR",
+  name: "Nauru",
+  dial: "+674"
+}, {
+  c: "NP",
+  name: "Nepal",
+  dial: "+977"
+}, {
+  c: "NL",
+  name: "Netherlands",
+  dial: "+31"
+}, {
+  c: "NZ",
+  name: "New Zealand",
+  dial: "+64"
+}, {
+  c: "NI",
+  name: "Nicaragua",
+  dial: "+505"
+}, {
+  c: "NE",
+  name: "Niger",
+  dial: "+227"
+}, {
+  c: "NG",
+  name: "Nigeria",
+  dial: "+234"
+}, {
+  c: "NO",
+  name: "Norway",
+  dial: "+47"
+}, {
+  c: "OM",
+  name: "Oman",
+  dial: "+968"
+}, {
+  c: "PK",
+  name: "Pakistan",
+  dial: "+92"
+}, {
+  c: "PW",
+  name: "Palau",
+  dial: "+680"
+}, {
+  c: "PA",
+  name: "Panama",
+  dial: "+507"
+}, {
+  c: "PG",
+  name: "Papua New Guinea",
+  dial: "+675"
+}, {
+  c: "PY",
+  name: "Paraguay",
+  dial: "+595"
+}, {
+  c: "PE",
+  name: "Peru",
+  dial: "+51"
+}, {
+  c: "PH",
+  name: "Philippines",
+  dial: "+63"
+}, {
+  c: "PL",
+  name: "Poland",
+  dial: "+48"
+}, {
+  c: "PT",
+  name: "Portugal",
+  dial: "+351"
+}, {
+  c: "QA",
+  name: "Qatar",
+  dial: "+974"
+}, {
+  c: "RO",
+  name: "Romania",
+  dial: "+40"
+}, {
+  c: "RU",
+  name: "Russia",
+  dial: "+7"
+}, {
+  c: "RW",
+  name: "Rwanda",
+  dial: "+250"
+}, {
+  c: "KN",
+  name: "Saint Kitts & Nevis",
+  dial: "+1-869"
+}, {
+  c: "LC",
+  name: "Saint Lucia",
+  dial: "+1-758"
+}, {
+  c: "VC",
+  name: "Saint Vincent & the Grenadines",
+  dial: "+1-784"
+}, {
+  c: "WS",
+  name: "Samoa",
+  dial: "+685"
+}, {
+  c: "SM",
+  name: "San Marino",
+  dial: "+378"
+}, {
+  c: "ST",
+  name: "São Tomé & Príncipe",
+  dial: "+239"
+}, {
+  c: "SA",
+  name: "Saudi Arabia",
+  dial: "+966"
+}, {
+  c: "SN",
+  name: "Senegal",
+  dial: "+221"
+}, {
+  c: "RS",
+  name: "Serbia",
+  dial: "+381"
+}, {
+  c: "SC",
+  name: "Seychelles",
+  dial: "+248"
+}, {
+  c: "SL",
+  name: "Sierra Leone",
+  dial: "+232"
+}, {
+  c: "SG",
+  name: "Singapore",
+  dial: "+65"
+}, {
+  c: "SK",
+  name: "Slovakia",
+  dial: "+421"
+}, {
+  c: "SI",
+  name: "Slovenia",
+  dial: "+386"
+}, {
+  c: "SB",
+  name: "Solomon Islands",
+  dial: "+677"
+}, {
+  c: "SO",
+  name: "Somalia",
+  dial: "+252"
+}, {
+  c: "ZA",
+  name: "South Africa",
+  dial: "+27"
+}, {
+  c: "SS",
+  name: "South Sudan",
+  dial: "+211"
+}, {
+  c: "ES",
+  name: "Spain",
+  dial: "+34"
+}, {
+  c: "LK",
+  name: "Sri Lanka",
+  dial: "+94"
+}, {
+  c: "SD",
+  name: "Sudan",
+  dial: "+249"
+}, {
+  c: "SR",
+  name: "Suriname",
+  dial: "+597"
+}, {
+  c: "SE",
+  name: "Sweden",
+  dial: "+46"
+}, {
+  c: "CH",
+  name: "Switzerland",
+  dial: "+41"
+}, {
+  c: "SY",
+  name: "Syria",
+  dial: "+963"
+}, {
+  c: "TW",
+  name: "Taiwan",
+  dial: "+886"
+}, {
+  c: "TJ",
+  name: "Tajikistan",
+  dial: "+992"
+}, {
+  c: "TZ",
+  name: "Tanzania",
+  dial: "+255"
+}, {
+  c: "TH",
+  name: "Thailand",
+  dial: "+66"
+}, {
+  c: "TL",
+  name: "Timor-Leste",
+  dial: "+670"
+}, {
+  c: "TG",
+  name: "Togo",
+  dial: "+228"
+}, {
+  c: "TO",
+  name: "Tonga",
+  dial: "+676"
+}, {
+  c: "TT",
+  name: "Trinidad & Tobago",
+  dial: "+1-868"
+}, {
+  c: "TN",
+  name: "Tunisia",
+  dial: "+216"
+}, {
+  c: "TR",
+  name: "Turkey",
+  dial: "+90"
+}, {
+  c: "TM",
+  name: "Turkmenistan",
+  dial: "+993"
+}, {
+  c: "TV",
+  name: "Tuvalu",
+  dial: "+688"
+}, {
+  c: "UG",
+  name: "Uganda",
+  dial: "+256"
+}, {
+  c: "UA",
+  name: "Ukraine",
+  dial: "+380"
+}, {
+  c: "AE",
+  name: "United Arab Emirates",
+  dial: "+971"
+}, {
+  c: "GB",
+  name: "United Kingdom",
+  dial: "+44"
+}, {
+  c: "US",
+  name: "United States",
+  dial: "+1"
+}, {
+  c: "UY",
+  name: "Uruguay",
+  dial: "+598"
+}, {
+  c: "UZ",
+  name: "Uzbekistan",
+  dial: "+998"
+}, {
+  c: "VU",
+  name: "Vanuatu",
+  dial: "+678"
+}, {
+  c: "VE",
+  name: "Venezuela",
+  dial: "+58"
+}, {
+  c: "VN",
+  name: "Vietnam",
+  dial: "+84"
+}, {
+  c: "YE",
+  name: "Yemen",
+  dial: "+967"
+}, {
+  c: "ZM",
+  name: "Zambia",
+  dial: "+260"
+}, {
+  c: "ZW",
+  name: "Zimbabwe",
+  dial: "+263"
+}].sort((e, t) => e.name.localeCompare(t.name));
+
+const ISO_COUNTRIES = [{
+  c: "AF",
+  f: "🇦🇫",
+  n: "Afghanistan"
+}, {
+  c: "AL",
+  f: "🇦🇱",
+  n: "Albania"
+}, {
+  c: "DZ",
+  f: "🇩🇿",
+  n: "Algeria"
+}, {
+  c: "AD",
+  f: "🇦🇩",
+  n: "Andorra"
+}, {
+  c: "AO",
+  f: "🇦🇴",
+  n: "Angola"
+}, {
+  c: "AR",
+  f: "🇦🇷",
+  n: "Argentina"
+}, {
+  c: "AM",
+  f: "🇦🇲",
+  n: "Armenia"
+}, {
+  c: "AU",
+  f: "🇦🇺",
+  n: "Australia"
+}, {
+  c: "AT",
+  f: "🇦🇹",
+  n: "Austria"
+}, {
+  c: "AZ",
+  f: "🇦🇿",
+  n: "Azerbaijan"
+}, {
+  c: "BS",
+  f: "🇧🇸",
+  n: "Bahamas"
+}, {
+  c: "BH",
+  f: "🇧🇭",
+  n: "Bahrain"
+}, {
+  c: "BD",
+  f: "🇧🇩",
+  n: "Bangladesh"
+}, {
+  c: "BY",
+  f: "🇧🇾",
+  n: "Belarus"
+}, {
+  c: "BE",
+  f: "🇧🇪",
+  n: "Belgium"
+}, {
+  c: "BZ",
+  f: "🇧🇿",
+  n: "Belize"
+}, {
+  c: "BJ",
+  f: "🇧🇯",
+  n: "Benin"
+}, {
+  c: "BT",
+  f: "🇧🇹",
+  n: "Bhutan"
+}, {
+  c: "BO",
+  f: "🇧🇴",
+  n: "Bolivia"
+}, {
+  c: "BA",
+  f: "🇧🇦",
+  n: "Bosnia and Herzegovina"
+}, {
+  c: "BW",
+  f: "🇧🇼",
+  n: "Botswana"
+}, {
+  c: "BR",
+  f: "🇧🇷",
+  n: "Brazil"
+}, {
+  c: "BN",
+  f: "🇧🇳",
+  n: "Brunei"
+}, {
+  c: "BG",
+  f: "🇧🇬",
+  n: "Bulgaria"
+}, {
+  c: "BF",
+  f: "🇧🇫",
+  n: "Burkina Faso"
+}, {
+  c: "BI",
+  f: "🇧🇮",
+  n: "Burundi"
+}, {
+  c: "CV",
+  f: "🇨🇻",
+  n: "Cape Verde"
+}, {
+  c: "KH",
+  f: "🇰🇭",
+  n: "Cambodia"
+}, {
+  c: "CM",
+  f: "🇨🇲",
+  n: "Cameroon"
+}, {
+  c: "CA",
+  f: "🇨🇦",
+  n: "Canada"
+}, {
+  c: "CF",
+  f: "🇨🇫",
+  n: "Central African Republic"
+}, {
+  c: "TD",
+  f: "🇹🇩",
+  n: "Chad"
+}, {
+  c: "CL",
+  f: "🇨🇱",
+  n: "Chile"
+}, {
+  c: "CN",
+  f: "🇨🇳",
+  n: "China"
+}, {
+  c: "CO",
+  f: "🇨🇴",
+  n: "Colombia"
+}, {
+  c: "KM",
+  f: "🇰🇲",
+  n: "Comoros"
+}, {
+  c: "CG",
+  f: "🇨🇬",
+  n: "Congo"
+}, {
+  c: "CR",
+  f: "🇨🇷",
+  n: "Costa Rica"
+}, {
+  c: "HR",
+  f: "🇭🇷",
+  n: "Croatia"
+}, {
+  c: "CU",
+  f: "🇨🇺",
+  n: "Cuba"
+}, {
+  c: "CY",
+  f: "🇨🇾",
+  n: "Cyprus"
+}, {
+  c: "CZ",
+  f: "🇨🇿",
+  n: "Czechia"
+}, {
+  c: "DK",
+  f: "🇩🇰",
+  n: "Denmark"
+}, {
+  c: "DJ",
+  f: "🇩🇯",
+  n: "Djibouti"
+}, {
+  c: "DO",
+  f: "🇩🇴",
+  n: "Dominican Republic"
+}, {
+  c: "EC",
+  f: "🇪🇨",
+  n: "Ecuador"
+}, {
+  c: "EG",
+  f: "🇪🇬",
+  n: "Egypt"
+}, {
+  c: "SV",
+  f: "🇸🇻",
+  n: "El Salvador"
+}, {
+  c: "GQ",
+  f: "🇬🇶",
+  n: "Equatorial Guinea"
+}, {
+  c: "ER",
+  f: "🇪🇷",
+  n: "Eritrea"
+}, {
+  c: "EE",
+  f: "🇪🇪",
+  n: "Estonia"
+}, {
+  c: "SZ",
+  f: "🇸🇿",
+  n: "Eswatini"
+}, {
+  c: "ET",
+  f: "🇪🇹",
+  n: "Ethiopia"
+}, {
+  c: "FJ",
+  f: "🇫🇯",
+  n: "Fiji"
+}, {
+  c: "FI",
+  f: "🇫🇮",
+  n: "Finland"
+}, {
+  c: "FR",
+  f: "🇫🇷",
+  n: "France"
+}, {
+  c: "GA",
+  f: "🇬🇦",
+  n: "Gabon"
+}, {
+  c: "GM",
+  f: "🇬🇲",
+  n: "Gambia"
+}, {
+  c: "GE",
+  f: "🇬🇪",
+  n: "Georgia"
+}, {
+  c: "DE",
+  f: "🇩🇪",
+  n: "Germany"
+}, {
+  c: "GH",
+  f: "🇬🇭",
+  n: "Ghana"
+}, {
+  c: "GR",
+  f: "🇬🇷",
+  n: "Greece"
+}, {
+  c: "GT",
+  f: "🇬🇹",
+  n: "Guatemala"
+}, {
+  c: "GN",
+  f: "🇬🇳",
+  n: "Guinea"
+}, {
+  c: "GW",
+  f: "🇬🇼",
+  n: "Guinea-Bissau"
+}, {
+  c: "GY",
+  f: "🇬🇾",
+  n: "Guyana"
+}, {
+  c: "HT",
+  f: "🇭🇹",
+  n: "Haiti"
+}, {
+  c: "HN",
+  f: "🇭🇳",
+  n: "Honduras"
+}, {
+  c: "HU",
+  f: "🇭🇺",
+  n: "Hungary"
+}, {
+  c: "IS",
+  f: "🇮🇸",
+  n: "Iceland"
+}, {
+  c: "IN",
+  f: "🇮🇳",
+  n: "India"
+}, {
+  c: "ID",
+  f: "🇮🇩",
+  n: "Indonesia"
+}, {
+  c: "IR",
+  f: "🇮🇷",
+  n: "Iran"
+}, {
+  c: "IQ",
+  f: "🇮🇶",
+  n: "Iraq"
+}, {
+  c: "IE",
+  f: "🇮🇪",
+  n: "Ireland"
+}, {
+  c: "IL",
+  f: "🇮🇱",
+  n: "Israel"
+}, {
+  c: "IT",
+  f: "🇮🇹",
+  n: "Italy"
+}, {
+  c: "JM",
+  f: "🇯🇲",
+  n: "Jamaica"
+}, {
+  c: "JP",
+  f: "🇯🇵",
+  n: "Japan"
+}, {
+  c: "JO",
+  f: "🇯🇴",
+  n: "Jordan"
+}, {
+  c: "KZ",
+  f: "🇰🇿",
+  n: "Kazakhstan"
+}, {
+  c: "KE",
+  f: "🇰🇪",
+  n: "Kenya"
+}, {
+  c: "KI",
+  f: "🇰🇮",
+  n: "Kiribati"
+}, {
+  c: "KW",
+  f: "🇰🇼",
+  n: "Kuwait"
+}, {
+  c: "KG",
+  f: "🇰🇬",
+  n: "Kyrgyzstan"
+}, {
+  c: "LA",
+  f: "🇱🇦",
+  n: "Laos"
+}, {
+  c: "LV",
+  f: "🇱🇻",
+  n: "Latvia"
+}, {
+  c: "LB",
+  f: "🇱🇧",
+  n: "Lebanon"
+}, {
+  c: "LS",
+  f: "🇱🇸",
+  n: "Lesotho"
+}, {
+  c: "LR",
+  f: "🇱🇷",
+  n: "Liberia"
+}, {
+  c: "LY",
+  f: "🇱🇾",
+  n: "Libya"
+}, {
+  c: "LI",
+  f: "🇱🇮",
+  n: "Liechtenstein"
+}, {
+  c: "LT",
+  f: "🇱🇹",
+  n: "Lithuania"
+}, {
+  c: "LU",
+  f: "🇱🇺",
+  n: "Luxembourg"
+}, {
+  c: "MG",
+  f: "🇲🇬",
+  n: "Madagascar"
+}, {
+  c: "MW",
+  f: "🇲🇼",
+  n: "Malawi"
+}, {
+  c: "MY",
+  f: "🇲🇾",
+  n: "Malaysia"
+}, {
+  c: "MV",
+  f: "🇲🇻",
+  n: "Maldives"
+}, {
+  c: "ML",
+  f: "🇲🇱",
+  n: "Mali"
+}, {
+  c: "MT",
+  f: "🇲🇹",
+  n: "Malta"
+}, {
+  c: "MH",
+  f: "🇲🇭",
+  n: "Marshall Islands"
+}, {
+  c: "MR",
+  f: "🇲🇷",
+  n: "Mauritania"
+}, {
+  c: "MU",
+  f: "🇲🇺",
+  n: "Mauritius"
+}, {
+  c: "MX",
+  f: "🇲🇽",
+  n: "Mexico"
+}, {
+  c: "FM",
+  f: "🇫🇲",
+  n: "Micronesia"
+}, {
+  c: "MD",
+  f: "🇲🇩",
+  n: "Moldova"
+}, {
+  c: "MC",
+  f: "🇲🇨",
+  n: "Monaco"
+}, {
+  c: "MN",
+  f: "🇲🇳",
+  n: "Mongolia"
+}, {
+  c: "ME",
+  f: "🇲🇪",
+  n: "Montenegro"
+}, {
+  c: "MA",
+  f: "🇲🇦",
+  n: "Morocco"
+}, {
+  c: "MZ",
+  f: "🇲🇿",
+  n: "Mozambique"
+}, {
+  c: "MM",
+  f: "🇲🇲",
+  n: "Myanmar"
+}, {
+  c: "NA",
+  f: "🇳🇦",
+  n: "Namibia"
+}, {
+  c: "NR",
+  f: "🇳🇷",
+  n: "Nauru"
+}, {
+  c: "NP",
+  f: "🇳🇵",
+  n: "Nepal"
+}, {
+  c: "NL",
+  f: "🇳🇱",
+  n: "Netherlands"
+}, {
+  c: "NZ",
+  f: "🇳🇿",
+  n: "New Zealand"
+}, {
+  c: "NI",
+  f: "🇳🇮",
+  n: "Nicaragua"
+}, {
+  c: "NE",
+  f: "🇳🇪",
+  n: "Niger"
+}, {
+  c: "NG",
+  f: "🇳🇬",
+  n: "Nigeria"
+}, {
+  c: "NO",
+  f: "🇳🇴",
+  n: "Norway"
+}, {
+  c: "OM",
+  f: "🇴🇲",
+  n: "Oman"
+}, {
+  c: "PK",
+  f: "🇵🇰",
+  n: "Pakistan"
+}, {
+  c: "PW",
+  f: "🇵🇼",
+  n: "Palau"
+}, {
+  c: "PA",
+  f: "🇵🇦",
+  n: "Panama"
+}, {
+  c: "PG",
+  f: "🇵🇬",
+  n: "Papua New Guinea"
+}, {
+  c: "PY",
+  f: "🇵🇾",
+  n: "Paraguay"
+}, {
+  c: "PE",
+  f: "🇵🇪",
+  n: "Peru"
+}, {
+  c: "PH",
+  f: "🇵🇭",
+  n: "Philippines"
+}, {
+  c: "PL",
+  f: "🇵🇱",
+  n: "Poland"
+}, {
+  c: "PT",
+  f: "🇵🇹",
+  n: "Portugal"
+}, {
+  c: "QA",
+  f: "🇶🇦",
+  n: "Qatar"
+}, {
+  c: "RO",
+  f: "🇷🇴",
+  n: "Romania"
+}, {
+  c: "RU",
+  f: "🇷🇺",
+  n: "Russia"
+}, {
+  c: "RW",
+  f: "🇷🇼",
+  n: "Rwanda"
+}, {
+  c: "KN",
+  f: "🇰🇳",
+  n: "Saint Kitts and Nevis"
+}, {
+  c: "LC",
+  f: "🇱🇨",
+  n: "Saint Lucia"
+}, {
+  c: "VC",
+  f: "🇻🇨",
+  n: "Saint Vincent and the Grenadines"
+}, {
+  c: "WS",
+  f: "🇼🇸",
+  n: "Samoa"
+}, {
+  c: "SM",
+  f: "🇸🇲",
+  n: "San Marino"
+}, {
+  c: "ST",
+  f: "🇸🇹",
+  n: "São Tomé and Príncipe"
+}, {
+  c: "SA",
+  f: "🇸🇦",
+  n: "Saudi Arabia"
+}, {
+  c: "SN",
+  f: "🇸🇳",
+  n: "Senegal"
+}, {
+  c: "RS",
+  f: "🇷🇸",
+  n: "Serbia"
+}, {
+  c: "SC",
+  f: "🇸🇨",
+  n: "Seychelles"
+}, {
+  c: "SL",
+  f: "🇸🇱",
+  n: "Sierra Leone"
+}, {
+  c: "SG",
+  f: "🇸🇬",
+  n: "Singapore"
+}, {
+  c: "SK",
+  f: "🇸🇰",
+  n: "Slovakia"
+}, {
+  c: "SI",
+  f: "🇸🇮",
+  n: "Slovenia"
+}, {
+  c: "SB",
+  f: "🇸🇧",
+  n: "Solomon Islands"
+}, {
+  c: "SO",
+  f: "🇸🇴",
+  n: "Somalia"
+}, {
+  c: "ZA",
+  f: "🇿🇦",
+  n: "South Africa"
+}, {
+  c: "SS",
+  f: "🇸🇸",
+  n: "South Sudan"
+}, {
+  c: "ES",
+  f: "🇪🇸",
+  n: "Spain"
+}, {
+  c: "LK",
+  f: "🇱🇰",
+  n: "Sri Lanka"
+}, {
+  c: "SD",
+  f: "🇸🇩",
+  n: "Sudan"
+}, {
+  c: "SR",
+  f: "🇸🇷",
+  n: "Suriname"
+}, {
+  c: "SE",
+  f: "🇸🇪",
+  n: "Sweden"
+}, {
+  c: "CH",
+  f: "🇨🇭",
+  n: "Switzerland"
+}, {
+  c: "SY",
+  f: "🇸🇾",
+  n: "Syria"
+}, {
+  c: "TW",
+  f: "🇹🇼",
+  n: "Taiwan"
+}, {
+  c: "TJ",
+  f: "🇹🇯",
+  n: "Tajikistan"
+}, {
+  c: "TZ",
+  f: "🇹🇿",
+  n: "Tanzania"
+}, {
+  c: "TH",
+  f: "🇹🇭",
+  n: "Thailand"
+}, {
+  c: "TL",
+  f: "🇹🇱",
+  n: "Timor-Leste"
+}, {
+  c: "TG",
+  f: "🇹🇬",
+  n: "Togo"
+}, {
+  c: "TO",
+  f: "🇹🇴",
+  n: "Tonga"
+}, {
+  c: "TT",
+  f: "🇹🇹",
+  n: "Trinidad and Tobago"
+}, {
+  c: "TN",
+  f: "🇹🇳",
+  n: "Tunisia"
+}, {
+  c: "TR",
+  f: "🇹🇷",
+  n: "Turkey"
+}, {
+  c: "TM",
+  f: "🇹🇲",
+  n: "Turkmenistan"
+}, {
+  c: "TV",
+  f: "🇹🇻",
+  n: "Tuvalu"
+}, {
+  c: "UG",
+  f: "🇺🇬",
+  n: "Uganda"
+}, {
+  c: "UA",
+  f: "🇺🇦",
+  n: "Ukraine"
+}, {
+  c: "AE",
+  f: "🇦🇪",
+  n: "United Arab Emirates"
+}, {
+  c: "GB",
+  f: "🇬🇧",
+  n: "United Kingdom"
+}, {
+  c: "US",
+  f: "🇺🇸",
+  n: "United States"
+}, {
+  c: "UY",
+  f: "🇺🇾",
+  n: "Uruguay"
+}, {
+  c: "UZ",
+  f: "🇺🇿",
+  n: "Uzbekistan"
+}, {
+  c: "VU",
+  f: "🇻🇺",
+  n: "Vanuatu"
+}, {
+  c: "VE",
+  f: "🇻🇪",
+  n: "Venezuela"
+}, {
+  c: "VN",
+  f: "🇻🇳",
+  n: "Vietnam"
+}, {
+  c: "YE",
+  f: "🇾🇪",
+  n: "Yemen"
+}, {
+  c: "ZM",
+  f: "🇿🇲",
+  n: "Zambia"
+}, {
+  c: "ZW",
+  f: "🇿🇼",
+  n: "Zimbabwe"
+}];
