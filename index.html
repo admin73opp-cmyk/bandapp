@@ -6229,7 +6229,8 @@
       a.onload = async e => {
         const n = await compressImage(e.target.result, 1024, .75);
         try {
-          const e = await RehearsalsDB.addPhoto(t, n);
+          const s = await storePhoto(n, `events/rehearsal/${t}/${Date.now()}.jpg`, !1),
+            e = await RehearsalsDB.addPhoto(t, s);
           o.photos || (o.photos = []), o.photos.push(e), renderRehearsals(), editingRehId === t && renderRehPhotoArea(t), toast2("Photo added!")
         } catch (e) {
           toast2("Failed to save photo", "w"), console.error("[bandapp] addRehPhoto:", e)
@@ -6253,7 +6254,7 @@
       if (a < 0 || a === undefined || !n.photos[a]) return;
       const s = n.photos[a];
       if (s.id && !await RehearsalsDB.removePhoto(s.id)) return void toast2("Couldn't remove photo — try again", "w");
-      n.photos.splice(a, 1), renderRehPhotoArea(e), renderRehearsals(), toast2("Photo removed", "w")
+      deleteStoragePhoto(s.url), n.photos.splice(a, 1), renderRehPhotoArea(e), renderRehearsals(), toast2("Photo removed", "w")
     }
 
     function openRehPhotoLightbox(e, t) {
@@ -9793,7 +9794,8 @@
       a.onload = async e => {
         const n = await compressImage(e.target.result, 1024, .75);
         try {
-          const e = await ConcertsDB.addPhoto(t, n);
+          const s = await storePhoto(n, `events/concert/${t}/${Date.now()}.jpg`, !1),
+            e = await ConcertsDB.addPhoto(t, s);
           o.photos || (o.photos = []), o.photos.push(e), renderConcerts(), editingConcertId === t && renderConcertPhotoArea(t), toast2("Photo added!")
         } catch (e) {
           toast2("Failed to save photo", "w"), console.error("[bandapp] addConcertPhoto:", e)
@@ -9815,7 +9817,7 @@
       if (a < 0 || a === undefined || !n.photos[a]) return;
       const s = n.photos[a];
       if (s.id && !await ConcertsDB.removePhoto(s.id)) return void toast2("Couldn't remove photo — try again", "w");
-      n.photos.splice(a, 1), renderConcertPhotoArea(e), renderConcerts(), toast2("Photo removed", "w")
+      deleteStoragePhoto(s.url), n.photos.splice(a, 1), renderConcertPhotoArea(e), renderConcerts(), toast2("Photo removed", "w")
     }
 
     function openPhotoLightbox(e, t) {
@@ -11082,7 +11084,8 @@
       o.onload = async e => {
         const t = await compressImage(e.target.result, 1024, .75);
         try {
-          const e = await BandsDB.addPhoto(n.id, t);
+          const s = await storePhoto(t, `events/band/${n.id}/${Date.now()}.jpg`, !1),
+            e = await BandsDB.addPhoto(n.id, s);
           n.photos || (n.photos = []), n.photos.push(e), renderBandPhotos(), toast2("Photo added!")
         } catch (e) {
           toast2("Failed to save photo", "w"), console.error("[bandapp] addGroupPhoto:", e)
@@ -11096,7 +11099,7 @@
       if (a < 0 || a === undefined || !t.photos[a]) return;
       const n = t.photos[a];
       if (n.id && !await BandsDB.removePhoto(n.id)) return void toast2("Couldn't remove photo — try again", "w");
-      t.photos.splice(a, 1), renderBandPhotos(), toast2("Photo removed", "w")
+      deleteStoragePhoto(n.url), t.photos.splice(a, 1), renderBandPhotos(), toast2("Photo removed", "w")
     }
 
     function openGroupPhotoLightbox(e) {
@@ -11766,6 +11769,45 @@
       })
     }
 
+    // Upload a compressed data-URL to the Storage 'photos' bucket and return
+    // its public URL. Throws on any failure (no bucket, RLS, network).
+    async function uploadPhoto(dataUrl, path, upsert = !0) {
+      const blob = await (await fetch(dataUrl)).blob();
+      const {
+        error: err
+      } = await supabase.storage.from("photos").upload(path, blob, {
+        upsert: upsert,
+        contentType: "image/jpeg",
+        cacheControl: "3600"
+      });
+      if (err) throw err;
+      const {
+        data: pub
+      } = supabase.storage.from("photos").getPublicUrl(path);
+      // Cache-bust overwritten stable paths (avatar/cover/logo) so the new
+      // image shows immediately instead of a stale CDN copy.
+      return pub.publicUrl + (upsert ? "?u=" + Date.now() : "")
+    }
+
+    // Try Storage; if it fails (e.g. the bucket migration hasn't been run yet),
+    // fall back to the inline base64 data-URL so uploads never break. Once the
+    // bucket exists, new uploads transparently start using Storage.
+    async function storePhoto(dataUrl, path, upsert = !0) {
+      try {
+        return await uploadPhoto(dataUrl, path, upsert)
+      } catch (e) {
+        return console.warn("[bandapp] photo storage upload failed — storing inline:", e?.message), dataUrl
+      }
+    }
+
+    // Best-effort delete of a Storage object given its public URL. No-op for
+    // legacy base64 values. Fire-and-forget — the DB row is already gone.
+    function deleteStoragePhoto(url) {
+      if ("string" != typeof url || !url.includes("/storage/v1/object/public/photos/")) return;
+      const path = url.split("/storage/v1/object/public/photos/")[1]?.split("?")[0];
+      path && supabase.storage.from("photos").remove([decodeURIComponent(path)]).then(null, e => console.warn("[bandapp] storage remove:", e?.message))
+    }
+
     function handleBpCover(e) {
       const t = e.target.files[0];
       if (!t) return;
@@ -11777,15 +11819,16 @@
           n.style.backgroundImage = `url(${t})`, n.style.backgroundSize = "cover", n.style.backgroundPosition = "center";
           const o = n.querySelector("[data-overlay]");
           o && (o.style.display = "none");
-          const a = getActiveBand();
-          a && (a.cover_url = t);
+          const u = await storePhoto(t, `covers/band-${activeBandId}.jpg`),
+            a = getActiveBand();
+          a && (a.cover_url = u);
           try {
-            localStorage.setItem(`bpCover_${activeBandId}`, t)
+            localStorage.setItem(`bpCover_${activeBandId}`, u)
           } catch (e) {}
           const {
             error: l
           } = await supabase.from("bands").update({
-            cover_url: t
+            cover_url: u
           }).eq("id", activeBandId);
           if (l) {
             handleDbError(l), a && (a.cover_url = null);
@@ -11812,15 +11855,16 @@
           n.style.backgroundImage = `url(${t})`, n.style.backgroundSize = "cover", n.style.backgroundPosition = "center", n.textContent = "";
           const o = document.querySelector(".bav");
           o && (o.style.backgroundImage = `url(${t})`, o.style.backgroundSize = "cover", o.style.backgroundPosition = "center", o.textContent = "");
-          const a = getActiveBand();
-          a && (a.logo_url = t);
+          const u = await storePhoto(t, `logos/${activeBandId}.jpg`),
+            a = getActiveBand();
+          a && (a.logo_url = u);
           try {
-            localStorage.setItem(`bpLogo_${activeBandId}`, t)
+            localStorage.setItem(`bpLogo_${activeBandId}`, u)
           } catch (e) {}
           const {
             error: l
           } = await supabase.from("bands").update({
-            logo_url: t
+            logo_url: u
           }).eq("id", activeBandId);
           if (l) {
             handleDbError(l), a && (a.logo_url = null);
@@ -12025,15 +12069,20 @@
       if (!t) return;
       const n = new FileReader;
       n.onload = async e => {
-        const t = await compressImage(e.target.result, 1400, .82),
-          n = document.getElementById("mpCover");
-        n && (n.style.backgroundImage = `url(${t})`, n.style.backgroundSize = "cover", n.style.backgroundPosition = "center");
+        const c = await compressImage(e.target.result, 1400, .82),
+          o = document.getElementById("mpCover");
+        o && (o.style.backgroundImage = `url(${c})`, o.style.backgroundSize = "cover", o.style.backgroundPosition = "center");
         try {
-          localStorage.setItem(`mpCover_${currentUser.id}`, t)
-        } catch (e) {}
-        await MembersDB.upsertProfile(currentUser.id, {
-          cover_url: t
-        }), currentUser._profile && (currentUser._profile.cover_url = t), toast2("Cover photo updated!")
+          const u = await storePhoto(c, `covers/member-${currentUser.id}.jpg`);
+          try {
+            localStorage.setItem(`mpCover_${currentUser.id}`, u)
+          } catch (e) {}
+          await MembersDB.upsertProfile(currentUser.id, {
+            cover_url: u
+          }), currentUser._profile && (currentUser._profile.cover_url = u), toast2("Cover photo updated!")
+        } catch (err) {
+          toast2("Failed to update cover photo", "w"), console.error("[bandapp] handleMpCover:", err)
+        }
       }, n.readAsDataURL(t), e.target.value = ""
     }
 
@@ -12042,18 +12091,23 @@
       if (!t) return;
       const n = new FileReader;
       n.onload = async e => {
-        // Compress before storing — raw phone photos are 5-10 MB of base64 in
-        // the profiles row and get re-downloaded by every member on every load.
-        const t = await compressImage(e.target.result, 1024, .75),
-          n = currentUser.memberIdx;
-        memberPhotos[n] = t;
+        // Compress, then upload to Storage and persist only the URL (falls
+        // back to inline base64 if the bucket isn't provisioned yet).
+        const c = await compressImage(e.target.result, 1024, .75),
+          o = document.getElementById("mpAv");
+        o && (o.style.backgroundImage = `url(${c})`, o.style.backgroundSize = "cover", o.style.backgroundPosition = "center", o.textContent = "");
         try {
-          localStorage.setItem(`mpPhoto_${currentUser.id}`, t)
-        } catch (e) {}
-        const o = document.getElementById("mpAv");
-        o && (o.style.backgroundImage = `url(${t})`, o.style.backgroundSize = "cover", o.style.backgroundPosition = "center", o.textContent = ""), await MembersDB.upsertProfile(currentUser.id, {
-          photo_url: t
-        }), currentUser._profile && (currentUser._profile.photo_url = t), syncCurrentUserToUI(), toast2("Photo updated!")
+          const u = await storePhoto(c, `avatars/${currentUser.id}.jpg`);
+          memberPhotos[currentUser.memberIdx] = u;
+          try {
+            localStorage.setItem(`mpPhoto_${currentUser.id}`, u)
+          } catch (e) {}
+          await MembersDB.upsertProfile(currentUser.id, {
+            photo_url: u
+          }), currentUser._profile && (currentUser._profile.photo_url = u), syncCurrentUserToUI(), toast2("Photo updated!")
+        } catch (err) {
+          toast2("Failed to update photo", "w"), console.error("[bandapp] handleMpPhoto:", err)
+        }
       }, n.readAsDataURL(t), e.target.value = ""
     }
 
