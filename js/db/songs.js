@@ -37,8 +37,8 @@ const SongsDB = {
     return Object.fromEntries((data || []).map(r => [r.song_id, r.note]));
   },
 
-  async upsert(song) {
-    // Strip UI aliases and derived fields; map back to DB column names
+  // UI fields → DB columns (strip aliases and derived fields)
+  _toPayload(song) {
     const {
       dur, note, spotify, youtube, apple, amazon,
       lyrics, sheet_music,
@@ -56,42 +56,11 @@ const SongsDB = {
       sheet_music_url: sheet_music  || null,
     };
     if (!payload.band_id) payload.band_id = activeBandId;
+    return payload;
+  },
 
-    // Remove columns that may not yet exist in the live DB so a missing
-    // migration doesn't silently block ALL saves.  The retry without those
-    // columns is a fallback; running the SQL migration is the proper fix.
-    const tryUpsert = async (p) => {
-      const { data, error } = await supabase
-        .from('songs')
-        .upsert(p)
-        .select()
-        .single();
-      return { data, error };
-    };
-
-    let { data, error } = await tryUpsert(payload);
-
-    // If the error is a missing column (42703), retry dropping only the
-    // specific column that caused the failure — never drop lyrics_url or
-    // sheet_music_url unless they are explicitly the missing column.
-    if (error && (error.code === '42703' || error.message?.includes('column') || error.message?.includes('does not exist'))) {
-      console.warn('[bandapp] songs.upsert — column missing, retrying without new fields:', error.message);
-      const msg = error.message || '';
-      // Build a fallback payload by removing only the offending columns.
-      // Priority: amazon_url is the most recently added field and the most
-      // likely culprit; remove it first.  Only strip lyrics_url /
-      // sheet_music_url if they are explicitly named in the error.
-      let fallback = { ...payload };
-      // Only drop a column if it is explicitly named in the error message.
-      // amazon_url is removed on any column error because it is the newest
-      // field and the most likely culprit when the exact column isn't named.
-      if (msg.includes('lyrics_url'))      delete fallback.lyrics_url;
-      if (msg.includes('sheet_music_url')) delete fallback.sheet_music_url;
-      delete fallback.amazon_url;
-      ({ data, error } = await tryUpsert(fallback));
-    }
-
-    if (error) { console.error('[bandapp] songs.upsert error:', error); throw error; }
+  // DB row → UI fields
+  _fromRow(data) {
     return {
       ...data,
       dur:         data.duration,
@@ -103,6 +72,52 @@ const SongsDB = {
       lyrics:      data.lyrics_url       || '',
       sheet_music: data.sheet_music_url  || '',
     };
+  },
+
+  _isColumnError(error) {
+    return !!error && (error.code === '42703'
+      || error.message?.includes('column')
+      || error.message?.includes('does not exist'));
+  },
+
+  // Drop only the offending column(s) so a missing migration doesn't block
+  // ALL saves. amazon_url (newest field) is dropped on any column error;
+  // lyrics_url/sheet_music_url only if explicitly named. Never guesses.
+  _stripMissingCols(payload, msg) {
+    const fb = { ...payload };
+    if ((msg || '').includes('lyrics_url'))      delete fb.lyrics_url;
+    if ((msg || '').includes('sheet_music_url')) delete fb.sheet_music_url;
+    delete fb.amazon_url;
+    return fb;
+  },
+
+  async upsert(song) {
+    const payload = this._toPayload(song);
+    let { data, error } = await supabase.from('songs').upsert(payload).select().single();
+    if (this._isColumnError(error)) {
+      console.warn('[bandapp] songs.upsert — column missing, retrying without new fields:', error.message);
+      ({ data, error } = await supabase.from('songs')
+        .upsert(this._stripMissingCols(payload, error.message)).select().single());
+    }
+    if (error) { console.error('[bandapp] songs.upsert error:', error); throw error; }
+    return this._fromRow(data);
+  },
+
+  // Batched upsert — one round-trip for many songs (import / sheet save)
+  // instead of N. Same column-missing fallback as upsert(): if the batch
+  // fails on a missing column, the offending column is stripped from every
+  // row and the batch is retried once.
+  async upsertMany(songs) {
+    if (!songs.length) return [];
+    let payloads = songs.map(s => this._toPayload(s));
+    let { data, error } = await supabase.from('songs').upsert(payloads).select();
+    if (this._isColumnError(error)) {
+      console.warn('[bandapp] songs.upsertMany — column missing, retrying without new fields:', error.message);
+      payloads = payloads.map(p => this._stripMissingCols(p, error.message));
+      ({ data, error } = await supabase.from('songs').upsert(payloads).select());
+    }
+    if (error) { console.error('[bandapp] songs.upsertMany error:', error); throw error; }
+    return (data || []).map(r => this._fromRow(r));
   },
 
   async delete(id) {

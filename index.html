@@ -8645,7 +8645,7 @@
       if (!songs.length) return void toast2("Nothing to save", "w");
       toast2("Saving…");
       try {
-        (await Promise.all(songs.map(e => SongsDB.upsert(e)))).every(Boolean) && (await loadSongs(), renderSheet(), updateLibCount(), toast2("Library saved ✓"))
+        await SongsDB.upsertMany(songs), await loadSongs(), renderSheet(), updateLibCount(), toast2("Library saved ✓")
       } catch (e) {
         console.error("[bandapp] saveSheetEdits:", e), toast2("Some songs failed to save — check your connection and try again", "w")
       }
@@ -8761,7 +8761,7 @@
           if (!n.length) return void toast2("No songs found in file", "w");
           const o = songs.length,
             a = o ? `${window.t("Add")} ${n.length} ${window.t("song(s) to your existing library")} (${o})?` : `${window.t("Import")} ${n.length} ${window.t("song(s) into your library?")}`;
-          confirm(a) && (await Promise.all(n.map(e => SongsDB.upsert({
+          confirm(a) && (await SongsDB.upsertMany(n.map(e => ({
             band_id: activeBandId,
             ...e,
             id: void 0
