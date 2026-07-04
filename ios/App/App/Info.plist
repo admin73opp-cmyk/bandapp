@@ -49,5 +49,11 @@
 	<true/>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
+	<key>NSCameraUsageDescription</key>
+	<string>Ritovo uses your camera to let you take photos for your profile, band cover, and rehearsal/concert galleries.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Ritovo needs access to your photo library so you can choose photos for your profile, band cover, and rehearsal/concert galleries.</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>Ritovo can save photos to your library when you download images from the app.</string>
 </dict>
 </plist>

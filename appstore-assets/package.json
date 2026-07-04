@@ -1,0 +1,16 @@
+{
+  "name": "appstore-assets",
+  "version": "1.0.0",
+  "description": "1. Open Xcode → open `ios/App/App.xcodeproj` 2. In the Simulator device picker choose:    - **iPhone 11 Pro Max** → gives 1242 × 2688 px at 3x    - **iPhone 14 Plus** or **iPhone 15 Plus** → gives 1284 × 2778 px at 3x 3. Build & Run the app (⌘R) 4. Sign in, navigate to each screen below 5. Take a screenshot: **Device menu → Screenshot** (or Cmd+S) 6. Screenshots save to your Desktop automatically 7. Rename and move to `appstore-assets/raw/`:",
+  "main": "format-screenshots.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "puppeteer": "^25.1.0",
+    "sharp": "^0.34.5"
+  }
+}

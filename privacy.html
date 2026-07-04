@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Privacy Policy — Ritovo</title>
+<style>
+  :root { color-scheme: dark; }
+  body { margin:0; padding:32px 20px 80px; background:#0F0F14; color:#E7E7EE; font:16px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif; }
+  .wrap { max-width:720px; margin:0 auto; }
+  h1 { font-size:1.8rem; margin-bottom:4px; }
+  .updated { color:#9A9AA8; font-size:0.9rem; margin-bottom:32px; }
+  h2 { font-size:1.15rem; margin-top:36px; color:#fff; }
+  p, li { color:#C7C7D4; }
+  a { color:#4ECCA3; }
+  ul { padding-left:1.2em; }
+  table { width:100%; border-collapse:collapse; margin:16px 0; }
+  th, td { text-align:left; padding:8px 10px; border-bottom:1px solid #2A2A35; font-size:0.92rem; }
+  th { color:#9A9AA8; font-weight:600; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Privacy Policy</h1>
+  <p class="updated">Ritovo (bandapp.app) · Last updated July 4, 2026</p>
+
+  <p>Ritovo is a scheduling and organisation app for bands and music groups. This policy explains what
+  information Ritovo collects, why, and how it's protected. Ritovo is built and operated as an
+  independent app; it is not affiliated with any band-management or streaming service.</p>
+
+  <h2>Information we collect</h2>
+  <table>
+    <tr><th>Data</th><th>Why we collect it</th></tr>
+    <tr><td>Email address</td><td>Account creation, sign-in, and transactional emails (invites, password resets)</td></tr>
+    <tr><td>Name, instrument, bio, phone number (optional)</td><td>Shown to your bandmates on your profile</td></tr>
+    <tr><td>Profile / cover photos, band photos</td><td>Displayed in your profile, band page, and rehearsal/concert galleries — only if you choose to upload one</td></tr>
+    <tr><td>Band data you create</td><td>Songs, set lists, rehearsals, concerts, availability, notes — the core content of the app</td></tr>
+    <tr><td>Feedback you submit</td><td>Bug reports and feature requests sent from within the app</td></tr>
+  </table>
+  <p>Ritovo does not collect location data, advertising identifiers, or browsing history, and does not use
+  third-party analytics or advertising SDKs.</p>
+
+  <h2>How data is stored and protected</h2>
+  <ul>
+    <li>All data is stored in a managed Postgres database (Supabase), encrypted in transit (TLS) and at rest.</li>
+    <li>Row-level security ensures you can only see data belonging to bands you are a member of.</li>
+    <li>Your password is never stored in plain text — it is hashed before storage and never visible to us.</li>
+    <li>Photos are stored in access-controlled cloud storage tied to your band membership.</li>
+  </ul>
+
+  <h2>Who can see your data</h2>
+  <p>Your profile and the band data you create are visible only to other confirmed members of the same
+  band(s) you belong to. We do not sell, rent, or share your personal data with third parties for
+  marketing purposes.</p>
+
+  <h2>Third-party services we use</h2>
+  <ul>
+    <li><strong>Supabase</strong> — database, authentication, and file storage</li>
+    <li><strong>Vercel</strong> — application hosting</li>
+    <li><strong>Resend</strong> — transactional email delivery (invites, password resets)</li>
+  </ul>
+  <p>These providers process data strictly on our behalf to operate the app and do not use it for their own purposes.</p>
+
+  <h2>Your rights</h2>
+  <p>You can update or delete your profile information, photos, and band data at any time from within the
+  app. To request full account deletion (including removal of your account and associated personal data
+  from our systems), email us at the address below and we will process the request within 30 days.</p>
+
+  <h2>Children's privacy</h2>
+  <p>Ritovo is not directed at children under 13, and we do not knowingly collect personal information from children under 13.</p>
+
+  <h2>Changes to this policy</h2>
+  <p>If this policy changes, the "Last updated" date above will be revised. Continued use of Ritovo after a
+  change constitutes acceptance of the updated policy.</p>
+
+  <h2>Contact</h2>
+  <p>Questions about this policy or your data: <a href="mailto:admin73opp@gmail.com">admin73opp@gmail.com</a></p>
+</div>
+</body>
+</html>
