@@ -2,8 +2,8 @@
 # Production values preserved from the linked project
 
 [auth]
-site_url = "https://bandapp-six.vercel.app"
-additional_redirect_urls = ["https://bandapp-six.vercel.app", "https://bandapp-six.vercel.app/", "https://bandapp.app", "https://bandapp.app/"]
+site_url = "https://ritovo.net"
+additional_redirect_urls = ["https://ritovo.net", "https://ritovo.net/", "https://bandapp-six.vercel.app", "https://bandapp-six.vercel.app/", "https://bandapp.app", "https://bandapp.app/"]
 
 [auth.email]
 enable_signup = true

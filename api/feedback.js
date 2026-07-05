@@ -1,4 +1,4 @@
-const ALLOWED_ORIGIN = process.env.APP_URL || 'https://bandapp.app';
+const ALLOWED_ORIGIN = process.env.APP_URL || 'https://ritovo.net';
 
 module.exports = async (req, res) => {
   const origin = req.headers.origin || '';

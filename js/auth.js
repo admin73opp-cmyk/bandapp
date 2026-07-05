@@ -158,7 +158,7 @@ async function doSignUp() {
   const pendingPhone      = sessionStorage.getItem('invitePhone')      || '';
   const pendingInstrument = sessionStorage.getItem('inviteInstrument') || '';
   const baseUrl = (window.Capacitor && window.Capacitor.isNativePlatform())
-    ? 'https://bandapp.app'
+    ? 'https://ritovo.net'
     : (window.location.origin + window.location.pathname);
   // Only embed the band UUID in the confirmation redirect — no PII in URLs.
   // Phone and instrument are stored in sessionStorage and survive across tabs without URL exposure.
@@ -252,7 +252,7 @@ async function doForgotPassword() {
   if (!email) { showAuthErr('forgotErr', 'Enter your email address'); return; }
 
   const resetRedirect = (window.Capacitor && window.Capacitor.isNativePlatform())
-    ? 'https://bandapp.app'
+    ? 'https://ritovo.net'
     : (window.location.origin + window.location.pathname);
   const { error } = await supabase.auth.resetPasswordForEmail(email, {
     redirectTo: resetRedirect,
