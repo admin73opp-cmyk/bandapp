@@ -4359,6 +4359,7 @@
                       <th data-i18n="Artist">Artist</th>
                       <th style="width:60px" data-i18n="Key">Key</th>
                       <th style="width:60px" data-i18n="Time">Time</th>
+                      <th style="width:60px" data-i18n="BPM">BPM</th>
                       <th class="lkcol" data-i18n="Links">Links</th>
                       <th data-i18n="Notes">Notes</th>
                       <th style="width:60px"><span style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap">Actions</span></th>
@@ -6901,12 +6902,12 @@
             const o = songByAnyId(t);
             if (!o) return "";
             const a = [];
-            return o.lyrics && a.push(`<a class="svb svb-ly" href="${safeUrl(o.lyrics)}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">${ricon("lyrics",11)} Lyrics</a>`), o.sheet_music && a.push(`<a class="svb svb-ly" href="${safeUrl(o.sheet_music)}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">${ricon("sheet",11)} Sheet</a>`), o.spotify && a.push(`<button class="svb svb-sp" data-url="${esc(o.spotify)}" onclick="event.stopPropagation();openMediaUrl(this)">Spotify</button>`), o.youtube && a.push(`<button class="svb svb-yt" data-url="${esc(o.youtube)}" onclick="event.stopPropagation();openMediaUrl(this)">YouTube</button>`), o.apple && a.push(`<button class="svb" data-url="${esc(o.apple)}" onclick="event.stopPropagation();openMediaUrl(this)">Apple</button>`), `<div class="slcard">\n          <div class="slcard-num">${String(n+1).padStart(2,"0")}</div>\n          <div class="slcard-body">\n            <div class="slcard-title">${esc(o.title)}</div>\n            <div class="slcard-artist">${esc(o.artist)}</div>\n            <div class="slcard-meta">\n              ${o.key?`<span class="kp">${esc(o.key)}</span>`:""}\n              ${o.dur?`<span style="font-family:var(--mono);font-size:var(--t-xs);color:var(--ink2)">${fmtDur(o.dur)}</span>`:""}\n            </div>\n            ${a.length?`<div class="sclinks" style="margin-top:5px">${a.join("")}</div>`:""}\n            ${o.note?`<div class="slcard-note">${esc(o.note)}</div>`:""}\n          </div>\n          <div class="slcard-actions">\n            <button class="btn-ic btn" style="width:26px;height:26px;padding:0" onclick="slMoveUp(${n})" title="Move up" ${0===n?"disabled":""}>${ricon("chevU",12)}</button>\n            <button class="btn-ic btn" style="width:26px;height:26px;padding:0" onclick="slMoveDown(${n})" title="Move down" ${n===e-1?"disabled":""}>${ricon("chevD",12)}</button>\n            <button class="btn-ic btn" style="width:26px;height:26px;padding:0;color:var(--r);border-color:var(--r)" onclick="removeSongFromSL('${t}')" title="Remove">${ricon("x",12)}</button>\n          </div>\n        </div>`
+            return o.lyrics && a.push(`<a class="svb svb-ly" href="${safeUrl(o.lyrics)}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">${ricon("lyrics",11)} Lyrics</a>`), o.sheet_music && a.push(`<a class="svb svb-ly" href="${safeUrl(o.sheet_music)}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">${ricon("sheet",11)} Sheet</a>`), o.spotify && a.push(`<button class="svb svb-sp" data-url="${esc(o.spotify)}" onclick="event.stopPropagation();openMediaUrl(this)">Spotify</button>`), o.youtube && a.push(`<button class="svb svb-yt" data-url="${esc(o.youtube)}" onclick="event.stopPropagation();openMediaUrl(this)">YouTube</button>`), o.apple && a.push(`<button class="svb" data-url="${esc(o.apple)}" onclick="event.stopPropagation();openMediaUrl(this)">Apple</button>`), `<div class="slcard">\n          <div class="slcard-num">${String(n+1).padStart(2,"0")}</div>\n          <div class="slcard-body">\n            <div class="slcard-title">${esc(o.title)}</div>\n            <div class="slcard-artist">${esc(o.artist)}</div>\n            <div class="slcard-meta">\n              ${o.key?`<span class="kp">${esc(o.key)}</span>`:""}\n              ${o.dur?`<span style="font-family:var(--mono);font-size:var(--t-xs);color:var(--ink2)">${fmtDur(o.dur)}</span>`:""}\n              ${o.bpm?`<span style="font-family:var(--mono);font-size:var(--t-xs);color:var(--ink2)">${o.bpm} BPM</span>`:""}\n            </div>\n            ${a.length?`<div class="sclinks" style="margin-top:5px">${a.join("")}</div>`:""}\n            ${o.note?`<div class="slcard-note">${esc(o.note)}</div>`:""}\n          </div>\n          <div class="slcard-actions">\n            <button class="btn-ic btn" style="width:26px;height:26px;padding:0" onclick="slMoveUp(${n})" title="Move up" ${0===n?"disabled":""}>${ricon("chevU",12)}</button>\n            <button class="btn-ic btn" style="width:26px;height:26px;padding:0" onclick="slMoveDown(${n})" title="Move down" ${n===e-1?"disabled":""}>${ricon("chevD",12)}</button>\n            <button class="btn-ic btn" style="width:26px;height:26px;padding:0;color:var(--r);border-color:var(--r)" onclick="removeSongFromSL('${t}')" title="Remove">${ricon("x",12)}</button>\n          </div>\n        </div>`
           }).join("")
         }
       } else t && (t.style.display = ""), n && (n.style.display = "none"), document.getElementById("slBody").innerHTML = getSlS().map((e, t) => {
         const n = songByAnyId(e);
-        return n ? `<tr draggable="true" data-id="${e}" ondragover="dov(event)" ondrop="ddrop(event)" ondragleave="this.classList.remove('dov')">\n        <td class="dh" style="cursor:grab;touch-action:none" draggable="true" ondragstart="ds(event)" ontouchstart="tStart(event)" ontouchmove="tMove(event)" ontouchend="tEnd(event)">⠿</td>\n        <td class="snum">${String(t+1).padStart(2,"0")}</td>\n        <td class="stitle">${esc(n.title)}</td>\n        <td class="sartist" style="color:var(--ink2);font-size:var(--t-sm)">${esc(n.artist)}</td>\n        <td><span class="kp">${esc(n.key)}</span></td>\n        <td style="font-family:var(--mono);font-size:var(--t-xs);color:var(--ink2);white-space:nowrap">${n.dur?fmtDur(n.dur):"—"}</td>\n        <td class="lkcol" style="white-space:nowrap">${openSongMedia(n,t)}${n.lyrics?`<a class="lb2" href="${safeUrl(n.lyrics)}" target="_blank" rel="noopener noreferrer" title="Lyrics" style="color:var(--a);text-decoration:none">${ricon("lyrics",14)}</a>`:""}${n.sheet_music?`<a class="lb2" href="${safeUrl(n.sheet_music)}" target="_blank" rel="noopener noreferrer" title="Sheet Music" style="color:var(--a);text-decoration:none">${ricon("sheet",14)}</a>`:""}</td>\n        <td class="nc">${esc(n.note)}</td>\n        <td><button class="btn btn-xs btn-g" onclick="removeSongFromSL('${e}')">✕</button></td>\n      </tr>` : ""
+        return n ? `<tr draggable="true" data-id="${e}" ondragover="dov(event)" ondrop="ddrop(event)" ondragleave="this.classList.remove('dov')">\n        <td class="dh" style="cursor:grab;touch-action:none" draggable="true" ondragstart="ds(event)" ontouchstart="tStart(event)" ontouchmove="tMove(event)" ontouchend="tEnd(event)">⠿</td>\n        <td class="snum">${String(t+1).padStart(2,"0")}</td>\n        <td class="stitle">${esc(n.title)}</td>\n        <td class="sartist" style="color:var(--ink2);font-size:var(--t-sm)">${esc(n.artist)}</td>\n        <td><span class="kp">${esc(n.key)}</span></td>\n        <td style="font-family:var(--mono);font-size:var(--t-xs);color:var(--ink2);white-space:nowrap">${n.dur?fmtDur(n.dur):"—"}</td>\n        <td style="font-family:var(--mono);font-size:var(--t-xs);color:var(--ink2);white-space:nowrap">${n.bpm||"—"}</td>\n        <td class="lkcol" style="white-space:nowrap">${openSongMedia(n,t)}${n.lyrics?`<a class="lb2" href="${safeUrl(n.lyrics)}" target="_blank" rel="noopener noreferrer" title="Lyrics" style="color:var(--a);text-decoration:none">${ricon("lyrics",14)}</a>`:""}${n.sheet_music?`<a class="lb2" href="${safeUrl(n.sheet_music)}" target="_blank" rel="noopener noreferrer" title="Sheet Music" style="color:var(--a);text-decoration:none">${ricon("sheet",14)}</a>`:""}</td>\n        <td class="nc">${esc(n.note)}</td>\n        <td><button class="btn btn-xs btn-g" onclick="removeSongFromSL('${e}')">✕</button></td>\n      </tr>` : ""
       }).join("")
     }
 
@@ -6916,10 +6917,10 @@
       const t = getActiveBand(),
         n = getSlS().map((e, t) => {
           const n = songByAnyId(e);
-          return n ? `<tr><td class="num">${String(t+1).padStart(2,"0")}</td><td>${esc(n.title)}</td><td>${esc(n.artist)}</td><td>${esc(n.key)}</td><td class="dur">${n.dur?fmtDur(n.dur):"—"}</td><td>${esc(n.note)}</td></tr>` : ""
+          return n ? `<tr><td class="num">${String(t+1).padStart(2,"0")}</td><td>${esc(n.title)}</td><td>${esc(n.artist)}</td><td>${esc(n.key)}</td><td class="dur">${n.dur?fmtDur(n.dur):"—"}</td><td class="dur">${n.bpm||"—"}</td><td>${esc(n.note)}</td></tr>` : ""
         }).join(""),
         o = getSlS().filter(e => songByAnyId(e)).length,
-        a = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>${esc(e.name)}</title><style>\n    body{font-family:system-ui,sans-serif;margin:32px;font-size:13px;color:#111}\n    h1{font-size:20px;font-weight:700;margin:0 0 4px}\n    .sub{color:#666;font-size:12px;margin-bottom:24px}\n    table{width:100%;border-collapse:collapse}\n    th{text-align:left;font-size:10px;text-transform:uppercase;color:#888;border-bottom:2px solid #ddd;padding:6px 8px;font-weight:600}\n    td{padding:8px 8px;border-bottom:1px solid #eee;vertical-align:top}\n    tr:last-child td{border-bottom:none}\n    .num{width:32px;font-family:monospace;color:#aaa;font-size:11px}\n    .dur{width:55px;font-family:monospace;font-size:11px;color:#666}\n    @media print{body{margin:20px}}\n  </style></head><body>\n    <h1>${esc(e.name)}</h1>\n    <div class="sub">${esc(t?.name||"")}${o?" &middot; "+o+" songs":""}</div>\n    <table><thead><tr><th class="num">#</th><th>Title</th><th>Artist</th><th>Key</th><th class="dur">Time</th><th>Notes</th></tr></thead>\n    <tbody>${n}</tbody></table>\n  </body></html>`,
+        a = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>${esc(e.name)}</title><style>\n    body{font-family:system-ui,sans-serif;margin:32px;font-size:13px;color:#111}\n    h1{font-size:20px;font-weight:700;margin:0 0 4px}\n    .sub{color:#666;font-size:12px;margin-bottom:24px}\n    table{width:100%;border-collapse:collapse}\n    th{text-align:left;font-size:10px;text-transform:uppercase;color:#888;border-bottom:2px solid #ddd;padding:6px 8px;font-weight:600}\n    td{padding:8px 8px;border-bottom:1px solid #eee;vertical-align:top}\n    tr:last-child td{border-bottom:none}\n    .num{width:32px;font-family:monospace;color:#aaa;font-size:11px}\n    .dur{width:55px;font-family:monospace;font-size:11px;color:#666}\n    @media print{body{margin:20px}}\n  </style></head><body>\n    <h1>${esc(e.name)}</h1>\n    <div class="sub">${esc(t?.name||"")}${o?" &middot; "+o+" songs":""}</div>\n    <table><thead><tr><th class="num">#</th><th>Title</th><th>Artist</th><th>Key</th><th class="dur">Time</th><th class="dur">BPM</th><th>Notes</th></tr></thead>\n    <tbody>${n}</tbody></table>\n  </body></html>`,
         s = window.open("", "_blank");
       s ? (s.document.write(a), s.document.close(), s.focus(), setTimeout(() => s.print(), 300)) : toast2("Allow pop-ups to print / save PDF", "w")
     }
@@ -7278,7 +7279,7 @@
     }
 
     function desktopSongCard(e) {
-      return `\n    <div class="songcard${e.hidden?" hidden-song":""}" onclick="openSongEdit('${e.id}')">\n      ${e.hidden?`<div style="position:absolute;top:10px;right:10px;font-size:var(--t-2xs);font-weight:700;color:var(--ink3);background:var(--bg2);border:1px solid var(--bd);border-radius:99px;padding:2px 7px;letter-spacing:.04em">${t("HIDDEN")}</div>`:""}\n      <div class="sctt" style="padding-right:${e.hidden?"52px":"0"}">${esc(e.title)}</div>\n      <div class="scar">${esc(e.artist)}${e.dur?`<span style="float:right;font-family:var(--mono);font-size:var(--t-xs);color:var(--ink3)">${fmtDur(e.dur)}</span>`:""}</div>\n      <div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:2px">\n        <span class="pill pbl" style="font-size:var(--t-2xs)">${esc(e.genre)}</span>\n        <span class="kp">${esc(e.key)}</span>\n      </div>\n      <div class="sclinks">\n        ${e.lyrics?`<a class="svb svb-ly" href="${safeUrl(e.lyrics)}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">${ricon("lyrics",11)} Lyrics</a>`:""}\n        ${e.sheet_music?`<a class="svb svb-ly" href="${safeUrl(e.sheet_music)}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">${ricon("sheet",11)} Sheet</a>`:""}\n        ${e.spotify?`<button class="svb svb-sp" data-url="${esc(e.spotify)}" onclick="event.stopPropagation();openMediaUrl(this)">Spotify</button>`:""}\n        ${e.youtube?`<button class="svb svb-yt" data-url="${esc(e.youtube)}" onclick="event.stopPropagation();openMediaUrl(this)">YouTube</button>`:""}\n        ${e.apple?`<button class="svb" data-url="${esc(e.apple)}" onclick="event.stopPropagation();openMediaUrl(this)">Apple</button>`:""}\n        ${e.amazon?`<button class="svb svb-am" data-url="${esc(e.amazon)}" onclick="event.stopPropagation();openMediaUrl(this)">Amazon</button>`:""}\n      </div>\n      \x3c!-- corner action buttons — visible on hover --\x3e\n      <div class="sc-actions" onclick="event.stopPropagation()">\n        <div class="sc-act-btn" onclick="toggleHideSong('${e.id}')" title="${e.hidden?"Unhide":"Hide"} song">\n          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">\n            ${e.hidden?'<path d="M1 8s2.5-5 7-5 7 5 7 5-2.5 5-7 5-7-5-7-5z"/><circle cx="8" cy="8" r="2"/>':'<path d="M1 8s2.5-5 7-5 7 5 7 5-2.5 5-7 5-7-5-7-5z"/><circle cx="8" cy="8" r="2"/><path d="M2 2l12 12" stroke-linecap="round"/>'}\n          </svg>\n        </div>\n        ${"admin"===currentUser.role?`<div class="sc-act-btn del" onclick="deleteSong('${e.id}')" title="Delete song">\n          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">\n            <path d="M2 4h12M5 4V2h6v2M6 7v5M10 7v5M3 4l1 10h8l1-10"/>\n          </svg>\n        </div>`:""}\n      </div>\n    </div>`
+      return `\n    <div class="songcard${e.hidden?" hidden-song":""}" onclick="openSongEdit('${e.id}')">\n      ${e.hidden?`<div style="position:absolute;top:10px;right:10px;font-size:var(--t-2xs);font-weight:700;color:var(--ink3);background:var(--bg2);border:1px solid var(--bd);border-radius:99px;padding:2px 7px;letter-spacing:.04em">${t("HIDDEN")}</div>`:""}\n      <div class="sctt" style="padding-right:${e.hidden?"52px":"0"}">${esc(e.title)}</div>\n      <div class="scar">${esc(e.artist)}${e.dur?`<span style="float:right;font-family:var(--mono);font-size:var(--t-xs);color:var(--ink3)">${fmtDur(e.dur)}</span>`:""}</div>\n      <div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:2px">\n        <span class="pill pbl" style="font-size:var(--t-2xs)">${esc(e.genre)}</span>\n        <span class="kp">${esc(e.key)}</span>\n        ${e.bpm?`<span class="pill pgray" style="font-size:var(--t-2xs);font-family:var(--mono)">${e.bpm} BPM</span>`:""}\n      </div>\n      <div class="sclinks">\n        ${e.lyrics?`<a class="svb svb-ly" href="${safeUrl(e.lyrics)}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">${ricon("lyrics",11)} Lyrics</a>`:""}\n        ${e.sheet_music?`<a class="svb svb-ly" href="${safeUrl(e.sheet_music)}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">${ricon("sheet",11)} Sheet</a>`:""}\n        ${e.spotify?`<button class="svb svb-sp" data-url="${esc(e.spotify)}" onclick="event.stopPropagation();openMediaUrl(this)">Spotify</button>`:""}\n        ${e.youtube?`<button class="svb svb-yt" data-url="${esc(e.youtube)}" onclick="event.stopPropagation();openMediaUrl(this)">YouTube</button>`:""}\n        ${e.apple?`<button class="svb" data-url="${esc(e.apple)}" onclick="event.stopPropagation();openMediaUrl(this)">Apple</button>`:""}\n        ${e.amazon?`<button class="svb svb-am" data-url="${esc(e.amazon)}" onclick="event.stopPropagation();openMediaUrl(this)">Amazon</button>`:""}\n      </div>\n      \x3c!-- corner action buttons — visible on hover --\x3e\n      <div class="sc-actions" onclick="event.stopPropagation()">\n        <div class="sc-act-btn" onclick="toggleHideSong('${e.id}')" title="${e.hidden?"Unhide":"Hide"} song">\n          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">\n            ${e.hidden?'<path d="M1 8s2.5-5 7-5 7 5 7 5-2.5 5-7 5-7-5-7-5z"/><circle cx="8" cy="8" r="2"/>':'<path d="M1 8s2.5-5 7-5 7 5 7 5-2.5 5-7 5-7-5-7-5z"/><circle cx="8" cy="8" r="2"/><path d="M2 2l12 12" stroke-linecap="round"/>'}\n          </svg>\n        </div>\n        ${"admin"===currentUser.role?`<div class="sc-act-btn del" onclick="deleteSong('${e.id}')" title="Delete song">\n          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">\n            <path d="M2 4h12M5 4V2h6v2M6 7v5M10 7v5M3 4l1 10h8l1-10"/>\n          </svg>\n        </div>`:""}\n      </div>\n    </div>`
     }
     const _GENRE_PILLS = ["pp", "pg", "pbl", "pamb", "pr", "pgray"];
 
@@ -7292,7 +7293,7 @@
     function mobileSongCard(e) {
       const t = (e, t, n, o) => e ? `<a class="sc-licon" href="${safeUrl(e)}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()" title="${t}"${o?` style="color:${o}"`:""}>${n}</a>` : "",
         n = [t(e.lyrics, "Lyrics", ricon("lyrics", 15), "var(--a)"), t(e.sheet_music, "Sheet Music", ricon("sheet", 15), "var(--a)"), t(e.spotify, "Spotify", ricon("play", 15), "#1DB954"), t(e.youtube, "YouTube", ricon("play", 15), "var(--r)"), t(e.apple, "Apple Music", ricon("play", 15)), t(e.amazon, "Amazon Music", ricon("play", 15), "#FF9900")].join("");
-      return `<div class="swipe-wrap">\n    <div class="swipe-actions">\n      <button class="swipe-act add" onclick="event.stopPropagation();quickAddToSetlist('${e.id}')" data-i18n="＋ Setlist">＋ Setlist</button>\n      ${"admin"===currentUser.role?`<button class="swipe-act del" onclick="event.stopPropagation();deleteSong('${e.id}')" data-i18n="Delete">Delete</button>`:""}\n    </div>\n    <div class="songcard mcard${e.hidden?" hidden-song":""}" onclick="openSongEdit('${e.id}')">\n      <div class="mcard-top">\n        <span class="mcard-title">${esc(e.title)}</span>\n        ${e.genre?`<span class="pill ${genrePillClass(e.genre)} mcard-genre">${esc(e.genre)}</span>`:""}\n      </div>\n      <div class="mcard-artist">${esc(e.artist||"")}</div>\n      <div class="mcard-bot">\n        ${e.key?`<span class="kp">${esc(e.key)}</span>`:""}\n        ${e.dur?`<span class="mcard-dur">${fmtDur(e.dur)}</span>`:""}\n        ${n?`<span class="mcard-links">${n}</span>`:""}\n      </div>\n    </div>\n  </div>`
+      return `<div class="swipe-wrap">\n    <div class="swipe-actions">\n      <button class="swipe-act add" onclick="event.stopPropagation();quickAddToSetlist('${e.id}')" data-i18n="＋ Setlist">＋ Setlist</button>\n      ${"admin"===currentUser.role?`<button class="swipe-act del" onclick="event.stopPropagation();deleteSong('${e.id}')" data-i18n="Delete">Delete</button>`:""}\n    </div>\n    <div class="songcard mcard${e.hidden?" hidden-song":""}" onclick="openSongEdit('${e.id}')">\n      <div class="mcard-top">\n        <span class="mcard-title">${esc(e.title)}</span>\n        ${e.genre?`<span class="pill ${genrePillClass(e.genre)} mcard-genre">${esc(e.genre)}</span>`:""}\n      </div>\n      <div class="mcard-artist">${esc(e.artist||"")}</div>\n      <div class="mcard-bot">\n        ${e.key?`<span class="kp">${esc(e.key)}</span>`:""}\n        ${e.dur?`<span class="mcard-dur">${fmtDur(e.dur)}</span>`:""}\n        ${e.bpm?`<span class="mcard-dur">${e.bpm} BPM</span>`:""}\n        ${n?`<span class="mcard-links">${n}</span>`:""}\n      </div>\n    </div>\n  </div>`
     }
     let _cardSwipeWired = !1;
 
@@ -7474,6 +7475,13 @@
       return KEY_NORMALIZE[String(e || "").trim()] || String(e || "").trim()
     }
 
+    // BPM is optional. Anything blank, non-numeric or outside 20–300 becomes
+    // null rather than being stored — matches the songs_bpm_range constraint.
+    function normBpm(e) {
+      const t = parseInt(e, 10);
+      return Number.isFinite(t) && t >= 20 && t <= 300 ? t : null
+    }
+
     function fmtDur(e) {
       if (!e || isNaN(e)) return "—";
       const t = Math.round(e),
@@ -7597,6 +7605,10 @@
         field: "dur",
         width: "100px"
       }, {
+        label: "BPM",
+        field: "bpm",
+        width: "80px"
+      }, {
         label: "Notes",
         field: "note",
         width: null
@@ -7706,6 +7718,8 @@
           return `<td><select class="sh-sel" aria-label="Key — ${esc(e.title)}" data-field="key" data-id="${e.id}" onchange="sheetEdit(this)">${KEYS_LIST.map(t=>`<option value="${t}"${e.key===t?" selected":""}>${t||"—"}</option>`).join("")}</select></td>`;
         case "dur":
           return `<td style="white-space:nowrap"><div style="display:flex;align-items:center;gap:2px">\n        <input class="sh-cell sh-dur" style="width:46px;min-width:0;text-align:center;padding:4px 5px;font-family:var(--mono);font-size:var(--t-sm)" type="number" min="0" max="99" placeholder="0" aria-label="Duration minutes — ${esc(e.title)}" value="${e.dur?Math.floor(e.dur/60):""}" data-field="durMin" data-id="${e.id}" onchange="sheetEditDur(this)" onkeydown="sheetKeyDownDur(event,this,'durSec')" title="Minutes">\n        <span style="color:var(--ink3);font-weight:700;font-size:var(--t-md);flex-shrink:0">:</span>\n        <input class="sh-cell sh-dur" style="width:46px;min-width:0;text-align:center;padding:4px 5px;font-family:var(--mono);font-size:var(--t-sm)" type="number" min="0" max="59" placeholder="00" aria-label="Duration seconds — ${esc(e.title)}" value="${e.dur?String(e.dur%60).padStart(2,"0"):""}" data-field="durSec" data-id="${e.id}" onchange="sheetEditDur(this)" onkeydown="sheetKeyDownDur(event,this,'durMin')" title="Seconds">\n      </div></td>`;
+        case "bpm":
+          return `<td><input class="sh-cell" style="width:56px;min-width:0;text-align:center;font-family:var(--mono);font-size:var(--t-sm)" type="number" min="20" max="300" step="1" placeholder="—" aria-label="BPM — ${esc(e.title)}" value="${e.bpm||""}" data-field="bpm" data-id="${e.id}" onchange="sheetEdit(this)" onkeydown="sheetKeyDown(event,this)"></td>`;
         case "note":
           return `<td><input class="sh-cell" style="min-width:140px" aria-label="Notes — ${esc(e.title)}" value="${esc(e.note||"")}" data-field="note" data-id="${e.id}" onchange="sheetEdit(this)" onkeydown="sheetKeyDown(event,this)"></td>`;
         case "lyrics":
@@ -7820,7 +7834,7 @@
             el: e,
             kind: "cell",
             prev: e._prevVal
-          }), o[n] = "hidden" === n ? e.checked : "dur" === n ? parseInt(e.value) || 0 : e.value, "hidden" === n) {
+          }), o[n] = "hidden" === n ? e.checked : "dur" === n ? parseInt(e.value) || 0 : "bpm" === n ? normBpm(e.value) : e.value, "bpm" === n && (e.value = o.bpm || ""), "hidden" === n) {
           const t = e.closest("tr");
           t && (t.className = "sh-row" + (o.hidden ? " hidden-row" : ""))
         }
@@ -7951,8 +7965,8 @@
     }
 
     function exportExcel() {
-      const e = ["Title", "Artist", "Genre", "Key", "Duration (sec)", "Notes", "Spotify", "YouTube", "Apple Music", "Hidden"],
-        t = songs.map(e => [e.title, e.artist, e.genre, e.key, e.dur || "", e.note || "", e.spotify || "", e.youtube || "", e.apple || "", e.hidden ? "Yes" : "No"]);
+      const e = ["Title", "Artist", "Genre", "Key", "Duration (sec)", "BPM", "Notes", "Spotify", "YouTube", "Apple Music", "Hidden"],
+        t = songs.map(e => [e.title, e.artist, e.genre, e.key, e.dur || "", e.bpm || "", e.note || "", e.spotify || "", e.youtube || "", e.apple || "", e.hidden ? "Yes" : "No"]);
       try {
         const n = XLSX.utils.book_new(),
           o = XLSX.utils.aoa_to_sheet([e, ...t]);
@@ -7966,6 +7980,8 @@
           wch: 6
         }, {
           wch: 14
+        }, {
+          wch: 7
         }, {
           wch: 32
         }, {
@@ -8009,6 +8025,7 @@
               genre: String(n.genre || "Jazz").trim(),
               key: normalizeKey(String(n.key).trim()),
               dur: parseInt(n["duration (sec)"] || n.duration || n.dur) || void 0,
+              bpm: normBpm(n.bpm || n.tempo),
               note: String(n.notes || n["group notes"] || n.note || "").trim(),
               spotify: String(n.spotify || n["spotify url"] || "").trim(),
               youtube: String(n.youtube || n["youtube url"] || "").trim(),
@@ -8051,7 +8068,7 @@
       const n = document.getElementById("seKey");
       n.options.length !== KEYS_LIST.length && (n.innerHTML = KEYS_LIST.map(e => `<option value="${e}">${e||"—"}</option>`).join("")), n.value = normalizeKey(t.key), document.getElementById("seNote").value = t.note || "";
       const o = t.dur || 0;
-      document.getElementById("seDurMin").value = o ? Math.floor(o / 60) : "", document.getElementById("seDurSec").value = o ? o % 60 : "", document.getElementById("seDurPreview").textContent = o ? fmtDur(o) : "", document.getElementById("seSpotify").value = t.spotify || "", document.getElementById("seYoutube").value = t.youtube || "", document.getElementById("seApple").value = t.apple || "", document.getElementById("seAmazon").value = t.amazon || "";
+      document.getElementById("seDurMin").value = o ? Math.floor(o / 60) : "", document.getElementById("seDurSec").value = o ? o % 60 : "", document.getElementById("seDurPreview").textContent = o ? fmtDur(o) : "", document.getElementById("seBpm").value = t.bpm || "", document.getElementById("seSpotify").value = t.spotify || "", document.getElementById("seYoutube").value = t.youtube || "", document.getElementById("seApple").value = t.apple || "", document.getElementById("seAmazon").value = t.amazon || "";
       const a = t.lyrics || "";
       document.getElementById("seLyrics").value = a, document.getElementById("seLyricsUploadStatus").textContent = "";
       const s = document.getElementById("seLyricsViewBtn");
@@ -8108,7 +8125,7 @@
     let _seSnapshot = null;
 
     function seCurrentValues() {
-      return ["seName", "seArtist", "seGenre", "seKey", "seNote", "seDurMin", "seDurSec", "seSpotify", "seYoutube", "seApple", "seAmazon", "seLyrics", "seSheetMusic"].map(e => document.getElementById(e)?.value || "").join("")
+      return ["seName", "seArtist", "seGenre", "seKey", "seNote", "seDurMin", "seDurSec", "seBpm", "seSpotify", "seYoutube", "seApple", "seAmazon", "seLyrics", "seSheetMusic"].map(e => document.getElementById(e)?.value || "").join("")
     }
 
     function cancelSongEdit() {
@@ -8129,6 +8146,7 @@
           key: document.getElementById("seKey").value,
           note: document.getElementById("seNote").value,
           dur: 60 * n + o || null,
+          bpm: normBpm(document.getElementById("seBpm").value),
           spotify: document.getElementById("seSpotify").value,
           youtube: document.getElementById("seYoutube").value,
           apple: document.getElementById("seApple").value,
@@ -11135,6 +11153,11 @@
           <input id="seDurSec" type="number" min="0" max="59" placeholder="sec" style="flex:1;padding:9px 13px;background:var(--bg);border:1.5px solid var(--bd);border-radius:var(--rad);color:var(--ink);font-family:var(--font);font-size:var(--t-md);outline:none;transition:border-color .13s" onfocus="this.style.borderColor='var(--a)'" onblur="this.style.borderColor='var(--bd)'">
           <span id="seDurPreview" style="font-family:var(--mono);font-size:var(--t-sm);color:var(--ink3);min-width:36px"></span>
         </div>
+      </div>
+
+      <div class="fg">
+        <label><span data-i18n-html="BPM (optional)">BPM <span style="font-weight:400;color:var(--ink3)">(optional)</span></span></label>
+        <input id="seBpm" type="number" min="20" max="300" step="1" placeholder="e.g. 120" style="padding:9px 13px;background:var(--bg);border:1.5px solid var(--bd);border-radius:var(--rad);color:var(--ink);font-family:var(--font);font-size:var(--t-md);outline:none;transition:border-color .13s;width:100%" onfocus="this.style.borderColor='var(--a)'" onblur="this.style.borderColor='var(--bd)'">
       </div>
 
       <div style="height:1px;background:var(--bd);margin:4px 0 14px"></div>

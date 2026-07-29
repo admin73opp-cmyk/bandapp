@@ -77,6 +77,7 @@ create table if not exists songs (
   genre       text,
   key         text,
   duration    int,       -- seconds
+  bpm         int check (bpm is null or (bpm between 20 and 300)),
   notes       text,
   spotify_url text,
   youtube_url text,

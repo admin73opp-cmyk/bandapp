@@ -96,6 +96,7 @@ const SongsDB = {
     const fb = { ...payload };
     if ((msg || '').includes('lyrics_url'))      delete fb.lyrics_url;
     if ((msg || '').includes('sheet_music_url')) delete fb.sheet_music_url;
+    if ((msg || '').includes('bpm'))             delete fb.bpm;
     delete fb.amazon_url;
     return fb;
   },
