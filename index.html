@@ -4375,17 +4375,19 @@
                 <div id="pvHeader" style="font-size:var(--t-sm);font-weight:600;color:var(--a);margin-bottom:2px">✦ Personal view</div>
                 <div style="font-size:var(--t-xs);color:var(--ink2)" data-i18n="Your notes are private. Stays in sync with the main list.">Your notes are private. Stays in sync with the main list.</div>
               </div>
+              <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px">
+                <span class="t1" style="white-space:nowrap" data-i18n="Columns">Columns</span>
+                <div id="myViewPicker" style="display:flex;flex-wrap:wrap;gap:6px"></div>
+                <label style="display:inline-flex;align-items:center;gap:5px;font-size:var(--t-xs);color:var(--ink2);white-space:nowrap;margin-left:auto;cursor:pointer">
+                  <input type="checkbox" id="myViewLandscape" checked style="accent-color:var(--a);width:14px;height:14px;cursor:pointer" onchange="toggleMyViewLandscape(this)">
+                  <span data-i18n="Landscape">Landscape</span>
+                </label>
+                <button class="btn btn-g btn-sm" onclick="printMyView()" style="white-space:nowrap"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px" aria-hidden="true"><path d="M7 8V3.5h10V8"/><rect x="3.5" y="8" width="17" height="8.5" rx="1.8"/><path d="M7 13.5h10v7H7z"/><circle cx="17.5" cy="10.8" r="1" fill="currentColor" stroke="none"/></svg> <span data-i18n="Print my view">Print my view</span></button>
+              </div>
               <div style="overflow-x:auto">
                 <table class="slt">
                   <thead>
-                    <tr>
-                      <th>#</th>
-                      <th data-i18n="Title">Title</th>
-                      <th data-i18n="Artist">Artist</th>
-                      <th data-i18n="Key">Key</th>
-                      <th data-i18n="Group Notes">Group Notes</th>
-                      <th>My Notes</th>
-                    </tr>
+                    <tr id="myHead"></tr>
                   </thead>
                   <tbody id="myBody"></tbody>
                 </table>
@@ -7085,12 +7087,141 @@
       document.querySelectorAll("#pg-setlists .stabs .stb").forEach(e => e.classList.remove("on")), t.classList.add("on"), document.getElementById("vMain").style.display = "main" === e ? "" : "none", document.getElementById("vMy").style.display = "my" === e ? "" : "none", "my" === e && renderMyBody()
     }
 
+    // Optional columns for the Set List "My View". Order here is the display
+    // order — the picker only decides which are on, never their position.
+    // The row number is always shown and is not listed.
+    const MYVIEW_FIELDS = [{
+        key: "title",
+        label: "Title"
+      }, {
+        key: "artist",
+        label: "Artist"
+      }, {
+        key: "keysig",
+        label: "Key"
+      }, {
+        key: "dur",
+        label: "Time"
+      }, {
+        key: "bpm",
+        label: "BPM"
+      }, {
+        key: "note",
+        label: "Group Notes"
+      }, {
+        key: "mynote",
+        label: "My Notes"
+      }],
+      // Defaults reproduce the columns My View had before it was configurable,
+      // so nobody's view changes until they opt in to Time / BPM themselves.
+      MYVIEW_DEFAULT = ["title", "artist", "keysig", "note", "mynote"],
+      _MYVIEW_LS_KEY = "bandapp_myViewPrefs";
+
+    function getMyViewPrefs() {
+      let e = currentUser.myviewPrefs;
+      if (!e) try {
+        e = JSON.parse(localStorage.getItem(_MYVIEW_LS_KEY) || "null")
+      } catch (t) {
+        e = null
+      }
+      const t = Array.isArray(e?.fields) ? e.fields.filter(e => MYVIEW_FIELDS.some(t => t.key === e)) : null;
+      return {
+        fields: t && t.length ? t : [...MYVIEW_DEFAULT],
+        landscape: !e || !1 !== e.landscape
+      }
+    }
+    // Written to the profile so the choice follows the user across devices,
+    // and mirrored to localStorage so it survives a failed/slow write.
+    async function saveMyViewPrefs(e) {
+      currentUser.myviewPrefs = e;
+      try {
+        localStorage.setItem(_MYVIEW_LS_KEY, JSON.stringify(e))
+      } catch (t) {}
+      const {
+        error: t
+      } = await supabase.from("profiles").upsert({
+        id: currentUser.id,
+        myview_prefs: e
+      }, {
+        onConflict: "id"
+      });
+      // Migration pending: PostgREST answers PGRST204 for an unknown column in
+      // the payload and 42703 when Postgres itself rejects it. Either way the
+      // picker still works from localStorage, so log it rather than alarming
+      // the user with an error toast on every single toggle.
+      t && ("PGRST204" === t.code || "42703" === t.code || /myview_prefs/.test(t.message || "") ? console.warn("[bandapp] myview_prefs column missing — prefs kept on this device only") : handleDbError(t))
+    }
+    async function toggleMyViewField(e) {
+      const t = getMyViewPrefs(),
+        n = t.fields.includes(e);
+      if (n && 1 === t.fields.length) return void toast2("Keep at least one column", "w");
+      // Commit to currentUser before re-rendering — the renderers read state
+      // back through getMyViewPrefs(), so a local-only mutation would be lost.
+      t.fields = n ? t.fields.filter(t => t !== e) : [...t.fields, e], currentUser.myviewPrefs = t, renderMyViewPicker(), renderMyBody(), await saveMyViewPrefs(t)
+    }
+    async function toggleMyViewLandscape(e) {
+      const t = getMyViewPrefs();
+      t.landscape = e.checked, await saveMyViewPrefs(t)
+    }
+
+    function renderMyViewPicker() {
+      const e = document.getElementById("myViewPicker");
+      if (!e) return;
+      const n = getMyViewPrefs();
+      e.innerHTML = MYVIEW_FIELDS.map(e => `<div class="bomc chip${n.fields.includes(e.key)?" on":""}" role="button" tabindex="0" aria-pressed="${n.fields.includes(e.key)}" onclick="toggleMyViewField('${e.key}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleMyViewField('${e.key}')}">${t(e.label)}</div>`).join("");
+      const o = document.getElementById("myViewLandscape");
+      o && (o.checked = n.landscape)
+    }
+
+    // Cell content for one field — shared by the on-screen table and the print
+    // view, so the printout can never drift from what the picker shows.
+    function myViewCell(e, t, n) {
+      switch (t) {
+        case "title":
+          return n ? esc(e.title) : `<td class="stitle">${esc(e.title)}</td>`;
+        case "artist":
+          return n ? esc(e.artist || "") : `<td class="sartist" style="color:var(--ink2);font-size:var(--t-sm)">${esc(e.artist||"")}</td>`;
+        case "keysig":
+          return n ? esc(e.key || "") : `<td><span class="kp">${esc(e.key)}</span></td>`;
+        case "dur":
+          return n ? e.dur ? fmtDur(e.dur) : "—" : `<td style="font-family:var(--mono);font-size:var(--t-xs);color:var(--ink2);white-space:nowrap">${e.dur?fmtDur(e.dur):"—"}</td>`;
+        case "bpm":
+          return n ? e.bpm || "—" : `<td style="font-family:var(--mono);font-size:var(--t-xs);color:var(--ink2);white-space:nowrap">${e.bpm||"—"}</td>`;
+        case "note":
+          return n ? esc(e.note || "") : `<td class="nc">${esc(e.note)}</td>`;
+        case "mynote":
+          return n ? esc(myC[e.id] || "") : `<td><input style="background:transparent;border:none;border-bottom:1.5px solid var(--bd);font-family:var(--font);font-size:var(--t-sm);width:100%;outline:none;padding:2px 4px;color:var(--ink)" value="${esc(myC[e.id]||"")}" placeholder="Add note…" onchange="saveSongNote('${e.id}',this.value)"></td>`;
+        default:
+          return n ? "" : "<td></td>"
+      }
+    }
+
     function renderMyBody() {
-      const e = document.getElementById("myBody");
-      e && (e.innerHTML = getSlS().map((e, t) => {
+      const e = document.getElementById("myBody"),
+        n = getMyViewPrefs(),
+        o = MYVIEW_FIELDS.filter(e => n.fields.includes(e.key)),
+        a = document.getElementById("myHead");
+      a && (a.innerHTML = "<th>#</th>" + o.map(e => `<th>${t(e.label)}</th>`).join("")), renderMyViewPicker(), e && (e.innerHTML = getSlS().map((e, t) => {
         const n = songByAnyId(e);
-        return n ? `<tr><td class="snum">${String(t+1).padStart(2,"0")}</td><td class="stitle">${esc(n.title)}</td><td class="sartist" style="color:var(--ink2);font-size:var(--t-sm)">${esc(n.artist)}</td><td><span class="kp">${esc(n.key)}</span></td><td class="nc">${esc(n.note)}</td><td><input style="background:transparent;border:none;border-bottom:1.5px solid var(--bd);font-family:var(--font);font-size:var(--t-sm);width:100%;outline:none;padding:2px 4px;color:var(--ink)" value="${myC[n.id]||""}" placeholder="Add note…" onchange="saveSongNote('${n.id}',this.value)"></td></tr>` : ""
+        return n ? `<tr><td class="snum">${String(t+1).padStart(2,"0")}</td>${o.map(e=>myViewCell(n,e.key,!1)).join("")}</tr>` : ""
       }).join(""))
+    }
+
+    function printMyView() {
+      const e = setlists.find(e => e.id === activeSetlistId);
+      if (!e) return void toast2("No set list selected", "w");
+      const n = getMyViewPrefs(),
+        o = MYVIEW_FIELDS.filter(e => n.fields.includes(e.key)),
+        a = getActiveBand(),
+        s = getSlS().map((e, t) => {
+          const n = songByAnyId(e);
+          return n ? `<tr><td class="num">${String(t+1).padStart(2,"0")}</td>${o.map(e=>`<td class="c-${e.key}">${myViewCell(n,e.key,!0)}</td>`).join("")}</tr>` : ""
+        }).join(""),
+        i = getSlS().filter(e => songByAnyId(e)).length,
+        l = n.landscape ? "landscape" : "portrait",
+        r = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>${esc(e.name)}</title><style>\n    @page{size:${l};margin:14mm}\n    body{font-family:system-ui,sans-serif;margin:0;font-size:${n.landscape?"17px":"14px"};color:#111}\n    h1{font-size:${n.landscape?"30px":"24px"};font-weight:700;margin:0 0 4px}\n    .sub{color:#666;font-size:${n.landscape?"15px":"13px"};margin-bottom:20px}\n    table{width:100%;border-collapse:collapse}\n    th{text-align:left;font-size:${n.landscape?"13px":"11px"};text-transform:uppercase;color:#888;border-bottom:2px solid #ddd;padding:7px 9px;font-weight:600}\n    td{padding:10px 9px;border-bottom:1px solid #eee;vertical-align:top}\n    tr:last-child td{border-bottom:none}\n    .num{width:34px;font-family:monospace;color:#aaa}\n    .c-dur,.c-bpm{width:70px;font-family:monospace;color:#555;white-space:nowrap}\n    .c-keysig{width:60px;font-weight:600}\n    @media print{body{margin:0}}\n  </style></head><body>\n    <h1>${esc(e.name)}</h1>\n    <div class="sub">${esc(a?.name||"")}${i?" &middot; "+i+" songs":""} &middot; ${esc(currentUser.firstName||"My")} view</div>\n    <table><thead><tr><th class="num">#</th>${o.map(e=>`<th class="c-${e.key}">${esc(t(e.label))}</th>`).join("")}</tr></thead>\n    <tbody>${s}</tbody></table>\n  </body></html>`,
+        d = window.open("", "_blank");
+      d ? (d.document.write(r), d.document.close(), d.focus(), setTimeout(() => d.print(), 300)) : toast2("Allow pop-ups to print / save PDF", "w")
     }
     async function saveSongNote(e, t) {
       myC[e] = t, t ? await SongsDB.upsertNote(e, t) : await SongsDB.deleteNote(e), toast2("Note saved")

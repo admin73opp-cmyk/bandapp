@@ -101,13 +101,30 @@ const SongsDB = {
     return fb;
   },
 
+  // Tell the user which fields were dropped. Without this the save reports
+  // success while silently discarding data, which reads as a broken feature
+  // rather than a pending migration.
+  _warnStripped(payload, fb) {
+    const LABELS = {
+      bpm: 'BPM', amazon_url: 'Amazon link',
+      lyrics_url: 'Lyrics link', sheet_music_url: 'Sheet music link',
+    };
+    const lost = Object.keys(payload)
+      .filter(k => !(k in fb) && payload[k] !== null && payload[k] !== undefined)
+      .map(k => LABELS[k] || k);
+    if (lost.length && typeof toast2 === 'function') {
+      toast2(`Saved, but ${lost.join(' and ')} could not be stored — a database migration is pending.`, 'w');
+    }
+  },
+
   async upsert(song) {
     const payload = this._toPayload(song);
     let { data, error } = await supabase.from('songs').upsert(payload).select().single();
     if (this._isColumnError(error)) {
       console.warn('[bandapp] songs.upsert — column missing, retrying without new fields:', error.message);
-      ({ data, error } = await supabase.from('songs')
-        .upsert(this._stripMissingCols(payload, error.message)).select().single());
+      const fb = this._stripMissingCols(payload, error.message);
+      this._warnStripped(payload, fb);
+      ({ data, error } = await supabase.from('songs').upsert(fb).select().single());
     }
     if (error) { console.error('[bandapp] songs.upsert error:', error); throw error; }
     return this._fromRow(data);
@@ -123,7 +140,9 @@ const SongsDB = {
     let { data, error } = await supabase.from('songs').upsert(payloads).select();
     if (this._isColumnError(error)) {
       console.warn('[bandapp] songs.upsertMany — column missing, retrying without new fields:', error.message);
-      payloads = payloads.map(p => this._stripMissingCols(p, error.message));
+      const stripped = payloads.map(p => this._stripMissingCols(p, error.message));
+      this._warnStripped(payloads[0], stripped[0]);
+      payloads = stripped;
       ({ data, error } = await supabase.from('songs').upsert(payloads).select());
     }
     if (error) { console.error('[bandapp] songs.upsertMany error:', error); throw error; }

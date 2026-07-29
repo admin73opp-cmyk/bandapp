@@ -70,6 +70,7 @@ async function loadCurrentUser(uid, email) {
   currentUser.color      = profile.color       || '#6C63FF';
   currentUser.lang       = profile.lang        || currentUser.lang || 'en';
   currentUser.avail      = profile.availability || [1,1,1,1,1,1,1];
+  currentUser.myviewPrefs = profile.myview_prefs || null;
   currentUser._profile   = profile; // full row — used as fallback in populateMpPage
 
   currentUser._memberships = memberships || [];

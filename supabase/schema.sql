@@ -31,6 +31,8 @@ create table if not exists profiles (
   vocals       text,
   -- 7-element array: Mon=0 … Sun=6, 1=available 0=unavailable
   availability int4[] not null default '{1,1,1,1,1,1,1}',
+  -- Set List "My View" prefs: {"fields":[...], "landscape":bool}
+  myview_prefs jsonb,
   color        text,
   bday         date,
   nationality  text,
