@@ -46,7 +46,7 @@ const SongsDB = {
     } = song;
     const payload = {
       ...rest,
-      duration:        dur,
+      duration:        dur          ?? null,
       notes:           note,
       spotify_url:     spotify      || null,
       youtube_url:     youtube      || null,
@@ -56,6 +56,15 @@ const SongsDB = {
       sheet_music_url: sheet_music  || null,
     };
     if (!payload.band_id) payload.band_id = activeBandId;
+    // Drop undefined keys. For a batch upsert, supabase-js builds the
+    // PostgREST `columns` list from Object.keys() of every row, so an
+    // undefined `id` (import) would be listed as a column but omitted from
+    // the JSON body — PostgREST then inserts NULL and the songs.id primary
+    // key rejects it. Single-row upserts never hit this because
+    // JSON.stringify already drops undefined and no `columns` list is sent.
+    // duration is coerced to null above rather than dropped — the sheet
+    // editor sets dur to undefined to mean "cleared", which must persist.
+    for (const k of Object.keys(payload)) if (payload[k] === undefined) delete payload[k];
     return payload;
   },
 

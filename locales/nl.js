@@ -565,6 +565,8 @@ window.NL = {
   'Library downloaded!': 'Bibliotheek gedownload!',
   'Downloaded as CSV': 'Gedownload als CSV',
   'Could not read file': 'Kon bestand niet lezen',
+  'Could not read file — please use an Excel (.xlsx) file': 'Kan bestand niet lezen — gebruik een Excel-bestand (.xlsx)',
+  'Import failed — songs could not be saved. Please try again.': 'Importeren mislukt — nummers konden niet worden opgeslagen. Probeer het opnieuw.',
   'No songs found in file': 'Geen nummers gevonden in bestand',
   'Link copied!': 'Link gekopieerd!',
   'No link to copy': 'Geen link om te kopiëren',

@@ -565,6 +565,8 @@ window.DE = {
   'Library downloaded!': 'Bibliothek heruntergeladen!',
   'Downloaded as CSV': 'Als CSV heruntergeladen',
   'Could not read file': 'Datei konnte nicht gelesen werden',
+  'Could not read file — please use an Excel (.xlsx) file': 'Datei konnte nicht gelesen werden — bitte eine Excel-Datei (.xlsx) verwenden',
+  'Import failed — songs could not be saved. Please try again.': 'Import fehlgeschlagen — Songs konnten nicht gespeichert werden. Bitte erneut versuchen.',
   'No songs found in file': 'Keine Songs in der Datei gefunden',
   'Link copied!': 'Link kopiert!',
   'No link to copy': 'Kein Link zum Kopieren',

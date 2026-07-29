@@ -565,6 +565,8 @@ window.IT = {
   'Library downloaded!': 'Libreria scaricata!',
   'Downloaded as CSV': 'Scaricato come CSV',
   'Could not read file': 'Impossibile leggere il file',
+  'Could not read file — please use an Excel (.xlsx) file': 'Impossibile leggere il file — usa un file Excel (.xlsx)',
+  'Import failed — songs could not be saved. Please try again.': 'Importazione non riuscita — impossibile salvare i brani. Riprova.',
   'No songs found in file': 'Nessun brano trovato nel file',
   'Link copied!': 'Link copiato!',
   'No link to copy': 'Nessun link da copiare',

@@ -565,6 +565,8 @@ window.PT_BR = {
   'Library downloaded!': 'Biblioteca baixada!',
   'Downloaded as CSV': 'Baixado como CSV',
   'Could not read file': 'Não foi possível ler o arquivo',
+  'Could not read file — please use an Excel (.xlsx) file': 'Não foi possível ler o arquivo — use um arquivo do Excel (.xlsx)',
+  'Import failed — songs could not be saved. Please try again.': 'Falha na importação — não foi possível salvar as músicas. Tente novamente.',
   'No songs found in file': 'Nenhuma música encontrada no arquivo',
   'Link copied!': 'Link copiado!',
   'No link to copy': 'Nenhum link para copiar',

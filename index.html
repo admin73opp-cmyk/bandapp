@@ -7985,37 +7985,44 @@
       if (!t) return;
       const n = new FileReader;
       n.onload = async e => {
+        let s;
         try {
           const t = XLSX.read(e.target.result, {
-              type: "binary"
-            }),
-            n = XLSX.utils.sheet_to_json(t.Sheets[t.SheetNames[0]], {
-              defval: ""
-            }).map((e, t) => {
-              const n = Object.fromEntries(Object.entries(e).map(([e, t]) => [e.toLowerCase().trim(), t]));
-              return {
-                id: t + 1,
-                title: String(n.title || n["song title"] || n.song || "Untitled").trim(),
-                artist: String(n.artist || "").trim(),
-                genre: String(n.genre || "Jazz").trim(),
-                key: normalizeKey(String(n.key).trim()),
-                note: String(n.notes || n["group notes"] || n.note || "").trim(),
-                spotify: String(n.spotify || n["spotify url"] || "").trim(),
-                youtube: String(n.youtube || n["youtube url"] || "").trim(),
-                apple: String(n["apple music"] || n.apple || "").trim(),
-                hidden: "yes" === String(n.hidden || "").toLowerCase()
-              }
-            });
-          if (!n.length) return void toast2("No songs found in file", "w");
-          const o = songs.length,
-            a = o ? `${window.t("Add")} ${n.length} ${window.t("song(s) to your existing library")} (${o})?` : `${window.t("Import")} ${n.length} ${window.t("song(s) into your library?")}`;
-          confirm(a) && (await SongsDB.upsertMany(n.map(e => ({
+            type: "binary"
+          });
+          s = XLSX.utils.sheet_to_json(t.Sheets[t.SheetNames[0]], {
+            defval: ""
+          }).map((e, t) => {
+            const n = Object.fromEntries(Object.entries(e).map(([e, t]) => [e.toLowerCase().trim(), t]));
+            return {
+              id: t + 1,
+              title: String(n.title || n["song title"] || n.song || "Untitled").trim(),
+              artist: String(n.artist || "").trim(),
+              genre: String(n.genre || "Jazz").trim(),
+              key: normalizeKey(String(n.key).trim()),
+              dur: parseInt(n["duration (sec)"] || n.duration || n.dur) || void 0,
+              note: String(n.notes || n["group notes"] || n.note || "").trim(),
+              spotify: String(n.spotify || n["spotify url"] || "").trim(),
+              youtube: String(n.youtube || n["youtube url"] || "").trim(),
+              apple: String(n["apple music"] || n.apple || "").trim(),
+              hidden: "yes" === String(n.hidden || "").toLowerCase()
+            }
+          })
+        } catch (e) {
+          return toast2("Could not read file — please use an Excel (.xlsx) file", "w"), void console.error("[bandapp] importExcel parse:", e)
+        }
+        if (!s.length) return void toast2("No songs found in file", "w");
+        const o = songs.length,
+          a = o ? `${window.t("Add")} ${s.length} ${window.t("song(s) to your existing library")} (${o})?` : `${window.t("Import")} ${s.length} ${window.t("song(s) into your library?")}`;
+        if (!confirm(a)) return;
+        try {
+          await SongsDB.upsertMany(s.map(e => ({
             band_id: activeBandId,
             ...e,
             id: void 0
-          }))), await loadSongs(), renderLib(), renderSheet(), updateLibCount(), toast2(`✓ ${n.length} song${1!==n.length?"s":""} added to library!`))
+          }))), await loadSongs(), renderLib(), renderSheet(), updateLibCount(), toast2(`✓ ${s.length} song${1!==s.length?"s":""} added to library!`)
         } catch (e) {
-          toast2("Could not read file — please use an Excel (.xlsx) file", "w"), console.error("[bandapp] importExcel:", e)
+          toast2("Import failed — songs could not be saved. Please try again.", "w"), console.error("[bandapp] importExcel save:", e)
         }
       }, n.readAsBinaryString(t), e.target.value = ""
     }
