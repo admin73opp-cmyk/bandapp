@@ -237,6 +237,8 @@ window.NL = {
   'From': 'Van',
   'To (leave blank for single day)': 'Tot (leeg laten voor één dag)',
   'Whole group': 'Hele group',
+  'Columns': 'Kolommen',
+  'Print': 'Afdrukken',
   'Blocked Periods': 'Geblokkeerde periodes',
   'From concert': 'Van optreden',
   'Days blocked for the whole group or for individual members. You can change the ones you created yourself.': 'Dagen geblokkeerd voor de hele groep of voor individuele leden. Je kunt je eigen blokkades aanpassen.',

@@ -237,6 +237,8 @@ window.IT = {
   'From': 'Dal',
   'To (leave blank for single day)': 'Al (lasciare vuoto per un giorno solo)',
   'Whole group': 'Tutto il gruppo',
+  'Columns': 'Colonne',
+  'Print': 'Stampa',
   'Blocked Periods': 'Periodi bloccati',
   'From concert': 'Dal concerto',
   'Days blocked for the whole group or for individual members. You can change the ones you created yourself.': 'Giorni bloccati per tutto il gruppo o per singoli membri. Puoi modificare quelli che hai creato tu.',

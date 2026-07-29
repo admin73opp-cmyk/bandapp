@@ -237,6 +237,8 @@ window.FR = {
   'From': 'Du',
   'To (leave blank for single day)': 'Au (laisser vide pour un seul jour)',
   'Whole group': 'Tout le groupe',
+  'Columns': 'Colonnes',
+  'Print': 'Imprimer',
   'Blocked Periods': 'Périodes bloquées',
   'From concert': 'Depuis un concert',
   'Days blocked for the whole group or for individual members. You can change the ones you created yourself.': 'Jours bloqués pour tout le groupe ou pour certains membres. Vous pouvez modifier ceux que vous avez créés.',

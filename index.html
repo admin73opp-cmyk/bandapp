@@ -4335,14 +4335,6 @@
                 <div id="slRehLink" style="margin-top:6px;display:flex;align-items:center;gap:7px;flex-wrap:wrap">
                 </div>
               </div>
-              <div style="display:flex;gap:5px;flex-wrap:wrap;align-items:center">
-                <span class="pdfn"><svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
-                    <path d="M3 2h7l3 3v9H3V2z" />
-                    <path d="M10 2v4h4" />
-                  </svg>Links hidden in PDF</span>
-                <button class="btn btn-g btn-sm" onclick="printSL()"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px" aria-hidden="true"><path d="M7 8V3.5h10V8"/><rect x="3.5" y="8" width="17" height="8.5" rx="1.8"/><path d="M7 13.5h10v7H7z"/><circle cx="17.5" cy="10.8" r="1" fill="currentColor" stroke="none"/></svg> Print</button>
-                <button class="btn btn-g btn-sm" onclick="printSL()">↓ PDF</button>
-              </div>
             </div>
             <div style="display:flex;gap:5px;margin-bottom:12px">
               <button class="stb on" onclick="switchV('main',this)" data-i18n="Main_tab">Main</button>
@@ -4375,10 +4367,13 @@
                 <div id="pvHeader" style="font-size:var(--t-sm);font-weight:600;color:var(--a);margin-bottom:2px">✦ Personal view</div>
                 <div style="font-size:var(--t-xs);color:var(--ink2)" data-i18n="Your notes are private. Stays in sync with the main list.">Your notes are private. Stays in sync with the main list.</div>
               </div>
-              <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px">
+              <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:8px">
                 <span class="t1" style="white-space:nowrap" data-i18n="Columns">Columns</span>
                 <div id="myViewPicker" style="display:flex;flex-wrap:wrap;gap:6px"></div>
-                <button class="btn btn-g btn-sm" onclick="printMyView()" style="white-space:nowrap;margin-left:auto"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px" aria-hidden="true"><path d="M7 8V3.5h10V8"/><rect x="3.5" y="8" width="17" height="8.5" rx="1.8"/><path d="M7 13.5h10v7H7z"/><circle cx="17.5" cy="10.8" r="1" fill="currentColor" stroke="none"/></svg> <span data-i18n="Print my view">Print my view</span></button>
+              </div>
+              <div style="display:flex;gap:5px;flex-wrap:wrap;align-items:center;margin-bottom:12px">
+                <button class="btn btn-g btn-sm" onclick="printMyView()"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px" aria-hidden="true"><path d="M7 8V3.5h10V8"/><rect x="3.5" y="8" width="17" height="8.5" rx="1.8"/><path d="M7 13.5h10v7H7z"/><circle cx="17.5" cy="10.8" r="1" fill="currentColor" stroke="none"/></svg> <span data-i18n="Print">Print</span></button>
+                <button class="btn btn-g btn-sm" onclick="printMyView()">↓ <span data-i18n="PDF">PDF</span></button>
               </div>
               <div style="overflow-x:auto">
                 <table class="slt">
@@ -6907,20 +6902,6 @@
         const n = songByAnyId(e);
         return n ? `<tr draggable="true" data-id="${e}" ondragover="dov(event)" ondrop="ddrop(event)" ondragleave="this.classList.remove('dov')">\n        <td class="dh" style="cursor:grab;touch-action:none" draggable="true" ondragstart="ds(event)" ontouchstart="tStart(event)" ontouchmove="tMove(event)" ontouchend="tEnd(event)">⠿</td>\n        <td class="snum">${String(t+1).padStart(2,"0")}</td>\n        <td class="stitle">${esc(n.title)}</td>\n        <td class="sartist" style="color:var(--ink2);font-size:var(--t-sm)">${esc(n.artist)}</td>\n        <td><span class="kp">${esc(n.key)}</span></td>\n        <td style="font-family:var(--mono);font-size:var(--t-xs);color:var(--ink2);white-space:nowrap">${n.dur?fmtDur(n.dur):"—"}</td>\n        <td style="font-family:var(--mono);font-size:var(--t-xs);color:var(--ink2);white-space:nowrap">${n.bpm||"—"}</td>\n        <td class="lkcol" style="white-space:nowrap">${openSongMedia(n,t)}${n.lyrics?`<a class="lb2" href="${safeUrl(n.lyrics)}" target="_blank" rel="noopener noreferrer" title="Lyrics" style="color:var(--a);text-decoration:none">${ricon("lyrics",14)}</a>`:""}${n.sheet_music?`<a class="lb2" href="${safeUrl(n.sheet_music)}" target="_blank" rel="noopener noreferrer" title="Sheet Music" style="color:var(--a);text-decoration:none">${ricon("sheet",14)}</a>`:""}</td>\n        <td class="nc">${esc(n.note)}</td>\n        <td><button class="btn btn-xs btn-g" onclick="removeSongFromSL('${e}')">✕</button></td>\n      </tr>` : ""
       }).join("")
-    }
-
-    function printSL() {
-      const e = setlists.find(e => e.id === activeSetlistId);
-      if (!e) return void toast2("No set list selected", "w");
-      const t = getActiveBand(),
-        n = getSlS().map((e, t) => {
-          const n = songByAnyId(e);
-          return n ? `<tr><td class="num">${String(t+1).padStart(2,"0")}</td><td>${esc(n.title)}</td><td>${esc(n.artist)}</td><td>${esc(n.key)}</td><td class="dur">${n.dur?fmtDur(n.dur):"—"}</td><td class="dur">${n.bpm||"—"}</td><td>${esc(n.note)}</td></tr>` : ""
-        }).join(""),
-        o = getSlS().filter(e => songByAnyId(e)).length,
-        a = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>${esc(e.name)}</title><style>\n    body{font-family:system-ui,sans-serif;margin:32px;font-size:13px;color:#111}\n    h1{font-size:20px;font-weight:700;margin:0 0 4px}\n    .sub{color:#666;font-size:12px;margin-bottom:24px}\n    table{width:100%;border-collapse:collapse}\n    th{text-align:left;font-size:10px;text-transform:uppercase;color:#888;border-bottom:2px solid #ddd;padding:6px 8px;font-weight:600}\n    td{padding:8px 8px;border-bottom:1px solid #eee;vertical-align:top}\n    tr:last-child td{border-bottom:none}\n    .num{width:32px;font-family:monospace;color:#aaa;font-size:11px}\n    .dur{width:55px;font-family:monospace;font-size:11px;color:#666}\n    @media print{body{margin:20px}}\n  </style></head><body>\n    <h1>${esc(e.name)}</h1>\n    <div class="sub">${esc(t?.name||"")}${o?" &middot; "+o+" songs":""}</div>\n    <table><thead><tr><th class="num">#</th><th>Title</th><th>Artist</th><th>Key</th><th class="dur">Time</th><th class="dur">BPM</th><th>Notes</th></tr></thead>\n    <tbody>${n}</tbody></table>\n  </body></html>`,
-        s = window.open("", "_blank");
-      s ? (s.document.write(a), s.document.close(), s.focus(), setTimeout(() => s.print(), 300)) : toast2("Allow pop-ups to print / save PDF", "w")
     }
 
     function songMediaLinks(e) {

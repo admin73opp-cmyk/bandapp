@@ -237,6 +237,8 @@ window.PT_BR = {
   'From': 'De',
   'To (leave blank for single day)': 'Até (deixe em branco para um único dia)',
   'Whole group': 'Grupo inteiro',
+  'Columns': 'Colunas',
+  'Print': 'Imprimir',
   'Blocked Periods': 'Períodos bloqueados',
   'From concert': 'Do show',
   'Days blocked for the whole group or for individual members. You can change the ones you created yourself.': 'Dias bloqueados para o grupo todo ou para membros específicos. Você pode alterar os que criou.',
