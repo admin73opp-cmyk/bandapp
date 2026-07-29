@@ -4531,23 +4531,6 @@
                 </div>
               </div>
             </div>
-            <div id="calChangelogSection" style="margin-top:18px">
-              <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;flex-wrap:wrap">
-                <div style="font-size:var(--t-md);font-weight:700;letter-spacing:-.01em;display:inline-flex;align-items:center;gap:5px"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6.5h11M9 12h11M9 17.5h7"/><circle cx="4.5" cy="6.5" r="1.4" fill="currentColor" stroke="none"/><circle cx="4.5" cy="12" r="1.4" fill="currentColor" stroke="none"/><circle cx="4.5" cy="17.5" r="1.4" fill="currentColor" stroke="none"/></svg>Change Log</div>
-                <select id="clDaysFilter" aria-label="Filter by days" class="sb2" style="font-size:var(--t-sm);padding:4px 8px" onchange="renderCalChangelog()">
-                  <option value="10">Last 10 days</option>
-                  <option value="30">Last 30 days</option>
-                  <option value="60">Last 60 days</option>
-                </select>
-                <select id="clOwnerFilter" aria-label="Filter by member" class="sb2" style="font-size:var(--t-sm);padding:4px 8px;min-width:120px" onchange="renderCalChangelog()">
-                  <option value="">All members</option>
-                </select>
-                <button id="clCleanupBtn" class="btn btn-g btn-sm" style="display:none;font-size:var(--t-xs)" onclick="cleanupChangelog()" title="Remove all entries older than 60 days"><svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M2 4h12M5 4V2h6v2M6 7v5M10 7v5M3 4l1 10h8l1-10"/></svg> Clean up &gt;60 days</button>
-                <div style="margin-left:auto;font-size:var(--t-xs);color:var(--ink3)"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" style="vertical-align:-1px" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 11v5"/><circle cx="12" cy="7.8" r="1.3" fill="currentColor" stroke="none"/></svg> Entries kept for 60 days</div>
-              </div>
-              <div id="clList" style="display:flex;flex-direction:column;gap:4px"></div>
-            </div>
-
           </div>
 
           <div id="calViewCompact" style="display:none">
@@ -4580,6 +4563,31 @@
                 <div id="fbChips" style="display:flex;gap:5px;flex-wrap:wrap"></div>
               </div>
             </div>
+          </div>
+
+          <div class="card" id="calBlockedSection" style="margin-top:18px">
+            <div class="ch">
+              <div class="ct" data-i18n="Blocked Periods">Blocked Periods</div>
+            </div>
+            <div style="font-size:var(--t-sm);color:var(--ink2);margin-bottom:12px" data-i18n="Days blocked for the whole group or for individual members. You can change the ones you created yourself.">Days blocked for the whole group or for individual members. You can change the ones you created yourself.</div>
+            <div id="calBoList" style="display:flex;flex-direction:column;gap:7px"></div>
+          </div>
+
+          <div id="calChangelogSection" style="margin-top:18px">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;flex-wrap:wrap">
+              <div style="font-size:var(--t-md);font-weight:700;letter-spacing:-.01em;display:inline-flex;align-items:center;gap:5px"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6.5h11M9 12h11M9 17.5h7"/><circle cx="4.5" cy="6.5" r="1.4" fill="currentColor" stroke="none"/><circle cx="4.5" cy="12" r="1.4" fill="currentColor" stroke="none"/><circle cx="4.5" cy="17.5" r="1.4" fill="currentColor" stroke="none"/></svg>Change Log</div>
+              <select id="clDaysFilter" aria-label="Filter by days" class="sb2" style="font-size:var(--t-sm);padding:4px 8px" onchange="renderCalChangelog()">
+                <option value="10">Last 10 days</option>
+                <option value="30">Last 30 days</option>
+                <option value="60">Last 60 days</option>
+              </select>
+              <select id="clOwnerFilter" aria-label="Filter by member" class="sb2" style="font-size:var(--t-sm);padding:4px 8px;min-width:120px" onchange="renderCalChangelog()">
+                <option value="">All members</option>
+              </select>
+              <button id="clCleanupBtn" class="btn btn-g btn-sm" style="display:none;font-size:var(--t-xs)" onclick="cleanupChangelog()" title="Remove all entries older than 60 days"><svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M2 4h12M5 4V2h6v2M6 7v5M10 7v5M3 4l1 10h8l1-10"/></svg> Clean up &gt;60 days</button>
+              <div style="margin-left:auto;font-size:var(--t-xs);color:var(--ink3)"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" style="vertical-align:-1px" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 11v5"/><circle cx="12" cy="7.8" r="1.3" fill="currentColor" stroke="none"/></svg> Entries kept for 60 days</div>
+            </div>
+            <div id="clList" style="display:flex;flex-direction:column;gap:4px"></div>
           </div>
 
         </div>
@@ -5629,7 +5637,7 @@
         <div class="fg" data-i18n="Label"><label>Label</label><input id="boLab" placeholder="Carnival, School Holiday, Antoine on tour…"></div>
         <div class="fg" data-i18n="From"><label>From</label><input type="date" id="boFr"></div>
         <div class="fg" data-i18n="To (leave blank for single day)"><label>To <span style="font-weight:400;color:var(--ink3)">(leave blank for single day)</span></label><input type="date" id="boTo"></div>
-        <div class="fg"><label data-i18n="Who does this affect?">Who does this affect?</label><select id="boSc" onchange="togBOM()">
+        <div class="fg" id="boScRow"><label data-i18n="Who does this affect?">Who does this affect?</label><select id="boSc" onchange="togBOM()">
             <option value="group" data-i18n="Whole group">Whole group</option>
             <option value="members" data-i18n="Specific members only">Specific members only</option>
           </select></div>
@@ -6723,7 +6731,7 @@
         bandprofile: "Group Profile",
         myprofile: "My Profile",
         settings: "Settings"
-      } [e] || e), "myprofile" === e && populateMpPage().catch(console.error), "settings" === e && populateSettingsPage(), "calendar" === e && renderCalChangelog().catch(console.error), applyI18n(), closeSb()
+      } [e] || e), "myprofile" === e && populateMpPage().catch(console.error), "settings" === e && populateSettingsPage(), "calendar" === e && (renderBOList(), renderCalChangelog().catch(console.error)), applyI18n(), closeSb()
     }
 
     function changeLang(e) {
@@ -8332,7 +8340,17 @@
     }
 
     function openAddBO() {
-      clrBOF(), showMod("boMod")
+      clrBOF(), lockBOScope(!1), showMod("boMod")
+    }
+
+    // Members may only ever touch their own personal block, so the scope and
+    // member pickers are locked for them — the blackouts_update RLS policy
+    // rejects any row that changes hands or widens to the whole group.
+    function lockBOScope(e) {
+      const t = document.getElementById("boSc"),
+        n = document.getElementById("boScRow"),
+        o = document.getElementById("boMR");
+      t && (t.disabled = e), n && (n.style.display = e ? "none" : ""), e && o && (o.style.display = "none")
     }
 
     function clrBOF() {
@@ -8341,7 +8359,7 @@
 
     function editBO(e) {
       const t = blackouts.find(t => t.id === e);
-      t && (document.getElementById("boId").value = t.id, document.getElementById("boLab").value = t.label, document.getElementById("boFr").value = t.from, document.getElementById("boTo").value = t.to, document.getElementById("boSc").value = t.scope, togBOM(), document.querySelectorAll(".bomc").forEach(e => e.classList.toggle("on", t.mids.includes(e.dataset.mid))), showMod("boMod"))
+      t && canManageBO(t) && (document.getElementById("boId").value = t.id, document.getElementById("boLab").value = t.label, document.getElementById("boFr").value = t.from, document.getElementById("boTo").value = t.to, document.getElementById("boSc").value = t.scope, togBOM(), document.querySelectorAll(".bomc").forEach(e => e.classList.toggle("on", t.mids.includes(e.dataset.mid))), lockBOScope("admin" !== currentUser.role), showMod("boMod"))
     }
     async function savBO() {
       const e = document.getElementById("boId").value || null,
@@ -8426,14 +8444,23 @@
 
     function syncBOPill() {}
 
+    function canManageBO(e) {
+      return !e.source_concert_id && ("admin" === currentUser.role || "members" === e.scope && 1 === e.mids.length && e.mids[0] === currentUser.id)
+    }
+
     function renderBOList() {
-      const e = document.getElementById("boList");
-      e && (blackouts.length ? e.innerHTML = [...blackouts].sort((e, t) => e.from.localeCompare(t.from)).map(e => {
+      const e = blackouts.length ? [...blackouts].sort((e, t) => e.from.localeCompare(t.from)).map(e => {
         const t = fmtD(e.from),
           n = e.to !== e.from ? ` → ${fmtD(e.to)}` : "",
-          o = "members" === e.scope ? `<div style="font-size:var(--t-2xs);color:var(--ink3);margin-top:2px">${e.mids.map(e=>members.find(t=>t.id===e)?.name.split(" ")[0]).filter(Boolean).join(", ")}</div>` : "";
-        return `<div class="boit"><div class="bost" style="background:${"group"===e.scope?"var(--r)":"var(--bl)"}"></div><div class="bobd"><div class="bola">${esc(e.label)}</div><div class="boda">${t}${n}</div>${o}</div><div style="display:flex;align-items:center;gap:5px;flex-shrink:0"><span class="pill ${"group"===e.scope?"pr":"pbl"}">${"group"===e.scope?"Whole group":`${e.mids.length} member${1!==e.mids.length?"s":""}`}</span><button class="btn-ic btn" onclick="editBO('${e.id}')" aria-label="Edit blocked days" style="width:27px;height:27px"><svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M11 2l3 3-8 8H3v-3L11 2z"/></svg></button><button class="btn-ic btn" onclick="delBO('${e.id}')" aria-label="Delete blocked days" style="width:27px;height:27px;color:var(--r);border-color:var(--r2)"><svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 4h12M5 4V2h6v2M6 7v5M10 7v5M3 4l1 10h8l1-10"/></svg></button></div></div>`
-      }).join("") : e.innerHTML = '<div class="es" style="padding:20px"><div class="es-ico">' + ricon("cal", 26) + '</div><h3>No blackout periods</h3><p>Add holidays, closures, or absences.</p></div>')
+          o = "members" === e.scope ? `<div style="font-size:var(--t-2xs);color:var(--ink3);margin-top:2px">${e.mids.map(e=>members.find(t=>t.id===e)?.name.split(" ")[0]).filter(Boolean).join(", ")}</div>` : "",
+          a = e.source_concert_id ? `<span class="pill pgray">${window.t("From concert")}</span>` : "",
+          s = canManageBO(e) ? `<button class="btn-ic btn" onclick="editBO('${e.id}')" aria-label="Edit blocked days" style="width:27px;height:27px"><svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M11 2l3 3-8 8H3v-3L11 2z"/></svg></button><button class="btn-ic btn" onclick="delBO('${e.id}')" aria-label="Delete blocked days" style="width:27px;height:27px;color:var(--r);border-color:var(--r2)"><svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 4h12M5 4V2h6v2M6 7v5M10 7v5M3 4l1 10h8l1-10"/></svg></button>` : "";
+        return `<div class="boit"><div class="bost" style="background:${"group"===e.scope?"var(--r)":"var(--bl)"}"></div><div class="bobd"><div class="bola">${esc(e.label)}</div><div class="boda">${t}${n}</div>${o}</div><div style="display:flex;align-items:center;gap:5px;flex-shrink:0">${a}<span class="pill ${"group"===e.scope?"pr":"pbl"}">${"group"===e.scope?window.t("Whole group"):`${e.mids.length} ${window.t(1!==e.mids.length?"members":"member")}`}</span>${s}</div></div>`
+      }).join("") : '<div class="es" style="padding:20px"><div class="es-ico">' + ricon("cal", 26) + `</div><h3>${window.t("No blackout periods")}</h3><p>${window.t("Add holidays, closures, or absences.")}</p></div>`;
+      ["boList", "calBoList"].forEach(t => {
+        const n = document.getElementById(t);
+        n && (n.innerHTML = e)
+      })
     }
     const DN = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"],
       MN = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
@@ -8572,7 +8599,13 @@
       userId: null
     };
     async function renderCalChangelog() {
-      if (!document.getElementById("calChangelogSection") || !activeBandId) return;
+      const _s = document.getElementById("calChangelogSection");
+      if (!_s) return;
+      // Admins only — non-admins never see the section and never fetch it.
+      // Gate runs before the activeBandId check so the section stays hidden
+      // even when no group is loaded yet.
+      if (_s.style.display = "admin" === currentUser.role ? "" : "none", "admin" !== currentUser.role) return;
+      if (!activeBandId) return;
       const e = parseInt(document.getElementById("clDaysFilter")?.value || "10"),
         t = document.getElementById("clOwnerFilter")?.value || "",
         n = document.getElementById("clOwnerFilter");
