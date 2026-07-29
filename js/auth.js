@@ -19,6 +19,19 @@ function handleDbError(err) {
   toast2(err.message || 'Something went wrong', 'w');
 }
 
+// The invited band id is kept in auth metadata so a signup that confirms its
+// email in a different browser still lands in the right band. It is a one-shot
+// token and MUST be consumed: left in place, the auto-join below re-runs
+// join_band_by_code on every subsequent login, silently re-adding a member an
+// admin has removed from the band.
+async function clearPendingBandMeta() {
+  try {
+    await supabase.auth.updateUser({ data: { pending_band_id: null, invited_band_id: null } });
+  } catch (e) {
+    console.warn('[bandapp] could not clear pending band metadata:', e?.message);
+  }
+}
+
 async function loadCurrentUser(uid, email) {
   currentUser.id    = uid;
   currentUser.email = email || '';
@@ -431,6 +444,7 @@ supabase.auth.onAuthStateChange(async (event, session) => {
         activeBandId = joinData.band_id;
         localStorage.setItem('activeBandId', joinData.band_id);
         sessionStorage.removeItem('pendingBandId');
+        await clearPendingBandMeta();
         window.history.replaceState({}, '', window.location.pathname);
       } else if (joinData?.error === 'already_member') {
         // User was pre-enrolled by the invite edge function — still navigate to the invited band
@@ -438,6 +452,7 @@ supabase.auth.onAuthStateChange(async (event, session) => {
         localStorage.setItem('activeBandId', _pendingBandId);
         sessionStorage.removeItem('pendingBandId');
         sessionStorage.removeItem('inviteToken');
+        await clearPendingBandMeta();
         window.history.replaceState({}, '', window.location.pathname);
       } else {
         // RPC not deployed or network error — clean URL but keep pendingBandId for retry on next login
