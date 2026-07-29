@@ -4378,11 +4378,7 @@
               <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px">
                 <span class="t1" style="white-space:nowrap" data-i18n="Columns">Columns</span>
                 <div id="myViewPicker" style="display:flex;flex-wrap:wrap;gap:6px"></div>
-                <label style="display:inline-flex;align-items:center;gap:5px;font-size:var(--t-xs);color:var(--ink2);white-space:nowrap;margin-left:auto;cursor:pointer">
-                  <input type="checkbox" id="myViewLandscape" checked style="accent-color:var(--a);width:14px;height:14px;cursor:pointer" onchange="toggleMyViewLandscape(this)">
-                  <span data-i18n="Landscape">Landscape</span>
-                </label>
-                <button class="btn btn-g btn-sm" onclick="printMyView()" style="white-space:nowrap"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px" aria-hidden="true"><path d="M7 8V3.5h10V8"/><rect x="3.5" y="8" width="17" height="8.5" rx="1.8"/><path d="M7 13.5h10v7H7z"/><circle cx="17.5" cy="10.8" r="1" fill="currentColor" stroke="none"/></svg> <span data-i18n="Print my view">Print my view</span></button>
+                <button class="btn btn-g btn-sm" onclick="printMyView()" style="white-space:nowrap;margin-left:auto"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px" aria-hidden="true"><path d="M7 8V3.5h10V8"/><rect x="3.5" y="8" width="17" height="8.5" rx="1.8"/><path d="M7 13.5h10v7H7z"/><circle cx="17.5" cy="10.8" r="1" fill="currentColor" stroke="none"/></svg> <span data-i18n="Print my view">Print my view</span></button>
               </div>
               <div style="overflow-x:auto">
                 <table class="slt">
@@ -7126,8 +7122,7 @@
       }
       const t = Array.isArray(e?.fields) ? e.fields.filter(e => MYVIEW_FIELDS.some(t => t.key === e)) : null;
       return {
-        fields: t && t.length ? t : [...MYVIEW_DEFAULT],
-        landscape: !e || !1 !== e.landscape
+        fields: t && t.length ? t : [...MYVIEW_DEFAULT]
       }
     }
     // Written to the profile so the choice follows the user across devices,
@@ -7137,6 +7132,9 @@
       try {
         localStorage.setItem(_MYVIEW_LS_KEY, JSON.stringify(e))
       } catch (t) {}
+      // No signed-in user means the upsert would violate the profiles RLS
+      // policy (id = auth.uid()); localStorage above already holds the choice.
+      if (!currentUser.id) return;
       const {
         error: t
       } = await supabase.from("profiles").upsert({
@@ -7159,18 +7157,11 @@
       // back through getMyViewPrefs(), so a local-only mutation would be lost.
       t.fields = n ? t.fields.filter(t => t !== e) : [...t.fields, e], currentUser.myviewPrefs = t, renderMyViewPicker(), renderMyBody(), await saveMyViewPrefs(t)
     }
-    async function toggleMyViewLandscape(e) {
-      const t = getMyViewPrefs();
-      t.landscape = e.checked, await saveMyViewPrefs(t)
-    }
-
     function renderMyViewPicker() {
       const e = document.getElementById("myViewPicker");
       if (!e) return;
       const n = getMyViewPrefs();
       e.innerHTML = MYVIEW_FIELDS.map(e => `<div class="bomc chip${n.fields.includes(e.key)?" on":""}" role="button" tabindex="0" aria-pressed="${n.fields.includes(e.key)}" onclick="toggleMyViewField('${e.key}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleMyViewField('${e.key}')}">${t(e.label)}</div>`).join("");
-      const o = document.getElementById("myViewLandscape");
-      o && (o.checked = n.landscape)
     }
 
     // Cell content for one field — shared by the on-screen table and the print
@@ -7218,8 +7209,9 @@
           return n ? `<tr><td class="num">${String(t+1).padStart(2,"0")}</td>${o.map(e=>`<td class="c-${e.key}">${myViewCell(n,e.key,!0)}</td>`).join("")}</tr>` : ""
         }).join(""),
         i = getSlS().filter(e => songByAnyId(e)).length,
-        l = n.landscape ? "landscape" : "portrait",
-        r = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>${esc(e.name)}</title><style>\n    @page{size:${l};margin:14mm}\n    body{font-family:system-ui,sans-serif;margin:0;font-size:${n.landscape?"17px":"14px"};color:#111}\n    h1{font-size:${n.landscape?"30px":"24px"};font-weight:700;margin:0 0 4px}\n    .sub{color:#666;font-size:${n.landscape?"15px":"13px"};margin-bottom:20px}\n    table{width:100%;border-collapse:collapse}\n    th{text-align:left;font-size:${n.landscape?"13px":"11px"};text-transform:uppercase;color:#888;border-bottom:2px solid #ddd;padding:7px 9px;font-weight:600}\n    td{padding:10px 9px;border-bottom:1px solid #eee;vertical-align:top}\n    tr:last-child td{border-bottom:none}\n    .num{width:34px;font-family:monospace;color:#aaa}\n    .c-dur,.c-bpm{width:70px;font-family:monospace;color:#555;white-space:nowrap}\n    .c-keysig{width:60px;font-weight:600}\n    @media print{body{margin:0}}\n  </style></head><body>\n    <h1>${esc(e.name)}</h1>\n    <div class="sub">${esc(a?.name||"")}${i?" &middot; "+i+" songs":""} &middot; ${esc(currentUser.firstName||"My")} view</div>\n    <table><thead><tr><th class="num">#</th>${o.map(e=>`<th class="c-${e.key}">${esc(t(e.label))}</th>`).join("")}</tr></thead>\n    <tbody>${s}</tbody></table>\n  </body></html>`,
+        // Always landscape: My View exists to show more columns at a size that
+        // is readable on a music stand, which portrait cannot fit.
+        r = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>${esc(e.name)}</title><style>\n    @page{size:landscape;margin:14mm}\n    body{font-family:system-ui,sans-serif;margin:0;font-size:17px;color:#111}\n    h1{font-size:30px;font-weight:700;margin:0 0 4px}\n    .sub{color:#666;font-size:15px;margin-bottom:20px}\n    table{width:100%;border-collapse:collapse}\n    th{text-align:left;font-size:13px;text-transform:uppercase;color:#888;border-bottom:2px solid #ddd;padding:7px 9px;font-weight:600}\n    td{padding:10px 9px;border-bottom:1px solid #eee;vertical-align:top}\n    tr:last-child td{border-bottom:none}\n    .num{width:34px;font-family:monospace;color:#aaa}\n    .c-dur,.c-bpm{width:70px;font-family:monospace;color:#555;white-space:nowrap}\n    .c-keysig{width:60px;font-weight:600}\n    @media print{body{margin:0}}\n  </style></head><body>\n    <h1>${esc(e.name)}</h1>\n    <div class="sub">${esc(a?.name||"")}${i?" &middot; "+i+" songs":""} &middot; ${esc(currentUser.firstName||"My")} view</div>\n    <table><thead><tr><th class="num">#</th>${o.map(e=>`<th class="c-${e.key}">${esc(t(e.label))}</th>`).join("")}</tr></thead>\n    <tbody>${s}</tbody></table>\n  </body></html>`,
         d = window.open("", "_blank");
       d ? (d.document.write(r), d.document.close(), d.focus(), setTimeout(() => d.print(), 300)) : toast2("Allow pop-ups to print / save PDF", "w")
     }
