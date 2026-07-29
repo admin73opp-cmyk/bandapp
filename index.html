@@ -8484,8 +8484,15 @@
       MN = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
       MAb = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
+    // availability[] and rehearsal_days[] are indexed Mon=0 … Sun=6 (see
+    // schema.sql), but Date.getDay() is Sun=0 … Sat=6. Every read of those
+    // arrays must convert, or availability lands one weekday off.
+    function dowIdx(e) {
+      return (e.getDay() + 6) % 7
+    }
+
     function getMAvail(e, t, n) {
-      const o = new Date(e, t, n).getDay(),
+      const o = dowIdx(new Date(e, t, n)),
         a = `${e}-${String(t+1).padStart(2,"0")}-${String(n).padStart(2,"0")}`;
       if (isBO(a)) return members.map(() => !1);
       return (calEv[a] || []).includes("concert") ? members.map(() => !0) : members.map((e, t) => !!e.avail[o] && !isMBO(t, a) && !hasCrossGroupConflict(t, a))
@@ -8594,7 +8601,7 @@
       return rehearsals.some(t => {
         if (!t.date || t.date < TODAY_STR || t.cancelled) return !1;
         const n = t.date.split("-"),
-          o = new Date(parseInt(n[0]), parseInt(n[1]) - 1, parseInt(n[2])).getDay();
+          o = dowIdx(new Date(parseInt(n[0]), parseInt(n[1]) - 1, parseInt(n[2])));
         return !e[o]
       })
     }
@@ -10022,7 +10029,7 @@
             const n = a[o[e.id]] || ["p", "·"];
             r = `<span class="rvi ${n[0]}" title="${t("RSVP")}">${n[1]}</span>`
           } else {
-            r = `<div class="ad ${(e.avail||[])[(new Date).getDay()]?"on":"off"}"></div>`
+            r = `<div class="ad ${(e.avail||[])[dowIdx(new Date)]?"on":"off"}"></div>`
           }
           return `<div class="mr2"><div class="mav2" style="background:${e.color};color:${_ink(e.color)};${i?`background-image:url(${i});background-size:cover;background-position:center`:""}">${i?"":e.init}</div><div style="flex:1"><div class="mn">${esc(e.name)}</div><div class="mi">${esc(l)}</div></div>${r}</div>`
         }).join(""), e.length < 3 && (i.innerHTML += `<div class="cl" style="margin-top:10px;cursor:pointer" onclick="openInvMod()">${t("Invite more members")} →</div>`)) : i.innerHTML = `<div style="text-align:center;padding:8px 4px"><div style="color:var(--ink3);font-size:var(--t-md);margin-bottom:10px">${t("It's lonely here. Invite your bandmates.")}</div><button class="btn btn-p btn-sm" onclick="openInvMod()">+ ${t("Invite Member")}</button></div>`
@@ -10560,7 +10567,7 @@
         await MembersDB.upsertProfile(t, {
           availability: e
         }), currentUser.avail = e;
-        const n = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].filter((t, n) => !e[(n + 1) % 7]),
+        const n = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].filter((t, n) => !e[n]),
           o = n.length ? `${currentUser.firstName||"Member"} marked ${n.join(", ")} as unavailable` : `${currentUser.firstName||"Member"} updated availability (all days available)`;
         logCalChange("updated", "availability", null, o, _availImpactsRehearsal(e))
       } else "links" === e && await MembersDB.upsertProfile(t, {
