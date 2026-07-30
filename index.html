@@ -11100,7 +11100,7 @@
           instrument2: document.getElementById("obwInst2").value,
           vocals: document.getElementById("obwVocals").value || "None",
           availability: e
-        }), currentUser.avail = e, await loadMembers(), syncCurrentUserToUI(), obwSetStep(3)
+        }), currentUser.avail = e, await loadMembers(), syncCurrentUserToUI(), "admin" === currentUser.role ? obwSetStep(3) : await obwFinish()
       } catch (e) {
         console.error("[bandapp] obwSaveProfile error:", e), toast2(t("Couldn't save your profile — please try again"), "w")
       } finally {
