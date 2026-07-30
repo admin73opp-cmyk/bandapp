@@ -4093,7 +4093,6 @@
         </div>
         <div class="fg" data-i18n="Email"><label>Email</label><input id="signupEmail" type="email" placeholder="you@email.com" autocomplete="email" onkeydown="if(event.key==='Enter')doSignUp()"></div>
         <div class="fg"><label><span data-i18n="Password">Password</span> <span style="font-weight:400;color:var(--ink3)" data-i18n="(min. 8 chars)">(min. 8 chars)</span></label><input id="signupPassword" type="password" placeholder="••••••••" autocomplete="new-password" onkeydown="if(event.key==='Enter')doSignUp()"></div>
-        <div class="fg" id="sfGroupField" data-i18n="Group name (optional)"><label>Group name (optional)</label><input id="signupGroup" placeholder="The Jazz Cats" onkeydown="if(event.key==='Enter')doSignUp()"></div>
         <div id="signupErr" class="auth-err" style="display:none"><span class="auth-err-msg"></span><button class="auth-err-x" onclick="clearAuthErr('signupErr')" aria-label="Dismiss">✕</button></div>
         <button id="signupBtn" class="btn btn-p btn-fw" onclick="doSignUp()" data-i18n="Create account">Create account</button>
       </div>
@@ -10965,10 +10964,6 @@
         const t = document.getElementById(e);
         t && (t.value = "")
       }), populateCountrySelects();
-      try {
-        const _pgn = localStorage.getItem("pendingGroupName");
-        if (_pgn) { const _n = document.getElementById("obwName"); if (_n) _n.value = _pgn; localStorage.removeItem("pendingGroupName"); }
-      } catch (e) {}
       const e = currentUser._profile || {},
         n = document.getElementById("obwInst1"),
         o = document.getElementById("obwInst2");

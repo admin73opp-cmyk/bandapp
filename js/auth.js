@@ -150,7 +150,6 @@ async function doSignUp() {
   const lastName  = document.getElementById('signupLast').value.trim();
   const email     = document.getElementById('signupEmail').value.trim();
   const pw        = document.getElementById('signupPassword').value;
-  const groupName = (document.getElementById('signupGroup')?.value || '').trim();
 
   if (!email || !pw) { showAuthErr('signupErr', 'Enter email and password'); return; }
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) { showAuthErr('signupErr', 'That doesn\'t look like a valid email address'); return; }
@@ -188,7 +187,6 @@ async function doSignUp() {
         ...(pendingBandId     ? { pending_band_id:    pendingBandId }     : {}),
         ...(pendingPhone      ? { pending_phone:       pendingPhone }      : {}),
         ...(pendingInstrument ? { pending_instrument:  pendingInstrument } : {}),
-        ...(groupName         ? { pending_group_name:  groupName }         : {}),
       },
       emailRedirectTo: redirectTo,
     },
@@ -207,11 +205,6 @@ async function doSignUp() {
     showAuthErr('signupErr', 'An account with this email already exists — try signing in or resetting your password.');
     return;
   }
-
-  // Carry the optional group name to the onboarding wizard so a cold user isn't
-  // asked for it twice. Metadata covers cross-device confirm; localStorage
-  // prefills instantly in the same browser.
-  if (groupName) { try { localStorage.setItem('pendingGroupName', groupName); } catch (e) {} }
 
   // Create profile row immediately (trigger may also do this — belt-and-suspenders)
   if (data.user) {
@@ -593,11 +586,9 @@ const _initHash = window.location.hash;
       // Show invite banner with band name
       const _banner    = document.getElementById('sf-invite-banner');
       const _bandEl    = document.getElementById('sf-invite-group');
-      const _bandField = document.getElementById('sfGroupField');
       const _bandName  = p.get('bandname') || '';
       if (_banner) _banner.style.display = '';
       if (_bandEl && _bandName) _bandEl.textContent = _bandName;
-      if (_bandField) _bandField.style.display = 'none'; // hide "create band" field for invitees
     }
   }
   // If session exists, onAuthStateChange fires automatically
