@@ -4828,8 +4828,9 @@
             </div>
             <div class="bp-code-row" style="display:none;margin-top:10px;padding:8px 12px;background:var(--bg2);border:1px solid var(--bd);border-radius:var(--rad);display:flex;align-items:center;gap:8px;flex-wrap:wrap">
               <span style="font-size:var(--t-xs);font-weight:700;color:var(--ink2);letter-spacing:.04em;text-transform:uppercase;white-space:nowrap" data-i18n="Group Code">Group Code</span>
-              <input id="bpJoinCode" aria-label="Group join code" readonly onclick="this.select()" style="font-size:var(--t-xs);color:var(--ink);flex:1;min-width:0;background:transparent;border:none;outline:none;cursor:text;font-family:monospace">
+              <input id="bpJoinCode" aria-label="Group join code" readonly onclick="this.select()" style="font-size:var(--t-lg);letter-spacing:.12em;font-weight:700;color:var(--ink);flex:1;min-width:0;background:transparent;border:none;outline:none;cursor:text;font-family:monospace">
               <button class="btn btn-g btn-sm" style="flex-shrink:0;font-size:var(--t-xs)" onclick="copyGroupInviteLink()" data-i18n="Copy">Copy</button>
+              <button class="btn btn-g btn-sm" onclick="regenerateJoinCode()" style="flex-shrink:0" data-i18n="New code">New code</button>
             </div>
           </div>
 
@@ -9628,7 +9629,7 @@
         t && e && (t.value = e.lyrics_repo || "any")
       }
       const u = document.getElementById("bpJoinCode");
-      u && (u.value = e ? e.id : "", u.closest(".bp-code-row").style.display = n && e ? "" : "none");
+      u && (u.value = e ? e.join_code || e.id : "", u.closest(".bp-code-row").style.display = n && e ? "" : "none");
       const m = document.getElementById("bpCover");
       if (m) {
         m.style.cursor = n ? "pointer" : "default";
@@ -9831,6 +9832,23 @@
       o && (o.style.display = "none");
       const a = document.getElementById("invLookupEmail");
       a && (a.value = ""), showMod("invMod")
+    }
+
+    async function regenerateJoinCode() {
+      const e = getActiveBand();
+      if (!e) return;
+      if ("admin" !== currentUser.role) return void toast2("Only admins can change the group code", "w");
+      if (!confirm(window.t("Generate a new code? The old one stops working immediately."))) return;
+      const {
+        data: t,
+        error: n
+      } = await supabase.rpc("assign_join_code", {
+        p_band_id: e.id
+      });
+      if (n) return void handleDbError(n);
+      e.join_code = t;
+      const o = document.getElementById("bpJoinCode");
+      o && (o.value = t), toast2("New group code generated");
     }
 
     function openJoinGroupMod() {
