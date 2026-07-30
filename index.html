@@ -7118,6 +7118,12 @@
         key: "bpm",
         label: "BPM"
       }, {
+        key: "lyrics",
+        label: "Lyrics"
+      }, {
+        key: "sheet_music",
+        label: "Sheet Music"
+      }, {
         key: "note",
         label: "Group Notes"
       }, {
@@ -7194,6 +7200,18 @@
           return n ? e.dur ? fmtDur(e.dur) : "—" : `<td style="font-family:var(--mono);font-size:var(--t-xs);color:var(--ink2);white-space:nowrap">${e.dur?fmtDur(e.dur):"—"}</td>`;
         case "bpm":
           return n ? e.bpm || "—" : `<td style="font-family:var(--mono);font-size:var(--t-xs);color:var(--ink2);white-space:nowrap">${e.bpm||"—"}</td>`;
+        case "lyrics":
+        case "sheet_music":
+          {
+            // On screen: the same icon link the main set list uses. In print a
+            // link is useless, so show a tick — on a music stand what matters
+            // is "does this song have sheet music I should have brought".
+            const o = e[t] || "";
+            if (n) return o ? "✓" : "—";
+            const a = "lyrics" === t ? "Lyrics" : "Sheet Music",
+              s = "lyrics" === t ? "lyrics" : "sheet";
+            return `<td style="text-align:center;white-space:nowrap">${o?`<a class="lb2" href="${safeUrl(o)}" target="_blank" rel="noopener noreferrer" title="${window.t(a)}" style="color:var(--a);text-decoration:none">${ricon(s,14)}</a>`:'<span style="color:var(--ink3)">—</span>'}</td>`
+          };
         case "note":
           return n ? esc(e.note || "") : `<td class="nc">${esc(e.note)}</td>`;
         case "mynote":
