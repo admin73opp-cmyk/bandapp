@@ -10955,12 +10955,18 @@
     }
     async function maybeShowOnboarding() {
       try {
-        if (currentUser._memberships?.length) return;
         const e = await _obwUserMeta();
-        e.onboarded || e.needs_onboarding || showOnboardingWizard()
+        if (e.onboarded || e.needs_onboarding) return;
+        // Someone who joined a group still needs the profile steps — instrument
+        // and availability are exactly what the band needs from them. Only the
+        // group-creation steps are skipped.
+        currentUser._memberships?.length ? showProfileOnlyWizard() : showOnboardingWizard()
       } catch (e) {
         console.warn("[bandapp] maybeShowOnboarding failed", e)
       }
+    }
+    function showProfileOnlyWizard() {
+      _obwHasGroup = !0, showOnboardingWizard(2)
     }
     function _obwInstOptions() {
       return '<option value="">—</option>' + INSTRUMENTS.map(e => `<option value="${esc(e.v)}">${esc(t(e.label))}</option>`).join("")
