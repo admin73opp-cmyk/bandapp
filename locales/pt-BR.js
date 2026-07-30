@@ -237,6 +237,7 @@ window.PT_BR = {
   'From': 'De',
   'To (leave blank for single day)': 'Até (deixe em branco para um único dia)',
   'Whole group': 'Grupo inteiro',
+  'You\'re already in a group on the free plan. Upgrade to join or create more.': 'Você já está em um grupo no plano gratuito. Faça upgrade para entrar ou criar mais.',
   'Join the band that invited you, or create a new one to manage rehearsals, set lists and songs.': 'Entre na banda que te convidou, ou crie uma nova para gerenciar ensaios, repertórios e músicas.',
   'New code': 'Novo código',
   'Generate a new code? The old one stops working immediately.': 'Gerar um novo código? O antigo deixará de funcionar imediatamente.',

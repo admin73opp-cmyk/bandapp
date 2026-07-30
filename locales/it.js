@@ -237,6 +237,7 @@ window.IT = {
   'From': 'Dal',
   'To (leave blank for single day)': 'Al (lasciare vuoto per un giorno solo)',
   'Whole group': 'Tutto il gruppo',
+  'You\'re already in a group on the free plan. Upgrade to join or create more.': 'Sei già in un gruppo con il piano gratuito. Passa a un piano superiore per unirti o crearne altri.',
   'Join the band that invited you, or create a new one to manage rehearsals, set lists and songs.': 'Unisciti alla band che ti ha invitato, o creane una nuova per gestire prove, scalette e brani.',
   'New code': 'Nuovo codice',
   'Generate a new code? The old one stops working immediately.': 'Generare un nuovo codice? Quello vecchio smetterà subito di funzionare.',

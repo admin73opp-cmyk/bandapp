@@ -237,6 +237,7 @@ window.ES = {
   'From': 'Desde',
   'To (leave blank for single day)': 'Hasta (dejar en blanco para un solo día)',
   'Whole group': 'Todo el grupo',
+  'You\'re already in a group on the free plan. Upgrade to join or create more.': 'Ya estás en un grupo con el plan gratuito. Mejora tu plan para unirte o crear más.',
   'Join the band that invited you, or create a new one to manage rehearsals, set lists and songs.': 'Únete a la banda que te invitó, o crea una nueva para gestionar ensayos, repertorios y canciones.',
   'New code': 'Nuevo código',
   'Generate a new code? The old one stops working immediately.': '¿Generar un nuevo código? El anterior dejará de funcionar de inmediato.',

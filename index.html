@@ -4251,7 +4251,7 @@
               <span class="startcard-t" data-i18n="Join a group">Join a group</span>
               <span class="startcard-s" data-i18n="I have a code from my band">I have a code from my band</span>
             </button>
-            <button class="startcard" onclick="showOnboardingWizard()">
+            <button class="startcard" onclick="showOnboardingWizard(1)">
               <span class="startcard-t" data-i18n="Create a group">Create a group</span>
               <span class="startcard-s" data-i18n="I'm setting up a new band">I'm setting up a new band</span>
             </button>
@@ -9880,7 +9880,7 @@
         p_code: _isUuid ? e : _short
       });
       t && (t.disabled = !1, t.textContent = "Join Group");
-      if (o || !n) return void s(o?.message || "Something went wrong");
+      if (o || !n) return void s("FREE_PLAN_BAND_LIMIT" === o?.message ? o?.details || window.t("You're already in a group on the free plan. Upgrade to join or create more.") : o?.message || "Something went wrong");
       if (!n.success) return void s(n.message || n.error || "Something went wrong");
       // already_member is success-shaped: switch to the band instead of erroring
       closeMod("joinGroupMod"), await loadBands(), await switchBand(n.band_id, !0), toast2("already_member" === n.error ? window.t("You're already in this group — switched to it.") : `${window.t("Welcome to")} ${n.band_name}! 🎉`)
@@ -10965,7 +10965,7 @@
     function _obwInstOptions() {
       return '<option value="">—</option>' + INSTRUMENTS.map(e => `<option value="${esc(e.v)}">${esc(t(e.label))}</option>`).join("")
     }
-    function showOnboardingWizard() {
+    function showOnboardingWizard(startStep) {
       _obwHasGroup = !1;
       ["obwName", "obwCity", "obwInvFirst", "obwInvLast", "obwInvEmail", "obwSongTitle", "obwSongArtist"].forEach(e => {
         const t = document.getElementById(e);
@@ -10981,7 +10981,7 @@
         i = document.getElementById("obwAvail");
       i && (i.innerHTML = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((e, n) => `<div class="dtog ${s[n]?"on":""}" onclick="this.classList.toggle('on')" data-di="${n}">${t(e)}</div>`).join(""));
       const l = document.getElementById("obwLang");
-      l && (l.value = currentUser.lang || "en"), obwSetStep(0), showMod("obwMod")
+      l && (l.value = currentUser.lang || "en"), obwSetStep(void 0 === startStep ? 0 : startStep), showMod("obwMod")
     }
     function obwSetStep(e) {
       _obwStep = e;
@@ -11038,7 +11038,11 @@
       }
     }
     async function obwDismiss() {
-      await obwMarkOnboarded(), closeMod("obwMod"), nav("dashboard")
+      await obwMarkOnboarded(), closeMod("obwMod");
+      try {
+        syncCurrentUserToUI(), renderDashboard(), updateSidebarCounts()
+      } catch (e) {}
+      nav("dashboard")
     }
     function obwJoinInstead() {
       // Joining an existing group is its own onboarding — don't mark onboarded

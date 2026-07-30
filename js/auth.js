@@ -16,7 +16,7 @@ function clearAuthErr(id) {
 
 function handleDbError(err) {
   console.error('[bandapp] DB error:', err?.code, err?.message, err?.details, err?.hint, err);
-  toast2(err.message || 'Something went wrong', 'w');
+  toast2(err.message === 'FREE_PLAN_BAND_LIMIT' ? (err.details || 'You are already in a group on the free plan.') : (err.message || 'Something went wrong'), 'w');
 }
 
 // The invited band id is kept in auth metadata so a signup that confirms its
@@ -457,8 +457,8 @@ supabase.auth.onAuthStateChange(async (event, session) => {
         window.history.replaceState({}, '', window.location.pathname);
       } else if (joinData?.error === 'already_member') {
         // User was pre-enrolled by the invite edge function — still navigate to the invited band
-        activeBandId = _pendingBandId;
-        localStorage.setItem('activeBandId', _pendingBandId);
+        activeBandId = joinData.band_id;
+        localStorage.setItem('activeBandId', joinData.band_id);
         sessionStorage.removeItem('pendingBandId');
         sessionStorage.removeItem('inviteToken');
         await clearPendingBandMeta();

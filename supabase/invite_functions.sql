@@ -1,34 +1,5 @@
--- join_band_by_code: joins current user to a band by its UUID (used as the invite code)
-create or replace function join_band_by_code(p_code uuid)
-returns jsonb language plpgsql security definer set search_path = public, pg_temp as $$
-declare
-  v_band bands%rowtype;
-  v_uid  uuid := auth.uid();
-begin
-  select * into v_band from bands where id = p_code;
-  if not found then
-    return jsonb_build_object('error', 'band_not_found', 'message', 'Band not found. Check the code and try again.');
-  end if;
-
-  -- Already a member — idempotent, not an error, but signal it so client cleans up
-  if exists(select 1 from band_members where band_id = p_code and user_id = v_uid) then
-    return jsonb_build_object(
-      'success',   true,
-      'band_id',   p_code,
-      'band_name', v_band.name,
-      'error',     'already_member'
-    );
-  end if;
-
-  insert into band_members(band_id, user_id, role) values(p_code, v_uid, 'member');
-
-  return jsonb_build_object(
-    'success',   true,
-    'band_id',   p_code,
-    'band_name', v_band.name
-  );
-end;
-$$;
+-- join_band_by_code now lives in supabase/migrations/20260730010000_join_band_by_code_text.sql
+-- (accepts either the 6-char bands.join_code or a band UUID). Do not recreate the uuid overload here.
 
 -- find_user_by_email: looks up a user by email address (for the "already on Bandapp?" lookup).
 -- Restricted to authenticated band admins to prevent open email enumeration.

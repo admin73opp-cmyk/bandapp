@@ -237,6 +237,7 @@ window.NL = {
   'From': 'Van',
   'To (leave blank for single day)': 'Tot (leeg laten voor één dag)',
   'Whole group': 'Hele group',
+  'You\'re already in a group on the free plan. Upgrade to join or create more.': 'Je zit al in een groep met het gratis plan. Upgrade om er meer bij te komen of aan te maken.',
   'Join the band that invited you, or create a new one to manage rehearsals, set lists and songs.': 'Word lid van de band die je heeft uitgenodigd, of maak een nieuwe voor repetities, setlists en nummers.',
   'New code': 'Nieuwe code',
   'Generate a new code? The old one stops working immediately.': 'Nieuwe code genereren? De oude werkt dan meteen niet meer.',
