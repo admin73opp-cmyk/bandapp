@@ -1507,6 +1507,17 @@
       flex-shrink: 0
     }
 
+    .startcard {
+      flex: 1 1 200px; max-width: 260px; min-height: 96px;
+      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;
+      padding: 18px 16px; cursor: pointer; text-align: center;
+      background: var(--w); border: 1.5px solid var(--bd); border-radius: var(--rad);
+      font-family: var(--font); transition: border-color .13s, background .13s;
+    }
+    .startcard:hover { border-color: var(--a); background: var(--a2); }
+    .startcard-t { font-size: var(--t-md); font-weight: 700; color: var(--ink); }
+    .startcard-s { font-size: var(--t-xs); color: var(--ink2); }
+
     .stabs {
       display: flex;
       gap: 5px;
@@ -4236,9 +4247,15 @@
           <div class="es-mark"><svg viewBox="0 0 120 120" fill="none" aria-hidden="true"><line x1="34" y1="32" x2="34" y2="88" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><text x="44" y="86" font-family="'Garamond','Georgia','Times New Roman',serif" font-size="56" font-weight="300" fill="currentColor">r</text><circle cx="88" cy="32" r="4.5" fill="currentColor"/></svg></div>
           <div style="font-size:var(--t-2xl);font-weight:700;letter-spacing:-.03em;margin-bottom:10px" data-i18n="Welcome to Ritovo">Welcome to Ritovo</div>
           <p style="font-size:var(--t-md);color:var(--ink2);margin-bottom:22px" data-i18n="Create your group to manage rehearsals, set lists, songs and your bandmates — all in one place.">Create your group to manage rehearsals, set lists, songs and your bandmates — all in one place.</p>
-          <button class="btn btn-p" onclick="showOnboardingWizard()" data-i18n="Create Your Group">Create Your Group</button>
-          <div style="margin-top:14px">
-            <span onclick="openJoinGroupMod()" style="font-size:var(--t-sm);color:var(--a);cursor:pointer;text-decoration:underline" data-i18n="Have a group code? Join an existing group →">Have a group code? Join an existing group →</span>
+          <div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center">
+            <button class="startcard" onclick="openJoinGroupMod()">
+              <span class="startcard-t" data-i18n="Join a group">Join a group</span>
+              <span class="startcard-s" data-i18n="I have a code from my band">I have a code from my band</span>
+            </button>
+            <button class="startcard" onclick="showOnboardingWizard()">
+              <span class="startcard-t" data-i18n="Create a group">Create a group</span>
+              <span class="startcard-s" data-i18n="I'm setting up a new band">I'm setting up a new band</span>
+            </button>
           </div>
         </div>
         <div id="dshMain">
