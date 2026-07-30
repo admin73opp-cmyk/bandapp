@@ -4496,7 +4496,7 @@
               <button class="help-btn" onclick="showHelp(this,'<strong>Calendar</strong><ul><li>Monthly overview of all group events — rehearsals and concerts.</li><li>Use the arrows to navigate between months.</li><li>Click any event to view its details or jump to it.</li><li>Switch between <strong>Full</strong> and compact view.</li></ul>')" title="Help">?</button>
             </div>
 
-            <div style="display:flex;background:var(--bg2);border-radius:99px;padding:3px;gap:2px;border:1.5px solid var(--bd)">
+            <div id="calViewToggle" style="display:flex;background:var(--bg2);border-radius:99px;padding:3px;gap:2px;border:1.5px solid var(--bd)">
               <button id="toggleFull" onclick="setCalView('full')" style="padding:4px 13px;border-radius:99px;border:none;font-family:var(--font);font-size:var(--t-xs);font-weight:600;cursor:pointer;transition:all .15s;background:var(--a);color:#fff" data-i18n="Full">Full
               </button>
               <button id="toggleCompact" onclick="setCalView('compact')" style="padding:4px 13px;border-radius:99px;border:none;font-family:var(--font);font-size:var(--t-xs);font-weight:600;cursor:pointer;transition:all .15s;background:transparent;color:var(--ink2)" data-i18n="Compact">Compact
@@ -8647,9 +8647,24 @@
     function isFB(e, t, n) {
       return cntAv(e, t, n) === members.length
     }
-    let calView = window.innerWidth < 768 ? "compact" : "full";
+    // A phone's NARROW edge is < 768 however the device is held, so this stays
+    // true in both orientations — unlike window.innerWidth, which on a
+    // landscape phone reports >= 768 (an iPhone Pro Max is 932 wide) and used
+    // to flip the calendar back to the unusable full month grid on rotation.
+    function isPhone() {
+      const e = window.screen && window.screen.width || window.innerWidth,
+        t = window.screen && window.screen.height || window.innerHeight;
+      return Math.min(e, t) < 768
+    }
+    let calView = isPhone() || window.innerWidth < 768 ? "compact" : "full";
 
     function setCalView(e) {
+      // Phones only ever get the compact view. Coercing here rather than at the
+      // call sites covers the toggle buttons, the resize handler and the
+      // restore-on-nav calls in one place.
+      isPhone() && (e = "compact");
+      const _tg = document.getElementById("calViewToggle");
+      _tg && (_tg.style.display = isPhone() ? "none" : "");
       calView = e, document.getElementById("calViewFull").style.display = "full" === e ? "" : "none", document.getElementById("calViewCompact").style.display = "compact" === e ? "" : "none";
       const t = document.getElementById("toggleFull"),
         n = document.getElementById("toggleCompact");
@@ -8757,8 +8772,12 @@
       })
     }
     window.addEventListener("resize", () => {
-      window.innerWidth < 768 && "full" === calView ? setCalView("compact") : window.innerWidth >= 768 && "compact" === calView ? setCalView("full") : checkLandscapeHint(), "sheet" === libView && setSheetTblWidth(), isMobile() !== _libWasMobile && (_libWasMobile = isMobile(), syncLibViewForViewport(), renderSL()), updateSheetSizeBanner()
-    }), window.addEventListener("orientationchange", () => setTimeout(checkLandscapeHint, 200));
+      isPhone() ? ("compact" !== calView ? setCalView("compact") : checkLandscapeHint()) : window.innerWidth < 768 && "full" === calView ? setCalView("compact") : window.innerWidth >= 768 && "compact" === calView ? setCalView("full") : checkLandscapeHint(), "sheet" === libView && setSheetTblWidth(), isMobile() !== _libWasMobile && (_libWasMobile = isMobile(), syncLibViewForViewport(), renderSL()), updateSheetSizeBanner()
+    }), window.addEventListener("orientationchange", () => setTimeout(() => {
+      // Re-assert on rotation too: some browsers fire orientationchange without
+      // a following resize, and a phone must never land on the full month grid.
+      isPhone() && "compact" !== calView ? setCalView("compact") : checkLandscapeHint()
+    }, 200));
     const _clCache = {
       data: [],
       bandId: null,
