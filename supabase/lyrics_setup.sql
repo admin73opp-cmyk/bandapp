@@ -21,8 +21,6 @@ values (
   10485760,     -- 10 MB per file
   array[
     'application/pdf',
-    'application/msword',                                                          -- .doc
-    'application/vnd.openxmlformats-officedocument.wordprocessingml.document',     -- .docx
     'image/png',
     'image/jpeg',
     'image/gif',
