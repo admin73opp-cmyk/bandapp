@@ -10,6 +10,7 @@
 create table if not exists bands (
   id         uuid primary key default gen_random_uuid(),
   name       text not null,
+  join_code  text unique,
   initials   text,
   color      text,
   city       text,
