@@ -32,6 +32,22 @@ async function clearPendingBandMeta() {
   }
 }
 
+// localStorage stringifies whatever it is given, so an earlier
+// setItem('activeBandId', null) persists the literal string "null". Read back
+// unguarded it becomes band_id="null" on every scoped query, and Postgres
+// rejects it with 22P02 invalid input syntax for type uuid — which silently
+// breaks songs, setlists, blackouts and the dashboard for that browser until
+// the key is cleared. Treat the poisoned values as absent and evict them.
+function readStoredBandId() {
+  let v;
+  try { v = localStorage.getItem('activeBandId'); } catch (e) { return null; }
+  if (!v || v === 'null' || v === 'undefined') {
+    try { localStorage.removeItem('activeBandId'); } catch (e) {}
+    return null;
+  }
+  return v;
+}
+
 async function loadCurrentUser(uid, email) {
   currentUser.id    = uid;
   currentUser.email = email || '';
@@ -71,7 +87,7 @@ async function loadCurrentUser(uid, email) {
       last_name:  ln,
       initials:   (((fn[0] || '') + (ln[0] || '')).toUpperCase()) || (email || '?').slice(0, 2).toUpperCase(),
     });
-    const savedBand = localStorage.getItem('activeBandId');
+    const savedBand = readStoredBandId();
     const validIds  = (memberships || []).map(m => m.band_id);
     activeBandId = (savedBand && validIds.includes(savedBand)) ? savedBand : (validIds[0] || null);
     return;
@@ -89,7 +105,7 @@ async function loadCurrentUser(uid, email) {
   currentUser._memberships = memberships || [];
 
   // Restore previously active band from localStorage, or default to first
-  const saved = localStorage.getItem('activeBandId');
+  const saved = readStoredBandId();
   const validIds = (memberships || []).map(m => m.band_id);
   activeBandId = (saved && validIds.includes(saved)) ? saved : (validIds[0] || null);
 

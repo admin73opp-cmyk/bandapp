@@ -6503,7 +6503,10 @@
     // load and renderDashboard(), leaving the "no group" empty state on screen.
     async function switchBand(e, force) {
       if (!force && e === activeBandId) return void closeMod("bswMod");
-      activeBandId = e, localStorage.setItem("activeBandId", e);
+      // localStorage stringifies, so setItem(key, null) persists the literal
+      // "null" — which then gets sent as band_id on every scoped query and
+      // Postgres rejects it (22P02 invalid input syntax for type uuid).
+      activeBandId = e, e ? localStorage.setItem("activeBandId", e) : localStorage.removeItem("activeBandId");
       const t = (currentUser._memberships || []).find(t => t.band_id === e);
       currentUser.role = t?.role || "member";
       const n = getActiveBand();
