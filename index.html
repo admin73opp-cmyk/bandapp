@@ -6497,8 +6497,12 @@
     function getActiveBand() {
       return BANDS.find(e => e.id === activeBandId)
     }
-    async function switchBand(e) {
-      if (e === activeBandId) return void closeMod("bswMod");
+    // force=true skips the "already on this band" short-circuit. Needed after
+    // joining by code: loadBands() reconciles activeBandId to the new band
+    // first, so the ids already match and the guard would skip the whole data
+    // load and renderDashboard(), leaving the "no group" empty state on screen.
+    async function switchBand(e, force) {
+      if (!force && e === activeBandId) return void closeMod("bswMod");
       activeBandId = e, localStorage.setItem("activeBandId", e);
       const t = (currentUser._memberships || []).find(t => t.band_id === e);
       currentUser.role = t?.role || "member";
@@ -6544,7 +6548,7 @@
           t && (t.value = "")
         });
         const r = document.getElementById("nbCountry");
-        r && (r.value = ""), toast2(`"${e}" created!`), await switchBand(l.id)
+        r && (r.value = ""), toast2(`"${e}" created!`), await switchBand(l.id, !0)
       } catch (e) {
         console.error("[bandapp] createNewGroup error:", e), toast2("Something went wrong creating the group", "w")
       } finally {
@@ -9767,7 +9771,7 @@
     async function confirmDeleteGroup() {
       const e = getActiveBand();
       if (!e) return;
-      document.getElementById("deleteBandConfirmInput").value.trim() === e.name ? (await BandsDB.delete(activeBandId), closeMod("deleteBandMod"), await loadBands(), BANDS.length ? (activeBandId = BANDS[0].id, await switchBand(activeBandId)) : (activeBandId = null, renderBandList(), toast2("Group deleted. No more groups.", "w"), nav("dashboard")), toast2("Group deleted", "w")) : toast2("Group name does not match", "w")
+      document.getElementById("deleteBandConfirmInput").value.trim() === e.name ? (await BandsDB.delete(activeBandId), closeMod("deleteBandMod"), await loadBands(), BANDS.length ? (activeBandId = BANDS[0].id, await switchBand(activeBandId, !0)) : (activeBandId = null, renderBandList(), toast2("Group deleted. No more groups.", "w"), nav("dashboard")), toast2("Group deleted", "w")) : toast2("Group name does not match", "w")
     }
 
     function renderBandPhotos() {
@@ -9876,7 +9880,7 @@
       if (o || !n) return void s(o?.message || "Something went wrong");
       if (!n.success) return void s(n.message || n.error || "Something went wrong");
       // already_member is success-shaped: switch to the band instead of erroring
-      closeMod("joinGroupMod"), await loadBands(), await switchBand(n.band_id), toast2("already_member" === n.error ? window.t("You're already in this group — switched to it.") : `${window.t("Welcome to")} ${n.band_name}! 🎉`)
+      closeMod("joinGroupMod"), await loadBands(), await switchBand(n.band_id, !0), toast2("already_member" === n.error ? window.t("You're already in this group — switched to it.") : `${window.t("Welcome to")} ${n.band_name}! 🎉`)
     }
     async function lookupInvitee() {
       const e = document.getElementById("invLookupEmail").value.trim();
@@ -11235,7 +11239,7 @@
             demo_band_id: n.id,
             onboarded: !0
           }
-        }), await loadBands(), closeMod("obwMod"), await switchBand(n.id), toast2(t("Sample data ready — explore away! 🎷"))
+        }), await loadBands(), closeMod("obwMod"), await switchBand(n.id, !0), toast2(t("Sample data ready — explore away! 🎷"))
       } catch (n) {
         console.error("[bandapp] obwSeedDemo error:", n), toast2(t("Couldn't create sample data — please try again"), "w"), e.disabled = !1, obwSetStep(_obwStep)
       }
