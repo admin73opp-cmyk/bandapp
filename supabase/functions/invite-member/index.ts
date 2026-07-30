@@ -44,7 +44,7 @@ function buildInviteEmail(opts: {
     <p style="margin:0 0 4px;font-size:15px;color:#444;line-height:1.6">
       Click the button below, sign up or sign in, and you'll join automatically.
     </p>
-    ${btn('Join ' + bandName + ' →', joinUrl)}
+    ${btn('Join ' + h(bandName) + ' →', joinUrl)}
     <p style="margin:20px 0 4px;font-size:13px;color:#666;line-height:1.6">
       Or open Ritovo and enter this join code:
     </p>
