@@ -237,6 +237,7 @@ window.FR = {
   'From': 'Du',
   'To (leave blank for single day)': 'Au (laisser vide pour un seul jour)',
   'Whole group': 'Tout le groupe',
+  'Join the band that invited you, or create a new one to manage rehearsals, set lists and songs.': 'Rejoignez le groupe qui vous a invité, ou créez-en un nouveau pour gérer répétitions, setlists et morceaux.',
   'New code': 'Nouveau code',
   'Generate a new code? The old one stops working immediately.': "Générer un nouveau code ? L'ancien cessera de fonctionner immédiatement.",
   'Only admins can change the group code': 'Seuls les admins peuvent changer le code du groupe',
