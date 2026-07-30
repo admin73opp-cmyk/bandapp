@@ -237,6 +237,8 @@ window.NL = {
   'From': 'Van',
   'To (leave blank for single day)': 'Tot (leeg laten voor één dag)',
   'Whole group': 'Hele group',
+  'A group code is 6 characters, like K7QM3P. Ask your admin for it.': 'Een groepscode heeft 6 tekens, zoals K7QM3P. Vraag je beheerder erom.',
+  'Enter the 6-character code from your band admin.': 'Voer de 6-tekenige code van je beheerder in.',
   'How do you want to start?': 'Hoe wil je beginnen?',
   'Join the band that invited you, or set up a new one.': 'Word lid van de band die je heeft uitgenodigd, of maak een nieuwe aan.',
   'Join a group': 'Lid worden van een groep',

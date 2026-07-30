@@ -237,6 +237,8 @@ window.ES = {
   'From': 'Desde',
   'To (leave blank for single day)': 'Hasta (dejar en blanco para un solo día)',
   'Whole group': 'Todo el grupo',
+  'A group code is 6 characters, like K7QM3P. Ask your admin for it.': 'Un código de grupo tiene 6 caracteres, como K7QM3P. Pídeselo a tu admin.',
+  'Enter the 6-character code from your band admin.': 'Introduce el código de 6 caracteres de tu admin.',
   'How do you want to start?': '¿Cómo quieres empezar?',
   'Join the band that invited you, or set up a new one.': 'Únete a la banda que te invitó, o crea una nueva.',
   'Join a group': 'Unirse a un grupo',

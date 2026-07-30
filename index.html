@@ -5436,8 +5436,8 @@
   <div class="mov" id="joinGroupMod" style="display:none" onclick="closeMB(event,'joinGroupMod')">
     <div class="mod" style="max-width:420px">
       <div class="mott">Join a Group</div>
-      <div class="most">Paste the group code shared by your admin to join as a member.</div>
-      <div class="fg"><label>Group Code</label><input id="joinGroupCode" placeholder="Paste code here…" style="font-family:monospace;font-size:var(--t-md)" onkeydown="if(event.key==='Enter')joinGroupByCode()"></div>
+      <div class="most" data-i18n="Enter the 6-character code from your band admin.">Enter the 6-character code from your band admin.</div>
+      <div class="fg"><label data-i18n="Group Code">Group Code</label><input id="joinGroupCode" placeholder="K7QM3P" autocapitalize="characters" autocomplete="off" spellcheck="false" style="font-family:monospace;font-size:var(--t-lg);letter-spacing:.12em;text-transform:uppercase" onkeydown="if(event.key==='Enter')joinGroupByCode()"></div>
       <div id="joinGroupResult" style="display:none;margin-bottom:8px"></div>
       <div class="moft">
         <button class="btn btn-g" onclick="closeMod('joinGroupMod')">Cancel</button>
@@ -9843,16 +9843,17 @@
         a = document.getElementById("joinGroupResult"),
         s = e => a && (a.style.display = "", a.innerHTML = `<div style="font-size:var(--t-sm);color:var(--r);padding:8px 10px;background:var(--r2);border-radius:var(--rad)">${esc(e)}</div>`);
       if (!e) return void toast2("Paste a group code first", "w");
-      // Group codes are band UUIDs — catch non-UUID input before it becomes a
-      // raw Postgres cast error ("invalid input syntax for type uuid").
-      if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(e)) return void s(window.t("That doesn't look like a group code. Ask your admin to copy it from Group Profile → Group Code."));
+      // Accept the 6-char join code (case/spacing tolerant) or a legacy band UUID.
+      const _isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(e),
+        _short = e.replace(/[^A-Za-z0-9]/g, "").toUpperCase();
+      if (!_isUuid && 6 !== _short.length) return void s(window.t("A group code is 6 characters, like K7QM3P. Ask your admin for it."));
       const t = document.getElementById("joinGroupBtn");
       t && (t.disabled = !0, t.textContent = "Joining…");
       const {
         data: n,
         error: o
       } = await supabase.rpc("join_band_by_code", {
-        p_code: e
+        p_code: _isUuid ? e : _short
       });
       t && (t.disabled = !1, t.textContent = "Join Group");
       if (o || !n) return void s(o?.message || "Something went wrong");

@@ -237,6 +237,8 @@ window.PT_BR = {
   'From': 'De',
   'To (leave blank for single day)': 'Até (deixe em branco para um único dia)',
   'Whole group': 'Grupo inteiro',
+  'A group code is 6 characters, like K7QM3P. Ask your admin for it.': 'Um código de grupo tem 6 caracteres, como K7QM3P. Peça ao seu admin.',
+  'Enter the 6-character code from your band admin.': 'Digite o código de 6 caracteres do seu admin.',
   'How do you want to start?': 'Como você quer começar?',
   'Join the band that invited you, or set up a new one.': 'Entre na banda que te convidou, ou crie uma nova.',
   'Join a group': 'Entrar em um grupo',
