@@ -28,8 +28,9 @@ const BandsDB = {
   },
 
   async upsert(band) {
+    // join_code is owned by assign_join_code() database function and must not be written here
     const { role, memberCount, songCount, setlistCount, upcomingCount, pastCount,
-            nextGig, photos, band_members, ...fields } = band;
+            nextGig, photos, band_members, join_code, ...fields } = band;
     if (fields.id) {
       // Existing band — UPDATE only
       const { id, ...updateFields } = fields;
