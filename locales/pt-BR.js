@@ -237,6 +237,8 @@ window.PT_BR = {
   'From': 'De',
   'To (leave blank for single day)': 'Até (deixe em branco para um único dia)',
   'Whole group': 'Grupo inteiro',
+  'How do you want to start?': 'Como você quer começar?',
+  'Join the band that invited you, or set up a new one.': 'Entre na banda que te convidou, ou crie uma nova.',
   'Join a group': 'Entrar em um grupo',
   'I have a code from my band': 'Tenho um código da minha banda',
   'Create a group': 'Criar um grupo',

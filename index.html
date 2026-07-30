@@ -5481,6 +5481,20 @@
       </div>
 
       <div style="padding:22px 24px;overflow-y:auto;flex:1">
+        <div id="obwStep0" class="obw-step">
+          <div class="mott" style="margin-bottom:4px" data-i18n="How do you want to start?">How do you want to start?</div>
+          <div class="most" data-i18n="Join the band that invited you, or set up a new one.">Join the band that invited you, or set up a new one.</div>
+          <div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-top:14px">
+            <button class="startcard" onclick="obwJoinInstead()">
+              <span class="startcard-t" data-i18n="Join a group">Join a group</span>
+              <span class="startcard-s" data-i18n="I have a code from my band">I have a code from my band</span>
+            </button>
+            <button class="startcard" onclick="obwSetStep(1)">
+              <span class="startcard-t" data-i18n="Create a group">Create a group</span>
+              <span class="startcard-s" data-i18n="I'm setting up a new band">I'm setting up a new band</span>
+            </button>
+          </div>
+        </div>
         <div id="obwStep1" class="obw-step">
           <div class="mott" style="margin-bottom:4px" data-i18n="Create your group">Create your group</div>
           <div class="most" data-i18n="You'll be the admin. You can change any of this later.">You'll be the admin. You can change any of this later.</div>
@@ -10946,20 +10960,23 @@
         i = document.getElementById("obwAvail");
       i && (i.innerHTML = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((e, n) => `<div class="dtog ${s[n]?"on":""}" onclick="this.classList.toggle('on')" data-di="${n}">${t(e)}</div>`).join(""));
       const l = document.getElementById("obwLang");
-      l && (l.value = currentUser.lang || "en"), obwSetStep(1), showMod("obwMod")
+      l && (l.value = currentUser.lang || "en"), obwSetStep(0), showMod("obwMod")
     }
     function obwSetStep(e) {
       _obwStep = e;
-      for (let t = 1; t <= 4; t++) {
+      for (let t = 0; t <= 4; t++) {
         const n = document.getElementById("obwStep" + t);
         n && (n.style.display = t === e ? "" : "none")
       }
-      document.getElementById("obwStepNum").textContent = e, document.getElementById("obwBar").style.width = 25 * e + "%";
+      document.getElementById("obwStepNum").textContent = e || 1, document.getElementById("obwBar").style.width = 25 * (e || 0) + "%";
       const bk = document.getElementById("obwBack"),
         n = document.getElementById("obwSkip"),
         o = document.getElementById("obwPrimary"),
         a = document.getElementById("obwClose");
-      bk.style.display = e > 1 ? "" : "none", n.style.display = 3 === e || 4 === e ? "" : "none", a.style.display = _obwHasGroup || 1 === e ? "" : "none";
+      // Step 0 is the Join/Create fork — the cards are the only actions, so the
+      // footer controls are all hidden there.
+      bk.style.display = e >= 1 ? "" : "none", n.style.display = 3 === e || 4 === e ? "" : "none", o.style.display = 0 === e ? "none" : "", a.style.display = _obwHasGroup || e <= 1 ? "" : "none";
+      if (0 === e) return;
       const s = {
         1: "Create Group →",
         2: "Save & Continue →",
@@ -10980,7 +10997,7 @@
       }).catch(() => {})
     }
     function obwBack() {
-      _obwStep > 1 && obwSetStep(_obwStep - 1)
+      _obwStep > 0 && obwSetStep(_obwStep - 1)
     }
     function obwSkip() {
       3 === _obwStep ? obwSetStep(4) : 4 === _obwStep && obwFinish()

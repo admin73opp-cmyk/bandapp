@@ -237,6 +237,8 @@ window.FR = {
   'From': 'Du',
   'To (leave blank for single day)': 'Au (laisser vide pour un seul jour)',
   'Whole group': 'Tout le groupe',
+  'How do you want to start?': 'Comment voulez-vous commencer ?',
+  'Join the band that invited you, or set up a new one.': 'Rejoignez le groupe qui vous a invité, ou créez-en un nouveau.',
   'Join a group': 'Rejoindre un groupe',
   'I have a code from my band': 'J’ai un code de mon groupe',
   'Create a group': 'Créer un groupe',

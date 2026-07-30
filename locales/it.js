@@ -237,6 +237,8 @@ window.IT = {
   'From': 'Dal',
   'To (leave blank for single day)': 'Al (lasciare vuoto per un giorno solo)',
   'Whole group': 'Tutto il gruppo',
+  'How do you want to start?': 'Come vuoi iniziare?',
+  'Join the band that invited you, or set up a new one.': 'Unisciti alla band che ti ha invitato, oppure creane una nuova.',
   'Join a group': 'Unisciti a un gruppo',
   'I have a code from my band': 'Ho un codice dalla mia band',
   'Create a group': 'Crea un gruppo',
