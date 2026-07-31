@@ -13,11 +13,21 @@ function blackoutFromRow(row) {
 const BlackoutsDB = {
 
   async fetch(bandId) {
-    const { data, error } = await supabase
-      .from('blackouts')
+    // blackouts_visible masks private reasons server-side for non-creators.
+    // Fall back to the raw table until the blackouts_private_reason.sql
+    // migration has been applied.
+    let { data, error } = await supabase
+      .from('blackouts_visible')
       .select('*')
       .eq('band_id', bandId)
       .order('from_date');
+    if (error && /blackouts_visible/.test(error.message || '')) {
+      ({ data, error } = await supabase
+        .from('blackouts')
+        .select('*')
+        .eq('band_id', bandId)
+        .order('from_date'));
+    }
     if (error) { handleDbError(error); return []; }
     return (data || []).map(blackoutFromRow);
   },
@@ -28,14 +38,25 @@ const BlackoutsDB = {
     fields.to_date    = to     || null;
     fields.member_ids = mids   || [];
     if (!fields.band_id) fields.band_id = activeBandId;
-    let query;
-    if (fields.id) {
-      const { id, ...updateFields } = fields;
-      query = supabase.from('blackouts').update(updateFields).eq('id', id).select().single();
-    } else {
-      query = supabase.from('blackouts').insert(fields).select().single();
+    const run = (f) => {
+      if (f.id) {
+        const { id, ...updateFields } = f;
+        return supabase.from('blackouts').update(updateFields).eq('id', id).select().single();
+      }
+      return supabase.from('blackouts').insert(f).select().single();
+    };
+    let { data, error } = await run(fields);
+    // Pre-migration DBs lack reason_private/created_by — drop only the column
+    // the error explicitly names and retry (never drop columns speculatively).
+    if (error) {
+      const msg = error.message || '';
+      const retry = { ...fields };
+      let dropped = false;
+      ['reason_private', 'created_by'].forEach(col => {
+        if (msg.includes(col) && col in retry) { delete retry[col]; dropped = true; }
+      });
+      if (dropped) ({ data, error } = await run(retry));
     }
-    const { data, error } = await query;
     if (error) { handleDbError(error); return null; }
     return blackoutFromRow(data);
   },

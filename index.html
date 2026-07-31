@@ -4455,7 +4455,7 @@
           </div>
         </div>
         <div class="dg" style="margin-top:14px">
-          <div class="card">
+          <div class="card" id="dshActivityCard" style="display:none">
             <div class="ch">
               <div class="ct" data-i18n="Recent Activity">Recent Activity</div>
               <div class="cl" onclick="nav('calendar')" data-i18n="See calendar →">See calendar →</div>
@@ -5298,6 +5298,15 @@
             </div>
           </div>
 
+          <div class="card" id="mp-card-blocks">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+              <div class="ct" data-i18n="Blocked Periods">Blocked Periods</div>
+              <button class="btn btn-p btn-sm" onclick="openBlockDaysMod()" data-i18n="+ Block Days">+ Block Days</button>
+            </div>
+            <div style="font-size:var(--t-sm);color:var(--ink3);margin-bottom:12px" data-i18n="Dates when you personally can't make it. They count as unavailable in rehearsal planning.">Dates when you personally can't make it. They count as unavailable in rehearsal planning.</div>
+            <div id="mpBoList" style="display:flex;flex-direction:column;gap:7px"></div>
+          </div>
+
           <div class="card" id="mp-card-links">
             <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
               <div class="ct" data-i18n="Links & Social">Links &amp; Social</div>
@@ -5348,6 +5357,13 @@
             <div style="margin-top:14px">
               <button class="btn btn-p btn-sm" onclick="saveSettings()" data-i18n="Save">Save</button>
             </div>
+          </div>
+
+          <div class="card" id="settDisplayCard">
+            <div class="ct" style="margin-bottom:4px" data-i18n="Display">Display</div>
+            <div style="font-size:var(--t-sm);color:var(--ink3);margin-bottom:12px" data-i18n="Optional sections, hidden by default. Applies on this device.">Optional sections, hidden by default. Applies on this device.</div>
+            <label style="display:flex;align-items:flex-start;gap:8px;cursor:pointer;margin-bottom:10px"><input type="checkbox" id="mpShowActivity" onchange="saveDisplayPrefs()" style="margin-top:3px;flex-shrink:0;accent-color:var(--a)"><span><span style="font-weight:600;font-size:var(--t-md)" data-i18n="Show Recent Activity on the Dashboard">Show Recent Activity on the Dashboard</span></span></label>
+            <label style="display:flex;align-items:flex-start;gap:8px;cursor:pointer" id="mpShowChangelogRow"><input type="checkbox" id="mpShowChangelog" onchange="saveDisplayPrefs()" style="margin-top:3px;flex-shrink:0;accent-color:var(--a)"><span><span style="font-weight:600;font-size:var(--t-md)" data-i18n="Show the Change Log on the Calendar">Show the Change Log on the Calendar</span><div style="font-weight:400;font-size:var(--t-xs);color:var(--ink3);margin-top:2px" data-i18n="Admins only.">Admins only.</div></span></label>
           </div>
 
           <div class="card">
@@ -5757,6 +5773,7 @@
       <div class="fg" data-i18n="Period"><label>Period</label><div class="rp" id="blkRP"></div><input type="hidden" id="blkFr"><input type="hidden" id="blkTo"></div>
       <div class="fg" id="blkMemberWrap" data-i18n="Member"><label data-i18n="Member">Member</label><select id="blkMember"></select></div>
       <div class="fg" data-i18n="Reason (optional)"><label data-i18n="Reason (optional)">Reason <span style="font-weight:400;color:var(--ink3)">(optional)</span></label><textarea id="blkReason" placeholder="Holiday, work trip, event…" data-i18n-placeholder="Holiday, work trip, event…" style="min-height:55px"></textarea></div>
+      <div class="fg" style="display:flex;align-items:flex-start;gap:8px"><input type="checkbox" id="blkPriv" style="margin-top:3px;flex-shrink:0;accent-color:var(--a)"><label for="blkPriv" style="margin:0;cursor:pointer"><span data-i18n="Make reason private">Make reason private</span><div style="font-weight:400;font-size:var(--t-xs);color:var(--ink3);margin-top:2px" data-i18n="Only you can read the reason. Others just see the blocked dates.">Only you can read the reason. Others just see the blocked dates.</div></label></div>
       <div id="blkErr" style="display:none;margin-bottom:10px;padding:10px 13px;background:var(--r2);border:1px solid var(--r);border-radius:var(--rad);font-size:var(--t-sm);color:var(--r)"></div>
       <div class="moft">
         <button class="btn btn-g" onclick="closeMod('blkMod')" data-i18n="Cancel">Cancel</button>
@@ -5833,6 +5850,7 @@
         <div class="mott" data-i18n="Blackout Period">Blackout Period</div>
         <div class="most">Block a date range for the whole group or specific members. Excluded from rehearsal suggestions.</div>
         <div class="fg" data-i18n="Label"><label>Label</label><input id="boLab" placeholder="Carnival, School Holiday, Antoine on tour…"></div>
+        <div class="fg" style="display:flex;align-items:flex-start;gap:8px"><input type="checkbox" id="boPriv" style="margin-top:3px;flex-shrink:0;accent-color:var(--a)"><label for="boPriv" style="margin:0;cursor:pointer"><span data-i18n="Make reason private">Make reason private</span><div style="font-weight:400;font-size:var(--t-xs);color:var(--ink3);margin-top:2px" data-i18n="Only you can read the reason. Others just see the blocked dates.">Only you can read the reason. Others just see the blocked dates.</div></label></div>
         <div class="fg" data-i18n="Period"><label>Period</label><div class="rp" id="boRP"></div><input type="hidden" id="boFr"><input type="hidden" id="boTo"></div>
         <div class="fg" id="boScRow"><label data-i18n="Who does this affect?">Who does this affect?</label><select id="boSc" onchange="togBOM()">
             <option value="group" data-i18n="Whole group">Whole group</option>
@@ -8678,7 +8696,7 @@
       return blackouts.filter(e => "group" === e.scope).forEach(t => {
         for (let n = new Date(t.from + "T00:00:00"); n <= new Date(t.to + "T00:00:00"); n.setDate(n.getDate() + 1)) {
           const o = `${n.getFullYear()}-${String(n.getMonth()+1).padStart(2,"0")}-${String(n.getDate()).padStart(2,"0")}`;
-          e[o] = t.label
+          e[o] = t.label || window.t("Blocked")
         }
       }), _boMapCache = e, _boMapCacheVer = _boMapVer, e
     }
@@ -8706,12 +8724,12 @@
     }
 
     function clrBOF() {
-      ["boId", "boLab", "boFr", "boTo"].forEach(e => document.getElementById(e).value = ""), document.getElementById("boSc").value = "group", togBOM(), document.querySelectorAll(".bomc").forEach(e => e.classList.remove("on"))
+      ["boId", "boLab", "boFr", "boTo"].forEach(e => document.getElementById(e).value = ""), document.getElementById("boPriv").checked = !1, document.getElementById("boSc").value = "group", togBOM(), document.querySelectorAll(".bomc").forEach(e => e.classList.remove("on"))
     }
 
     function editBO(e) {
       const t = blackouts.find(t => t.id === e);
-      t && canManageBO(t) && (document.getElementById("boId").value = t.id, document.getElementById("boLab").value = t.label, document.getElementById("boFr").value = t.from, document.getElementById("boTo").value = t.to, document.getElementById("boSc").value = t.scope, togBOM(), document.querySelectorAll(".bomc").forEach(e => e.classList.toggle("on", t.mids.includes(e.dataset.mid))), lockBOScope("admin" !== currentUser.role), initRangePicker("boRP", "boFr", "boTo"), showMod("boMod"))
+      t && canManageBO(t) && (document.getElementById("boId").value = t.id, document.getElementById("boLab").value = t.label, document.getElementById("boPriv").checked = !!t.reason_private, document.getElementById("boFr").value = t.from, document.getElementById("boTo").value = t.to, document.getElementById("boSc").value = t.scope, togBOM(), document.querySelectorAll(".bomc").forEach(e => e.classList.toggle("on", t.mids.includes(e.dataset.mid))), lockBOScope("admin" !== currentUser.role), initRangePicker("boRP", "boFr", "boTo"), showMod("boMod"))
     }
     async function savBO() {
       const e = document.getElementById("boId").value || null,
@@ -8727,21 +8745,23 @@
         from: n,
         to: o,
         scope: a,
-        mids: s
+        mids: s,
+        reason_private: document.getElementById("boPriv").checked
       };
-      e && (i.id = e);
+      e ? i.id = e : i.created_by = currentUser.id;
       const l = await BlackoutsDB.upsert(i);
       if (!l) return;
       await loadBlackouts(), blackouts.find(e => e.id === l.id) || (blackouts = [...blackouts, l], _boMapVer++);
       const r = e ? "updated" : "created",
         d = n + (o && o !== n ? " – " + o : ""),
         c = _rangeImpactsEvent(n, o);
-      logCalChange(r, "blackout", l.id, `Blackout "${t}" (${d}) ${r}`, c), closeMod("boMod"), renderBOList(), renderCal(), syncBOPill(), toast2(e ? "Blackout updated" : "Blackout added")
+      // Private reasons must not leak into the shared change log.
+      logCalChange(r, "blackout", l.id, `Blackout "${i.reason_private?window.t("Private"):t}" (${d}) ${r}`, c), closeMod("boMod"), renderBOList(), renderCal(), syncBOPill(), toast2(e ? "Blackout updated" : "Blackout added")
     }
     async function delBO(e) {
       const t = blackouts.find(t => t.id === e),
         n = !!t && _rangeImpactsEvent(t.from, t.to);
-      await BlackoutsDB.delete(e), t && logCalChange("deleted", "blackout", e, `Blackout "${t.label}" (${t.from+(t.to&&t.to!==t.from?" – "+t.to:"")}) removed`, n), await loadBlackouts(), renderBOList(), renderCal(), syncBOPill(), toast2("Blackout removed", "w")
+      await BlackoutsDB.delete(e), t && logCalChange("deleted", "blackout", e, `Blackout "${t.reason_private?window.t("Private"):t.label}" (${t.from+(t.to&&t.to!==t.from?" – "+t.to:"")}) removed`, n), await loadBlackouts(), renderBOList(), renderCal(), syncBOPill(), toast2("Blackout removed", "w")
     }
 
     function togBOM() {
@@ -8797,7 +8817,7 @@
     }
 
     function openBlockDaysMod() {
-      document.getElementById("blkFr").value = TODAY_STR, document.getElementById("blkTo").value = "", document.getElementById("blkReason").value = "";
+      document.getElementById("blkFr").value = TODAY_STR, document.getElementById("blkTo").value = "", document.getElementById("blkReason").value = "", document.getElementById("blkPriv").checked = !1;
       const e = "admin" === currentUser.role,
         n = document.getElementById("blkMember"),
         o = e ? members : [members.find(e => e.id === currentUser.id) || {
@@ -8827,7 +8847,9 @@
           from: e,
           to: n,
           scope: "members",
-          mids: [o]
+          mids: [o],
+          reason_private: document.getElementById("blkPriv").checked,
+          created_by: currentUser.id
         },
         d = document.querySelector("#blkMod .btn-p");
       d && (d.disabled = !0, d.textContent = "Saving…");
@@ -8835,7 +8857,7 @@
       if (d && (d.disabled = !1, d.textContent = t("Block Days") || "Block Days"), !c) return void(s && (s.textContent = "Could not save — check you have the right permissions (admin may need to apply the latest RLS migration in Supabase).", s.style.display = ""));
       await loadBlackouts(), blackouts.find(e => e.id === c.id) || (blackouts = [...blackouts, c], _boMapVer++);
       const u = e + (n && n !== e ? " – " + n : "");
-      logCalChange("created", "blackout", c.id, `${l} blocked: ${u}${a?" — "+a:""}`, _rangeImpactsEvent(e, n)), closeMod("blkMod"), renderBOList(), renderCal(), renderCalChangelog().catch(() => {}), syncBOPill(), toast2("Days blocked!")
+      logCalChange("created", "blackout", c.id, `${l} blocked: ${u}${a&&!r.reason_private?" — "+a:""}`, _rangeImpactsEvent(e, n)), closeMod("blkMod"), renderBOList(), renderCal(), renderCalChangelog().catch(() => {}), syncBOPill(), toast2("Days blocked!")
     }
 
     function togBOMc(e) {
@@ -8856,17 +8878,20 @@
       e.style.display = o ? "" : "none", t && (t.style.transform = o ? "rotate(180deg)" : ""), n && n.setAttribute("aria-expanded", o ? "true" : "false")
     }
 
-    function renderBOList() {
-      const boHtml = l => l.length ? [...l].sort((e, t) => e.from.localeCompare(t.from)).map(e => {
+    function _boItemsHtml(l) {
+      return l.length ? [...l].sort((e, t) => e.from.localeCompare(t.from)).map(e => {
         const t = fmtD(e.from),
           n = e.to !== e.from ? ` → ${fmtD(e.to)}` : "",
           o = "members" === e.scope ? `<div style="font-size:var(--t-2xs);color:var(--ink3);margin-top:2px">${e.mids.map(e=>members.find(t=>t.id===e)?.name.split(" ")[0]).filter(Boolean).join(", ")}</div>` : "",
           a = e.source_concert_id ? `<span class="pill pgray">${window.t("From concert")}</span>` : "",
           s = canManageBO(e) ? `<button class="btn-ic btn" onclick="editBO('${e.id}')" aria-label="Edit blocked days" style="width:27px;height:27px"><svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M11 2l3 3-8 8H3v-3L11 2z"/></svg></button><button class="btn-ic btn" onclick="delBO('${e.id}')" aria-label="Delete blocked days" style="width:27px;height:27px;color:var(--r);border-color:var(--r2)"><svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 4h12M5 4V2h6v2M6 7v5M10 7v5M3 4l1 10h8l1-10"/></svg></button>` : "";
-        return `<div class="boit"><div class="bost" style="background:${"group"===e.scope?"var(--r)":"var(--bl)"}"></div><div class="bobd"><div class="bola">${esc(e.label)}</div><div class="boda">${t}${n}</div>${o}</div><div style="display:flex;align-items:center;gap:5px;flex-shrink:0">${a}<span class="pill ${"group"===e.scope?"pr":"pbl"}">${"group"===e.scope?window.t("Whole group"):`${e.mids.length} ${window.t(1!==e.mids.length?"members":"member")}`}</span>${s}</div></div>`
-      }).join("") : '<div class="es" style="padding:20px"><div class="es-ico">' + ricon("cal", 26) + `</div><h3>${window.t("No blackout periods")}</h3><p>${window.t("Add holidays, closures, or absences.")}</p></div>`;
+        return `<div class="boit"><div class="bost" style="background:${"group"===e.scope?"var(--r)":"var(--bl)"}"></div><div class="bobd"><div class="bola">${e.reason_private?"🔒 ":""}${esc(e.label||window.t("Private"))}</div><div class="boda">${t}${n}</div>${o}</div><div style="display:flex;align-items:center;gap:5px;flex-shrink:0">${a}<span class="pill ${"group"===e.scope?"pr":"pbl"}">${"group"===e.scope?window.t("Whole group"):`${e.mids.length} ${window.t(1!==e.mids.length?"members":"member")}`}</span>${s}</div></div>`
+      }).join("") : '<div class="es" style="padding:20px"><div class="es-ico">' + ricon("cal", 26) + `</div><h3>${window.t("No blackout periods")}</h3><p>${window.t("Add holidays, closures, or absences.")}</p></div>`
+    }
+
+    function renderBOList() {
       const e = document.getElementById("boList");
-      e && (e.innerHTML = boHtml(blackouts));
+      e && (e.innerHTML = _boItemsHtml(blackouts));
       // Calendar list: drop periods that ended more than a week ago.
       const t = new Date(TODAY_STR + "T12:00:00");
       t.setDate(t.getDate() - 7);
@@ -8874,7 +8899,27 @@
         o = blackouts.filter(e => (e.to || e.from) >= n),
         a = document.getElementById("calBoList"),
         s = document.getElementById("calBoCount");
-      a && (a.innerHTML = boHtml(o)), s && (s.textContent = o.length)
+      a && (a.innerHTML = _boItemsHtml(o)), s && (s.textContent = o.length), renderMpBOList()
+    }
+
+    // My Profile: only this user's personal blocks (not group-wide closures).
+    function renderMpBOList() {
+      const e = document.getElementById("mpBoList");
+      e && (e.innerHTML = _boItemsHtml(blackouts.filter(e => "members" === e.scope && e.mids.includes(currentUser.id))))
+    }
+
+    // Optional-section display preferences (per device, hidden by default).
+    function getDisplayPref(e) {
+      return "1" === localStorage.getItem(e)
+    }
+
+    function applyDisplayPrefs() {
+      const e = document.getElementById("dshActivityCard");
+      e && (e.style.display = getDisplayPref("showRecentActivity") ? "" : "none")
+    }
+
+    function saveDisplayPrefs() {
+      localStorage.setItem("showRecentActivity", document.getElementById("mpShowActivity").checked ? "1" : "0"), localStorage.setItem("showCalChangelog", document.getElementById("mpShowChangelog").checked ? "1" : "0"), applyDisplayPrefs(), renderCalChangelog().catch(() => {})
     }
     const DN = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"],
       MN = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
@@ -9086,7 +9131,8 @@
       // Admins only — non-admins never see the section and never fetch it.
       // Gate runs before the activeBandId check so the section stays hidden
       // even when no group is loaded yet.
-      if (_s.style.display = "admin" === currentUser.role ? "" : "none", "admin" !== currentUser.role) return;
+      const _show = "admin" === currentUser.role && getDisplayPref("showCalChangelog");
+      if (_s.style.display = _show ? "" : "none", !_show) return;
       if (!activeBandId) return;
       const e = parseInt(document.getElementById("clDaysFilter")?.value || "10"),
         t = document.getElementById("clOwnerFilter")?.value || "",
@@ -10450,6 +10496,7 @@
     }
 
     function renderDashboard() {
+      applyDisplayPrefs();
       const e = ++_dshGen,
         n = getActiveBand(),
         o = document.getElementById("dshS"),
@@ -11052,7 +11099,7 @@
       const u = document.getElementById("mpNameDisplay"),
         s = document.getElementById("mpRoleDisplay");
       u && (u.textContent = [l, r].filter(Boolean).join(" ") || "Your Profile"), s && (s.textContent = n ? (n.instrument ? t(n.instrument) + " · " : "") + t("admin" === n.role ? "Admin" : "guest" === n.role ? "Guest" : "Member") : t("Member")), populateCountrySelects(), document.getElementById("mpFirst").value = l, document.getElementById("mpLast").value = r, document.getElementById("mpBday").value = o.bday || n?.bday || a.bday || "", document.getElementById("mpNat").value = o.nat || n?.nat || a.nationality || "", document.getElementById("mpEmail").value = currentUser.email || "", document.getElementById("mpCountry").value = o.country || n?.country || a.country || "", initPhoneField("mpPhoneCc", "mpPhoneNum", o.phone || [n?.phoneDial, n?.phoneNum].filter(Boolean).join(" ") || [a.phone_dial, a.phone_number].filter(Boolean).join(" ") || ""), document.getElementById("mpBio").value = o.bio || n?.bio || a.bio || "", renderMpNatFlag(), populateInstrumentSelects(), document.getElementById("mpInst1").value = n?.instrument || currentUser.instrument || a.instrument || "", renderInstPicker("mpInst1"), document.getElementById("mpInst2").value = n?.inst2 || a.instrument2 || "", renderInstPicker("mpInst2"), renderMpInstPreview(), document.getElementById("mpVocals").value = n?.vocals || a.vocals || "None";
-      document.getElementById("mpAvailDays").innerHTML = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((e, o) => `<div class="dtog ${(n?.avail||currentUser.avail||[1,1,1,1,1,1,1])[o]?"on":""}" onclick="this.classList.toggle('on')" data-di="${o}">${t(e)}</div>`).join(""), document.getElementById("mpGear").value = o.gear || n?.gear || a.gear || "", document.getElementById("mpSpotify").value = o.spotify || n?.spotify || a.spotify_url || "", document.getElementById("mpApple").value = o.apple || n?.apple || a.apple_url || "", document.getElementById("mpYoutube").value = o.youtube || n?.youtube || a.youtube_url || "", document.getElementById("mpInstagram").value = o.instagram || n?.instagram || a.instagram_url || "", document.getElementById("mpFacebook").value = o.facebook || n?.facebook || a.facebook_url || "", document.getElementById("mpWebsite").value = o.website || n?.website || a.website_url || "", renderMpReadViews(), ["personal", "music", "avail", "links"].forEach(e => mpCancel(e))
+      document.getElementById("mpAvailDays").innerHTML = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((e, o) => `<div class="dtog ${(n?.avail||currentUser.avail||[1,1,1,1,1,1,1])[o]?"on":""}" onclick="this.classList.toggle('on')" data-di="${o}">${t(e)}</div>`).join(""), document.getElementById("mpGear").value = o.gear || n?.gear || a.gear || "", document.getElementById("mpSpotify").value = o.spotify || n?.spotify || a.spotify_url || "", document.getElementById("mpApple").value = o.apple || n?.apple || a.apple_url || "", document.getElementById("mpYoutube").value = o.youtube || n?.youtube || a.youtube_url || "", document.getElementById("mpInstagram").value = o.instagram || n?.instagram || a.instagram_url || "", document.getElementById("mpFacebook").value = o.facebook || n?.facebook || a.facebook_url || "", document.getElementById("mpWebsite").value = o.website || n?.website || a.website_url || "", renderMpReadViews(), renderMpBOList(), ["personal", "music", "avail", "links"].forEach(e => mpCancel(e))
     }
 
     function mpEdit(e) {
@@ -11283,7 +11330,11 @@
       const e = document.getElementById("settDefaultView");
       e && (e.value = localStorage.getItem("defaultView") || "dashboard");
       const t = document.getElementById("settAppearance");
-      t && (t.value = localStorage.getItem("appearance") || "default"), _obwUserMeta().then(e => {
+      t && (t.value = localStorage.getItem("appearance") || "default");
+      const _sa = document.getElementById("mpShowActivity"),
+        _sc = document.getElementById("mpShowChangelog"),
+        _scr = document.getElementById("mpShowChangelogRow");
+      _sa && (_sa.checked = getDisplayPref("showRecentActivity")), _sc && (_sc.checked = getDisplayPref("showCalChangelog"), _sc.disabled = "admin" !== currentUser.role), _scr && (_scr.style.opacity = "admin" === currentUser.role ? "" : ".55"), _obwUserMeta().then(e => {
         const t = document.getElementById("settDemoCard");
         t && (t.style.display = e.demo_band_id ? "" : "none")
       })
