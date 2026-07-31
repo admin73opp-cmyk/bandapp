@@ -30,7 +30,12 @@ const RehearsalsDB = {
   },
 
   async upsert(rehearsal) {
-    const { month, day, year, photos, start, end, setlistId, _ts, ...fields } = rehearsal;
+    // rsvps/myRsvp are attached to loaded rehearsals by loadRehearsals() but are
+    // NOT columns — RSVPs live in the separate rehearsal_rsvps table. Any caller
+    // that spreads a loaded rehearsal (cancel, link/unlink a setlist) would
+    // otherwise send them as columns and Postgres rejects the whole write.
+    // Anything added to a rehearsal object client-side must be stripped here.
+    const { month, day, year, photos, start, end, setlistId, _ts, rsvps, myRsvp, ...fields } = rehearsal;
     fields.start_time = start;
     fields.end_time   = end;
     fields.setlist_id = setlistId || null;
