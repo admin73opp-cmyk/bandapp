@@ -38,23 +38,54 @@ function fold(line: string): string {
   return out.join('\r\n')
 }
 
-// "YYYY-MM-DD" + "HH:MM" → floating local "YYYYMMDDTHHMM00" (no Z, no TZID),
-// so the event shows at the band's wall-clock time in every viewer's app.
-function floatingDT(dateStr: string, timeStr: string): string | null {
-  const m = timeStr.match(timeRe)
-  if (!m) return null
-  const [y, mo, d] = dateStr.split('-')
-  return `${y}${mo}${d}T${pad(+m[1])}${pad(+m[2])}00`
+// Times are stored as the band's local wall-clock time. Floating ICS times
+// (no Z, no TZID) are NOT portable: Google Calendar interprets them as UTC in
+// subscribed feeds, shifting every event by the local UTC offset. So we
+// convert wall-clock time in the band's IANA timezone to a real UTC instant
+// and emit "YYYYMMDDTHHMMSSZ", which every client handles identically.
+const FEED_TZ = Deno.env.get('CALENDAR_FEED_TZ') || 'Europe/Brussels'
+
+// Minutes the zone is ahead of UTC at the given instant (DST-aware via Intl).
+function tzOffsetMinutes(tz: string, at: Date): number {
+  const parts = Object.fromEntries(
+    new Intl.DateTimeFormat('en-US', {
+      timeZone: tz, hour12: false,
+      year: 'numeric', month: '2-digit', day: '2-digit',
+      hour: '2-digit', minute: '2-digit', second: '2-digit',
+    }).formatToParts(at).map((p) => [p.type, p.value]),
+  )
+  const asUTC = Date.UTC(+parts.year, +parts.month - 1, +parts.day, +parts.hour % 24, +parts.minute, +parts.second)
+  return Math.round((asUTC - at.getTime()) / 60000)
 }
 
-// Add minutes to a date/time, returning floating "YYYYMMDDTHHMM00".
-function addMinutes(dateStr: string, timeStr: string, mins: number): string | null {
+// Wall-clock "YYYY-MM-DD" + "HH:MM" in tz → UTC Date. Two-pass so DST
+// transitions on the event day resolve to the correct offset. An "24:00"
+// end time rolls naturally into 00:00 the next day via Date.UTC.
+function zonedToUTC(dateStr: string, timeStr: string, tz: string): Date | null {
   const m = timeStr.match(timeRe)
   if (!m) return null
   const [y, mo, d] = dateStr.split('-').map(Number)
-  const base = Date.UTC(y, mo - 1, d, +m[1], +m[2]) + mins * 60000
-  const dt = new Date(base)
-  return `${dt.getUTCFullYear()}${pad(dt.getUTCMonth() + 1)}${pad(dt.getUTCDate())}T${pad(dt.getUTCHours())}${pad(dt.getUTCMinutes())}00`
+  const naive = Date.UTC(y, mo - 1, d, +m[1], +m[2])
+  let guess = new Date(naive - tzOffsetMinutes(tz, new Date(naive)) * 60000)
+  const off = tzOffsetMinutes(tz, guess)
+  if (naive - off * 60000 !== guess.getTime()) guess = new Date(naive - off * 60000)
+  return guess
+}
+
+function utcStamp(dt: Date): string {
+  return `${dt.getUTCFullYear()}${pad(dt.getUTCMonth() + 1)}${pad(dt.getUTCDate())}T${pad(dt.getUTCHours())}${pad(dt.getUTCMinutes())}00Z`
+}
+
+// "YYYY-MM-DD" + "HH:MM" in the band's zone → "YYYYMMDDTHHMM00Z" (UTC).
+function floatingDT(dateStr: string, timeStr: string): string | null {
+  const dt = zonedToUTC(dateStr, timeStr, FEED_TZ)
+  return dt ? utcStamp(dt) : null
+}
+
+// Add minutes to a zoned date/time, returning "YYYYMMDDTHHMM00Z" (UTC).
+function addMinutes(dateStr: string, timeStr: string, mins: number): string | null {
+  const dt = zonedToUTC(dateStr, timeStr, FEED_TZ)
+  return dt ? utcStamp(new Date(dt.getTime() + mins * 60000)) : null
 }
 
 // All-day fallback: DTEND is exclusive, so add one day.
