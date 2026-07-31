@@ -8817,7 +8817,10 @@
     }
 
     function openBlockDaysMod() {
-      document.getElementById("blkFr").value = TODAY_STR, document.getElementById("blkTo").value = "", document.getElementById("blkReason").value = "", document.getElementById("blkPriv").checked = !1;
+      // No prefilled start date: a preselected "today" makes the user's first
+      // tap register as the END of a today-anchored range, which breaks
+      // cross-month selection (tap, navigate month, tap).
+      document.getElementById("blkFr").value = "", document.getElementById("blkTo").value = "", document.getElementById("blkReason").value = "", document.getElementById("blkPriv").checked = !1;
       const e = "admin" === currentUser.role,
         n = document.getElementById("blkMember"),
         o = e ? members : [members.find(e => e.id === currentUser.id) || {
