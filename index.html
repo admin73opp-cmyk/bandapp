@@ -2464,14 +2464,19 @@
       margin: auto
     }
 
+    /* These two used to differ only by 1px vs 1.5px of border on a 16px
+       square — invisible in practice. Individual availability is the common
+       case, so it is quiet: a soft fill, no outline. A full-group day is the
+       rare one worth spotting, so it is a solid saturated block. Both greens
+       come from the theme vars, so this inverts correctly in dark mode. */
     .ac-av {
       background: var(--g2);
-      border: 1px solid var(--g)
+      border: none
     }
 
     .ac-fl {
-      background: var(--g2);
-      border: 1.5px solid var(--g)
+      background: var(--g);
+      border: 1px solid var(--g)
     }
 
     .ac-bo {
@@ -4571,8 +4576,8 @@
               <div class="ch">
                 <div class="ct" data-i18n="Availability">Availability — <span id="calMS">May 2026</span></div>
                 <div style="display:flex;gap:8px;font-size:var(--t-xs);color:var(--ink2)">
-                  <span style="display:inline-flex;align-items:center;gap:3px" data-i18n="Full group"><span style="width:9px;height:9px;border-radius:2px;background:var(--g2);border:1.5px solid #86EFAC;display:inline-block"></span>Full group</span>
-                  <span style="display:inline-flex;align-items:center;gap:3px" data-i18n="Available"><span style="width:9px;height:9px;border-radius:2px;background:var(--g2);border:1px solid #86EFAC;display:inline-block"></span>Available</span>
+                  <span style="display:inline-flex;align-items:center;gap:3px" data-i18n="Full group"><span style="width:9px;height:9px;border-radius:2px;background:var(--g);display:inline-block"></span>Full group</span>
+                  <span style="display:inline-flex;align-items:center;gap:3px" data-i18n="Available"><span style="width:9px;height:9px;border-radius:2px;background:var(--g2);display:inline-block"></span>Available</span>
                   <span style="display:inline-flex;align-items:center;gap:3px" data-i18n="Blackout"><span style="width:9px;height:9px;border-radius:2px;background:var(--r2);border:1px solid #FECACA;display:inline-block"></span>Blackout</span>
                 </div>
               </div>
