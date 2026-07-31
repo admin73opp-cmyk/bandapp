@@ -2065,6 +2065,94 @@
       padding: 3px 2px
     }
 
+    /* Inline date-range picker (blackout modals) */
+    .rp {
+      background: var(--bg);
+      border: 1.5px solid var(--bd);
+      border-radius: var(--rad);
+      padding: 10px 12px 8px
+    }
+
+    .rp-hd {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 4px
+    }
+
+    .rp-t {
+      font-weight: 700;
+      font-size: var(--t-md)
+    }
+
+    .rp-nav {
+      width: 28px;
+      height: 28px;
+      border: none;
+      background: transparent;
+      border-radius: 7px;
+      cursor: pointer;
+      color: var(--ink2);
+      font-size: 16px;
+      line-height: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center
+    }
+
+    .rp-nav:hover {
+      background: var(--a2);
+      color: var(--a)
+    }
+
+    .rp-g {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 2px 0
+    }
+
+    .rp-d {
+      aspect-ratio: 1.15;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: var(--t-sm);
+      font-family: var(--font);
+      border: none;
+      border-radius: 8px;
+      background: transparent;
+      color: var(--ink);
+      cursor: pointer;
+      padding: 0
+    }
+
+    .rp-d:hover {
+      background: var(--a2)
+    }
+
+    .rp-d.td {
+      font-weight: 700;
+      color: var(--a)
+    }
+
+    .rp-d.in {
+      background: var(--a2);
+      border-radius: 0
+    }
+
+    .rp-d.ep {
+      background: var(--a);
+      color: var(--onA);
+      font-weight: 700
+    }
+
+    .rp-sum {
+      font-size: var(--t-xs);
+      color: var(--ink2);
+      text-align: center;
+      margin-top: 6px
+    }
+
     .cd {
       aspect-ratio: 2/1;
       border-radius: 7px;
@@ -5660,8 +5748,7 @@
     <div class="mod">
       <div class="mott" data-i18n="Block Days">Block Days</div>
       <div class="most" data-i18n="Mark a date range when a member is unavailable to rehearse.">Mark a date range when a member is unavailable to rehearse.</div>
-      <div class="fg" data-i18n="From"><label data-i18n="From">From</label><input type="date" id="blkFr"></div>
-      <div class="fg" data-i18n="To (leave blank for single day)"><label>To <span style="font-weight:400;color:var(--ink3)" data-i18n="(leave blank for single day)">(leave blank for single day)</span></label><input type="date" id="blkTo"></div>
+      <div class="fg" data-i18n="Period"><label>Period</label><div class="rp" id="blkRP"></div><input type="hidden" id="blkFr"><input type="hidden" id="blkTo"></div>
       <div class="fg" id="blkMemberWrap" data-i18n="Member"><label data-i18n="Member">Member</label><select id="blkMember"></select></div>
       <div class="fg" data-i18n="Reason (optional)"><label data-i18n="Reason (optional)">Reason <span style="font-weight:400;color:var(--ink3)">(optional)</span></label><textarea id="blkReason" placeholder="Holiday, work trip, event…" data-i18n-placeholder="Holiday, work trip, event…" style="min-height:55px"></textarea></div>
       <div id="blkErr" style="display:none;margin-bottom:10px;padding:10px 13px;background:var(--r2);border:1px solid var(--r);border-radius:var(--rad);font-size:var(--t-sm);color:var(--r)"></div>
@@ -5740,8 +5827,7 @@
         <div class="mott" data-i18n="Blackout Period">Blackout Period</div>
         <div class="most">Block a date range for the whole group or specific members. Excluded from rehearsal suggestions.</div>
         <div class="fg" data-i18n="Label"><label>Label</label><input id="boLab" placeholder="Carnival, School Holiday, Antoine on tour…"></div>
-        <div class="fg" data-i18n="From"><label>From</label><input type="date" id="boFr"></div>
-        <div class="fg" data-i18n="To (leave blank for single day)"><label>To <span style="font-weight:400;color:var(--ink3)">(leave blank for single day)</span></label><input type="date" id="boTo"></div>
+        <div class="fg" data-i18n="Period"><label>Period</label><div class="rp" id="boRP"></div><input type="hidden" id="boFr"><input type="hidden" id="boTo"></div>
         <div class="fg" id="boScRow"><label data-i18n="Who does this affect?">Who does this affect?</label><select id="boSc" onchange="togBOM()">
             <option value="group" data-i18n="Whole group">Whole group</option>
             <option value="members" data-i18n="Specific members only">Specific members only</option>
@@ -8600,7 +8686,7 @@
     }
 
     function openAddBO() {
-      clrBOF(), lockBOScope(!1), showMod("boMod")
+      clrBOF(), lockBOScope(!1), initRangePicker("boRP", "boFr", "boTo"), showMod("boMod")
     }
 
     // Members may only ever touch their own personal block, so the scope and
@@ -8619,7 +8705,7 @@
 
     function editBO(e) {
       const t = blackouts.find(t => t.id === e);
-      t && canManageBO(t) && (document.getElementById("boId").value = t.id, document.getElementById("boLab").value = t.label, document.getElementById("boFr").value = t.from, document.getElementById("boTo").value = t.to, document.getElementById("boSc").value = t.scope, togBOM(), document.querySelectorAll(".bomc").forEach(e => e.classList.toggle("on", t.mids.includes(e.dataset.mid))), lockBOScope("admin" !== currentUser.role), showMod("boMod"))
+      t && canManageBO(t) && (document.getElementById("boId").value = t.id, document.getElementById("boLab").value = t.label, document.getElementById("boFr").value = t.from, document.getElementById("boTo").value = t.to, document.getElementById("boSc").value = t.scope, togBOM(), document.querySelectorAll(".bomc").forEach(e => e.classList.toggle("on", t.mids.includes(e.dataset.mid))), lockBOScope("admin" !== currentUser.role), initRangePicker("boRP", "boFr", "boTo"), showMod("boMod"))
     }
     async function savBO() {
       const e = document.getElementById("boId").value || null,
@@ -8656,6 +8742,54 @@
       document.getElementById("boMR").style.display = "members" === document.getElementById("boSc").value ? "" : "none"
     }
 
+    // Inline one-shot range picker: tap a start date, tap an end date. Writes
+    // into the existing hidden from/to inputs so save/edit logic is untouched.
+    const _rps = {};
+
+    function initRangePicker(e, t, n) {
+      const o = document.getElementById(t).value || TODAY_STR,
+        a = new Date(o + "T12:00:00");
+      _rps[e] = {
+        fid: t,
+        tid: n,
+        y: a.getFullYear(),
+        m: a.getMonth()
+      }, renderRangePicker(e)
+    }
+
+    function rpNav(e, t) {
+      const n = _rps[e];
+      n.m += t, n.m < 0 ? (n.m = 11, n.y--) : n.m > 11 && (n.m = 0, n.y++), renderRangePicker(e)
+    }
+
+    function rpPick(e, t) {
+      const n = _rps[e],
+        o = document.getElementById(n.fid),
+        a = document.getElementById(n.tid),
+        s = o.value;
+      !s || a.value ? (o.value = t, a.value = "") : t < s ? (o.value = t, a.value = s) : a.value = t, renderRangePicker(e)
+    }
+
+    function renderRangePicker(e) {
+      const t = _rps[e],
+        n = document.getElementById(e);
+      if (!t || !n) return;
+      const o = document.getElementById(t.fid).value,
+        a = document.getElementById(t.tid).value || o,
+        s = (new Date(t.y, t.m, 1).getDay() + 6) % 7,
+        i = new Date(t.y, t.m + 1, 0).getDate();
+      let l = `<div class="rp-hd"><button type="button" class="rp-nav" onclick="rpNav('${e}',-1)" aria-label="${window.t("Previous month")}">‹</button><div class="rp-t">${window.t(MN[t.m])} ${t.y}</div><button type="button" class="rp-nav" onclick="rpNav('${e}',1)" aria-label="${window.t("Next month")}">›</button></div><div class="rp-g">`;
+      l += [1, 2, 3, 4, 5, 6, 0].map(e => `<div class="cdl">${window.t(DN[e])}</div>`).join("");
+      for (let d = 0; d < s; d++) l += "<div></div>";
+      for (let d = 1; d <= i; d++) {
+        const ds = `${t.y}-${String(t.m+1).padStart(2,"0")}-${String(d).padStart(2,"0")}`,
+          ep = o && (ds === o || ds === a),
+          inr = o && ds > o && ds < a;
+        l += `<button type="button" class="rp-d${ep?" ep":inr?" in":""}${ds===TODAY_STR?" td":""}" onclick="rpPick('${e}','${ds}')">${d}</button>`
+      }
+      l += `</div><div class="rp-sum">${o?fmtD(o)+(a&&a!==o?" – "+fmtD(a):""):window.t("Tap a start date, then an end date")}</div>`, n.innerHTML = l
+    }
+
     function openBlockDaysMod() {
       document.getElementById("blkFr").value = TODAY_STR, document.getElementById("blkTo").value = "", document.getElementById("blkReason").value = "";
       const e = "admin" === currentUser.role,
@@ -8669,7 +8803,7 @@
         const n = e.id === currentUser.id,
           o = [e.firstName, e.lastName].filter(Boolean).join(" ") || "Me";
         return `<option value="${e.id}"${n?" selected":""}>${o}${n?" ("+t("you")+")":""}</option>`
-      }).join(""), n.disabled = !e, showMod("blkMod")
+      }).join(""), n.disabled = !e, initRangePicker("blkRP", "blkFr", "blkTo"), showMod("blkMod")
     }
     async function saveBlockDays() {
       const e = document.getElementById("blkFr").value,
@@ -8788,7 +8922,7 @@
         t = new Date(o, a, 1).getDay(),
         n = new Date(o, a + 1, 0).getDate(),
         s = members.map(e => getCrossGroupBlocks(e.name));
-      let i = DN.map(e => `<div class="cdl">${e}</div>`).join("");
+      let i = DN.map(e => `<div class="cdl">${window.t(e)}</div>`).join("");
       for (let e = 0; e < t; e++) i += '<div class="cd ce"></div>';
       for (let t = 1; t <= n; t++) {
         const n = `${o}-${String(a+1).padStart(2,"0")}-${String(t).padStart(2,"0")}`,
