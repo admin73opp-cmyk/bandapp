@@ -6061,9 +6061,11 @@
 
     function rsvpCardHtml(e, n, o) {
       if (o) return "";
-      const a = "admin" === currentUser.role,
-        s = rehAttendance(e),
-        i = a && s.total ? `<span class="rsvp-summary" data-action="rsvp-breakdown" title="${t("View attendance")}">${ricon("people",12)} ${s.yes} / ${s.total} ${t("confirmed")}${s.pending?` · ${s.pending} ${t("pending")}`:""}</span>` : "";
+      // Attendance is group coordination, not admin data — every member sees
+      // who is coming. The chevron marks the chip as a button; without it the
+      // pill reads as a static badge and the breakdown goes undiscovered.
+      const s = rehAttendance(e),
+        i = s.total ? `<span class="rsvp-summary" role="button" tabindex="0" data-action="rsvp-breakdown" title="${t("View attendance")}" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();event.stopPropagation();openRsvpBreakdown('${e.id}')}">${ricon("people",12)} ${s.yes} / ${s.total} ${t("confirmed")}${s.pending?` · ${s.pending} ${t("pending")}`:""}<svg width="9" height="9" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true" style="margin-left:2px"><path d="M4 8h8M9 5l3 3-3 3"/></svg></span>` : "";
       if (n) return i;
       const l = e.myRsvp?.status || null;
       return i + `<div class="rsvp-mine" onclick="event.stopPropagation()">\n      <button type="button" class="rsvp-opt${"yes"===l?" on-yes":""}" onclick="setMyRsvp('${e.id}','yes')">${ricon("check",12)} ${t("Yes")}</button>\n      <button type="button" class="rsvp-opt${"no"===l?" on-no":""}" onclick="setMyRsvp('${e.id}','no')">${ricon("x",12)} ${t("No")}</button>\n      <button type="button" class="rsvp-opt${"maybe"===l?" on-maybe":""}" onclick="setMyRsvp('${e.id}','maybe')">${ricon("q",12)} ${t("Maybe")}</button>\n      <input type="text" class="rsvp-note" maxlength="120" placeholder="${t("Add a note (optional)")}" value="${esc(e.myRsvp?.note||"")}" onclick="event.stopPropagation()" onchange="setMyRsvpNote('${e.id}',this.value)">\n    </div>`
