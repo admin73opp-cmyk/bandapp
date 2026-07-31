@@ -2073,6 +2073,12 @@
       padding: 10px 12px 8px
     }
 
+    .rp-months {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(175px, 1fr));
+      gap: 4px 14px
+    }
+
     .rp-hd {
       display: flex;
       align-items: center;
@@ -2082,7 +2088,13 @@
 
     .rp-t {
       font-weight: 700;
-      font-size: var(--t-md)
+      font-size: var(--t-md);
+      white-space: nowrap
+    }
+
+    .rp-navsp {
+      width: 28px;
+      flex-shrink: 0
     }
 
     .rp-nav {
@@ -8801,17 +8813,26 @@
         n = document.getElementById(e);
       if (!t || !n) return;
       const o = document.getElementById(t.fid).value,
-        a = document.getElementById(t.tid).value || o,
-        s = (new Date(t.y, t.m, 1).getDay() + 6) % 7,
-        i = new Date(t.y, t.m + 1, 0).getDate();
-      let l = `<div class="rp-hd"><button type="button" class="rp-nav" onclick="rpNav('${e}',-1)" aria-label="${window.t("Previous month")}">‹</button><div class="rp-t">${window.t(MN[t.m])} ${t.y}</div><button type="button" class="rp-nav" onclick="rpNav('${e}',1)" aria-label="${window.t("Next month")}">›</button></div><div class="rp-g">`;
-      l += [1, 2, 3, 4, 5, 6, 0].map(e => `<div class="cdl">${window.t(DN[e])}</div>`).join("");
-      for (let d = 0; d < s; d++) l += "<div></div>";
-      for (let d = 1; d <= i; d++) {
-        const ds = `${t.y}-${String(t.m+1).padStart(2,"0")}-${String(d).padStart(2,"0")}`,
-          ep = o && (ds === o || ds === a),
-          inr = o && ds > o && ds < a;
-        l += `<button type="button" class="rp-d${ep?" ep":inr?" in":""}${ds===TODAY_STR?" td":""}" onclick="rpPick('${e}','${ds}')">${d}</button>`
+        a = document.getElementById(t.tid).value || o;
+      // Two consecutive months at once: most ranges fit without touching the
+      // arrows, and the window still slides one month per arrow tap.
+      let l = '<div class="rp-months">';
+      for (let k = 0; k < 2; k++) {
+        const y = t.y + Math.floor((t.m + k) / 12),
+          mo = (t.m + k) % 12,
+          s = (new Date(y, mo, 1).getDay() + 6) % 7,
+          i = new Date(y, mo + 1, 0).getDate();
+        let g = [1, 2, 3, 4, 5, 6, 0].map(e => `<div class="cdl">${window.t(DN[e])}</div>`).join("");
+        for (let d = 0; d < s; d++) g += "<div></div>";
+        for (let d = 1; d <= i; d++) {
+          const ds = `${y}-${String(mo+1).padStart(2,"0")}-${String(d).padStart(2,"0")}`,
+            ep = o && (ds === o || ds === a),
+            inr = o && ds > o && ds < a;
+          g += `<button type="button" class="rp-d${ep?" ep":inr?" in":""}${ds===TODAY_STR?" td":""}" onclick="rpPick('${e}','${ds}')">${d}</button>`
+        }
+        const prev = 0 === k ? `<button type="button" class="rp-nav" onclick="rpNav('${e}',-1)" aria-label="${window.t("Previous month")}">‹</button>` : '<span class="rp-navsp"></span>',
+          next = 1 === k ? `<button type="button" class="rp-nav" onclick="rpNav('${e}',1)" aria-label="${window.t("Next month")}">›</button>` : '<span class="rp-navsp"></span>';
+        l += `<div><div class="rp-hd">${prev}<div class="rp-t">${window.t(MAb[mo])} ${y}</div>${next}</div><div class="rp-g">${g}</div></div>`
       }
       l += `</div><div class="rp-sum">${o?fmtD(o)+(a&&a!==o?" – "+fmtD(a):""):window.t("Tap a start date, then an end date")}</div>`, n.innerHTML = l
     }
