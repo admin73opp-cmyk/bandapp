@@ -2689,6 +2689,22 @@
       margin-top: 7px
     }
 
+    /* Rehearsal notes on the card. pre-wrap keeps the line breaks people type
+       into the (now much taller) notes box; clamped to 3 lines so a long note
+       cannot stretch one card out of line with its neighbours — the full text
+       is on View. */
+    .cnote {
+      margin-top: 7px;
+      font-size: var(--t-xs);
+      color: var(--ink2);
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden
+    }
+
     .cactions {
       display: flex;
       flex-direction: column;
@@ -6028,7 +6044,7 @@
         l = e.setlistId && _setlistMap[e.setlistId] || null,
         r = a ? `<span style="margin-left:8px;font-size:var(--t-2xs);padding:2px 7px;border-radius:99px;background:var(--r2);color:var(--r);font-weight:600;vertical-align:middle">${t("Cancelled")}</span>` : o ? `<span style="margin-left:8px;font-size:var(--t-2xs);padding:2px 7px;border-radius:99px;background:var(--bg2);color:var(--ink3);font-weight:600;vertical-align:middle">${t("Past")}</span>` : "",
         d = a || o ? `<button class="btn btn-g btn-sm" data-action="view">${t("View")}</button>` : `<button class="btn btn-g btn-sm" style="color:var(--amb);border-color:var(--amb2)" data-action="cancel">${t("Cancel")}</button>\n      <button class="btn btn-g btn-sm" data-action="view">${t("View")}</button>`;
-      return `<div class="ccrd${o?" past":""}${a?" cancelled":""}" data-rid="${e.id}" onclick="handleRehCardClick(event,'${e.id}')">\n    <div class="cdb">\n      <div class="cdmo">${t(e.month)}</div>\n      <div class="cddy" style="${o||a?"color:var(--ink3)":""}">${e.day}</div>\n      <div class="cdyr">${e.year}</div>\n    </div>\n    <div>\n      <div class="ctitle">${esc(e.title)}${r}</div>\n      <div class="cmeta">\n        ${e.location?`<span class="cmi"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 2C5.8 2 4 3.8 4 6c0 3.5 4 8 4 8s4-4.5 4-8c0-2.2-1.8-4-4-4z"/><circle cx="8" cy="6" r="1.5"/></svg>${mapAddr(e.location)}</span>`:""}\n        <span class="cmi"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M8 4v4l3 2"/></svg>${e.start}–${e.end}</span>\n      </div>\n      <div class="cbadges">\n        <span class="pill ${a?"pr":"pg"}">${a?t("Cancelled"):t("Rehearsal")}</span>\n        ${l&&!a?`<span class="pill pp" style="cursor:pointer;display:inline-flex;align-items:center;gap:4px" data-action="setlist" data-slid="${e.setlistId}" title="Open Set List">♩ ${esc(l.name)} <svg width="9" height="9" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 8h8M9 5l3 3-3 3"/></svg></span>`:""}\n      </div>\n      ${rsvpCardHtml(e,o,a)}\n      ${i}\n    </div>\n    <div class="cactions">${d}</div>\n  </div>`
+      return `<div class="ccrd${o?" past":""}${a?" cancelled":""}" data-rid="${e.id}" onclick="handleRehCardClick(event,'${e.id}')">\n    <div class="cdb">\n      <div class="cdmo">${t(e.month)}</div>\n      <div class="cddy" style="${o||a?"color:var(--ink3)":""}">${e.day}</div>\n      <div class="cdyr">${e.year}</div>\n    </div>\n    <div>\n      <div class="ctitle">${esc(e.title)}${r}</div>\n      <div class="cmeta">\n        ${e.location?`<span class="cmi"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 2C5.8 2 4 3.8 4 6c0 3.5 4 8 4 8s4-4.5 4-8c0-2.2-1.8-4-4-4z"/><circle cx="8" cy="6" r="1.5"/></svg>${mapAddr(e.location)}</span>`:""}\n        <span class="cmi"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M8 4v4l3 2"/></svg>${e.start}–${e.end}</span>\n      </div>\n      <div class="cbadges">\n        <span class="pill ${a?"pr":"pg"}">${a?t("Cancelled"):t("Rehearsal")}</span>\n        ${l&&!a?`<span class="pill pp" style="cursor:pointer;display:inline-flex;align-items:center;gap:4px" data-action="setlist" data-slid="${e.setlistId}" title="Open Set List">♩ ${esc(l.name)} <svg width="9" height="9" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 8h8M9 5l3 3-3 3"/></svg></span>`:""}\n      </div>\n      ${e.notes?`<div class="cnote">${esc(e.notes)}</div>`:""}\n      ${rsvpCardHtml(e,o,a)}\n      ${i}\n    </div>\n    <div class="cactions">${d}</div>\n  </div>`
     }
 
     function handleRehCardClick(e, t) {
