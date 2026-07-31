@@ -9509,17 +9509,33 @@
       return countryLabel(e)
     }
 
+    // Nationality shows a demonym where we have one ("Belg"), falling back to the
+    // localised country name ("België") for countries not in DEMONYMS. Same
+    // stored value either way — the ISO code — so this is display only.
+    function nationalityLabel(e) {
+      if (!e) return "";
+      const t = currentUser.lang || "en";
+      return "undefined" != typeof DEMONYMS && DEMONYMS[e] && DEMONYMS[e][t] || countryLabel(e)
+    }
+
     function populateCountrySelects() {
       // Sort by the LOCALISED label, not the English one — in Dutch "Duitsland"
-      // belongs under D, not where "Germany" sat.
+      // belongs under D, not where "Germany" sat. Nationality sorts on its own
+      // labels, which order differently from the country names.
       const t2 = currentUser.lang || "en",
-        e = ISO_COUNTRIES.map(e => ({
+        build = fn => ISO_COUNTRIES.map(e => ({
           c: e.c,
-          l: countryLabel(e.c)
-        })).sort((e, n) => e.l.localeCompare(n.l, t2)).map(e => `<option value="${e.c}">${esc(e.l)}</option>`).join("");
-      ["pfNat", "pfCountry", "mpNat", "mpCountry", "nbCountry", "obwCountry"].forEach(t => {
+          l: fn(e.c)
+        })).sort((e, n) => e.l.localeCompare(n.l, t2)).map(e => `<option value="${e.c}">${esc(e.l)}</option>`).join(""),
+        countries = build(countryLabel),
+        nats = build(nationalityLabel);
+      ["pfNat", "mpNat"].forEach(t => {
         const n = document.getElementById(t);
-        n && (n.innerHTML = `<option value="">— Select —</option>${e}`)
+        n && (n.innerHTML = `<option value="">— Select —</option>${nats}`)
+      });
+      ["pfCountry", "mpCountry", "nbCountry", "obwCountry"].forEach(t => {
+        const n = document.getElementById(t);
+        n && (n.innerHTML = `<option value="">— Select —</option>${countries}`)
       })
     }
 

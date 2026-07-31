@@ -1498,3 +1498,40 @@ const ISO_COUNTRIES = [{
   f: "🇿🇼",
   n: "Zimbabwe"
 }];
+
+// ── Nationality demonyms ─────────────────────────────────────
+// Intl.DisplayNames gives country NAMES in every language but has no demonym
+// data, and there is no browser API that does. This covers the countries this
+// app's members actually come from; anything not listed falls back to the
+// localised country name, which is still correct — just "België" rather than
+// "Belg".
+//
+// Forms are the bare label you would put on a form. Dutch and German inflect
+// by gender (Belg/Belgische, Belgier/Belgierin) and the app does not store
+// gender, so the base form is used deliberately rather than guessing.
+const DEMONYMS = {
+  BE: { en: "Belgian",      nl: "Belg",          de: "Belgier",       fr: "Belge",          es: "Belga",          it: "Belga",         pt: "Belga" },
+  NL: { en: "Dutch",        nl: "Nederlander",   de: "Niederländer",  fr: "Néerlandais",    es: "Neerlandés",     it: "Olandese",      pt: "Neerlandês" },
+  DE: { en: "German",       nl: "Duitser",       de: "Deutscher",     fr: "Allemand",       es: "Alemán",         it: "Tedesco",       pt: "Alemão" },
+  FR: { en: "French",       nl: "Fransman",      de: "Franzose",      fr: "Français",       es: "Francés",        it: "Francese",      pt: "Francês" },
+  ES: { en: "Spanish",      nl: "Spanjaard",     de: "Spanier",       fr: "Espagnol",       es: "Español",        it: "Spagnolo",      pt: "Espanhol" },
+  IT: { en: "Italian",      nl: "Italiaan",      de: "Italiener",     fr: "Italien",        es: "Italiano",       it: "Italiano",      pt: "Italiano" },
+  PT: { en: "Portuguese",   nl: "Portugees",     de: "Portugiese",    fr: "Portugais",      es: "Portugués",      it: "Portoghese",    pt: "Português" },
+  BR: { en: "Brazilian",    nl: "Braziliaan",    de: "Brasilianer",   fr: "Brésilien",      es: "Brasileño",      it: "Brasiliano",    pt: "Brasileiro" },
+  GB: { en: "British",      nl: "Brit",          de: "Brite",         fr: "Britannique",    es: "Británico",      it: "Britannico",    pt: "Britânico" },
+  IE: { en: "Irish",        nl: "Ier",           de: "Ire",           fr: "Irlandais",      es: "Irlandés",       it: "Irlandese",     pt: "Irlandês" },
+  US: { en: "American",     nl: "Amerikaan",     de: "Amerikaner",    fr: "Américain",      es: "Estadounidense", it: "Statunitense",  pt: "Americano" },
+  CA: { en: "Canadian",     nl: "Canadees",      de: "Kanadier",      fr: "Canadien",       es: "Canadiense",     it: "Canadese",      pt: "Canadense" },
+  AT: { en: "Austrian",     nl: "Oostenrijker",  de: "Österreicher",  fr: "Autrichien",     es: "Austriaco",      it: "Austriaco",     pt: "Austríaco" },
+  CH: { en: "Swiss",        nl: "Zwitser",       de: "Schweizer",     fr: "Suisse",         es: "Suizo",          it: "Svizzero",      pt: "Suíço" },
+  LU: { en: "Luxembourgish",nl: "Luxemburger",   de: "Luxemburger",   fr: "Luxembourgeois", es: "Luxemburgués",   it: "Lussemburghese",pt: "Luxemburguês" },
+  DK: { en: "Danish",       nl: "Deen",          de: "Däne",          fr: "Danois",         es: "Danés",          it: "Danese",        pt: "Dinamarquês" },
+  SE: { en: "Swedish",      nl: "Zweed",         de: "Schwede",       fr: "Suédois",        es: "Sueco",          it: "Svedese",       pt: "Sueco" },
+  NO: { en: "Norwegian",    nl: "Noor",          de: "Norweger",      fr: "Norvégien",      es: "Noruego",        it: "Norvegese",     pt: "Norueguês" },
+  FI: { en: "Finnish",      nl: "Fin",           de: "Finne",         fr: "Finlandais",     es: "Finlandés",      it: "Finlandese",    pt: "Finlandês" },
+  PL: { en: "Polish",       nl: "Pool",          de: "Pole",          fr: "Polonais",       es: "Polaco",         it: "Polacco",       pt: "Polonês" },
+  RO: { en: "Romanian",     nl: "Roemeen",       de: "Rumäne",        fr: "Roumain",        es: "Rumano",         it: "Rumeno",        pt: "Romeno" },
+  MA: { en: "Moroccan",     nl: "Marokkaan",     de: "Marokkaner",    fr: "Marocain",       es: "Marroquí",       it: "Marocchino",    pt: "Marroquino" },
+  TR: { en: "Turkish",      nl: "Turk",          de: "Türke",         fr: "Turc",           es: "Turco",          it: "Turco",         pt: "Turco" },
+  GR: { en: "Greek",        nl: "Griek",         de: "Grieche",       fr: "Grec",           es: "Griego",         it: "Greco",         pt: "Grego" },
+};
