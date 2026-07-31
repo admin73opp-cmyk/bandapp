@@ -8915,6 +8915,12 @@
       // Mon=0, matching the availability array — NOT DN, which is Sun=0.
       DOW_ABBR = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
+    // Members whose birthday (month-day, any year) falls on the given date.
+    function bdayNames(e) {
+      const t = e.slice(5);
+      return members.filter(e => e.bday && e.bday.slice(5) === t).map(e => e.firstName || e.name.split(" ")[0])
+    }
+
     function monthGridHtml(o, a) {
       // One month's day cells. Extracted from renderCal so the full view can
       // render three months from the same code path.
@@ -8926,7 +8932,8 @@
       for (let e = 0; e < t; e++) i += '<div class="cd ce"></div>';
       for (let t = 1; t <= n; t++) {
         const n = `${o}-${String(a+1).padStart(2,"0")}-${String(t).padStart(2,"0")}`,
-          l = calEv[n] || [],
+          bn = bdayNames(n),
+          l = bn.length ? [...calEv[n] || [], "birthday"] : calEv[n] || [],
           r = n === TODAY_STR,
           d = e[n],
           c = l.includes("rehearsal"),
@@ -8967,7 +8974,7 @@
           e && (v += `<div class="cd-xblabel">${e}</div>`, tips.push(e))
         }
         l.forEach(e => {
-          "concert" === e && (v += '<div class="cglyph cglyph-c">★</div>', tips.push(window.t("Concert"))), "rehearsal" === e && (v += '<div class="cglyph cglyph-r">♩</div>', tips.push(window.t("Rehearsal"))), "birthday" === e && (v += '<div class="cdot cdot-b"></div>', tips.push(window.t("Birthday")))
+          "concert" === e && (v += '<div class="cglyph cglyph-c">★</div>', tips.push(window.t("Concert"))), "rehearsal" === e && (v += '<div class="cglyph cglyph-r">♩</div>', tips.push(window.t("Rehearsal"))), "birthday" === e && (v += '<div class="cdot cdot-b"></div>', tips.push(`${window.t("Birthday")}: ${bn.join(", ")}`))
         });
         i += `<div class="${y}"${tips.length?` title="${esc(tips.join(" \u00b7 "))}"`:""} ${d||m||p?"":`onclick="calClk(${t},'${n}',${u})"`}>${v}</div>`
       }
