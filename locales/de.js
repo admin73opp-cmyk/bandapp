@@ -241,6 +241,7 @@ window.DE = {
   'Next month': 'Nächster Monat',
   'To (leave blank for single day)': 'Bis (leer lassen für einen einzelnen Tag)',
   'Whole group': 'Ganze Gruppe',
+  'Periods that ended more than a week ago are hidden.': 'Zeiträume, die vor mehr als einer Woche endeten, werden ausgeblendet.',
   'not available': 'nicht verfügbar',
   'blackout': 'Sperrzeit',
   'other group': 'andere Gruppe',

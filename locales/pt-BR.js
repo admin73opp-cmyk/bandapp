@@ -241,6 +241,7 @@ window.PT_BR = {
   'Next month': 'Mês seguinte',
   'To (leave blank for single day)': 'Até (deixe em branco para um único dia)',
   'Whole group': 'Grupo inteiro',
+  'Periods that ended more than a week ago are hidden.': 'Períodos encerrados há mais de uma semana ficam ocultos.',
   'not available': 'indisponível',
   'blackout': 'período bloqueado',
   'other group': 'outro grupo',

@@ -4747,11 +4747,15 @@
           </div>
 
           <div class="card" id="calBlockedSection" style="margin-top:18px">
-            <div class="ch">
-              <div class="ct" data-i18n="Blocked Periods">Blocked Periods</div>
+            <div class="ch" style="margin-bottom:0;cursor:pointer;user-select:none" role="button" aria-expanded="false" id="calBoHdr" onclick="togCalBO()">
+              <div class="ct" style="display:flex;align-items:center;gap:8px"><span data-i18n="Blocked Periods">Blocked Periods</span><span class="pill pgray" id="calBoCount">0</span></div>
+              <svg id="calBoChev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="transition:transform .15s;color:var(--ink3)" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
             </div>
-            <div style="font-size:var(--t-sm);color:var(--ink2);margin-bottom:12px" data-i18n="Days blocked for the whole group or for individual members. You can change the ones you created yourself.">Days blocked for the whole group or for individual members. You can change the ones you created yourself.</div>
-            <div id="calBoList" style="display:flex;flex-direction:column;gap:7px"></div>
+            <div id="calBoBody" style="display:none;margin-top:12px">
+              <div style="font-size:var(--t-sm);color:var(--ink2);margin-bottom:4px" data-i18n="Days blocked for the whole group or for individual members. You can change the ones you created yourself.">Days blocked for the whole group or for individual members. You can change the ones you created yourself.</div>
+              <div style="font-size:var(--t-xs);color:var(--ink3);margin-bottom:12px" data-i18n="Periods that ended more than a week ago are hidden.">Periods that ended more than a week ago are hidden.</div>
+              <div id="calBoList" style="display:flex;flex-direction:column;gap:7px"></div>
+            </div>
           </div>
 
           <div id="calChangelogSection" style="margin-top:18px">
@@ -8844,8 +8848,16 @@
       return !e.source_concert_id && ("admin" === currentUser.role || "members" === e.scope && 1 === e.mids.length && e.mids[0] === currentUser.id)
     }
 
+    function togCalBO() {
+      const e = document.getElementById("calBoBody"),
+        t = document.getElementById("calBoChev"),
+        n = document.getElementById("calBoHdr"),
+        o = "none" === e.style.display;
+      e.style.display = o ? "" : "none", t && (t.style.transform = o ? "rotate(180deg)" : ""), n && n.setAttribute("aria-expanded", o ? "true" : "false")
+    }
+
     function renderBOList() {
-      const e = blackouts.length ? [...blackouts].sort((e, t) => e.from.localeCompare(t.from)).map(e => {
+      const boHtml = l => l.length ? [...l].sort((e, t) => e.from.localeCompare(t.from)).map(e => {
         const t = fmtD(e.from),
           n = e.to !== e.from ? ` → ${fmtD(e.to)}` : "",
           o = "members" === e.scope ? `<div style="font-size:var(--t-2xs);color:var(--ink3);margin-top:2px">${e.mids.map(e=>members.find(t=>t.id===e)?.name.split(" ")[0]).filter(Boolean).join(", ")}</div>` : "",
@@ -8853,10 +8865,16 @@
           s = canManageBO(e) ? `<button class="btn-ic btn" onclick="editBO('${e.id}')" aria-label="Edit blocked days" style="width:27px;height:27px"><svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M11 2l3 3-8 8H3v-3L11 2z"/></svg></button><button class="btn-ic btn" onclick="delBO('${e.id}')" aria-label="Delete blocked days" style="width:27px;height:27px;color:var(--r);border-color:var(--r2)"><svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 4h12M5 4V2h6v2M6 7v5M10 7v5M3 4l1 10h8l1-10"/></svg></button>` : "";
         return `<div class="boit"><div class="bost" style="background:${"group"===e.scope?"var(--r)":"var(--bl)"}"></div><div class="bobd"><div class="bola">${esc(e.label)}</div><div class="boda">${t}${n}</div>${o}</div><div style="display:flex;align-items:center;gap:5px;flex-shrink:0">${a}<span class="pill ${"group"===e.scope?"pr":"pbl"}">${"group"===e.scope?window.t("Whole group"):`${e.mids.length} ${window.t(1!==e.mids.length?"members":"member")}`}</span>${s}</div></div>`
       }).join("") : '<div class="es" style="padding:20px"><div class="es-ico">' + ricon("cal", 26) + `</div><h3>${window.t("No blackout periods")}</h3><p>${window.t("Add holidays, closures, or absences.")}</p></div>`;
-      ["boList", "calBoList"].forEach(t => {
-        const n = document.getElementById(t);
-        n && (n.innerHTML = e)
-      })
+      const e = document.getElementById("boList");
+      e && (e.innerHTML = boHtml(blackouts));
+      // Calendar list: drop periods that ended more than a week ago.
+      const t = new Date(TODAY_STR + "T12:00:00");
+      t.setDate(t.getDate() - 7);
+      const n = t.toLocaleDateString("en-CA"),
+        o = blackouts.filter(e => (e.to || e.from) >= n),
+        a = document.getElementById("calBoList"),
+        s = document.getElementById("calBoCount");
+      a && (a.innerHTML = boHtml(o)), s && (s.textContent = o.length)
     }
     const DN = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"],
       MN = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],

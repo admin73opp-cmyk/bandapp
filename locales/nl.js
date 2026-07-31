@@ -241,6 +241,7 @@ window.NL = {
   'Next month': 'Volgende maand',
   'To (leave blank for single day)': 'Tot (leeg laten voor één dag)',
   'Whole group': 'Hele groep',
+  'Periods that ended more than a week ago are hidden.': 'Periodes die meer dan een week geleden zijn afgelopen, worden verborgen.',
   'not available': 'niet beschikbaar',
   'blackout': 'geblokkeerd',
   'other group': 'andere groep',

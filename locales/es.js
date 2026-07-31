@@ -241,6 +241,7 @@ window.ES = {
   'Next month': 'Mes siguiente',
   'To (leave blank for single day)': 'Hasta (dejar en blanco para un solo día)',
   'Whole group': 'Todo el grupo',
+  'Periods that ended more than a week ago are hidden.': 'Los períodos que terminaron hace más de una semana se ocultan.',
   'not available': 'no disponible',
   'blackout': 'periodo bloqueado',
   'other group': 'otro grupo',
