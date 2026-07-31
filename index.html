@@ -9477,14 +9477,46 @@
       n && n.classList.remove("open"), o && o.classList.remove("open"), populateLangSelect("settLang", e)
     }
 
-    function isoName(e) {
+    // Country names come from the browser's own CLDR data via Intl.DisplayNames:
+    // ~200 countries in every supported language with no strings to maintain.
+    // Cached per language because constructing DisplayNames is not free and
+    // populateCountrySelects fills six selects at once. Falls back to the
+    // English name in ISO_COUNTRIES if the API is missing or returns nothing.
+    let _cdn = null,
+      _cdnLang = null;
+
+    function countryLabel(e) {
       if (!e) return "";
-      const t = ISO_COUNTRIES.find(t => t.c === e);
-      return t ? t.n : ""
+      const t = currentUser.lang || "en";
+      if (_cdnLang !== t) {
+        _cdnLang = t;
+        try {
+          _cdn = new Intl.DisplayNames(["pt" === t ? "pt-BR" : t], {
+            type: "region"
+          })
+        } catch (n) {
+          _cdn = null
+        }
+      }
+      if (_cdn) try {
+        const n = _cdn.of(e);
+        if (n && n !== e) return n
+      } catch (n) {}
+      return ISO_COUNTRIES.find(t => t.c === e)?.n || e
+    }
+
+    function isoName(e) {
+      return countryLabel(e)
     }
 
     function populateCountrySelects() {
-      const e = ISO_COUNTRIES.map(e => `<option value="${e.c}">${e.n}</option>`).join("");
+      // Sort by the LOCALISED label, not the English one — in Dutch "Duitsland"
+      // belongs under D, not where "Germany" sat.
+      const t2 = currentUser.lang || "en",
+        e = ISO_COUNTRIES.map(e => ({
+          c: e.c,
+          l: countryLabel(e.c)
+        })).sort((e, n) => e.l.localeCompare(n.l, t2)).map(e => `<option value="${e.c}">${esc(e.l)}</option>`).join("");
       ["pfNat", "pfCountry", "mpNat", "mpCountry", "nbCountry", "obwCountry"].forEach(t => {
         const n = document.getElementById(t);
         n && (n.innerHTML = `<option value="">— Select —</option>${e}`)
