@@ -8777,7 +8777,9 @@
     }
 
     // How many months the full calendar view shows, starting at curMonth.
-    const CAL_MONTHS = 3;
+    const CAL_MONTHS = 3,
+      // Mon=0, matching the availability array — NOT DN, which is Sun=0.
+      DOW_ABBR = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
     function monthGridHtml(o, a) {
       // One month's day cells. Extracted from renderCal so the full view can
@@ -8799,8 +8801,19 @@
           p = n < TODAY_STR;
         let g = [];
         if (c && !d && members.length) {
-          const e = getMAvail(o, a, t);
-          g = members.filter((t, n) => !e[n]).map(e => e.firstName || e.name.split(" ")[0])
+          // Carry WHY each member is unavailable. A bare "⚠ Stef" reads as
+          // "Stef is blocked", but that is only one of three possible causes —
+          // the other two are a weekday they never do and another group's
+          // booking. Order matches how getMAvail evaluates them.
+          const av = getMAvail(o, a, t),
+            dw = dowIdx(new Date(o, a, t));
+          g = members.map((mem, ix) => {
+            if (av[ix]) return null;
+            return {
+              nm: mem.firstName || mem.name.split(" ")[0],
+              why: mem.avail && !mem.avail[dw] ? `${window.t("not available")} ${window.t(DOW_ABBR[dw])}` : isMBO(ix, n) ? window.t("blackout") : hasCrossGroupConflict(ix, n) ? window.t("other group") : window.t("unavailable")
+            }
+          }).filter(Boolean)
         }
         let y = "cd";
         r && (y += " cto"), p && (y += " cd-past"), d ? y += " cbo" : l.includes("concert") ? y += " ccon" : c ? y += g.length ? " creh-warn" : " creh" : u ? y += " cfb" : m && (y += " cd-xgroup");
@@ -8809,8 +8822,11 @@
         // in-cell labels are hidden by CSS, so the tooltip is what carries this.
         const tips = [];
         if (u && (v += '<div class="cltn">' + ricon("bolt", 9) + "</div>", tips.push(window.t("Full group"))), d && (v += `<div class="cbol">${d}</div>`, tips.push(d)), g.length) {
-          const e = g.slice(0, 2).join(", ") + (g.length > 2 ? "\u2026" : "");
-          v += `<div class="creh-warn-lbl">\u26a0 ${e}</div>`, tips.push("\u26a0 " + g.join(", "))
+          // One person: show the reason inline, which is the common case and
+          // the whole point. Several: names only \u2014 reasons would overflow the
+          // cell \u2014 with the full breakdown in the tooltip either way.
+          const e = 1 === g.length ? `${g[0].nm} \u2014 ${g[0].why}` : g.slice(0, 2).map(x => x.nm).join(", ") + (g.length > 2 ? "\u2026" : "");
+          v += `<div class="creh-warn-lbl">\u26a0 ${e}</div>`, tips.push("\u26a0 " + g.map(x => `${x.nm} \u2014 ${x.why}`).join(", "))
         }
         if (m && !u) {
           const e = members.reduce((e, t) => getCrossGroupLabel(t.name, n) || e, "");
