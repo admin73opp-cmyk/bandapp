@@ -619,7 +619,7 @@ window.PT_BR = {
   'Opening WhatsApp… 💬': 'Abrindo WhatsApp… 💬',
   'Shared by email + WhatsApp 📣': 'Compartilhado por e-mail + WhatsApp 📣',
   'Add a WhatsApp group link first': 'Adicione primeiro um link de grupo do WhatsApp',
-  'No WhatsApp group linked. Go to Group Profile → WhatsApp Group first.': 'Nenhum grupo do WhatsApp vinculado. Vá para Perfil do Grupo → WhatsApp Group primeiro.',
+  'No WhatsApp group linked. Go to Group Profile → WhatsApp Group first.': 'Nenhum grupo do WhatsApp vinculado. Vá para Perfil do Grupo → Grupo do WhatsApp primeiro.',
   'is now a Member!': 'agora é um Membro!',
   'is now a Guest until': 'agora é um Convidado até',
   'No new songs selected': 'Nenhuma música nova selecionada',
