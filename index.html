@@ -2019,6 +2019,36 @@
       gap: 3px
     }
 
+    /* Three months side by side. auto-fit + minmax means it degrades on its
+       own: 3 across on a desktop, 2 on a narrow window, 1 stacked below ~700px
+       — no breakpoint list to keep in sync. */
+    .cg3 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 18px
+    }
+
+    .calmonth-t {
+      font-size: var(--t-sm);
+      font-weight: 700;
+      letter-spacing: -.01em;
+      margin-bottom: 6px;
+      color: var(--ink2)
+    }
+
+    /* At a third of the width the in-cell text labels no longer fit. They stay
+       in the DOM for the single-month case but are hidden here; the same text
+       is on the cell's title attribute, so nothing is lost. */
+    .cg3 .cbol,
+    .cg3 .creh-warn-lbl,
+    .cg3 .cd-xblabel {
+      display: none
+    }
+
+    .cg3 .cd {
+      min-height: 34px
+    }
+
     .cdl {
       text-align: center;
       font-size: var(--t-2xs);
@@ -4537,7 +4567,7 @@
               <div class="bpl" id="bestList"></div>
             </div>
             <div class="card">
-              <div class="cg" id="calGrid"></div>
+              <div class="cg3" id="calGrid"></div>
               <div class="cal-leg">
                 <div class="li" data-i18n="Concert">
                   <div class="ld2" style="background:var(--a)"></div>Concert
@@ -8714,6 +8744,54 @@
       e && (e.style.display = "compact" === calView && window.innerWidth < 768 && window.innerHeight > window.innerWidth ? "flex" : "none")
     }
 
+    // How many months the full calendar view shows, starting at curMonth.
+    const CAL_MONTHS = 3;
+
+    function monthGridHtml(o, a) {
+      // One month's day cells. Extracted from renderCal so the full view can
+      // render three months from the same code path.
+      const e = getBOMap(),
+        t = new Date(o, a, 1).getDay(),
+        n = new Date(o, a + 1, 0).getDate(),
+        s = members.map(e => getCrossGroupBlocks(e.name));
+      let i = DN.map(e => `<div class="cdl">${e}</div>`).join("");
+      for (let e = 0; e < t; e++) i += '<div class="cd ce"></div>';
+      for (let t = 1; t <= n; t++) {
+        const n = `${o}-${String(a+1).padStart(2,"0")}-${String(t).padStart(2,"0")}`,
+          l = calEv[n] || [],
+          r = n === TODAY_STR,
+          d = e[n],
+          c = l.includes("rehearsal"),
+          u = !d && isFB(o, a, t) && !l.includes("concert") && !c,
+          m = !d && !l.includes("concert") && !c && s.some(e => e.has(n)),
+          p = n < TODAY_STR;
+        let g = [];
+        if (c && !d && members.length) {
+          const e = getMAvail(o, a, t);
+          g = members.filter((t, n) => !e[n]).map(e => e.firstName || e.name.split(" ")[0])
+        }
+        let y = "cd";
+        r && (y += " cto"), p && (y += " cd-past"), d ? y += " cbo" : l.includes("concert") ? y += " ccon" : c ? y += g.length ? " creh-warn" : " creh" : u ? y += " cfb" : m && (y += " cd-xgroup");
+        let v = `<div class="cdn">${t}</div>`;
+        // Collected for the cell's title attribute: in the 3-month layout the
+        // in-cell labels are hidden by CSS, so the tooltip is what carries this.
+        const tips = [];
+        if (u && (v += '<div class="cltn">' + ricon("bolt", 9) + "</div>", tips.push(window.t("Full group"))), d && (v += `<div class="cbol">${d}</div>`, tips.push(d)), g.length) {
+          const e = g.slice(0, 2).join(", ") + (g.length > 2 ? "\u2026" : "");
+          v += `<div class="creh-warn-lbl">\u26a0 ${e}</div>`, tips.push("\u26a0 " + g.join(", "))
+        }
+        if (m && !u) {
+          const e = members.reduce((e, t) => getCrossGroupLabel(t.name, n) || e, "");
+          e && (v += `<div class="cd-xblabel">${e}</div>`, tips.push(e))
+        }
+        l.forEach(e => {
+          "concert" === e && (v += '<div class="cdot cdot-c"></div>', tips.push(window.t("Concert"))), "rehearsal" === e && (v += '<div class="cdot cdot-r"></div>', tips.push(window.t("Rehearsal"))), "birthday" === e && (v += '<div class="cdot cdot-b"></div>', tips.push(window.t("Birthday")))
+        });
+        i += `<div class="${y}"${tips.length?` title="${esc(tips.join(" \u00b7 "))}"`:""} ${d||m||p?"":`onclick="calClk(${t},'${n}',${u})"`}>${v}</div>`
+      }
+      return i
+    }
+
     function renderCal() {
       const e = document.getElementById("calNoGroup"),
         n = document.getElementById("calContent");
@@ -8721,47 +8799,18 @@
       e && (e.style.display = "none"), n && (n.style.display = "");
       const o = curMonth.getFullYear(),
         a = curMonth.getMonth(),
-        s = `${t(MN[a])} ${o}`;
+        s = `${window.t(MN[a])} ${o}`;
       document.getElementById("calLbl").textContent = s;
       const i = document.getElementById("calMS");
       if (i && (i.textContent = s), "full" === calView) {
-        const e = getBOMap(),
-          t = new Date(o, a, 1).getDay(),
-          n = new Date(o, a + 1, 0).getDate(),
-          s = members.map(e => getCrossGroupBlocks(e.name));
-        let i = DN.map(e => `<div class="cdl">${e}</div>`).join("");
-        for (let e = 0; e < t; e++) i += '<div class="cd ce"></div>';
-        for (let t = 1; t <= n; t++) {
-          const n = `${o}-${String(a+1).padStart(2,"0")}-${String(t).padStart(2,"0")}`,
-            l = calEv[n] || [],
-            r = n === TODAY_STR,
-            d = e[n],
-            c = l.includes("rehearsal"),
-            u = !d && isFB(o, a, t) && !l.includes("concert") && !c,
-            m = !d && !l.includes("concert") && !c && s.some(e => e.has(n)),
-            p = n < TODAY_STR;
-          let g = [];
-          if (c && !d && members.length) {
-            const e = getMAvail(o, a, t);
-            g = members.filter((t, n) => !e[n]).map(e => e.firstName || e.name.split(" ")[0])
-          }
-          let y = "cd";
-          r && (y += " cto"), p && (y += " cd-past"), d ? y += " cbo" : l.includes("concert") ? y += " ccon" : c ? y += g.length ? " creh-warn" : " creh" : u ? y += " cfb" : m && (y += " cd-xgroup");
-          let v = `<div class="cdn">${t}</div>`;
-          if (u && (v += '<div class="cltn">' + ricon("bolt", 9) + "</div>"), d && (v += `<div class="cbol">${d}</div>`), g.length) {
-            const e = g.slice(0, 2).join(", ") + (g.length > 2 ? "…" : "");
-            v += `<div class="creh-warn-lbl">⚠ ${e}</div>`
-          }
-          if (m && !u) {
-            const e = members.reduce((e, t) => getCrossGroupLabel(t.name, n) || e, "");
-            e && (v += `<div class="cd-xblabel">${e}</div>`)
-          }
-          l.forEach(e => {
-            "concert" === e && (v += '<div class="cdot cdot-c"></div>'), "rehearsal" === e && (v += '<div class="cdot cdot-r"></div>'), "birthday" === e && (v += '<div class="cdot cdot-b"></div>')
-          });
-          i += `<div class="${y}" ${d||m||p?"":`onclick="calClk(${t},'${n}',${u})"`}>${v}</div>`
+        // Three months from the anchor forward — planning runs forward, so the
+        // current month plus the next two is the useful window.
+        let h = "";
+        for (let k = 0; k < CAL_MONTHS; k++) {
+          const dt = new Date(o, a + k, 1);
+          h += `<div class="calmonth"><div class="calmonth-t">${window.t(MN[dt.getMonth()])} ${dt.getFullYear()}</div><div class="cg">${monthGridHtml(dt.getFullYear(), dt.getMonth())}</div></div>`
         }
-        document.getElementById("calGrid").innerHTML = i, renderBest()
+        document.getElementById("calGrid").innerHTML = h, renderBest()
       } else renderAvail()
     }
 
