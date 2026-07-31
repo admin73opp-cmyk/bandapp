@@ -8954,7 +8954,10 @@
         i = (document.getElementById("rmNt").value || "").trim() || null,
         l = document.getElementById("rmSlSel")?.value || null,
         r = l && setlists.find(e => e.id === l)?.name || null,
-        d = "whatsapp" !== e && "both" !== e || !t ? null : `🎸 ${n} confirmed!\n📅 ${pendKey}${o?" ⏰ "+o:""}${s?"\n📍 "+s:""}${r?"\n♩ "+r:""}`;
+        // i (notes) is included here as well as in the notify-rehearsal email
+        // below — it was previously passed to email only, so WhatsApp silently
+        // dropped it. Matches shareRehearsal's "\n📝 " format.
+        d = "whatsapp" !== e && "both" !== e || !t ? null : `🎸 ${n} confirmed!\n📅 ${pendKey}${o?" ⏰ "+o:""}${s?"\n📍 "+s:""}${r?"\n♩ "+r:""}${i?"\n📝 "+i:""}`;
       closeMod("rehMod");
       const c = pendKey;
       pendKey = null;
