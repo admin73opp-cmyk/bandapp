@@ -2045,7 +2045,13 @@
       display: none
     }
 
+    /* aspect-ratio must be cleared here. Left at 2/1, a min-height makes the
+       browser derive WIDTH from height (34 x 2 = 68px), pinning every cell to
+       68px regardless of its column — so cells stopped resizing with the
+       window and overflowed into the next column. Width now follows the grid
+       track; min-height keeps the cell tall enough to be clickable. */
     .cg3 .cd {
+      aspect-ratio: auto;
       min-height: 34px
     }
 
