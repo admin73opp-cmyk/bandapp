@@ -269,6 +269,7 @@ These files exist in `supabase/` but may not be in the live DB — verify before
 - `sheet_music_setup.sql` — adds `songs.sheet_music_url`
 - `calendar_changelog.sql` — adds `calendar_changelog` table + RLS
 - `blackouts_member_rls.sql` — allows non-admin members to block their own days
+- `blackouts_private_reason.sql` — adds `reason_private`/`created_by` to blackouts + `blackouts_visible` view that masks private reasons for non-creators. App falls back to the raw table (no privacy enforcement) until this runs.
 
 ## Invite Flow
 - **Edge function**: `invite-member` uses `generateLink({ type: 'invite' })` (NOT `inviteUserByEmail`) to create the auth user + get the invite URL, then sends a branded email via Resend. This gives full control over email content.
