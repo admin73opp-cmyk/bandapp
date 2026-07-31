@@ -395,6 +395,8 @@ window.FR = {
   'Ready to play': 'Prêt à jouer',
   'None yet': 'Aucun pour l\'instant',
   'Available': 'Disponible',
+  'Green = available': 'Vert = disponible',
+  'Gray = unavailable': 'Gris = indisponible',
   'Expired': 'Expiré',
 
   /* ── MEMBERS PAGE ─────────────────────────────────────── */

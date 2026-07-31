@@ -395,6 +395,8 @@ window.IT = {
   'Ready to play': 'Pronto da suonare',
   'None yet': 'Nessuno ancora',
   'Available': 'Disponibile',
+  'Green = available': 'Verde = disponibile',
+  'Gray = unavailable': 'Grigio = non disponibile',
   'Expired': 'Scaduto',
 
   /* ── MEMBERS PAGE ─────────────────────────────────────── */

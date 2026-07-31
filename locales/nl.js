@@ -395,6 +395,8 @@ window.NL = {
   'Ready to play': 'Klaar om te spelen',
   'None yet': 'Nog geen',
   'Available': 'Beschikbaar',
+  'Green = available': 'Groen = beschikbaar',
+  'Gray = unavailable': 'Grijs = niet beschikbaar',
   'Expired': 'Verlopen',
 
   /* ── MEMBERS PAGE ─────────────────────────────────────── */

@@ -395,6 +395,8 @@ window.DE = {
   'Ready to play': 'Spielbereit',
   'None yet': 'Noch keines',
   'Available': 'Verfügbar',
+  'Green = available': 'Grün = verfügbar',
+  'Gray = unavailable': 'Grau = nicht verfügbar',
   'Expired': 'Abgelaufen',
 
   /* ── MEMBERS PAGE ─────────────────────────────────────── */

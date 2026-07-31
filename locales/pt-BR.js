@@ -395,6 +395,8 @@ window.PT_BR = {
   'Ready to play': 'Pronto para tocar',
   'None yet': 'Nenhum ainda',
   'Available': 'Disponível',
+  'Green = available': 'Verde = disponível',
+  'Gray = unavailable': 'Cinza = indisponível',
   'Expired': 'Expirado',
 
   /* ── MEMBERS PAGE ─────────────────────────────────────── */

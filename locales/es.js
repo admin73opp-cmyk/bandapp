@@ -395,6 +395,8 @@ window.ES = {
   'Ready to play': 'Lista para tocar',
   'None yet': 'Ninguno aún',
   'Available': 'Disponible',
+  'Green = available': 'Verde = disponible',
+  'Gray = unavailable': 'Gris = no disponible',
   'Expired': 'Expirado',
 
   /* ── MEMBERS PAGE ─────────────────────────────────────── */
