@@ -7017,6 +7017,7 @@
     }
 
     function toggleSbMinimize() {
+      if (isMobile()) return;
       const e = document.getElementById("sb"),
         t = document.querySelector(".mc"),
         n = e.classList.toggle("minimized");
@@ -7026,10 +7027,16 @@
       } catch (e) {}
     }
 
+    // Minimized sidebar is desktop-only: on phones the sidebar is an
+    // off-canvas overlay and the expand toggle is hidden, so a restored
+    // "minimized" state would be stuck compact. Idempotent — also called
+    // on viewport transitions to apply/strip the state.
     function initSbState() {
+      let e = !1;
       try {
-        "1" === localStorage.getItem("sbMin") && (document.getElementById("sb").classList.add("minimized"), document.querySelector(".mc").classList.add("sb-minimized"))
-      } catch (e) {}
+        e = !isMobile() && "1" === localStorage.getItem("sbMin")
+      } catch (t) {}
+      document.getElementById("sb").classList.toggle("minimized", e), document.querySelector(".mc").classList.toggle("sb-minimized", e)
     }
 
     function toggleSb() {
@@ -9172,7 +9179,7 @@
       })
     }
     window.addEventListener("resize", () => {
-      isPhone() ? ("compact" !== calView ? setCalView("compact") : checkLandscapeHint()) : window.innerWidth < 768 && "full" === calView ? setCalView("compact") : window.innerWidth >= 768 && "compact" === calView ? setCalView("full") : checkLandscapeHint(), "sheet" === libView && setSheetTblWidth(), isMobile() !== _libWasMobile && (_libWasMobile = isMobile(), syncLibViewForViewport(), renderSL()), updateSheetSizeBanner()
+      isPhone() ? ("compact" !== calView ? setCalView("compact") : checkLandscapeHint()) : window.innerWidth < 768 && "full" === calView ? setCalView("compact") : window.innerWidth >= 768 && "compact" === calView ? setCalView("full") : checkLandscapeHint(), "sheet" === libView && setSheetTblWidth(), isMobile() !== _libWasMobile && (_libWasMobile = isMobile(), syncLibViewForViewport(), renderSL(), initSbState()), updateSheetSizeBanner()
     }), window.addEventListener("orientationchange", () => setTimeout(() => {
       // Re-assert on rotation too: some browsers fire orientationchange without
       // a following resize, and a phone must never land on the full month grid.
