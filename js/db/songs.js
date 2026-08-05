@@ -154,6 +154,13 @@ const SongsDB = {
     if (error) { handleDbError(error); }
   },
 
+  // Batched delete — one round-trip for many songs (multi-select delete)
+  async deleteMany(ids) {
+    if (!ids.length) return;
+    const { error } = await supabase.from('songs').delete().in('id', ids);
+    if (error) { handleDbError(error); }
+  },
+
   async upsertNote(songId, note) {
     const { error } = await supabase
       .from('song_notes')
