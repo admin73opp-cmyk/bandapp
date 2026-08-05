@@ -4518,6 +4518,11 @@
                 <path d="M4 6l4 4 4-4" />
               </svg>
             </div>
+            <button class="btn btn-g btn-sm" onclick="renameActiveSetlist()" title="Rename setlist">
+              <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M11.5 2.5l2 2L5 13l-2.7.7L3 11z" />
+              </svg>
+            </button>
             <button class="btn btn-g btn-sm" onclick="deleteActiveSetlist()" style="color:var(--r);border-color:var(--r2)" title="Delete setlist">
               <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
                 <path d="M2 4h12M5 4V2h6v2M6 7v5M10 7v5M3 4l1 10h8l1-10" />
@@ -5462,6 +5467,19 @@
       <div class="moft">
         <button class="btn btn-g" onclick="closeMod('slMod')" data-i18n="Cancel">Cancel</button>
         <button class="btn btn-p" id="slCreateBtn" onclick="const _b=this;_b.disabled=!0;createNewSetList().finally(()=>_b.disabled=!1)" data-i18n="Create Set List">Create Set List</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="mov" id="slRenameMod" style="display:none" onclick="closeMB(event,'slRenameMod')">
+    <div class="mod" style="max-width:420px">
+      <div class="mott" data-i18n="Rename Set List">Rename Set List</div>
+
+      <div class="fg"><label>Set List Title <span style="color:var(--r)">*</span></label><input id="slRenameInput" placeholder="e.g. Blue Note Summer Night"></div>
+
+      <div class="moft">
+        <button class="btn btn-g" onclick="closeMod('slRenameMod')" data-i18n="Cancel">Cancel</button>
+        <button class="btn btn-p" onclick="const _b=this;_b.disabled=!0;saveSlRename().finally(()=>_b.disabled=!1)" data-i18n="Save">Save</button>
       </div>
     </div>
   </div>
@@ -7293,6 +7311,22 @@
       activeSetlistId = t, await loadSetlistSongs(t), slS = getSlS();
       const n = setlists.find(e => e.id === t);
       document.getElementById("slName").textContent = n ? n.name : "Set List", renderSlMeta(), renderSL()
+    }
+    function renameActiveSetlist() {
+      const e = setlists.find(e => e.id === activeSetlistId);
+      if (!e) return;
+      const t = document.getElementById("slRenameInput");
+      t.value = e.name || "", showMod("slRenameMod"), t.focus()
+    }
+    async function saveSlRename() {
+      const e = setlists.find(e => e.id === activeSetlistId);
+      if (!e) return void closeMod("slRenameMod");
+      const t = document.getElementById("slRenameInput").value.trim();
+      if (!t) return void toast2("Please enter a set list title", "w");
+      if (t === e.name) return void closeMod("slRenameMod");
+      const n = await SetlistsDB.upsert({ ...e, name: t });
+      if (!n) return; // handleDbError already toasted; keep the modal open
+      e.name = n.name, closeMod("slRenameMod"), document.getElementById("slName").textContent = e.name, renderSLDropdown(), renderSlMeta(), renderConcerts(), renderRehearsals(), renderDashboard(), toast2("Set list renamed")
     }
     async function deleteActiveSetlist() {
       const e = setlists.find(e => e.id === activeSetlistId);

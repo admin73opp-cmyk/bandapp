@@ -578,6 +578,8 @@ window.DE = {
   'Order updated': 'Reihenfolge aktualisiert',
   'Note saved': 'Notiz gespeichert',
   'Set list deleted': 'Setlist gelöscht',
+  'Rename Set List': 'Setlist umbenennen',
+  'Set list renamed': 'Setlist umbenannt',
   'Song hidden from setlists': 'Song in Setlists ausgeblendet',
   'Song visible again': 'Song wieder sichtbar',
   'Song deleted': 'Song gelöscht',

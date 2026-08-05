@@ -578,6 +578,8 @@ window.ES = {
   'Order updated': 'Orden actualizado',
   'Note saved': 'Nota guardada',
   'Set list deleted': 'Setlist eliminada',
+  'Rename Set List': 'Renombrar setlist',
+  'Set list renamed': 'Setlist renombrada',
   'Song hidden from setlists': 'Canción oculta en las setlists',
   'Song visible again': 'Canción visible de nuevo',
   'Song deleted': 'Canción eliminada',

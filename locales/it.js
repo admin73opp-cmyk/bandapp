@@ -578,6 +578,8 @@ window.IT = {
   'Order updated': 'Ordine aggiornato',
   'Note saved': 'Nota salvata',
   'Set list deleted': 'Setlist eliminata',
+  'Rename Set List': 'Rinomina setlist',
+  'Set list renamed': 'Setlist rinominata',
   'Song hidden from setlists': 'Brano nascosto dalle setlist',
   'Song visible again': 'Brano di nuovo visibile',
   'Song deleted': 'Brano eliminato',

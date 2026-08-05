@@ -578,6 +578,8 @@ window.PT_BR = {
   'Order updated': 'Ordem atualizada',
   'Note saved': 'Nota salva',
   'Set list deleted': 'Setlist excluída',
+  'Rename Set List': 'Renomear setlist',
+  'Set list renamed': 'Setlist renomeada',
   'Song hidden from setlists': 'Música ocultada dos setlists',
   'Song visible again': 'Música visível novamente',
   'Song deleted': 'Música excluída',

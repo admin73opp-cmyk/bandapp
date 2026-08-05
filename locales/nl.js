@@ -578,6 +578,8 @@ window.NL = {
   'Order updated': 'Volgorde bijgewerkt',
   'Note saved': 'Notitie opgeslagen',
   'Set list deleted': 'Setlist verwijderd',
+  'Rename Set List': 'Setlist hernoemen',
+  'Set list renamed': 'Setlist hernoemd',
   'Song hidden from setlists': 'Nummer verborgen in setlists',
   'Song visible again': 'Nummer weer zichtbaar',
   'Song deleted': 'Nummer verwijderd',
