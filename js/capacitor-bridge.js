@@ -47,6 +47,19 @@ function _handleDeepLink(url) {
   if (inviteToken) sessionStorage.setItem('inviteToken',   inviteToken);
   if (bandId)      sessionStorage.setItem('pendingBandId', bandId);
 
+  // ── Nothing to act on — leave the UI alone ────────────────────────────────
+  // A plain https://ritovo.net/go universal-link tap (e.g. from a WhatsApp
+  // rehearsal notification) carries no code, no access_token, no invite, and
+  // no band param. On a warm start the app is already running and already
+  // signed in, so there is nothing here for auth.js's onAuthStateChange to
+  // clean up (that only fires on SIGNED_IN / INITIAL_SESSION, not for an
+  // already-authenticated session). Do NOT remove this: without it, every
+  // such tap forces the auth screen on top of a live session and nothing
+  // ever dismisses it again.
+  var hasCode        = !!params.get('code');
+  var hasAccessToken = !!(hash && hash.includes('access_token'));
+  if (!hasCode && !hasAccessToken && !inviteToken && !bandId) return;
+
   // Show the auth loading screen while we exchange the token
   var authScreenEl = document.getElementById('authScreen');
   var loadingEl    = document.getElementById('authLoading');

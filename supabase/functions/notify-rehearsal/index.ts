@@ -25,7 +25,7 @@ serve(async (req) => {
   try {
     const resendKey = Deno.env.get('RESEND_API_KEY')
     const fromEmail = Deno.env.get('FROM_EMAIL') || 'noreply@ritovo.app'
-    const appUrl    = Deno.env.get('APP_URL') || ''
+    const appUrl    = (Deno.env.get('APP_URL') || '').replace(/\/$/, '')
 
     if (!resendKey) return json(req, { error: 'Email service not configured' }, 503)
 
