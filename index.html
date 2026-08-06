@@ -6379,7 +6379,7 @@
       const n = getBandNotifPref(),
         o = !!bandWaLinks[activeBandId];
       if (("whatsapp" === n || "both" === n) && !o) return void toast2("No WhatsApp group linked. Go to Group Profile → WhatsApp Group first.", "w");
-      const a = `🎵 Rehearsal: ${t.title}\n📅 ${t.day} ${t.month} ${t.year} · ${t.start}–${t.end}\n📍 ${t.location}${t.notes?"\n📝 "+t.notes:""}`;
+      const a = withAppLink(`🎵 Rehearsal: ${t.title}\n📅 ${t.day} ${t.month} ${t.year} · ${t.start}–${t.end}\n📍 ${t.location}${t.notes?"\n📝 "+t.notes:""}`);
       ("email" === n || "both" === n) && supabase.functions.invoke("notify-rehearsal", {
         body: {
           band_id: activeBandId,
@@ -7079,7 +7079,7 @@
     function openInviteMessage() {
       const e = getActiveBand(),
         t = currentUser.name,
-        n = `Dear ${[(document.getElementById("invFirstName")?.value||"Musician").trim(),(document.getElementById("invLastName")?.value||"").trim()].filter(Boolean).join(" ")},\n\nI am very happy to invite you to join group "${e?e.name:"our group"}" on Ritovo.\n\nCheers,\n${t}`;
+        n = `Dear ${[(document.getElementById("invFirstName")?.value||"Musician").trim(),(document.getElementById("invLastName")?.value||"").trim()].filter(Boolean).join(" ")},\n\nI am very happy to invite you to join group "${e?e.name:"our group"}" on Ritovo.\n\n${APP_SHARE_URL}\n\nCheers,\n${t}`;
       document.getElementById("invMsgText").value = n;
       const o = document.querySelector(".invopt.on .invl")?.textContent || "Email";
       document.getElementById("invMsgChannel").textContent = o;
@@ -9310,7 +9310,7 @@
         // i (notes) is included here as well as in the notify-rehearsal email
         // below — it was previously passed to email only, so WhatsApp silently
         // dropped it. Matches shareRehearsal's "\n📝 " format.
-        d = "whatsapp" !== e && "both" !== e || !t ? null : `🎸 ${n} confirmed!\n📅 ${pendKey}${o?" ⏰ "+o:""}${s?"\n📍 "+s:""}${r?"\n♩ "+r:""}${i?"\n📝 "+i:""}`;
+        d = "whatsapp" !== e && "both" !== e || !t ? null : withAppLink(`🎸 ${n} confirmed!\n📅 ${pendKey}${o?" ⏰ "+o:""}${s?"\n📍 "+s:""}${r?"\n♩ "+r:""}${i?"\n📝 "+i:""}`);
       closeMod("rehMod");
       const c = pendKey;
       pendKey = null;
@@ -9472,7 +9472,7 @@
       const {
         type: t,
         id: n
-      } = cancelTarget, o = (window.location.origin + "/").replace(/[?#].*/, "").replace(/\/+$/, "");
+      } = cancelTarget, o = APP_SHARE_URL;
       let a = `🚫 Event cancelled. Please check Ritovo for updates: ${o}`,
         s = !1;
       try {
