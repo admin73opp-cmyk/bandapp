@@ -44,5 +44,8 @@
       ]
     }
   ],
-  "rewrites": [{ "source": "/((?!api/)(?!\\.well-known/)(?!.*\\.[a-zA-Z0-9]+$).*)", "destination": "/index.html" }]
+  "rewrites": [
+    { "source": "/go", "destination": "/go.html" },
+    { "source": "/((?!api/)(?!\\.well-known/)(?!.*\\.[a-zA-Z0-9]+$).*)", "destination": "/index.html" }
+  ]
 }

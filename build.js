@@ -125,7 +125,7 @@ const fileMap = {}; // 'js/auth.js' → 'js/auth.a1b2c3d4.js'
   }
 
   // ── Copy standalone legal pages (kept outside the SPA rewrite via .html ext) ──
-  for (const legalFile of ['privacy.html', 'support.html']) {
+  for (const legalFile of ['privacy.html', 'support.html', 'go.html']) {
     if (fs.existsSync(legalFile)) {
       fs.copyFileSync(legalFile, path.join(OUT, legalFile));
       console.log(`  ${legalFile} → dist/${legalFile}`);

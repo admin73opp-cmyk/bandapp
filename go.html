@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Opening Ritovo</title>
+<noscript><meta http-equiv="refresh" content="0;url=/"></noscript>
+<style>
+body{margin:0;display:flex;align-items:center;justify-content:center;height:100vh;
+background:#0C6E6A;color:#fff;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif}
+p{font-size:15px}
+</style>
+</head>
+<body>
+<p>Opening Ritovo&hellip; <a href="/" style="color:#fff">continue in your browser</a></p>
+<script>
+// Where a tap on https://ritovo.net/go actually goes.
+//
+// On iOS WITH the app installed this file never runs: the OS intercepts the tap
+// via the /* universal-link claim in .well-known/apple-app-site-association and
+// opens the native app. Only iOS-without-the-app and non-iOS devices get here.
+//
+// Set IOS_STORE_URL once the App Store listing is live. While it is empty every
+// device falls through to the web app — that is the intended shipping state.
+var IOS_STORE_URL = '';
+var WEB_APP_URL   = '/';
+
+// Pure so it can be exercised directly from test/go-resolver.test.js.
+// maxTouchPoints is a parameter because since iPadOS 13 an iPad reports the
+// desktop macOS user-agent string; touch points are the only way to tell them apart.
+function resolveTarget(ua, maxTouchPoints, storeUrl) {
+  var isIOS = /iPad|iPhone|iPod/.test(ua) ||
+              (/Macintosh/.test(ua) && maxTouchPoints > 1);
+  return (isIOS && storeUrl) ? storeUrl : WEB_APP_URL;
+}
+
+// replace(), not href — the resolver must not enter history or Back bounces here again.
+location.replace(resolveTarget(navigator.userAgent, navigator.maxTouchPoints || 0, IOS_STORE_URL));
+</script>
+</body>
+</html>
