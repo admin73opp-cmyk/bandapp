@@ -56,7 +56,7 @@ export function emailLayout(opts: {
         <tr>
           <td align="center" style="padding-top:24px">
             <p style="margin:0;font-size:12px;color:#aaa">
-              © Ritovo · <a href="${base}" style="color:#aaa;text-decoration:none">ritovo.app</a>
+              © Ritovo · <a href="${base}/go" style="color:#aaa;text-decoration:none">${base.replace(/^https?:\/\//, '')}</a>
             </p>
             ${opts.footer ? `<p style="margin:4px 0 0;font-size:11px;color:#bbb">${opts.footer}</p>` : ''}
           </td>

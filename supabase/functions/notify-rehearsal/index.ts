@@ -144,9 +144,9 @@ serve(async (req) => {
         </td></tr>
       </table>
       ${token ? rsvpButtons(appUrl, token) : ''}
-      ${btn('Open in Ritovo', appUrl)}
+      ${btn('Open in Ritovo', `${appUrl}/go`)}
       <p style="margin:0;font-size:12px;color:#999;line-height:1.6">
-        If the button doesn't work, visit <a href="${appUrl}" style="color:#6C63FF">${appUrl.replace(/\/$/, '')}</a>
+        If the button doesn't work, visit <a href="${appUrl}/go" style="color:#6C63FF">${appUrl.replace(/\/$/, '')}</a>
       </p>`
 
     // Send all emails in parallel

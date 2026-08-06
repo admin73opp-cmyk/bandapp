@@ -161,7 +161,7 @@ serve(async (req) => {
               </td></tr>
             </table>
             ${token ? rsvpButtons(appUrl, token) : ''}
-            ${btn('Open in Ritovo', appUrl)}`
+            ${btn('Open in Ritovo', `${appUrl}/go`)}`
           if (await send(email, subject, body, `You're receiving this because you're a member of ${h(bandName)} on Ritovo.`)) sent++
         }
       }
@@ -265,7 +265,7 @@ serve(async (req) => {
               <p style="margin:0;font-size:15px;color:#1a1a2e"><strong>✅ ${counts.yes} yes &nbsp; ❓ ${counts.maybe} maybe &nbsp; ❌ ${counts.no} no</strong></p>
             </td></tr>
           </table>
-          ${btn('View attendance', appUrl)}`
+          ${btn('View attendance', `${appUrl}/go`)}`
         if (await send(email, subject, body, `You're receiving this because you're an admin of ${h(bandName)} on Ritovo.`)) sent++
       }
       return json(req, { success: true, notified: true, sent })
