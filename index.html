@@ -4519,6 +4519,11 @@
                 <path d="M4 6l4 4 4-4" />
               </svg>
             </div>
+            <button class="btn btn-g btn-sm" onclick="renameActiveSetlist()" title="Rename setlist">
+              <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M11.5 2.5l2 2L5 13l-2.7.7L3 11z" />
+              </svg>
+            </button>
             <button class="btn btn-g btn-sm" onclick="deleteActiveSetlist()" style="color:var(--r);border-color:var(--r2)" title="Delete setlist">
               <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
                 <path d="M2 4h12M5 4V2h6v2M6 7v5M10 7v5M3 4l1 10h8l1-10" />
@@ -4608,6 +4613,7 @@
             <button id="libViewSheet" onclick="setLibView('sheet')" style="padding:4px 13px;border-radius:99px;border:none;font-family:var(--font);font-size:var(--t-xs);font-weight:600;cursor:pointer;transition:all .15s;background:transparent;color:var(--ink2)" data-i18n="Spreadsheet">Spreadsheet
             </button>
           </div>
+          <button class="btn btn-g btn-sm" id="libImportBandBtn" style="display:none" onclick="openLibImportMod()" title="Import songs from another group where you are an admin" data-i18n="⇄ Import from group" data-i18n-title="Import songs from another group where you are an admin">⇄ Import from group</button>
           <button class="btn btn-p btn-sm" onclick="openAddSong()" data-i18n="+ Add Song">+ Add Song</button>
         </div>
 
@@ -4632,6 +4638,7 @@
             <div style="padding:10px 14px;border-bottom:1px solid var(--bd);display:flex;gap:8px;align-items:center;flex-wrap:wrap;background:var(--bg)">
               <span style="font-size:var(--t-xs);font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.06em" data-i18n="Click any cell to edit">Click any cell to edit</span>
               <div style="margin-left:auto;display:flex;gap:6px;flex-wrap:wrap">
+                <button class="btn btn-g btn-sm" id="sheetDelSelBtn" style="display:none;font-size:var(--t-xs);color:var(--r);border-color:var(--r2)" onclick="deleteSelectedSheetRows()"></button>
                 <label class="btn btn-g btn-sm" style="cursor:pointer;font-size:var(--t-xs)" title="Upload Excel (.xlsx) to replace library" data-i18n-title="Upload Excel (.xlsx) to replace library">
                   <span data-i18n="↑ Upload">↑ Upload</span>
                   <input type="file" accept=".xlsx,.xls" style="display:none" onchange="importExcel(event)">
@@ -5463,6 +5470,36 @@
       <div class="moft">
         <button class="btn btn-g" onclick="closeMod('slMod')" data-i18n="Cancel">Cancel</button>
         <button class="btn btn-p" id="slCreateBtn" onclick="const _b=this;_b.disabled=!0;createNewSetList().finally(()=>_b.disabled=!1)" data-i18n="Create Set List">Create Set List</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="mov" id="slRenameMod" style="display:none" onclick="closeMB(event,'slRenameMod')">
+    <div class="mod" style="max-width:420px">
+      <div class="mott" data-i18n="Rename Set List">Rename Set List</div>
+
+      <div class="fg"><label>Set List Title <span style="color:var(--r)">*</span></label><input id="slRenameInput" placeholder="e.g. Blue Note Summer Night"></div>
+
+      <div class="moft">
+        <button class="btn btn-g" onclick="closeMod('slRenameMod')" data-i18n="Cancel">Cancel</button>
+        <button class="btn btn-p" onclick="const _b=this;_b.disabled=!0;saveSlRename().finally(()=>_b.disabled=!1)" data-i18n="Save">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="mov" id="libImportMod" style="display:none" onclick="closeMB(event,'libImportMod')">
+    <div class="mod" style="max-width:420px">
+      <div class="mott" data-i18n="Import Songs from Another Group">Import Songs from Another Group</div>
+      <div class="most" data-i18n="Copies all songs from another group where you are also an admin. Songs already in this library (same title and artist) are skipped.">Copies all songs from another group where you are also an admin. Songs already in this library (same title and artist) are skipped.</div>
+
+      <div class="fg">
+        <label data-i18n="Source group">Source group</label>
+        <select id="libImportBandSel"></select>
+      </div>
+
+      <div class="moft">
+        <button class="btn btn-g" onclick="closeMod('libImportMod')" data-i18n="Cancel">Cancel</button>
+        <button class="btn btn-p" onclick="const _b=this;_b.disabled=!0;importLibFromBand().finally(()=>_b.disabled=!1)" data-i18n="Import">Import</button>
       </div>
     </div>
   </div>
@@ -7000,6 +7037,7 @@
     }
 
     function toggleSbMinimize() {
+      if (isMobile()) return;
       const e = document.getElementById("sb"),
         t = document.querySelector(".mc"),
         n = e.classList.toggle("minimized");
@@ -7009,10 +7047,16 @@
       } catch (e) {}
     }
 
+    // Minimized sidebar is desktop-only: on phones the sidebar is an
+    // off-canvas overlay and the expand toggle is hidden, so a restored
+    // "minimized" state would be stuck compact. Idempotent — also called
+    // on viewport transitions to apply/strip the state.
     function initSbState() {
+      let e = !1;
       try {
-        "1" === localStorage.getItem("sbMin") && (document.getElementById("sb").classList.add("minimized"), document.querySelector(".mc").classList.add("sb-minimized"))
-      } catch (e) {}
+        e = !isMobile() && "1" === localStorage.getItem("sbMin")
+      } catch (t) {}
+      document.getElementById("sb").classList.toggle("minimized", e), document.querySelector(".mc").classList.toggle("sb-minimized", e)
     }
 
     function toggleSb() {
@@ -7294,6 +7338,22 @@
       activeSetlistId = t, await loadSetlistSongs(t), slS = getSlS();
       const n = setlists.find(e => e.id === t);
       document.getElementById("slName").textContent = n ? n.name : "Set List", renderSlMeta(), renderSL()
+    }
+    function renameActiveSetlist() {
+      const e = setlists.find(e => e.id === activeSetlistId);
+      if (!e) return;
+      const t = document.getElementById("slRenameInput");
+      t.value = e.name || "", showMod("slRenameMod"), t.focus()
+    }
+    async function saveSlRename() {
+      const e = setlists.find(e => e.id === activeSetlistId);
+      if (!e) return void closeMod("slRenameMod");
+      const t = document.getElementById("slRenameInput").value.trim();
+      if (!t) return void toast2("Please enter a set list title", "w");
+      if (t === e.name) return void closeMod("slRenameMod");
+      const n = await SetlistsDB.upsert({ ...e, name: t });
+      if (!n) return; // handleDbError already toasted; keep the modal open
+      e.name = n.name, closeMod("slRenameMod"), document.getElementById("slName").textContent = e.name, renderSLDropdown(), renderSlMeta(), renderConcerts(), renderRehearsals(), renderDashboard(), toast2("Set list renamed")
     }
     async function deleteActiveSetlist() {
       const e = setlists.find(e => e.id === activeSetlistId);
@@ -7799,7 +7859,34 @@
         e.textContent = `${songs.length} songs across ${t.size} genres`
       }
       const t = document.getElementById("sbLibCount");
-      t && (t.textContent = songs.length)
+      t && (t.textContent = songs.length);
+      const n = document.getElementById("libImportBandBtn");
+      n && (n.style.display = "Admin" === getActiveBand()?.role && BANDS.some(e => e.id !== activeBandId && "Admin" === e.role) ? "" : "none")
+    }
+
+    function openLibImportMod() {
+      const e = BANDS.filter(e => e.id !== activeBandId && "Admin" === e.role);
+      if (!e.length || "Admin" !== getActiveBand()?.role) return void toast2("You must be an admin of both groups to import songs", "w");
+      document.getElementById("libImportBandSel").innerHTML = e.map(e => `<option value="${e.id}">${esc(e.name)}</option>`).join(""), showMod("libImportMod")
+    }
+    async function importLibFromBand() {
+      const e = document.getElementById("libImportBandSel").value,
+        t = BANDS.find(t => t.id === e);
+      if (!t || "Admin" !== t.role || "Admin" !== getActiveBand()?.role) return void toast2("You must be an admin of both groups to import songs", "w");
+      const n = await SongsDB.fetch(e);
+      if (!n.length) return void toast2("That group's library has no songs", "w");
+      const o = new Set(songs.map(e => `${(e.title||"").toLowerCase().trim()}|${(e.artist||"").toLowerCase().trim()}`)),
+        a = n.filter(e => !o.has(`${(e.title||"").toLowerCase().trim()}|${(e.artist||"").toLowerCase().trim()}`));
+      if (!a.length) return void toast2("All songs from that group are already in this library", "w");
+      try {
+        await SongsDB.upsertMany(a.map(e => ({ ...e, id: void 0, band_id: activeBandId, created_at: void 0 })))
+      } catch (e) {
+        return toast2("Import failed — songs could not be saved. Please try again.", "w"), void console.error("[bandapp] importLibFromBand:", e)
+      }
+      closeMod("libImportMod");
+      const s = n.length - a.length;
+      toast2(`✓ ${a.length} ${window.t("song(s) imported from")} "${t.name}"${s?` · ${s} ${window.t("duplicate(s) skipped")}`:""}`);
+      loadSongs().then(() => { renderLib(), "sheet" === libView && renderSheet(), updateLibCount() }).catch(() => {})
     }
 
     function updateSidebarCounts() {
@@ -7899,7 +7986,7 @@
     }
 
     function sheetTblW() {
-      return 32 + SHEET_COLS.reduce((e, t) => e + sheetColW(t.field), 0) + 36
+      return ("admin" === currentUser.role ? 28 : 0) + 32 + SHEET_COLS.reduce((e, t) => e + sheetColW(t.field), 0) + 36
     }
 
     function setSheetTblWidth() {
@@ -8063,13 +8150,17 @@
       if (!e) return;
       setSheetTblWidth();
       const t = document.getElementById("sheetCols");
-      t && (t.innerHTML = '<col style="width:32px">' + SHEET_COLS.map(e => `<col style="width:${sheetColW(e.field)}px">`).join("") + '<col style="width:36px">');
+      t && (t.innerHTML = ("admin" === currentUser.role ? '<col style="width:28px">' : "") + '<col style="width:32px">' + SHEET_COLS.map(e => `<col style="width:${sheetColW(e.field)}px">`).join("") + '<col style="width:36px">');
       const n = SHEET_COLS.map((e, t) => {
         const n = sheetSortCol === e.field,
           o = n ? "asc" === sheetSortDir ? "▲" : "▼" : "⇅";
         return `<th class="${"sh-hd"+(n?" sort-"+sheetSortDir:"")}" draggable="true" style="width:${sheetColW(e.field)}px;cursor:grab" title="Drag to reorder · Click to sort"\n      ondragstart="colDragStart(event,${t})" ondragend="colDragEnd(event)"\n      ondragover="colDragOver(event)" ondrop="colDrop(event,${t})"\n      onclick="sortSheet('${e.field}')">${e.label||'<span style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap">'+e.field+'</span>'}<span class="sh-sort-icon">${o}</span><div class="sh-resize" onmousedown="startColResize(event,'${e.field}',this.parentElement)" onclick="event.stopPropagation()"></div></th>`
       }).join("");
-      e.innerHTML = `<tr style="background:var(--bg);position:sticky;top:0;z-index:2">\n    <th style="width:32px;padding:8px 6px;border-bottom:2px solid var(--bd);text-align:center;font-size:var(--t-xs);font-weight:700;color:var(--ink3)">#</th>\n    ${n}\n    <th style="width:36px;padding:8px 6px;border-bottom:2px solid var(--bd)"><span style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap">Hide</span></th>\n  </tr>`
+      const o = "admin" === currentUser.role ? (() => {
+        const e = getSortedSongs();
+        return `<th style="width:28px;padding:8px 4px;border-bottom:2px solid var(--bd);text-align:center"><input type="checkbox" aria-label="Select all songs" style="accent-color:var(--a);width:14px;height:14px;cursor:pointer;vertical-align:middle"${e.length&&e.every(e=>_sheetSel.has(e.id))?" checked":""} onchange="sheetSelAll(this)"></th>`
+      })() : "";
+      e.innerHTML = `<tr style="background:var(--bg);position:sticky;top:0;z-index:2">\n    ${o}<th style="width:32px;padding:8px 6px;border-bottom:2px solid var(--bd);text-align:center;font-size:var(--t-xs);font-weight:700;color:var(--ink3)">#</th>\n    ${n}\n    <th style="width:36px;padding:8px 6px;border-bottom:2px solid var(--bd)"><span style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap">Hide</span></th>\n  </tr>`
     }
 
     function renderSheetCell(e, t) {
@@ -8111,8 +8202,45 @@
       renderLibFilters(), renderSheetHead();
       const e = document.getElementById("sheetBody");
       if (!e) return;
+      const t = getSortedSongs(),
+        n = "admin" === currentUser.role;
+      e.innerHTML = t.map((e, t) => `\n    <tr class="sh-row${e.hidden?" hidden-row":""}" data-id="${e.id}">\n      ${n?`<td style="text-align:center;padding:4px"><input type="checkbox" aria-label="Select song — ${esc(e.title)}" style="accent-color:var(--a);width:14px;height:14px;cursor:pointer;vertical-align:middle"${_sheetSel.has(e.id)?" checked":""} data-id="${e.id}" onchange="sheetSelToggle(this)"></td>`:""}\n      <td><div class="sh-cell-num">${t+1}</div></td>\n      ${SHEET_COLS.map(t=>renderSheetCell(e,t.field)).join("")}\n      ${n?`<td style="text-align:center;padding:4px"><button class="btn-ic btn" onclick="deleteSheetRow('${e.id}')" style="width:24px;height:24px;color:var(--r);border-color:var(--r2)" title="Delete"><svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 4h12M5 4V2h6v2M6 7v5M10 7v5M3 4l1 10h8l1-10"/></svg></button></td>`:"<td></td>"}\n    </tr>`).join(""), updateSheetSelUI(), wireSheetUndo(), updateSheetSizeBanner()
+    }
+
+    // ── Multi-select delete (spreadsheet view, admin only) ──────
+    let _sheetSel = new Set;
+
+    function sheetSelToggle(e) {
+      e.checked ? _sheetSel.add(e.dataset.id) : _sheetSel.delete(e.dataset.id), updateSheetSelUI()
+    }
+
+    function sheetSelAll(e) {
       const t = getSortedSongs();
-      e.innerHTML = t.map((e, t) => `\n    <tr class="sh-row${e.hidden?" hidden-row":""}" data-id="${e.id}">\n      <td><div class="sh-cell-num">${t+1}</div></td>\n      ${SHEET_COLS.map(t=>renderSheetCell(e,t.field)).join("")}\n      ${"admin"===currentUser.role?`<td style="text-align:center;padding:4px"><button class="btn-ic btn" onclick="deleteSheetRow('${e.id}')" style="width:24px;height:24px;color:var(--r);border-color:var(--r2)" title="Delete"><svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 4h12M5 4V2h6v2M6 7v5M10 7v5M3 4l1 10h8l1-10"/></svg></button></td>`:"<td></td>"}\n    </tr>`).join(""), wireSheetUndo(), updateSheetSizeBanner()
+      e.checked ? t.forEach(e => _sheetSel.add(e.id)) : t.forEach(e => _sheetSel.delete(e.id)), renderSheet()
+    }
+
+    function updateSheetSelUI() {
+      _sheetSel = new Set([..._sheetSel].filter(e => songs.some(t => t.id === e)));
+      const e = document.getElementById("sheetDelSelBtn");
+      e && (e.style.display = _sheetSel.size ? "" : "none", e.textContent = `🗑 ${window.t("Delete selected")} (${_sheetSel.size})`)
+    }
+
+    async function deleteSelectedSheetRows() {
+      if ("admin" !== currentUser.role) return void toast2("Only admins can delete songs", "w");
+      updateSheetSelUI();
+      const e = [..._sheetSel];
+      if (!e.length) return;
+      // One bulk query instead of per-song songUsedInSetlists() round-trips.
+      // Abort on error: treating songs as unused would cascade-delete them
+      // out of set lists.
+      const { data: t, error: s } = await supabase.from("setlist_songs").select("song_id").in("song_id", e);
+      if (s) return void handleDbError(s);
+      const n = new Set((t || []).map(e => e.song_id)),
+        o = e.filter(e => !n.has(e));
+      if (!o.length) return void toast2("Selected song(s) can't be deleted — they are used in set lists. Remove them from the set list(s) first.", "w");
+      const a = `${window.t("Delete")} ${o.length} ${window.t("song(s)?")}${n.size?`\n${n.size} ${window.t("song(s) used in a set list will be skipped.")}`:""}\n\n${window.t("This cannot be undone.")}`;
+      if (!confirm(a)) return;
+      await SongsDB.deleteMany(o), _sheetSel.clear(), await loadSongs(), renderSheet(), renderLib(), updateLibCount(), toast2(`${o.length} ${window.t("song(s) deleted")}`, "w")
     }
 
     function esc(e) {
@@ -9139,7 +9267,7 @@
       })
     }
     window.addEventListener("resize", () => {
-      isPhone() ? ("compact" !== calView ? setCalView("compact") : checkLandscapeHint()) : window.innerWidth < 768 && "full" === calView ? setCalView("compact") : window.innerWidth >= 768 && "compact" === calView ? setCalView("full") : checkLandscapeHint(), "sheet" === libView && setSheetTblWidth(), isMobile() !== _libWasMobile && (_libWasMobile = isMobile(), syncLibViewForViewport(), renderSL()), updateSheetSizeBanner()
+      isPhone() ? ("compact" !== calView ? setCalView("compact") : checkLandscapeHint()) : window.innerWidth < 768 && "full" === calView ? setCalView("compact") : window.innerWidth >= 768 && "compact" === calView ? setCalView("full") : checkLandscapeHint(), "sheet" === libView && setSheetTblWidth(), isMobile() !== _libWasMobile && (_libWasMobile = isMobile(), syncLibViewForViewport(), renderSL(), initSbState()), updateSheetSizeBanner()
     }), window.addEventListener("orientationchange", () => setTimeout(() => {
       // Re-assert on rotation too: some browsers fire orientationchange without
       // a following resize, and a phone must never land on the full month grid.
