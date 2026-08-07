@@ -6214,6 +6214,60 @@
       }), rehearsals = t, buildCalEv())
     }
 
+    // ── Live refresh — pick up what OTHER members changed ────────────────────
+    // Rehearsals + RSVPs are fetched once by initApp() and afterwards only when
+    // *you* change something (setMyRsvp patches the in-memory array directly).
+    // Another member's Yes/No, an edit, or a cancellation therefore stayed
+    // invisible until the page was re-parsed — i.e. until the app was killed and
+    // relaunched. Refetch when the app returns to the foreground and on a slow
+    // timer while it is open.
+    const REH_POLL_MS = 6e4,
+      REH_REFRESH_FLOOR_MS = 8e3;
+    let _rehLastRefresh = 0,
+      _rehRefreshing = !1;
+
+    // Cheap fingerprint of everything the rehearsal tiles actually draw. Lets a
+    // poll that found nothing new skip the re-render, so the common case never
+    // costs a DOM rebuild (no flicker, no lost scroll position).
+    function _rehSignature() {
+      return rehearsals.map(e => [e.id, e.date, e.start, e.end, e.title, e.location, e.notes, e.setlistId, e.cancelled ? 1 : 0, (e.rsvps || []).map(e => `${e.user_id}:${e.status}:${e.note||""}`).sort().join(",")].join("")).join("")
+    }
+    async function refreshRehearsalsLive() {
+      if (!activeBandId || !currentUser?.id) return;
+      if (document.hidden || !1 === navigator.onLine) return;
+      if (_rehRefreshing || Date.now() - _rehLastRefresh < REH_REFRESH_FLOOR_MS) return;
+      // renderRehearsals() rebuilds the list's innerHTML, which would swallow a
+      // half-typed RSVP note and steal focus. Skip this round; the next tick
+      // retries once the field is no longer focused.
+      const e = document.activeElement;
+      if (e && /^(INPUT|TEXTAREA|SELECT)$/.test(e.tagName)) return;
+      _rehRefreshing = !0;
+      const t = _rehSignature();
+      try {
+        await loadRehearsals(), _rehSignature() !== t && (renderRehearsals(), renderCal(), renderDashboard(), updateSidebarCounts())
+      } catch (e) {
+        console.error("[bandapp] live rehearsal refresh failed:", e)
+      } finally {
+        _rehLastRefresh = Date.now(), _rehRefreshing = !1
+      }
+    }
+    document.addEventListener("visibilitychange", () => {
+      document.hidden || refreshRehearsalsLive()
+    });
+    setInterval(refreshRehearsalsLive, REH_POLL_MS);
+    // iOS/Android shell: WKWebView does fire visibilitychange on background and
+    // foreground, but appStateChange is the signal the native layer guarantees.
+    // Both are throttled by REH_REFRESH_FLOOR_MS, so firing twice is harmless.
+    (function registerAppStateRefresh(tries) {
+      if (!window.Capacitor?.isNativePlatform?.()) return;
+      const App = (window.Capacitor.Plugins || {}).App;
+      // The plugin may not be injected yet on a cold start. Retry briefly, then
+      // give up — visibilitychange still covers the foreground case.
+      App && "function" == typeof App.addListener ? App.addListener("appStateChange", state => {
+        state?.isActive && refreshRehearsalsLive()
+      }) : tries < 100 && setTimeout(() => registerAppStateRefresh(tries + 1), 50)
+    })(0);
+
     function rehAttendance(e) {
       const t = activeMembers(),
         n = {};
