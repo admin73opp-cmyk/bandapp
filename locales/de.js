@@ -81,6 +81,7 @@ window.DE = {
 
   /* ── TOP BAR ──────────────────────────────────────────── */
   'Invite': 'Einladen',
+  '+ Rehearsal': '+ Probe',
   '+ Concert': '+ Konzert',
 
   /* ── PAGE TITLES (nav() map) ──────────────────────────── */

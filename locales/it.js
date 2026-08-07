@@ -81,6 +81,7 @@ window.IT = {
 
   /* ── TOP BAR ──────────────────────────────────────────── */
   'Invite': 'Invita',
+  '+ Rehearsal': '+ Prova',
   '+ Concert': '+ Concerto',
 
   /* ── PAGE TITLES (nav() map) ──────────────────────────── */

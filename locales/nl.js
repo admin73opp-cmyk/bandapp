@@ -81,6 +81,7 @@ window.NL = {
 
   /* ── TOP BAR ──────────────────────────────────────────── */
   'Invite': 'Uitnodigen',
+  '+ Rehearsal': '+ Repetitie',
   '+ Concert': '+ Optreden',
 
   /* ── PAGE TITLES (nav() map) ──────────────────────────── */

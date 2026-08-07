@@ -81,6 +81,7 @@ window.ES = {
 
   /* ── TOP BAR ──────────────────────────────────────────── */
   'Invite': 'Invitar',
+  '+ Rehearsal': '+ Ensayo',
   '+ Concert': '+ Concierto',
 
   /* ── PAGE TITLES (nav() map) ──────────────────────────── */

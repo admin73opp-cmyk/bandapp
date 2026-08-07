@@ -81,6 +81,7 @@ window.PT_BR = {
 
   /* ── TOP BAR ──────────────────────────────────────────── */
   'Invite': 'Convidar',
+  '+ Rehearsal': '+ Ensaio',
   '+ Concert': '+ Show',
 
   /* ── PAGE TITLES (nav() map) ──────────────────────────── */

@@ -81,6 +81,7 @@ window.FR = {
 
   /* ── TOP BAR ──────────────────────────────────────────── */
   'Invite': 'Inviter',
+  '+ Rehearsal': '+ Répétition',
   '+ Concert': '+ Concert',
 
   /* ── PAGE TITLES (nav() map) ──────────────────────────── */
