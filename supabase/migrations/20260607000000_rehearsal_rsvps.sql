@@ -43,15 +43,17 @@ alter table rehearsals add column if not exists rsvp_complete_notified bool not 
 alter table rehearsal_rsvps       enable row level security;
 alter table rehearsal_rsvp_tokens enable row level security;
 
--- rehearsal_rsvps: members read/write their OWN row; admins read ALL rows
--- for rehearsals in bands they administer.
+-- rehearsal_rsvps: members write their OWN row, but the whole group READS every
+-- row — attendance is group coordination, not admin data, and the UI renders it
+-- for everyone. Superseded the original admin-only read; kept in sync here so
+-- re-running this file cannot revert 20260807000000_rehearsal_rsvps_member_visibility.sql.
 drop policy if exists rehearsal_rsvps_select on rehearsal_rsvps;
 create policy rehearsal_rsvps_select on rehearsal_rsvps
   for select using (
     user_id = auth.uid()
     or exists(
       select 1 from rehearsals r
-      where r.id = rehearsal_rsvps.rehearsal_id and is_band_admin(r.band_id)
+      where r.id = rehearsal_rsvps.rehearsal_id and is_band_member(r.band_id)
     )
   );
 
