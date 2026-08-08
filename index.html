@@ -2674,36 +2674,6 @@
       border: 1px solid var(--bd)
     }
 
-    .fbchips {
-      display: flex;
-      gap: 5px;
-      flex-wrap: wrap;
-      margin-top: 11px;
-      padding-top: 11px;
-      border-top: 1px solid var(--bd)
-    }
-
-    .fbc {
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      padding: 4px 10px;
-      border-radius: 99px;
-      background: var(--g2);
-      border: 1.5px solid var(--g);
-      font-size: var(--t-xs);
-      font-weight: 600;
-      color: var(--g);
-      cursor: pointer;
-      transition: all .12s
-    }
-
-    .fbc:hover {
-      background: var(--g);
-      color: #fff;
-      border-color: var(--g)
-    }
-
     .clist {
       display: flex;
       flex-direction: column;
@@ -4766,10 +4736,6 @@
                   </thead>
                   <tbody id="avBody"></tbody>
                 </table>
-              </div>
-              <div class="fbchips">
-                <div class="t1" style="align-self:center;white-space:nowrap;display:inline-flex;align-items:center;gap:3px"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13.2 2.5 5 13.7h5.2L10.8 21.5 19 10.3h-5.2z"/></svg><span data-i18n="Full group">Full group</span>:</div>
-                <div id="fbChips" style="display:flex;gap:5px;flex-wrap:wrap"></div>
               </div>
             </div>
           </div>
@@ -9405,10 +9371,13 @@
       s.forEach(t => {
         const o = `${e}-${String(n+1).padStart(2,"0")}-${String(t).padStart(2,"0")}`;
         a[o] ? l.add(t) : isFB(e, n, t) && i.add(t)
-      }), document.getElementById("avHdr").innerHTML = `<th class="nc2" style="font-size:var(--t-xs);font-weight:700;color:var(--ink3)">${t("Member")}</th>` + s.map(t => {
-        const o = `${e}-${String(n+1).padStart(2,"0")}-${String(t).padStart(2,"0")}`;
+      });
+      const w = DN.map(e => t(e));
+      document.getElementById("avHdr").innerHTML = `<th class="nc2" style="font-size:var(--t-xs);font-weight:700;color:var(--ink3)">${t("Member")}</th>` + s.map(t => {
+        const o = `${e}-${String(n+1).padStart(2,"0")}-${String(t).padStart(2,"0")}`,
+          d = w[new Date(e, n, t).getDay()];
         let s = "";
-        return !(o < TODAY_STR) && i.has(t) && (s = "cfl"), l.has(t) && (s = "cbl"), `<th class="${s}" title="${a[o]||""}">${t}${l.has(t)?"*":""}</th>`
+        return !(o < TODAY_STR) && i.has(t) && (s = "cfl"), l.has(t) && (s = "cbl"), `<th class="${s}" title="${a[o]||""}"><div style="font-weight:500;opacity:.6">${d}</div>${t}${l.has(t)?"*":""}</th>`
       }).join(""), document.getElementById("avBody").innerHTML = members.map((t, o) => {
         const a = s.map(a => {
             const s = `${e}-${String(n+1).padStart(2,"0")}-${String(a).padStart(2,"0")}`,
@@ -9425,17 +9394,7 @@
           }).join(""),
           r = !!CROSS_GROUP_MEMBERS[t.name] ? '<span title="Member of multiple groups" style="font-size:.55rem;color:var(--amb);font-weight:700;margin-left:3px">⊘</span>' : "";
         return `<tr><td class="nc2" style="position:sticky;left:0;background:var(--w);z-index:1"><div style="display:flex;align-items:center;gap:7px"><div class="mav2" style="width:21px;height:21px;font-size:.55rem;background:${t.color};color:${_ink(t.color)}">${esc(t.init)}</div><span style="font-size:var(--t-sm);font-weight:500">${esc(t.name.split(" ")[0])}</span>${r}</div></td>${a}</tr>`
-      }).join("");
-      const r = document.getElementById("fbChips"),
-        d = [...i].sort((e, t) => e - t).filter(t => {
-          const o = `${e}-${String(n+1).padStart(2,"0")}-${String(t).padStart(2,"0")}`,
-            a = calEv[o] || [];
-          return o >= TODAY_STR && !a.includes("rehearsal") && !a.includes("concert")
-        });
-      r.innerHTML = d.length ? d.map(o => {
-        const a = t(DN[new Date(e, n, o).getDay()]);
-        return `<div class="fbc" onclick="openRehMod(${o},'${e}-${String(n+1).padStart(2,"0")}-${String(o).padStart(2,"0")}',true)">${ricon("bolt",10)} ${a} ${o} ${t(MAb[n])}</div>`
-      }).join("") : `<span style="font-size:var(--t-sm);color:var(--ink3)">${t("No full-group days this month")}</span>`
+      }).join("")
     }
 
     function renderBest() {
