@@ -955,4 +955,11 @@ window.FR = {
   'Pick a date first for a recurring rehearsal': 'Choisissez d\'abord une date pour une répétition récurrente',
   'Pick an end date after the rehearsal date': 'Choisissez une date de fin après la date de la répétition',
   'rehearsals added!': 'répétitions ajoutées !',
+
+  /* ── BLOCK SPECIFIC WEEKDAYS ──────────────────────── */
+  'Only on these weekdays': 'Uniquement ces jours de la semaine',
+  'Leave empty to block every day in the period.': 'Laissez vide pour bloquer chaque jour de la période.',
+  'No matching days in the selected period': 'Aucun jour correspondant dans la période choisie',
+  'Selected period is too long': 'La période choisie est trop longue',
+  'days blocked!': 'jours bloqués !',
 };

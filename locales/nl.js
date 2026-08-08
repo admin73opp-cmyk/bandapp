@@ -955,4 +955,11 @@ window.NL = {
   'Pick a date first for a recurring rehearsal': 'Kies eerst een datum voor een terugkerende repetitie',
   'Pick an end date after the rehearsal date': 'Kies een einddatum na de repetitiedatum',
   'rehearsals added!': 'repetities toegevoegd!',
+
+  /* ── BLOCK SPECIFIC WEEKDAYS ──────────────────────── */
+  'Only on these weekdays': 'Alleen op deze weekdagen',
+  'Leave empty to block every day in the period.': 'Laat leeg om elke dag in de periode te blokkeren.',
+  'No matching days in the selected period': 'Geen overeenkomende dagen in de gekozen periode',
+  'Selected period is too long': 'De gekozen periode is te lang',
+  'days blocked!': 'dagen geblokkeerd!',
 };

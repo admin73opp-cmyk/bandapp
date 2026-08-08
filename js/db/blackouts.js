@@ -61,6 +61,35 @@ const BlackoutsDB = {
     return blackoutFromRow(data);
   },
 
+  // Batch insert for weekday-filtered "Block Days" — one request for the
+  // whole series instead of one per run. Returns the inserted rows, or
+  // null on error.
+  async insertMany(list) {
+    const rows = list.map(blackout => {
+      const { from, to, mids, ...fields } = blackout;
+      fields.from_date  = from || null;
+      fields.to_date    = to   || null;
+      fields.member_ids = mids || [];
+      if (!fields.band_id) fields.band_id = activeBandId;
+      return fields;
+    });
+    const run = (rs) => supabase.from('blackouts').insert(rs).select();
+    let { data, error } = await run(rows);
+    // Same pre-migration fallback as upsert(): drop only the column the
+    // error explicitly names and retry.
+    if (error) {
+      const msg = error.message || '';
+      let dropped = false;
+      const retry = rows.map(r => ({ ...r }));
+      ['reason_private', 'created_by'].forEach(col => {
+        if (msg.includes(col)) { retry.forEach(r => delete r[col]); dropped = true; }
+      });
+      if (dropped) ({ data, error } = await run(retry));
+    }
+    if (error) { handleDbError(error); return null; }
+    return (data || []).map(blackoutFromRow);
+  },
+
   async delete(id) {
     const { error } = await supabase.from('blackouts').delete().eq('id', id);
     if (error) { handleDbError(error); }

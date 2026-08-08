@@ -2674,6 +2674,27 @@
       border: 1px solid var(--bd)
     }
 
+    .dowc {
+      min-width: 37px;
+      padding: 6px 0;
+      border-radius: 99px;
+      border: 1.5px solid var(--bd);
+      background: var(--bg);
+      color: var(--ink2);
+      font-family: var(--font);
+      font-size: var(--t-xs);
+      font-weight: 600;
+      text-align: center;
+      cursor: pointer;
+      transition: all .12s
+    }
+
+    .dowc.on {
+      background: var(--a);
+      border-color: var(--a);
+      color: var(--onA)
+    }
+
     .clist {
       display: flex;
       flex-direction: column;
@@ -5796,6 +5817,10 @@
       <div class="mott" data-i18n="Block Days">Block Days</div>
       <div class="most" data-i18n="Mark a date range when a member is unavailable to rehearse.">Mark a date range when a member is unavailable to rehearse.</div>
       <div class="fg" data-i18n="Period"><label>Period</label><div class="rp" id="blkRP"></div><input type="hidden" id="blkFr"><input type="hidden" id="blkTo"></div>
+      <div class="fg"><label><span data-i18n="Only on these weekdays">Only on these weekdays</span> <span style="font-weight:400;color:var(--ink3)" data-i18n="(optional)">(optional)</span></label>
+        <div id="blkDows" style="display:flex;gap:5px;flex-wrap:wrap"></div>
+        <div style="font-size:var(--t-xs);color:var(--ink3);margin-top:5px" data-i18n="Leave empty to block every day in the period.">Leave empty to block every day in the period.</div>
+      </div>
       <div class="fg" id="blkMemberWrap" data-i18n="Member"><label data-i18n="Member">Member</label><select id="blkMember"></select></div>
       <div class="fg"><label data-i18n="Reason (optional)">Reason (optional)</label><textarea id="blkReason" placeholder="Holiday, work trip, event…" data-i18n-placeholder="Holiday, work trip, event…" style="min-height:55px"></textarea></div>
       <div style="display:flex;align-items:flex-start;gap:9px;margin-bottom:13px"><input type="checkbox" id="blkPriv" style="width:16px;height:16px;margin-top:2px;flex-shrink:0;accent-color:var(--a)"><label for="blkPriv" style="margin:0;cursor:pointer;flex:1;min-width:0"><span style="font-weight:600;font-size:var(--t-md)" data-i18n="Make reason private">Make reason private</span><div style="font-weight:400;font-size:var(--t-xs);color:var(--ink3);margin-top:2px" data-i18n="Only you can read the reason. Others just see the blocked dates.">Only you can read the reason. Others just see the blocked dates.</div></label></div>
@@ -9023,7 +9048,7 @@
       // No prefilled start date: a preselected "today" makes the user's first
       // tap register as the END of a today-anchored range, which breaks
       // cross-month selection (tap, navigate month, tap).
-      document.getElementById("blkFr").value = "", document.getElementById("blkTo").value = "", document.getElementById("blkReason").value = "", document.getElementById("blkPriv").checked = !1;
+      document.getElementById("blkFr").value = "", document.getElementById("blkTo").value = "", document.getElementById("blkReason").value = "", document.getElementById("blkPriv").checked = !1, document.getElementById("blkDows").innerHTML = [1, 2, 3, 4, 5, 6, 0].map(e => `<button type="button" class="dowc" data-dow="${e}" onclick="this.classList.toggle('on')">${t(DN[e])}</button>`).join("");
       const e = "admin" === currentUser.role,
         n = document.getElementById("blkMember"),
         o = e ? members : [members.find(e => e.id === currentUser.id) || {
@@ -9042,16 +9067,27 @@
         n = document.getElementById("blkTo").value || e,
         o = document.getElementById("blkMember").value,
         a = document.getElementById("blkReason").value.trim(),
-        s = document.getElementById("blkErr");
+        s = document.getElementById("blkErr"),
+        w = [...document.querySelectorAll("#blkDows .dowc.on")].map(e => +e.dataset.dow);
       if (s && (s.style.display = "none"), !e) return void toast2(t("Please select a start date") || "Please select a start date", "w");
       if (!o) return void toast2("Please select a member", "w");
       if ("admin" !== currentUser.role && o !== currentUser.id) return void toast2("You can only block your own days", "w");
+      const {
+        runs,
+        days
+      } = w.length ? _dowRuns(e, n, w) : {
+        runs: [{
+          from: e,
+          to: n
+        }],
+        days: 0
+      };
+      if (!runs.length) return void toast2("No matching days in the selected period", "w");
+      if (runs.length > 120) return void toast2("Selected period is too long", "w");
       const i = members.find(e => e.id === o),
         l = i ? [i.firstName, i.lastName].filter(Boolean).join(" ") : currentUser.firstName || "Member",
         r = {
           label: a || `${l} unavailable`,
-          from: e,
-          to: n,
           scope: "members",
           mids: [o],
           reason_private: document.getElementById("blkPriv").checked,
@@ -9059,11 +9095,40 @@
         },
         d = document.querySelector("#blkMod .btn-p");
       d && (d.disabled = !0, d.textContent = "Saving…");
-      const c = await BlackoutsDB.upsert(r);
-      if (d && (d.disabled = !1, d.textContent = t("Block Days") || "Block Days"), !c) return void(s && (s.textContent = "Could not save — check you have the right permissions (admin may need to apply the latest RLS migration in Supabase).", s.style.display = ""));
-      await loadBlackouts(), blackouts.find(e => e.id === c.id) || (blackouts = [...blackouts, c], _boMapVer++);
-      const u = e + (n && n !== e ? " – " + n : "");
-      logCalChange("created", "blackout", c.id, `${l} blocked: ${u}${a&&!r.reason_private?" — "+a:""}`, _rangeImpactsEvent(e, n)), closeMod("blkMod"), renderBOList(), renderCal(), renderCalChangelog().catch(() => {}), syncBOPill(), toast2("Days blocked!")
+      const c = w.length ? await BlackoutsDB.insertMany(runs.map(e => ({ ...r,
+        ...e
+      }))) : [await BlackoutsDB.upsert({ ...r,
+        from: e,
+        to: n
+      })].filter(Boolean);
+      if (d && (d.disabled = !1, d.textContent = t("Block Days") || "Block Days"), !c || !c.length) return void(s && (s.textContent = "Could not save — check you have the right permissions (admin may need to apply the latest RLS migration in Supabase).", s.style.display = ""));
+      await loadBlackouts(), c.forEach(e => {
+        blackouts.find(t => t.id === e.id) || (blackouts = [...blackouts, e], _boMapVer++)
+      });
+      const u = e + (n && n !== e ? " – " + n : ""),
+        y = w.length ? `every ${[1,2,3,4,5,6,0].filter(e=>w.includes(e)).map(e=>DN[e]).join(", ")}, ` : "";
+      logCalChange("created", "blackout", c[0].id, `${l} blocked: ${y}${u}${a&&!r.reason_private?" — "+a:""}`, runs.some(e => _rangeImpactsEvent(e.from, e.to))), closeMod("blkMod"), renderBOList(), renderCal(), renderCalChangelog().catch(() => {}), syncBOPill(), toast2(w.length ? `${days} ${window.t("days blocked!")}` : "Days blocked!")
+    }
+
+    // Split [from,to] into blackout runs covering only the given weekdays
+    // (Date.getDay() values). Consecutive matching calendar days merge into
+    // one run, so e.g. Sa+Su become weekend ranges instead of single days.
+    function _dowRuns(fromStr, toStr, dows) {
+      const runs = [];
+      let days = 0,
+        lastIdx = -2;
+      for (let d = new Date(fromStr + "T00:00:00"), end = new Date(toStr + "T00:00:00"), i = 0; d <= end; d.setDate(d.getDate() + 1), i++) {
+        if (!dows.includes(d.getDay())) continue;
+        const s = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+        i === lastIdx + 1 ? runs[runs.length - 1].to = s : runs.push({
+          from: s,
+          to: s
+        }), lastIdx = i, days++
+      }
+      return {
+        runs,
+        days
+      }
     }
 
     function togBOMc(e) {

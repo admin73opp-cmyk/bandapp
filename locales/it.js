@@ -955,4 +955,11 @@ window.IT = {
   'Pick a date first for a recurring rehearsal': 'Scegli prima una data per una prova ricorrente',
   'Pick an end date after the rehearsal date': 'Scegli una data di fine successiva alla data della prova',
   'rehearsals added!': 'prove aggiunte!',
+
+  /* ── BLOCK SPECIFIC WEEKDAYS ──────────────────────── */
+  'Only on these weekdays': 'Solo in questi giorni della settimana',
+  'Leave empty to block every day in the period.': 'Lascia vuoto per bloccare ogni giorno del periodo.',
+  'No matching days in the selected period': 'Nessun giorno corrispondente nel periodo selezionato',
+  'Selected period is too long': 'Il periodo selezionato è troppo lungo',
+  'days blocked!': 'giorni bloccati!',
 };
