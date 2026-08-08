@@ -944,4 +944,15 @@ window.NL = {
   "You're already in this group — switched to it.": 'Je zit al in deze groep — we zijn ernaar overgeschakeld.',
   'Welcome to': 'Welkom bij',
   'One shared calendar': 'Eén gedeelde kalender',
+
+  /* ── RECURRING REHEARSALS ─────────────────────────── */
+  'Repeat': 'Herhalen',
+  'Does not repeat': 'Wordt niet herhaald',
+  'Weekly': 'Wekelijks',
+  'Bi-weekly': 'Tweewekelijks',
+  'Monthly': 'Maandelijks',
+  'Repeat until': 'Herhalen tot',
+  'Pick a date first for a recurring rehearsal': 'Kies eerst een datum voor een terugkerende repetitie',
+  'Pick an end date after the rehearsal date': 'Kies een einddatum na de repetitiedatum',
+  'rehearsals added!': 'repetities toegevoegd!',
 };

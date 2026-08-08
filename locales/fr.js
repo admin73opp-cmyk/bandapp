@@ -944,4 +944,15 @@ window.FR = {
   "You're already in this group — switched to it.": 'Vous êtes déjà dans ce groupe — nous y avons basculé.',
   'Welcome to': 'Bienvenue dans',
   'One shared calendar': 'Un calendrier partagé',
+
+  /* ── RECURRING REHEARSALS ─────────────────────────── */
+  'Repeat': 'Répéter',
+  'Does not repeat': 'Ne se répète pas',
+  'Weekly': 'Chaque semaine',
+  'Bi-weekly': 'Toutes les deux semaines',
+  'Monthly': 'Chaque mois',
+  'Repeat until': 'Répéter jusqu\'au',
+  'Pick a date first for a recurring rehearsal': 'Choisissez d\'abord une date pour une répétition récurrente',
+  'Pick an end date after the rehearsal date': 'Choisissez une date de fin après la date de la répétition',
+  'rehearsals added!': 'répétitions ajoutées !',
 };
