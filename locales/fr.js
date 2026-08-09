@@ -962,4 +962,5 @@ window.FR = {
   'No matching days in the selected period': 'Aucun jour correspondant dans la période choisie',
   'Selected period is too long': 'La période choisie est trop longue',
   'days blocked!': 'jours bloqués !',
+  'Past periods are hidden automatically.': 'Les périodes passées sont masquées automatiquement.',
 };

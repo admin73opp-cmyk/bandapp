@@ -4768,7 +4768,7 @@
             </div>
             <div id="calBoBody" style="display:none;margin-top:12px">
               <div style="font-size:var(--t-sm);color:var(--ink2);margin-bottom:4px" data-i18n="Days blocked for the whole group or for individual members. You can change the ones you created yourself.">Days blocked for the whole group or for individual members. You can change the ones you created yourself.</div>
-              <div style="font-size:var(--t-xs);color:var(--ink3);margin-bottom:12px" data-i18n="Periods that ended more than a week ago are hidden.">Periods that ended more than a week ago are hidden.</div>
+              <div style="font-size:var(--t-xs);color:var(--ink3);margin-bottom:12px" data-i18n="Past periods are hidden automatically.">Past periods are hidden automatically.</div>
               <div id="calBoList" style="display:flex;flex-direction:column;gap:7px"></div>
             </div>
           </div>
@@ -9160,23 +9160,26 @@
       }).join("") : '<div class="es" style="padding:20px"><div class="es-ico">' + ricon("cal", 26) + `</div><h3>${window.t("No blackout periods")}</h3><p>${window.t("Add holidays, closures, or absences.")}</p></div>`
     }
 
+    // Every blocked-period list hides blocks that already ended — finished
+    // blocks are noise. Ongoing multi-day blocks (started earlier, end today
+    // or later) still show. The rows stay in the DB and in `blackouts`, so
+    // past-date calendar/availability rendering is unaffected.
+    function _currentBOs() {
+      return blackouts.filter(e => (e.to || e.from) >= TODAY_STR)
+    }
+
     function renderBOList() {
-      const e = document.getElementById("boList");
-      e && (e.innerHTML = _boItemsHtml(blackouts));
-      // Calendar list: drop periods that ended more than a week ago.
-      const t = new Date(TODAY_STR + "T12:00:00");
-      t.setDate(t.getDate() - 7);
-      const n = t.toLocaleDateString("en-CA"),
-        o = blackouts.filter(e => (e.to || e.from) >= n),
+      const o = _currentBOs(),
+        e = document.getElementById("boList"),
         a = document.getElementById("calBoList"),
         s = document.getElementById("calBoCount");
-      a && (a.innerHTML = _boItemsHtml(o)), s && (s.textContent = o.length), renderMpBOList()
+      e && (e.innerHTML = _boItemsHtml(o)), a && (a.innerHTML = _boItemsHtml(o)), s && (s.textContent = o.length), renderMpBOList()
     }
 
     // My Profile: only this user's personal blocks (not group-wide closures).
     function renderMpBOList() {
       const e = document.getElementById("mpBoList");
-      e && (e.innerHTML = _boItemsHtml(blackouts.filter(e => "members" === e.scope && e.mids.includes(currentUser.id))))
+      e && (e.innerHTML = _boItemsHtml(_currentBOs().filter(e => "members" === e.scope && e.mids.includes(currentUser.id))))
     }
 
     // Optional-section display preferences (per device, hidden by default).

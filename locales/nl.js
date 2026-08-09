@@ -962,4 +962,5 @@ window.NL = {
   'No matching days in the selected period': 'Geen overeenkomende dagen in de gekozen periode',
   'Selected period is too long': 'De gekozen periode is te lang',
   'days blocked!': 'dagen geblokkeerd!',
+  'Past periods are hidden automatically.': 'Verlopen periodes worden automatisch verborgen.',
 };

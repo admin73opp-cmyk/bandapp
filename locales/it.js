@@ -962,4 +962,5 @@ window.IT = {
   'No matching days in the selected period': 'Nessun giorno corrispondente nel periodo selezionato',
   'Selected period is too long': 'Il periodo selezionato è troppo lungo',
   'days blocked!': 'giorni bloccati!',
+  'Past periods are hidden automatically.': 'I periodi passati vengono nascosti automaticamente.',
 };
